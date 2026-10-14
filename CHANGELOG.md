@@ -6,7 +6,7 @@ The first release of toon-explainer: a skill for coding agents and a portable Ca
 
 ### Script to film
 
-- Added `script2spec.py`: parses a storyboard (`Shot N / Voiceover / On screen`, or the Russian `Кадр N / Озвучка / На экране`), estimates shot timing from words per minute and writes a skeleton spec plus an SRT file.
+- Added `script2spec.py`: parses a storyboard (`Shot N / Voiceover / On screen`, other languages through a `--labels` file), estimates shot timing from words per minute and writes a skeleton spec plus an SRT file.
 - Added alignment to a real voiceover: `--srt` snaps every shot to its first spoken word (difflib word matching, short VTT timestamps, no cumulative drift); `--merge` re-times a filled spec without touching its layers.
 - Added a JSON spec contract with a validator (`spec.py`) whose vocabulary is checked against the engine by tests.
 

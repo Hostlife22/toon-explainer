@@ -43,7 +43,7 @@
       }
     },
 
-    // Ink splat that slams in, with optional text (e.g. "K.O.", "ВОТ ОНО"). Reference: black splatter + red/white letter.
+    // Ink splat that slams in, with optional text (e.g. "K.O.", "GOTCHA"). Reference: black splatter + red/white letter.
     splat(ctx, L, lt) {
       const p = T.ease.outBack(T.prog(lt, 0, 0.18)), s = (L.size ?? 360) * p;
       const pts = T.blobPts(0, 0, s, s * 0.62, (L.id ?? 'splat') + 'b', 26, 0.38);

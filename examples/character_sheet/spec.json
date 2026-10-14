@@ -1,499 +1,499 @@
 {
- "title": "Лист персонажа: ракурсы, эмоции, позы, костюмы",
- "fps": 30,
- "seed": 3,
- "style": {
-  "grain": false,
-  "vignette": false
- },
- "cast": {
-  "king": {
-   "robe": "#b8323a",
-   "trim": "#e0b040",
-   "hair": "long",
-   "hairColor": "#4a3022",
-   "beard": "full",
-   "beardColor": "#4a3022",
-   "head": "crown"
+  "title": "Character sheet: views, expressions, poses, costumes",
+  "fps": 30,
+  "seed": 3,
+  "style": {
+    "grain": false,
+    "vignette": false
   },
-  "legion": {
-   "robe": "#c0202a",
-   "armor": "#a9aeb4",
-   "pleats": true,
-   "head": "helmet",
-   "hair": "bald",
-   "holdL": "shield",
-   "hold": "sword"
-  },
-  "citizen": {
-   "robe": "#e9e2d2",
-   "sash": "#6a8fbf",
-   "hair": "curly",
-   "hairColor": "#5a3a26"
-  },
-  "scholar": {
-   "robe": "#7a8a4a",
-   "hair": "bald-sides",
-   "hairColor": "#8a8a8a",
-   "mustache": true,
-   "head": "hat"
-  }
- },
- "shots": [
-  {
-   "id": "views",
-   "dur": 1,
-   "bg": {
-    "kind": "flat",
-    "color": "#e8e4dc"
-   },
-   "camera": {
-    "zoom": [
-     1,
-     1
-    ]
-   },
-   "layers": [
-    {
-     "type": "bean",
-     "who": "king",
-     "view": "front",
-     "x": 0.14,
-     "y": 0.95,
-     "size": 560,
-     "expr": "neutral",
-     "blink": false
+  "cast": {
+    "king": {
+      "robe": "#b8323a",
+      "trim": "#e0b040",
+      "hair": "long",
+      "hairColor": "#4a3022",
+      "beard": "full",
+      "beardColor": "#4a3022",
+      "head": "crown"
     },
-    {
-     "type": "bean",
-     "who": "king",
-     "view": "3q",
-     "x": 0.38,
-     "y": 0.95,
-     "size": 560,
-     "expr": "neutral",
-     "blink": false
+    "legion": {
+      "robe": "#c0202a",
+      "armor": "#a9aeb4",
+      "pleats": true,
+      "head": "helmet",
+      "hair": "bald",
+      "holdL": "shield",
+      "hold": "sword"
     },
-    {
-     "type": "bean",
-     "who": "king",
-     "view": "side",
-     "x": 0.62,
-     "y": 0.95,
-     "size": 560,
-     "expr": "neutral",
-     "blink": false
+    "citizen": {
+      "robe": "#e9e2d2",
+      "sash": "#6a8fbf",
+      "hair": "curly",
+      "hairColor": "#5a3a26"
     },
-    {
-     "type": "bean",
-     "who": "king",
-     "view": "back",
-     "x": 0.86,
-     "y": 0.95,
-     "size": 560,
-     "expr": "neutral",
-     "blink": false
+    "scholar": {
+      "robe": "#7a8a4a",
+      "hair": "bald-sides",
+      "hairColor": "#8a8a8a",
+      "mustache": true,
+      "head": "hat"
     }
-   ]
   },
-  {
-   "id": "expressions",
-   "dur": 1,
-   "bg": {
-    "kind": "flat",
-    "color": "#e8e4dc"
-   },
-   "camera": {
-    "zoom": [
-     1,
-     1
-    ]
-   },
-   "layers": [
+  "shots": [
     {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.07,
-     "y": 0.47,
-     "size": 300,
-     "expr": "neutral",
-     "blink": false,
-     "legs": true
+      "id": "views",
+      "dur": 1,
+      "bg": {
+        "kind": "flat",
+        "color": "#e8e4dc"
+      },
+      "camera": {
+        "zoom": [
+          1,
+          1
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "king",
+          "view": "front",
+          "x": 0.14,
+          "y": 0.95,
+          "size": 560,
+          "expr": "neutral",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "king",
+          "view": "3q",
+          "x": 0.38,
+          "y": 0.95,
+          "size": 560,
+          "expr": "neutral",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "king",
+          "view": "side",
+          "x": 0.62,
+          "y": 0.95,
+          "size": 560,
+          "expr": "neutral",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "king",
+          "view": "back",
+          "x": 0.86,
+          "y": 0.95,
+          "size": 560,
+          "expr": "neutral",
+          "blink": false
+        }
+      ]
     },
     {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.213,
-     "y": 0.47,
-     "size": 300,
-     "expr": "happy",
-     "blink": false,
-     "legs": true
+      "id": "expressions",
+      "dur": 1,
+      "bg": {
+        "kind": "flat",
+        "color": "#e8e4dc"
+      },
+      "camera": {
+        "zoom": [
+          1,
+          1
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.07,
+          "y": 0.47,
+          "size": 300,
+          "expr": "neutral",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.213,
+          "y": 0.47,
+          "size": 300,
+          "expr": "happy",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.356,
+          "y": 0.47,
+          "size": 300,
+          "expr": "content",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.49899999999999994,
+          "y": 0.47,
+          "size": 300,
+          "expr": "smug",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.6419999999999999,
+          "y": 0.47,
+          "size": 300,
+          "expr": "angry",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.7849999999999999,
+          "y": 0.47,
+          "size": 300,
+          "expr": "rage",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.9279999999999999,
+          "y": 0.47,
+          "size": 300,
+          "expr": "sad",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.07,
+          "y": 0.97,
+          "size": 300,
+          "expr": "worried",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.213,
+          "y": 0.97,
+          "size": 300,
+          "expr": "shock",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.356,
+          "y": 0.97,
+          "size": 300,
+          "expr": "scream",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.49899999999999994,
+          "y": 0.97,
+          "size": 300,
+          "expr": "squint",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.6419999999999999,
+          "y": 0.97,
+          "size": 300,
+          "expr": "cry",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.7849999999999999,
+          "y": 0.97,
+          "size": 300,
+          "expr": "dead",
+          "blink": false,
+          "legs": true
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.9279999999999999,
+          "y": 0.97,
+          "size": 300,
+          "expr": "sleepy",
+          "blink": false,
+          "legs": true
+        }
+      ]
     },
     {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.356,
-     "y": 0.47,
-     "size": 300,
-     "expr": "content",
-     "blink": false,
-     "legs": true
+      "id": "poses",
+      "dur": 1,
+      "bg": {
+        "kind": "flat",
+        "color": "#e8e4dc"
+      },
+      "camera": {
+        "zoom": [
+          1,
+          1
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.06,
+          "y": 0.47,
+          "size": 280,
+          "pose": "idle",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.158,
+          "y": 0.47,
+          "size": 280,
+          "pose": "point",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.256,
+          "y": 0.47,
+          "size": 280,
+          "pose": "point-up",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.35400000000000004,
+          "y": 0.47,
+          "size": 280,
+          "pose": "arms-up",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.452,
+          "y": 0.47,
+          "size": 280,
+          "pose": "shrug",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.55,
+          "y": 0.47,
+          "size": 280,
+          "pose": "facepalm",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.6480000000000001,
+          "y": 0.47,
+          "size": 280,
+          "pose": "think",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.746,
+          "y": 0.47,
+          "size": 280,
+          "pose": "wave",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8440000000000001,
+          "y": 0.47,
+          "size": 280,
+          "pose": "hold",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.942,
+          "y": 0.47,
+          "size": 280,
+          "pose": "fist",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.06,
+          "y": 0.97,
+          "size": 280,
+          "pose": "hips",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.158,
+          "y": 0.97,
+          "size": 280,
+          "pose": "cross",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.256,
+          "y": 0.97,
+          "size": 280,
+          "pose": "present",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.35400000000000004,
+          "y": 0.97,
+          "size": 280,
+          "pose": "scared",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.452,
+          "y": 0.97,
+          "size": 280,
+          "pose": "hands-face",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.55,
+          "y": 0.97,
+          "size": 280,
+          "pose": "thumbs-up",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.6480000000000001,
+          "y": 0.97,
+          "size": 280,
+          "pose": "clutch-head",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.746,
+          "y": 0.97,
+          "size": 280,
+          "pose": "sword-up",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8440000000000001,
+          "y": 0.97,
+          "size": 280,
+          "pose": "reach",
+          "blink": false
+        }
+      ]
     },
     {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.49899999999999994,
-     "y": 0.47,
-     "size": 300,
-     "expr": "smug",
-     "blink": false,
-     "legs": true
-    },
-    {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.6419999999999999,
-     "y": 0.47,
-     "size": 300,
-     "expr": "angry",
-     "blink": false,
-     "legs": true
-    },
-    {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.7849999999999999,
-     "y": 0.47,
-     "size": 300,
-     "expr": "rage",
-     "blink": false,
-     "legs": true
-    },
-    {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.9279999999999999,
-     "y": 0.47,
-     "size": 300,
-     "expr": "sad",
-     "blink": false,
-     "legs": true
-    },
-    {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.07,
-     "y": 0.97,
-     "size": 300,
-     "expr": "worried",
-     "blink": false,
-     "legs": true
-    },
-    {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.213,
-     "y": 0.97,
-     "size": 300,
-     "expr": "shock",
-     "blink": false,
-     "legs": true
-    },
-    {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.356,
-     "y": 0.97,
-     "size": 300,
-     "expr": "scream",
-     "blink": false,
-     "legs": true
-    },
-    {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.49899999999999994,
-     "y": 0.97,
-     "size": 300,
-     "expr": "squint",
-     "blink": false,
-     "legs": true
-    },
-    {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.6419999999999999,
-     "y": 0.97,
-     "size": 300,
-     "expr": "cry",
-     "blink": false,
-     "legs": true
-    },
-    {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.7849999999999999,
-     "y": 0.97,
-     "size": 300,
-     "expr": "dead",
-     "blink": false,
-     "legs": true
-    },
-    {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.9279999999999999,
-     "y": 0.97,
-     "size": 300,
-     "expr": "sleepy",
-     "blink": false,
-     "legs": true
+      "id": "costumes",
+      "dur": 1,
+      "bg": {
+        "kind": "flat",
+        "color": "#e8e4dc"
+      },
+      "camera": {
+        "zoom": [
+          1,
+          1
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "king",
+          "x": 0.14,
+          "y": 0.95,
+          "size": 560,
+          "expr": "neutral",
+          "pose": "idle",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "legion",
+          "x": 0.38,
+          "y": 0.95,
+          "size": 560,
+          "expr": "neutral",
+          "pose": "hold",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.62,
+          "y": 0.95,
+          "size": 560,
+          "expr": "neutral",
+          "pose": "idle",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.86,
+          "y": 0.95,
+          "size": 560,
+          "expr": "neutral",
+          "pose": "idle",
+          "blink": false
+        }
+      ]
     }
-   ]
-  },
-  {
-   "id": "poses",
-   "dur": 1,
-   "bg": {
-    "kind": "flat",
-    "color": "#e8e4dc"
-   },
-   "camera": {
-    "zoom": [
-     1,
-     1
-    ]
-   },
-   "layers": [
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.06,
-     "y": 0.47,
-     "size": 280,
-     "pose": "idle",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.158,
-     "y": 0.47,
-     "size": 280,
-     "pose": "point",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.256,
-     "y": 0.47,
-     "size": 280,
-     "pose": "point-up",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.35400000000000004,
-     "y": 0.47,
-     "size": 280,
-     "pose": "arms-up",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.452,
-     "y": 0.47,
-     "size": 280,
-     "pose": "shrug",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.55,
-     "y": 0.47,
-     "size": 280,
-     "pose": "facepalm",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.6480000000000001,
-     "y": 0.47,
-     "size": 280,
-     "pose": "think",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.746,
-     "y": 0.47,
-     "size": 280,
-     "pose": "wave",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.8440000000000001,
-     "y": 0.47,
-     "size": 280,
-     "pose": "hold",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.942,
-     "y": 0.47,
-     "size": 280,
-     "pose": "fist",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.06,
-     "y": 0.97,
-     "size": 280,
-     "pose": "hips",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.158,
-     "y": 0.97,
-     "size": 280,
-     "pose": "cross",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.256,
-     "y": 0.97,
-     "size": 280,
-     "pose": "present",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.35400000000000004,
-     "y": 0.97,
-     "size": 280,
-     "pose": "scared",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.452,
-     "y": 0.97,
-     "size": 280,
-     "pose": "hands-face",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.55,
-     "y": 0.97,
-     "size": 280,
-     "pose": "thumbs-up",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.6480000000000001,
-     "y": 0.97,
-     "size": 280,
-     "pose": "clutch-head",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.746,
-     "y": 0.97,
-     "size": 280,
-     "pose": "sword-up",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.8440000000000001,
-     "y": 0.97,
-     "size": 280,
-     "pose": "reach",
-     "blink": false
-    }
-   ]
-  },
-  {
-   "id": "costumes",
-   "dur": 1,
-   "bg": {
-    "kind": "flat",
-    "color": "#e8e4dc"
-   },
-   "camera": {
-    "zoom": [
-     1,
-     1
-    ]
-   },
-   "layers": [
-    {
-     "type": "bean",
-     "who": "king",
-     "x": 0.14,
-     "y": 0.95,
-     "size": 560,
-     "expr": "neutral",
-     "pose": "idle",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "legion",
-     "x": 0.38,
-     "y": 0.95,
-     "size": 560,
-     "expr": "neutral",
-     "pose": "hold",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "citizen",
-     "x": 0.62,
-     "y": 0.95,
-     "size": 560,
-     "expr": "neutral",
-     "pose": "idle",
-     "blink": false
-    },
-    {
-     "type": "bean",
-     "who": "scholar",
-     "x": 0.86,
-     "y": 0.95,
-     "size": 560,
-     "expr": "neutral",
-     "pose": "idle",
-     "blink": false
-    }
-   ]
-  }
- ]
+  ]
 }

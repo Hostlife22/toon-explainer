@@ -1,5 +1,5 @@
 {
-  "title": "Год, который длился 445 дней — демо",
+  "title": "The year that lasted 445 days (demo)",
   "fps": 30,
   "seed": 445,
   "style": {
@@ -47,7 +47,7 @@
     {
       "id": "k01",
       "dur": 4.0,
-      "vo": "В сорок шестом году до нашей эры римляне прожили год длиной в четыреста сорок пять дней.",
+      "vo": "In 46 BC the Romans lived through a year that lasted four hundred and forty-five days.",
       "bg": {
         "kind": "sky",
         "preset": "sunset",
@@ -120,7 +120,7 @@
         {
           "type": "date",
           "text": "46",
-          "suffix": "до н. э.",
+          "suffix": "BC",
           "x": 0.5,
           "y": 0.22,
           "at": 0.4,
@@ -128,14 +128,14 @@
         },
         {
           "type": "era",
-          "small": "46 до н. э.",
+          "small": "46 BC",
           "parts": [
             [
-              "РИМСКАЯ",
+              "ROMAN",
               "#e0393e"
             ],
             [
-              "РЕСПУБЛИКА",
+              "REPUBLIC",
               "#ffffff"
             ]
           ],
@@ -149,7 +149,7 @@
       "id": "k02",
       "dur": 4.0,
       "transition": "zoom-punch",
-      "vo": "Не ошибка. Не опечатка. Четыреста сорок пять дней.",
+      "vo": "Not a mistake. Not a typo. Four hundred and forty-five days.",
       "bg": {
         "kind": "burst",
         "color": "#2f8f8a"
@@ -172,7 +172,7 @@
           "x": 0.36,
           "y": 0.52,
           "size": 520,
-          "head": "ГОД 708 AUC",
+          "head": "YEAR 708 AUC",
           "from": 1,
           "to": 445,
           "dur": 2.4,
@@ -185,7 +185,7 @@
           "from": 365,
           "to": 445,
           "dur": 2.4,
-          "suffix": " ДНЕЙ",
+          "suffix": " DAYS",
           "size": 140,
           "color": "#ffe066"
         },
@@ -204,7 +204,7 @@
       "id": "k03",
       "dur": 4.5,
       "transition": "cut",
-      "vo": "Календарём в Риме управляли жрецы. И они решали, сколько длится твой год.",
+      "vo": "In Rome, priests ran the calendar. And they decided how long your year would be.",
       "bg": {
         "kind": "interior",
         "wall": "#e7c48f",
@@ -259,8 +259,8 @@
         },
         {
           "type": "label",
-          "tag": "ВЕРХОВНЫЙ ЖРЕЦ",
-          "text": "ПОНТИФИК",
+          "tag": "HIGH PRIEST",
+          "text": "PONTIFEX",
           "x": 0.24,
           "y": 0.42,
           "at": 0.6,
@@ -281,7 +281,7 @@
       "id": "k04",
       "dur": 4.0,
       "transition": "whip",
-      "vo": "Другу — лишний месяц у власти. Врагу — срок покороче.",
+      "vo": "A friend got an extra month in office. An enemy got a shorter term.",
       "bg": {
         "kind": "sky",
         "preset": "day",
@@ -340,7 +340,7 @@
         },
         {
           "type": "label",
-          "text": "+1 МЕСЯЦ",
+          "text": "+1 MONTH",
           "x": 0.3,
           "y": 0.18,
           "at": 0.9,
@@ -384,7 +384,7 @@
         },
         {
           "type": "label",
-          "text": "−1 МЕСЯЦ",
+          "text": "−1 MONTH",
           "x": 0.72,
           "y": 0.18,
           "at": 2.1,
@@ -413,7 +413,7 @@
       "id": "k05",
       "dur": 4.0,
       "transition": "zoom-punch",
-      "vo": "А потом пришёл человек, которому это надоело. Гай Юлий Цезарь.",
+      "vo": "Then came a man who had had enough of it. Gaius Julius Caesar.",
       "bg": {
         "kind": "sky",
         "preset": "dusk",
@@ -476,8 +476,8 @@
         },
         {
           "type": "label",
-          "tag": "ДИКТАТОР",
-          "text": "ЮЛИЙ ЦЕЗАРЬ",
+          "tag": "DICTATOR",
+          "text": "JULIUS CAESAR",
           "x": 0.28,
           "y": 0.36,
           "at": 1.0,
@@ -491,7 +491,7 @@
       "id": "k06",
       "dur": 4.5,
       "transition": "fade-white",
-      "vo": "Он отобрал календарь у жрецов. И ты до сих пор живёшь по его правилам.",
+      "vo": "He took the calendar away from the priests. And you still live by his rules.",
       "bg": {
         "kind": "burst",
         "color": "#c8623a",
@@ -516,7 +516,7 @@
               "num": "V"
             },
             {
-              "head": "ИЮЛЬ",
+              "head": "JULY",
               "num": "VII",
               "headColor": "#b8861b"
             }
@@ -533,7 +533,7 @@
         },
         {
           "type": "title",
-          "text": "ИЮЛЬ = ЮЛИЙ",
+          "text": "JULY = JULIUS",
           "x": 0.5,
           "y": 0.92,
           "at": 1.8,

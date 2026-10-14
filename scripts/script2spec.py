@@ -3,12 +3,16 @@
 
   python3 scripts/script2spec.py script.md --out film/spec.json [--wpm 160] [--srt vo.srt] [--min 1.6]
   python3 scripts/script2spec.py script.md --srt vo.srt --merge film/spec.json   # re-time a filled spec, keep layers
+  python3 scripts/script2spec.py script.md --labels labels.json --out film/spec.json  # storyboard in another language
 
-Input format (Russian or English labels), one block per shot:
+Input format, one block per shot:
 
-  **Кадр 12** 🎬
-  — Озвучка: «Человек сделал 45 версий одного и того же соуса…»
-  — На экране: учёный в лаборатории над колбами
+  **Shot 12** 🎬
+  - Voiceover: "A man made 45 versions of the same sauce..."
+  - On screen: a scientist in a lab over rows of flasks
+
+Labels in another language: pass --labels with a JSON file that adds words to the defaults, e.g.
+  {"shot": ["Plan"], "voiceover": ["Narration"], "screen": ["Visual"]}
 
 Timing:
   * without --srt: duration = words / (wpm/60) + 0.25 s pause, at least --min seconds;
@@ -26,39 +30,59 @@ import difflib
 import json
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
-SHOT_RE = re.compile(r"^\s*\**\s*(?:Кадр|Shot)\s*(\d+)\s*\**\s*(.*)$", re.IGNORECASE)
-VO_RE = re.compile(r"^\s*[—–\-]?\s*(?:Озвучка|Voiceover|VO)\s*:\s*(.+)$", re.IGNORECASE)
-SCREEN_RE = re.compile(r"^\s*[—–\-]?\s*(?:На экране|On screen|Screen)\s*:\s*(.+)$", re.IGNORECASE)
-WORD_RE = re.compile(r"[\wё]+", re.IGNORECASE)
+DEFAULT_LABELS = {"shot": ["Shot"], "voiceover": ["Voiceover", "VO"], "screen": ["On screen", "Screen"]}
+WORD_RE = re.compile(r"\w+")
+
+
+def compile_labels(extra: dict | None = None) -> tuple[re.Pattern, re.Pattern, re.Pattern]:
+    """Build the shot / voiceover / on-screen line patterns from the default English labels plus `extra` words."""
+    labels = {k: list(v) for k, v in DEFAULT_LABELS.items()}
+    for key, words in (extra or {}).items():
+        if key not in labels or not isinstance(words, list) or not all(isinstance(w, str) and w.strip() for w in words):
+            raise ValueError(f"labels: expected {{'shot'|'voiceover'|'screen': [words]}}, got {key!r}")
+        labels[key] += words
+    alt = lambda key: "|".join(re.escape(w) for w in sorted(labels[key], key=len, reverse=True))
+    shot = re.compile(rf"^\s*\**\s*(?:{alt('shot')})\s*(\d+)\s*\**\s*(.*)$", re.IGNORECASE)
+    vo = re.compile(rf"^\s*[\u2014\u2013\-*]?\s*(?:{alt('voiceover')})\s*:\s*(.+)$", re.IGNORECASE)
+    screen = re.compile(rf"^\s*[\u2014\u2013\-*]?\s*(?:{alt('screen')})\s*:\s*(.+)$", re.IGNORECASE)
+    return shot, vo, screen
+
+
+SHOT_RE, VO_RE, SCREEN_RE = compile_labels()
 TS = r"(?:(\d+):)?(\d+):(\d+)[,.](\d+)"  # hh:mm:ss,mmm (SRT) or mm:ss.mmm (short VTT)
 SRT_TIME = re.compile(TS + r"\s*-->\s*" + TS)
 
 
+QUOTES = "\"'\u00ab\u00bb\u201c\u201d\u201e\u2018\u2019"
+
+
 def strip_quotes(text: str) -> str:
-    return text.strip().strip("«»\"“”„").strip()
+    return text.strip().strip(QUOTES).strip()
 
 
-def parse_storyboard(text: str) -> list[dict]:
+def parse_storyboard(text: str, labels: dict | None = None) -> list[dict]:
     """Return [{n, anim, vo, screen}] in order. Raises ValueError on an empty or malformed storyboard."""
+    shot_re, vo_re, screen_re = compile_labels(labels) if labels else (SHOT_RE, VO_RE, SCREEN_RE)
     shots: list[dict] = []
     cur = None
     for raw in text.splitlines():
         line = raw.strip()
-        m = SHOT_RE.match(line)
+        m = shot_re.match(line)
         if m:
-            cur = {"n": int(m.group(1)), "anim": "🎬" in m.group(2), "vo": "", "screen": ""}
+            cur = {"n": int(m.group(1)), "anim": "\U0001F3AC" in m.group(2), "vo": "", "screen": ""}
             shots.append(cur)
             continue
         if cur is None:
             continue
-        if (m := VO_RE.match(line)):
+        if (m := vo_re.match(line)):
             cur["vo"] = strip_quotes(m.group(1))
-        elif (m := SCREEN_RE.match(line)):
+        elif (m := screen_re.match(line)):
             cur["screen"] = m.group(1).strip()
     if not shots:
-        raise ValueError("no shots found: expected blocks starting with '**Кадр N**' or '**Shot N**'")
+        raise ValueError("no shots found: expected blocks starting with '**Shot N**' (or a label from --labels)")
     nums = [s["n"] for s in shots]
     dupes = sorted({n for n in nums if nums.count(n) > 1})
     if dupes:
@@ -69,8 +93,13 @@ def parse_storyboard(text: str) -> list[dict]:
     return shots
 
 
+def _fold(word: str) -> str:
+    """Lower-case and drop diacritics, so spelling variants of a letter match between script and transcript."""
+    return "".join(ch for ch in unicodedata.normalize("NFD", word.lower()) if not unicodedata.combining(ch))
+
+
 def words(text: str) -> list[str]:
-    return [w.lower().replace("ё", "е") for w in WORD_RE.findall(text)]
+    return [_fold(w) for w in WORD_RE.findall(text)]
 
 
 def estimate_durations(shots: list[dict], wpm: float, min_dur: float, pause: float = 0.25) -> list[float]:
@@ -195,11 +224,13 @@ def main(argv=None) -> None:
     ap.add_argument("--min", dest="min_dur", type=float, default=1.6)
     ap.add_argument("--srt", help="real VO timings (SRT or VTT)")
     ap.add_argument("--title", default="")
+    ap.add_argument("--labels", help="JSON file with extra storyboard label words for another language")
     a = ap.parse_args(argv)
     try:
-        shots = parse_storyboard(Path(a.storyboard).read_text(encoding="utf-8"))
+        labels = json.loads(Path(a.labels).read_text(encoding="utf-8")) if a.labels else None
+        shots = parse_storyboard(Path(a.storyboard).read_text(encoding="utf-8"), labels)
         durs = align_durations(shots, parse_srt(Path(a.srt).read_text(encoding="utf-8"))) if a.srt else estimate_durations(shots, a.wpm, a.min_dur)
-    except (OSError, ValueError) as err:
+    except (OSError, ValueError, json.JSONDecodeError) as err:
         sys.exit(f"❌ {err}")
     if a.merge:
         target = Path(a.merge)

@@ -1,6 +1,6 @@
 ---
 name: toon-explainer
-description: "Turn a narrated script/storyboard into a cutout-cartoon explainer video in the style of history/science YouTube channels (Historically-style bean-head characters, painted skies, bold outlined lettering, maps, counters, punch-zooms). Script → JSON spec → deterministic Canvas render → MP4. Use when the user wants to animate a script, generate shots from a storyboard (the companion master prompt's step 5 format «Кадр N — Озвучка — На экране» or «Shot N — Voiceover — On screen»), recreate this reference style, or render/preview/re-time such a film."
+description: "Turn a narrated script/storyboard into a cutout-cartoon explainer video in the style of history/science YouTube channels (Historically-style bean-head characters, painted skies, bold outlined lettering, maps, counters, punch-zooms). Script → JSON spec → deterministic Canvas render → MP4. Use when the user wants to animate a script, generate shots from a storyboard (the companion master prompt's step 5 format «Shot N — Voiceover — On screen», other languages via --labels), recreate this reference style, or render/preview/re-time such a film."
 ---
 
 # Toon Explainer

@@ -7,6 +7,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -20,15 +21,15 @@ import script2spec as s2s  # noqa: E402
 from spec import SpecError, load, validate  # noqa: E402
 
 STORYBOARD = """
-### Сценарий
+### Script
 
-**Кадр 1**
-— Озвучка: «В сорок шестом году до нашей эры год длился четыреста сорок пять дней.»
-— На экране: римский форум на закате, дата 46 до н. э.
+**Shot 1**
+- Voiceover: "In 46 BC the Roman year lasted four hundred and forty five days."
+- On screen: the Roman Forum at sunset, the date 46 BC
 
-**Кадр 2** 🎬
-— Озвучка: «И это была не ошибка.»
-— На экране: календарь бешено листается
+**Shot 2** 🎬
+— Voiceover: «And it was no mistake.»
+— On screen: a calendar flips wildly
 
 **Shot 3**
 - Voiceover: "Priests controlled the calendar."
@@ -37,11 +38,11 @@ STORYBOARD = """
 
 SRT = """1
 00:00:00,000 --> 00:00:03,900
-В сорок шестом году до нашей эры год длился четыреста сорок пять дней.
+In 46 BC the Roman year lasted four hundred and forty five days.
 
 2
 00:00:04,200 --> 00:00:05,600
-И это была не ошибка.
+And it was no mistake.
 
 3
 00:00:06,000 --> 00:00:08,000
@@ -57,15 +58,15 @@ def test_parse_storyboard_reads_all_shots_and_flags():
     shots = s2s.parse_storyboard(STORYBOARD)
     assert [s["n"] for s in shots] == [1, 2, 3]
     assert [s["anim"] for s in shots] == [False, True, False]
-    assert shots[1]["vo"] == "И это была не ошибка."
+    assert shots[1]["vo"] == "And it was no mistake."
     assert shots[2]["screen"] == "pontifex with a scroll"
 
 
 def test_parse_storyboard_rejects_empty_and_missing_vo():
     with pytest.raises(ValueError, match="no shots"):
-        s2s.parse_storyboard("просто текст")
+        s2s.parse_storyboard("just some text")
     with pytest.raises(ValueError, match="without voiceover"):
-        s2s.parse_storyboard("**Кадр 1**\n— На экране: что-то")
+        s2s.parse_storyboard("**Shot 1**\n- On screen: something")
 
 
 def test_estimate_durations_follow_wpm_with_floor():
@@ -73,14 +74,14 @@ def test_estimate_durations_follow_wpm_with_floor():
     durs = s2s.estimate_durations(shots, wpm=160, min_dur=1.6)
     assert durs[0] == pytest.approx(13 * 60 / 160 + 0.25, abs=0.01)  # 13 words
     assert durs[1] == pytest.approx(5 * 60 / 160 + 0.25, abs=0.01)  # 5 words → 2.13 s, above the floor
-    short = s2s.estimate_durations([{"vo": "Да."}], wpm=160, min_dur=1.6)
+    short = s2s.estimate_durations([{"vo": "Yes."}], wpm=160, min_dur=1.6)
     assert short == [1.6]
 
 
 def test_align_durations_snaps_to_real_voice():
     shots = s2s.parse_storyboard(STORYBOARD)
     durs = s2s.align_durations(shots, s2s.parse_srt(SRT), tail=0.5)
-    assert durs[0] == pytest.approx(4.2, abs=0.01)  # shot 2 starts when "И" is spoken at 4.2 s
+    assert durs[0] == pytest.approx(4.2, abs=0.01)  # shot 2 starts when "And" is spoken at 4.2 s
     assert durs[1] == pytest.approx(1.8, abs=0.01)
     assert sum(durs) == pytest.approx(8.5, abs=0.01)
 
@@ -175,13 +176,13 @@ def test_key_green_makes_background_transparent():
 
 # ---------- review regressions ----------
 def test_parse_srt_accepts_short_vtt_and_fractions():
-    cues = s2s.parse_srt("WEBVTT\n\n00:01.5 --> 00:02.250\nПривет мир\n")
-    assert cues == [(1.5, 2.25, "Привет мир")]
+    cues = s2s.parse_srt("WEBVTT\n\n00:01.5 --> 00:02.250\nHello world\n")
+    assert cues == [(1.5, 2.25, "Hello world")]
 
 
 def test_align_never_drifts_past_vo_length():
-    shots = [{"n": i, "vo": v, "screen": "", "anim": False} for i, v in enumerate(["один", "два", "три"], 1)]
-    cues = [(0.0, 0.1, "один два три")]  # absurdly fast VO forces the 0.4 s floor
+    shots = [{"n": i, "vo": v, "screen": "", "anim": False} for i, v in enumerate(["one", "two", "three"], 1)]
+    cues = [(0.0, 0.1, "one two three")]  # absurdly fast VO forces the 0.4 s floor
     durs = s2s.align_durations(shots, cues, tail=0.6)
     assert all(d >= 0.4 - 1e-9 for d in durs)
     assert sum(durs) == pytest.approx(1.2, abs=1e-6)  # 3 × floor, no extra drift beyond what the floor requires
@@ -189,7 +190,7 @@ def test_align_never_drifts_past_vo_length():
 
 def test_duplicate_shot_numbers_rejected():
     with pytest.raises(ValueError, match="duplicate"):
-        s2s.parse_storyboard("**Кадр 1**\n— Озвучка: «а»\n**Кадр 1**\n— Озвучка: «б»")
+        s2s.parse_storyboard("**Shot 1**\n- Voiceover: a\n**Shot 1**\n- Voiceover: b")
 
 
 def test_validator_catches_bad_window_sky_and_bg_type():
@@ -281,3 +282,24 @@ def test_short_hex_colours_render(tmp_path):
     r = subprocess.run([sys.executable, str(ROOT / "scripts" / "render.py"), str(p), "--stills", "0.5", "--scale", "0.25", "--out", str(tmp_path / "o")],
                        capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_extra_labels_parse_another_language_and_fold_diacritics():
+    text = "**Plano 1**\n- Narración: «Él llegó.»\n- Pantalla: una sala"
+    with pytest.raises(ValueError, match="no shots"):
+        s2s.parse_storyboard(text)
+    shots = s2s.parse_storyboard(text, {"shot": ["Plano"], "voiceover": ["Narración"], "screen": ["Pantalla"]})
+    assert shots[0]["vo"] == "Él llegó." and shots[0]["screen"] == "una sala"
+    assert s2s.words("Él llegó") == s2s.words("el llego")
+    with pytest.raises(ValueError, match="labels"):
+        s2s.parse_storyboard(text, {"title": ["x"]})
+
+
+def test_repository_text_is_english_only():
+    """Docs, code and examples must not contain Cyrillic; localized storyboards go through --labels."""
+    cyrillic = re.compile("[\u0400-\u04ff]")
+    suffixes = {".md", ".py", ".js", ".html", ".json", ".yml", ".txt"}
+    hits = [str(p.relative_to(ROOT)) for p in ROOT.rglob("*")
+            if p.is_file() and p.suffix in suffixes and ".git" not in p.parts
+            and cyrillic.search(p.read_text(encoding="utf-8", errors="ignore"))]
+    assert hits == [], hits

@@ -4,11 +4,19 @@ Relation to the companion master prompt (MASTER_PROMPT.md, step 5 storyboard for
 
 ## Storyboard format
 
-The parser accepts both Russian and English labels:
+One block per shot, with these labels:
 
-- `**Кадр N**` (Shot N) or `**Shot N**`, optionally followed by 🎬;
-- `— Озвучка:` (Voiceover) or `— Voiceover:` / `— VO:`;
-- `— На экране:` (On screen) or `— On screen:` / `— Screen:`.
+- `**Shot N**`, optionally followed by 🎬 (the shot gets a main action);
+- `- Voiceover:` or `- VO:` (the line, quotes optional);
+- `- On screen:` or `- Screen:` (what the viewer sees).
+
+For a storyboard written in another language, add its label words with a JSON file and pass `--labels`:
+
+```json
+{ "shot": ["Plano"], "voiceover": ["Narración"], "screen": ["Pantalla"] }
+```
+
+Matching ignores case and diacritics, so the voiceover alignment also works for scripts in other languages.
 
 ## Pipeline
 
@@ -28,7 +36,7 @@ script.md ──script2spec──► spec.json (skeleton, timings, .srt)
 ```sh
 python3 scripts/script2spec.py film/script.md --out film/spec.json --wpm 160
 ```
-Each `**Кадр N**` (or `**Shot N**`) becomes a shot `kNN` whose duration is based on its word count. The `vo`, `screen` and `anim` (🎬) fields are preserved. Each shot gets a placeholder `caption` marked `todo`.
+Each `**Shot N**` becomes a shot `kNN` whose duration is based on its word count. The `vo`, `screen` and `anim` (🎬) fields are preserved. Each shot gets a placeholder `caption` marked `todo`.
 
 ### 2. Filling in (Claude's job)
 For each shot:

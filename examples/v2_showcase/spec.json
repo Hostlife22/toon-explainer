@@ -1,5 +1,5 @@
 {
-  "title": "v2: глубина фона, 3/4-риг, атмосфера, толпы (по полному разбору референса)",
+  "title": "v2: background depth, 3/4 rig, atmosphere, crowds (from the full reference breakdown)",
   "fps": 30,
   "seed": 22,
   "style": {
@@ -67,7 +67,7 @@
     {
       "id": "v01_balcony",
       "dur": 4.0,
-      "vo": "В 771 году до нашей эры царь Нумитор отдыхал на балконе.",
+      "vo": "In 771 BC, King Numitor was relaxing on his balcony.",
       "bg": {
         "kind": "sky",
         "preset": "sunset",
@@ -138,8 +138,8 @@
         },
         {
           "type": "label",
-          "tag": "ЦАРЬ",
-          "text": "НУМИТОР",
+          "tag": "KING",
+          "text": "NUMITOR",
           "x": 0.28,
           "y": 0.4,
           "at": 0.8,
@@ -156,7 +156,7 @@
         "at": 2.0,
         "dur": 0.5
       },
-      "vo": "Три легиона шли через лес. А потом начался дождь.",
+      "vo": "Three legions marched through the forest. Then the rain began.",
       "bg": {
         "kind": "forest"
       },
@@ -212,14 +212,14 @@
         },
         {
           "type": "era",
-          "small": "9 н. э.",
+          "small": "9 AD",
           "parts": [
             [
-              "ТЕВТОБУРГСКИЙ",
+              "TEUTOBURG",
               "#e0393e"
             ],
             [
-              "ЛЕС",
+              "FOREST",
               "#ffffff"
             ]
           ],
@@ -232,7 +232,7 @@
       "id": "v03_fear",
       "dur": 3.0,
       "grade": "storm",
-      "vo": "Солдаты не видели врага.",
+      "vo": "The soldiers could not see the enemy.",
       "bg": {
         "kind": "forest",
         "rays": false
@@ -294,7 +294,7 @@
       "id": "v04_palace",
       "dur": 4.0,
       "transition": "fade-white",
-      "vo": "Август знал: армия должна принадлежать государству.",
+      "vo": "Augustus knew the army had to belong to the state.",
       "bg": {
         "kind": "interior",
         "wall": "#d9b470",
@@ -356,8 +356,8 @@
         },
         {
           "type": "label",
-          "tag": "ИМПЕРАТОР",
-          "text": "АВГУСТ",
+          "tag": "EMPEROR",
+          "text": "AUGUSTUS",
           "x": 0.42,
           "y": 0.22,
           "at": 0.6,
@@ -369,7 +369,7 @@
       "id": "v05_map",
       "dur": 4.0,
       "transition": "dissolve",
-      "vo": "Граница остановилась на Рейне. Дальше Рим не пошёл.",
+      "vo": "The border stopped at the Rhine. Rome went no further.",
       "bg": {
         "kind": "parchment"
       },
@@ -467,7 +467,7 @@
               "x": 0.4,
               "y": 0.6,
               "at": 0.3,
-              "label": "РИМ"
+              "label": "ROME"
             }
           ]
         },
@@ -483,7 +483,7 @@
         },
         {
           "type": "sign",
-          "text": "РЕЙН",
+          "text": "RHINE",
           "x": 0.62,
           "y": 0.62,
           "w": 220,
@@ -497,7 +497,7 @@
       "id": "v05_city",
       "dur": 3.5,
       "transition": "whip",
-      "vo": "А римляне были в восторге.",
+      "vo": "And the Romans loved it.",
       "bg": {
         "kind": "city",
         "preset": "day"
@@ -545,7 +545,7 @@
       "id": "v06_fire",
       "dur": 3.5,
       "transition": "zoom-punch",
-      "vo": "Половина Рима сгорела.",
+      "vo": "Half of Rome burned down.",
       "grade": "night",
       "bg": {
         "kind": "city",
@@ -611,7 +611,7 @@
       "id": "v07_run",
       "dur": 3.0,
       "transition": "cut",
-      "vo": "Гонец бежал до самого Рима.",
+      "vo": "The messenger ran all the way to Rome.",
       "bg": {
         "kind": "sky",
         "preset": "day",
@@ -685,7 +685,7 @@
       "dur": 3.5,
       "transition": "fade-black",
       "grade": "solemn",
-      "vo": "Варус понял, что армии больше нет.",
+      "vo": "Varus realized his army was gone.",
       "bg": {
         "kind": "forest",
         "rays": false,

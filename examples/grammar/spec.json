@@ -1,94 +1,440 @@
 {
-  "title": "Каталог рецептов 02-visual-grammar (C, F, G, H, I + card/sign/timer)",
+  "title": "Recipe catalog for 02-visual-grammar (C, F, G, H, I + card/sign/counter)",
   "fps": 30,
   "seed": 7,
-  "style": { "grain": true, "vignette": 0.38 },
+  "style": {
+    "grain": true,
+    "vignette": 0.38
+  },
   "cast": {
-    "scientist": { "robe": "#f4f4f0", "hair": "bald-sides", "hairColor": "#8a8a8a", "mustache": true, "belt": "#5a6a7a" },
-    "boss": { "robe": "#2e3440", "sash": "#c8323a", "hair": "short", "hairColor": "#1e1e1e", "beard": "stubble" },
-    "you": { "robe": "#4f7fb8", "hair": "short", "hairColor": "#6b4a30" },
-    "legion": { "robe": "#c8323a", "armor": "#b0b5ba", "head": "helmet", "hair": "bald" }
+    "scientist": {
+      "robe": "#f4f4f0",
+      "hair": "bald-sides",
+      "hairColor": "#8a8a8a",
+      "mustache": true,
+      "belt": "#5a6a7a"
+    },
+    "boss": {
+      "robe": "#2e3440",
+      "sash": "#c8323a",
+      "hair": "short",
+      "hairColor": "#1e1e1e",
+      "beard": "stubble"
+    },
+    "you": {
+      "robe": "#4f7fb8",
+      "hair": "short",
+      "hairColor": "#6b4a30"
+    },
+    "legion": {
+      "robe": "#c8323a",
+      "armor": "#b0b5ba",
+      "head": "helmet",
+      "hair": "bald"
+    }
   },
   "shots": [
     {
-      "id": "c_reveal_a", "dur": 2.6,
-      "vo": "Он не был поваром.",
-      "bg": { "kind": "interior", "wall": "#4a3a30", "floor": "#3a2a20", "trim": "#2a1c15" },
-      "camera": { "zoom": [1.0, 1.05] },
+      "id": "c_reveal_a",
+      "dur": 2.6,
+      "vo": "He was not a cook.",
+      "bg": {
+        "kind": "interior",
+        "wall": "#4a3a30",
+        "floor": "#3a2a20",
+        "trim": "#2a1c15"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ]
+      },
       "layers": [
-        { "type": "bean", "who": "scientist", "x": 0.5, "y": 0.98, "size": 620, "gaze": -30, "expr": "neutral" },
-        { "type": "fx", "kind": "spotlight", "x": 0.5, "y": 0.5, "radius": 330, "strength": 0.9 }
+        {
+          "type": "bean",
+          "who": "scientist",
+          "x": 0.5,
+          "y": 0.98,
+          "size": 620,
+          "gaze": -30,
+          "expr": "neutral"
+        },
+        {
+          "type": "fx",
+          "kind": "spotlight",
+          "x": 0.5,
+          "y": 0.5,
+          "radius": 330,
+          "strength": 0.9
+        }
       ]
     },
     {
-      "id": "c_reveal_b", "dur": 2.8, "transition": "zoom-punch",
-      "vo": "Он был учёным. Его звали Говард Московиц.",
-      "bg": { "kind": "burst", "color": "#2f8f8a" },
+      "id": "c_reveal_b",
+      "dur": 2.8,
+      "transition": "zoom-punch",
+      "vo": "He was a scientist. His name was Howard Moskowitz.",
+      "bg": {
+        "kind": "burst",
+        "color": "#2f8f8a"
+      },
       "layers": [
-        { "type": "bean", "who": "scientist", "x": 0.6, "y": 1.42, "size": 1300, "expr": "smug", "talk": [[0.4, 2.2]] },
-        { "type": "label", "tag": "УЧЁНЫЙ", "text": "ГОВАРД МОСКОВИЦ", "x": 0.3, "y": 0.3, "at": 0.6, "size": 80, "arrow": "down-right" }
+        {
+          "type": "bean",
+          "who": "scientist",
+          "x": 0.6,
+          "y": 1.42,
+          "size": 1300,
+          "expr": "smug",
+          "talk": [
+            [
+              0.4,
+              2.2
+            ]
+          ]
+        },
+        {
+          "type": "label",
+          "tag": "SCIENTIST",
+          "text": "HOWARD MOSKOWITZ",
+          "x": 0.3,
+          "y": 0.3,
+          "at": 0.6,
+          "size": 80,
+          "arrow": "down-right"
+        }
       ]
     },
     {
-      "id": "f_map", "dur": 4.0, "transition": "fade-white",
-      "vo": "Через десять лет этот вкус был в каждом супермаркете страны.",
-      "bg": { "kind": "parchment" },
-      "camera": { "zoom": [1.0, 1.06], "focus": [0.45, 0.55] },
+      "id": "f_map",
+      "dur": 4.0,
+      "transition": "fade-white",
+      "vo": "Ten years later that taste was in every supermarket in the country.",
+      "bg": {
+        "kind": "parchment"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.06
+        ],
+        "focus": [
+          0.45,
+          0.55
+        ]
+      },
       "layers": [
-        { "type": "map", "land": [[0.42, 0.55, 0.3, 0.22], [0.78, 0.38, 0.14, 0.16]],
-          "regions": [{ "pts": [[0.3, 0.5], [0.45, 0.42], [0.58, 0.55], [0.48, 0.68], [0.33, 0.64]], "at": 0.6, "dur": 1.8 }],
-          "pins": [{ "x": 0.4, "y": 0.55, "at": 0.3, "label": "1986" }],
-          "routes": [{ "pts": [[0.4, 0.55], [0.6, 0.45], [0.78, 0.38]], "at": 1.6, "dur": 1.5 }] },
-        { "type": "era", "small": "США", "parts": [["1986", "#e0393e"], ["— 1996", "#ffffff"]], "x": 0.025, "y": 0.95 }
+        {
+          "type": "map",
+          "land": [
+            [
+              0.42,
+              0.55,
+              0.3,
+              0.22
+            ],
+            [
+              0.78,
+              0.38,
+              0.14,
+              0.16
+            ]
+          ],
+          "regions": [
+            {
+              "pts": [
+                [
+                  0.3,
+                  0.5
+                ],
+                [
+                  0.45,
+                  0.42
+                ],
+                [
+                  0.58,
+                  0.55
+                ],
+                [
+                  0.48,
+                  0.68
+                ],
+                [
+                  0.33,
+                  0.64
+                ]
+              ],
+              "at": 0.6,
+              "dur": 1.8
+            }
+          ],
+          "pins": [
+            {
+              "x": 0.4,
+              "y": 0.55,
+              "at": 0.3,
+              "label": "1986"
+            }
+          ],
+          "routes": [
+            {
+              "pts": [
+                [
+                  0.4,
+                  0.55
+                ],
+                [
+                  0.6,
+                  0.45
+                ],
+                [
+                  0.78,
+                  0.38
+                ]
+              ],
+              "at": 1.6,
+              "dur": 1.5
+            }
+          ]
+        },
+        {
+          "type": "era",
+          "small": "USA",
+          "parts": [
+            [
+              "1986",
+              "#e0393e"
+            ],
+            [
+              "— 1996",
+              "#ffffff"
+            ]
+          ],
+          "x": 0.025,
+          "y": 0.95
+        }
       ]
     },
     {
-      "id": "g_villain", "dur": 3.6,
-      "vo": "Но платил за исследования не ты. Платила индустрия.",
-      "bg": { "kind": "sky", "preset": "night", "clouds": 3, "hills": 2 },
-      "camera": { "zoom": [1.0, 1.12], "ease": "out", "focus": [0.5, 0.4] },
+      "id": "g_villain",
+      "dur": 3.6,
+      "vo": "But you were not the one paying for the research. The industry was.",
+      "bg": {
+        "kind": "sky",
+        "preset": "night",
+        "clouds": 3,
+        "hills": 2
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.12
+        ],
+        "ease": "out",
+        "focus": [
+          0.5,
+          0.4
+        ]
+      },
       "layers": [
-        { "type": "bean", "who": "boss", "x": 0.5, "y": 1.06, "size": 820, "expr": "smug", "pose": [{ "at": 0, "v": "cross" }, { "at": 2.0, "v": "present" }], "hold": "moneybag" },
-        { "type": "fx", "kind": "spotlight", "x": 0.5, "y": 0.45, "radius": 460, "strength": 0.7 },
-        { "type": "label", "tag": "ЗАКАЗЧИК", "text": "ИНДУСТРИЯ", "x": 0.2, "y": 0.3, "at": 1.4, "size": 86, "tagColor": "#ff6b6b" }
+        {
+          "type": "bean",
+          "who": "boss",
+          "x": 0.5,
+          "y": 1.06,
+          "size": 820,
+          "expr": "smug",
+          "pose": [
+            {
+              "at": 0,
+              "v": "cross"
+            },
+            {
+              "at": 2.0,
+              "v": "present"
+            }
+          ],
+          "hold": "moneybag"
+        },
+        {
+          "type": "fx",
+          "kind": "spotlight",
+          "x": 0.5,
+          "y": 0.45,
+          "radius": 460,
+          "strength": 0.7
+        },
+        {
+          "type": "label",
+          "tag": "CLIENT",
+          "text": "INDUSTRY",
+          "x": 0.2,
+          "y": 0.3,
+          "at": 1.4,
+          "size": 86,
+          "tagColor": "#ff6b6b"
+        }
       ]
     },
     {
-      "id": "h_lab_wide", "dur": 1.8, "transition": "cut",
-      "vo": "В закрытой лаборатории",
-      "bg": { "kind": "interior", "wall": "#cfd8d8", "trim": "#5a7a8a", "floor": "#8a9aa0", "window": [0.12, 0.2, 0.2, 0.3], "windowSky": "night" },
+      "id": "h_lab_wide",
+      "dur": 1.8,
+      "transition": "cut",
+      "vo": "In a closed laboratory",
+      "bg": {
+        "kind": "interior",
+        "wall": "#cfd8d8",
+        "trim": "#5a7a8a",
+        "floor": "#8a9aa0",
+        "window": [
+          0.12,
+          0.2,
+          0.2,
+          0.3
+        ],
+        "windowSky": "night"
+      },
       "layers": [
-        { "type": "bean", "who": "scientist", "x": 0.34, "y": 0.95, "size": 480, "pose": "think", "expr": "worried" },
-        { "type": "card", "x": 0.72, "y": 0.66, "w": 520, "h": 340, "title": "ПРОТОКОЛ №17", "lines": ["сахар: 0,8%", "соль: 1,2%", "вывод: ещё"], "every": 0.35, "lineSize": 40, "scale": 0.9 }
+        {
+          "type": "bean",
+          "who": "scientist",
+          "x": 0.34,
+          "y": 0.95,
+          "size": 480,
+          "pose": "think",
+          "expr": "worried"
+        },
+        {
+          "type": "card",
+          "x": 0.72,
+          "y": 0.66,
+          "w": 520,
+          "h": 340,
+          "title": "PROTOCOL #17",
+          "lines": [
+            "sugar: 0.8%",
+            "salt: 1.2%",
+            "verdict: more"
+          ],
+          "every": 0.35,
+          "lineSize": 40,
+          "scale": 0.9
+        }
       ]
     },
     {
-      "id": "h_lab_close", "dur": 1.4,
-      "vo": "он нашёл точку,",
-      "bg": { "kind": "burst", "color": "#5a7a8a", "center": "#e0f0f0", "edge": "#1a2a30" },
+      "id": "h_lab_close",
+      "dur": 1.4,
+      "vo": "he found the point",
+      "bg": {
+        "kind": "burst",
+        "color": "#5a7a8a",
+        "center": "#e0f0f0",
+        "edge": "#1a2a30"
+      },
       "layers": [
-        { "type": "bean", "who": "scientist", "x": 0.5, "y": 1.5, "size": 1400, "expr": "shock" },
-        { "type": "fx", "kind": "speedlines", "x": 0.5, "y": 0.42, "inner": 560 }
+        {
+          "type": "bean",
+          "who": "scientist",
+          "x": 0.5,
+          "y": 1.5,
+          "size": 1400,
+          "expr": "shock"
+        },
+        {
+          "type": "fx",
+          "kind": "speedlines",
+          "x": 0.5,
+          "y": 0.42,
+          "inner": 560
+        }
       ]
     },
     {
-      "id": "h_lab_detail", "dur": 1.6, "transition": "zoom-punch",
-      "vo": "после которой мозг не может остановиться.",
-      "bg": { "kind": "flat", "color": "#1a1210" },
+      "id": "h_lab_detail",
+      "dur": 1.6,
+      "transition": "zoom-punch",
+      "vo": "beyond which the brain cannot stop.",
+      "bg": {
+        "kind": "flat",
+        "color": "#1a1210"
+      },
       "layers": [
-        { "type": "title", "text": "ТОЧКА БЛАЖЕНСТВА", "x": 0.5, "y": 0.55, "size": 120, "color": "#ffe066", "sub": "BLISS POINT" },
-        { "type": "counter", "x": 0.5, "y": 0.82, "from": 1985, "to": 1996, "dur": 1.2, "sep": false, "size": 70, "color": "#ffffff" }
+        {
+          "type": "title",
+          "text": "THE BLISS POINT",
+          "x": 0.5,
+          "y": 0.55,
+          "size": 120,
+          "color": "#ffe066",
+          "sub": "WHERE THE BRAIN CANNOT STOP"
+        },
+        {
+          "type": "counter",
+          "x": 0.5,
+          "y": 0.82,
+          "from": 1985,
+          "to": 1996,
+          "dur": 1.2,
+          "sep": false,
+          "size": 70,
+          "color": "#ffffff"
+        }
       ]
     },
     {
-      "id": "i_finale", "dur": 4.2, "transition": "fade-black",
-      "vo": "Ты не проигрывал самому себе. Тебе просто не сказали, что на той стороне кто-то есть.",
-      "bg": { "kind": "sky", "preset": "dusk", "clouds": 3 },
-      "camera": { "zoom": [1.08, 1.0], "ease": "inOut" },
+      "id": "i_finale",
+      "dur": 4.2,
+      "transition": "fade-black",
+      "vo": "You were not losing to yourself. Nobody told you someone was on the other side.",
+      "bg": {
+        "kind": "sky",
+        "preset": "dusk",
+        "clouds": 3
+      },
+      "camera": {
+        "zoom": [
+          1.08,
+          1.0
+        ],
+        "ease": "inOut"
+      },
       "layers": [
-        { "type": "bean", "who": "you", "x": 0.5, "y": 0.92, "size": 460, "expr": [{ "at": 0, "v": "worried" }, { "at": 2.2, "v": "neutral" }], "gaze": 0 },
-        { "type": "sign", "text": "ТЫ ЗДЕСЬ", "x": 0.78, "y": 0.92, "w": 300 },
-        { "type": "title", "text": "КТО-ТО ЕСТЬ", "x": 0.5, "y": 0.2, "at": 2.0, "size": 110, "color": "#ffffff" }
+        {
+          "type": "bean",
+          "who": "you",
+          "x": 0.5,
+          "y": 0.92,
+          "size": 460,
+          "expr": [
+            {
+              "at": 0,
+              "v": "worried"
+            },
+            {
+              "at": 2.2,
+              "v": "neutral"
+            }
+          ],
+          "gaze": 0
+        },
+        {
+          "type": "sign",
+          "text": "YOU ARE HERE",
+          "x": 0.78,
+          "y": 0.92,
+          "w": 300
+        },
+        {
+          "type": "title",
+          "text": "SOMEONE IS THERE",
+          "x": 0.5,
+          "y": 0.2,
+          "at": 2.0,
+          "size": 110,
+          "color": "#ffffff"
+        }
       ]
     }
   ]

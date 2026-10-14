@@ -38,8 +38,8 @@ Empty location, then the date, then the era badge.
  "camera":{"zoom":[1.0,1.06],"pan":[[0,0],[30,-10]]},
  "layers":[
   {"type":"prop","kind":"temple","x":0.5,"y":0.8,"size":420,"enter":"none","z":0.8},
-  {"type":"date","text":"46","suffix":"до н. э.","x":0.5,"y":0.22,"at":0.5},
-  {"type":"era","small":"46 до н. э.","parts":[["РИМСКАЯ","#e0393e"],["РЕСПУБЛИКА","#fff"]],"x":0.025,"y":0.95,"at":0.2}]}
+  {"type":"date","text":"46","suffix":"BC","x":0.5,"y":0.22,"at":0.5},
+  {"type":"era","small":"46 BC","parts":[["ROMAN","#e0393e"],["REPUBLIC","#fff"]],"x":0.025,"y":0.95,"at":0.2}]}
 ```
 
 ### B. Character introduction (name + tag + arrow)
@@ -47,7 +47,7 @@ The most common shot in the reference.
 ```json
 {"layers":[
   {"type":"bean","who":"caesar","x":0.62,"y":0.97,"size":680,"expr":"smug","pose":[{"at":0,"v":"hips"},{"at":2,"v":"point"}],"talk":[[2.1,3.5]]},
-  {"type":"label","tag":"ДИКТАТОР","text":"ЮЛИЙ ЦЕЗАРЬ","x":0.28,"y":0.36,"at":0.8,"arrow":"down-right","size":88}]}
+  {"type":"label","tag":"DICTATOR","text":"JULIUS CAESAR","x":0.28,"y":0.36,"at":0.8,"arrow":"down-right","size":88}]}
 ```
 Place the caption on the **empty side** of the frame: x 0.22–0.32 if the character is on the right. Long name → `size` 80–90.
 
@@ -62,16 +62,16 @@ Two characters or two objects on opposite sides; the second appears later; `whip
 ```json
 {"layers":[
   {"type":"bean","who":"a","x":0.3,"y":0.95,"size":520,"expr":[{"at":0,"v":"neutral"},{"at":0.8,"v":"happy"}],"pose":[{"at":0.8,"v":"arms-up"}],"jump":[{"at":0.9,"h":70}]},
-  {"type":"label","text":"+1 МЕСЯЦ","x":0.3,"y":0.18,"at":0.9,"color":"#9be07f"},
+  {"type":"label","text":"+1 MONTH","x":0.3,"y":0.18,"at":0.9,"color":"#9be07f"},
   {"type":"bean","who":"b","x":0.72,"y":0.95,"size":520,"flip":true,"expr":[{"at":2,"v":"shock"}],"pose":[{"at":2,"v":"scared"}],"shake":[{"at":2,"dur":0.5}]},
-  {"type":"label","text":"−1 МЕСЯЦ","x":0.72,"y":0.18,"at":2.1,"color":"#ff6b6b"}]}
+  {"type":"label","text":"−1 MONTH","x":0.72,"y":0.18,"at":2.1,"color":"#ff6b6b"}]}
 ```
 
 ### E. Specifics: a number, amount, or year (credibility)
 `burst` background, a large counter, and a punch-zoom the moment the number finishes counting.
 ```json
 {"bg":{"kind":"burst","color":"#2f8f8a"},"camera":{"punch":[{"at":2.4,"amount":0.12}]},
- "layers":[{"type":"counter","x":0.5,"y":0.55,"from":0,"to":20000,"dur":2.2,"suffix":" СОЛДАТ","size":150,"color":"#ffe066"},
+ "layers":[{"type":"counter","x":0.5,"y":0.55,"from":0,"to":20000,"dur":2.2,"suffix":" SOLDIERS","size":150,"color":"#ffe066"},
            {"type":"fx","kind":"speedlines","x":0.5,"y":0.5,"at":2.4,"out":3.2}]}
 ```
 For a document or study, use `card` (title, year, 2–3 lines); for a day, month, or deadline, use `calendar`.
@@ -80,14 +80,14 @@ For a document or study, use `card` (title, year, 2–3 lines); for a day, month
 ```json
 {"bg":{"kind":"parchment"},"layers":[{"type":"map","land":[[0.45,0.55,0.25,0.18],[0.7,0.4,0.2,0.2]],
   "regions":[{"pts":[[0.38,0.5],[0.5,0.45],[0.55,0.6],[0.42,0.66]],"at":0.5,"dur":1.5}],
-  "pins":[{"x":0.47,"y":0.55,"at":0.3,"label":"РИМ"}],
+  "pins":[{"x":0.47,"y":0.55,"at":0.3,"label":"ROME"}],
   "routes":[{"pts":[[0.47,0.55],[0.6,0.45],[0.72,0.38]],"at":1.2,"dur":1.4}]},
   {"type":"bean","who":"x","x":0.62,"y":0.6,"size":260}]}
 ```
 For real geography, supply a `map.image`: an AI-generated parchment-style map or PNG outlines. The code handles fills, pins, and routes.
 
 ### G. Turn to the "villain" / the system
-Dark preset (`night`, `storm`), villain large from below (`size` 750+, `y` 1.02), `expr:"smug"`, slow push-in `zoom [1, 1.12]` with `ease:"out"`, `fx: spotlight` or dark-colored `rays`. Tag caption: "ИНДУСТРИЯ", "КОРПОРАЦИЯ", "СЕНАТ".
+Dark preset (`night`, `storm`), villain large from below (`size` 750+, `y` 1.02), `expr:"smug"`, slow push-in `zoom [1, 1.12]` with `ease:"out"`, `fx: spotlight` or dark-colored `rays`. Tag caption: "INDUSTRY", "CORPORATION", "SENATE".
 
 ### H. Cinematic episode scene (closed-door meeting, experiment)
 5–8 short shots (1–2 s) in a single `interior` location:
