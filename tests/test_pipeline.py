@@ -303,3 +303,46 @@ def test_repository_text_is_english_only():
             if p.is_file() and p.suffix in suffixes and ".git" not in p.parts
             and cyrillic.search(p.read_text(encoding="utf-8", errors="ignore"))]
     assert hits == [], hits
+
+
+def test_vocab_kinds_match_engine_registries():
+    """Every scripts/vocab/*.json "registry" entry must list exactly the kinds the engine registers."""
+    import spec as S
+    from playwright.sync_api import sync_playwright
+    import render as R
+
+    if not S.REGISTRIES:
+        pytest.skip("no vocabulary registries declared")
+    srv = R.serve(set())
+    try:
+        with sync_playwright() as pw:
+            browser, page, _ = R.open_page(pw, json.loads(DEMO.read_text(encoding="utf-8")), srv.server_address[1], 0.25)
+            found = {key: page.evaluate(f"() => Object.keys({expr} || {{}})") for key, expr in S.REGISTRIES.items()}
+            browser.close()
+    finally:
+        srv.shutdown()
+    for key, kinds in found.items():
+        expected = S.LAYER_KINDS.get(key)
+        assert expected is not None, f"registry {key!r} has no kinds list in scripts/vocab"
+        assert set(kinds) == expected, (key, sorted(set(kinds) ^ expected))
+
+
+def test_frames_do_not_depend_on_render_order():
+    """Transition frames (whip, dissolve) must not show leftovers of the previously rendered frame."""
+    from playwright.sync_api import sync_playwright
+    import render as R
+
+    spec = json.loads(DEMO.read_text(encoding="utf-8"))
+    grab = "async (t)=>{window.renderFrame(t);return window.__canvas.toDataURL('image/png');}"
+    srv = R.serve(set())
+    try:
+        with sync_playwright() as pw:
+            browser, page, _ = R.open_page(pw, spec, srv.server_address[1], 0.25)
+            t = 12.6  # inside the whip transition into shot k04
+            fresh = page.evaluate(grab, t)
+            page.evaluate(grab, 3.0)
+            again = page.evaluate(grab, t)
+            browser.close()
+    finally:
+        srv.shutdown()
+    assert fresh == again

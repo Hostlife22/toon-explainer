@@ -36,6 +36,9 @@
     squint: { eyes: 'squint', mouth: 'grimace', talk: ['grimace', 'wide'] },
     cry: { eyes: 'arcDown', brows: 'sad', mouth: 'wobbleOpen', talk: ['wobbleOpen', 'wide'], tears: true },
     dead: { eyes: 'x', mouth: 'o', talk: ['o'] },
+    mad: { eyes: 'spiral', mouth: 'grin', talk: ['grin', 'wide'] }, // madness: rotating spirals + wobbly grin (Horror 12:20)
+    evil: { eyes: 'slit', brows: 'angry', mouth: 'smirk', talk: ['smirk', 'wide'] }, // glowing red slits
+    sick: { eyes: 'ringed', brows: 'worried', mouth: 'frown', talk: ['frown', 'mid'], blood: true },
   };
   T.BEAN_EXPR = Object.keys(EXPR);
 
@@ -54,6 +57,19 @@
       case 'squint': ctx.beginPath(); ctx.moveTo(x - s * 20, y - 18); ctx.lineTo(x + s * 14, y); ctx.lineTo(x - s * 20, y + 16); ctx.stroke(); return;
       case 'x': ctx.lineWidth = 9; ctx.beginPath(); ctx.moveTo(x - 15, y - 15); ctx.lineTo(x + 15, y + 15); ctx.moveTo(x + 15, y - 15); ctx.lineTo(x - 15, y + 15); ctx.stroke(); return;
       case 'dotSmall': ctx.beginPath(); ctx.ellipse(x, y + 2, 11, 15, 0, 0, Math.PI * 2); ctx.fill(); return;
+      case 'spiral': {
+        ctx.lineWidth = 6; ctx.beginPath();
+        for (let i = 0; i <= 48; i++) { const a = (i / 48) * Math.PI * 6 + lt * Math.PI * 2 * s, r = 2 + (i / 48) * 24; ctx[i ? 'lineTo' : 'moveTo'](x + Math.cos(a) * r, y + Math.sin(a) * r); }
+        ctx.stroke(); return;
+      }
+      case 'slit':
+        ctx.save(); ctx.shadowColor = '#ff2a2a'; ctx.shadowBlur = (24) * T.DPR; ctx.fillStyle = '#ff2a2a';
+        ctx.beginPath(); ctx.ellipse(x, y, 24, 7, s * -0.3, 0, Math.PI * 2); ctx.fill(); ctx.restore(); return;
+      case 'ringed':
+        ctx.fillStyle = 'rgba(70,60,80,0.35)'; ctx.beginPath(); ctx.ellipse(x, y + 6, 28, 32, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = P.ink; ctx.beginPath(); ctx.ellipse(x, y, 11, 16, 0, 0, Math.PI * 2); ctx.fill(); return;
+      case 'flag': // countryball eyes: white ovals, no pupils
+        T.outlined(ctx, (k) => k.ellipse(x, y, 24, 30, 0, 0, Math.PI * 2), '#ffffff', { line: 7 }); return;
       default: ctx.beginPath(); ctx.ellipse(x, y, 13, 20, 0, 0, Math.PI * 2); ctx.fill();
     }
   }
@@ -99,6 +115,9 @@
       case 'frown': return line(() => { ctx.moveTo(mx - 26, my + 12); ctx.quadraticCurveTo(mx, my - 12, mx + 26, my + 12); });
       case 'smirk': return line(() => { ctx.moveTo(mx - 24, my + 4); ctx.quadraticCurveTo(mx + 10, my + 14, mx + 34, my - 10); });
       case 'small': return line(() => { ctx.moveTo(mx - 12, my); ctx.lineTo(mx + 12, my); });
+      case 'grin':
+        T.outlined(ctx, (k) => { k.moveTo(mx - 56, my - 14); for (let i = 1; i <= 8; i++) k.lineTo(mx - 56 + i * 14, my - 14 + (i % 2 ? -6 : 4)); k.quadraticCurveTo(mx, my + 56, mx - 56, my - 14); k.closePath(); }, '#fff', { line: 7 });
+        return;
       default: return line(() => { ctx.moveTo(mx - 22, my); ctx.quadraticCurveTo(mx, my + 8, mx + 22, my); });
     }
   }
@@ -116,6 +135,10 @@
         const x = fx + s * 40 - 8, flow = (lt * 3) % 1;
         ctx.beginPath(); ctx.moveTo(x, -445); ctx.lineTo(x + 16, -445); ctx.lineTo(x + 20 + flow * 4, -300); ctx.lineTo(x - 4, -300); ctx.closePath(); ctx.fill();
       }
+    }
+    if (e.blood) { // trickle from the mouth corner
+      ctx.fillStyle = '#a01020'; ctx.beginPath(); ctx.moveTo(fx + 30, -380); ctx.quadraticCurveTo(fx + 40, -350, fx + 34, -326); ctx.quadraticCurveTo(fx + 24, -350, fx + 22, -378); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.arc(fx + 34, -326, 8, 0, Math.PI * 2); ctx.fill();
     }
     if (e.sweat) {
       const ph = (lt * 0.8) % 1;
@@ -143,6 +166,10 @@
     const col = c.hairColor ?? P.hair, back = -sh * HW * 0.5;
     if (c.hair === 'long') T.outlined(ctx, (k) => { k.moveTo(-160 + back, -520); k.quadraticCurveTo(-225 + back, -380, -185 + back, -270); k.lineTo(sh > 0 ? -20 : 185, -270); k.quadraticCurveTo(sh > 0 ? 0 : 225, -380, 160, -520); k.closePath(); }, col);
     if (c.hair === 'curly') curls(ctx, col, seed, 150, 390, 13, 42, 6, back);
+    if (c.hair === 'queue') { // long braid hanging down the back (Qing)
+      ctx.strokeStyle = P.ink; ctx.lineWidth = 34; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-130 + back, -480); ctx.quadraticCurveTo(-200 + back, -330, -170 + back, -170); ctx.stroke();
+      ctx.strokeStyle = col; ctx.lineWidth = 22; ctx.stroke();
+    }
   }
 
   function hairFront(ctx, c, seed, sh, view) {
@@ -170,6 +197,7 @@
       ctx.restore();
       if (c.hair === 'bun') T.outlined(ctx, (k) => k.arc(back * 0.8 - 30, -630, 50, 0, Math.PI * 2), col);
     }
+    if (c.hair === 'queue') T.outlined(ctx, (k) => { k.moveTo(-HW * 1.02, -400); k.quadraticCurveTo(-HW * 1.1, -560, -HW * 0.2, -600); k.quadraticCurveTo(-HW * 0.6, -520, -HW * 0.75, -400); k.closePath(); }, col);
     if (c.hair === 'bald-sides') T.outlined(ctx, (k) => k.ellipse(-150 + back * 0.3, -440, 34, 64, 0, 0, Math.PI * 2), col);
   }
 
@@ -185,55 +213,29 @@
       const r = T.rng(77); ctx.fillStyle = T.shade(c.skin ?? P.skin, -0.38);
       for (let i = 0; i < 40; i++) { const a = Math.PI * (0.15 + r() * 0.7); ctx.fillRect(fx + Math.cos(a) * 110 * r(), -450 + Math.sin(a) * 130, 4, 4); }
     }
+    if (c.beard === 'long') {
+      const g = c.beardColor ?? '#d9d3c7';
+      T.outlined(ctx, (k) => { k.moveTo(-140 + o * 0.2, -420); k.quadraticCurveTo(-150 + o, -260, o * 1.2, -150); k.quadraticCurveTo(150 + o, -260, 140, -420); k.quadraticCurveTo(o, -390, -140 + o * 0.2, -420); k.closePath(); }, g,
+        { shade: (k) => { k.strokeStyle = T.shade(g, -0.2); k.lineWidth = 5; for (let i = -2; i <= 2; i++) { k.beginPath(); k.moveTo(o + i * 30, -380); k.quadraticCurveTo(o + i * 26, -280, o + i * 14, -190); k.stroke(); } } });
+    }
+    if (c.beard === 'walrus') T.outlined(ctx, (k) => { k.moveTo(fx - 120, -350); k.quadraticCurveTo(fx - 90, -440, fx, -410); k.quadraticCurveTo(fx + 90, -440, fx + 120, -350); k.quadraticCurveTo(fx + 60, -390, fx, -380); k.quadraticCurveTo(fx - 60, -390, fx - 120, -350); k.closePath(); }, c.mustacheColor ?? col);
     if (c.mustache) T.outlined(ctx, (k) => { k.moveTo(fx - 70, -398); k.quadraticCurveTo(fx - 10, -448, fx, -414); k.quadraticCurveTo(fx + 10, -448, fx + 70, -398); k.quadraticCurveTo(fx, -400, fx - 70, -398); }, c.mustacheColor ?? col);
   }
 
-  function headwear(ctx, c, lt, sh) {
-    const kind = c.head, back = -sh * 30;
-    if (kind === 'crown') {
-      const g = c.headColor ?? P.gold;
-      T.outlined(ctx, (k) => { k.moveTo(-112, -568); k.lineTo(-130, -680); k.lineTo(-70, -618); k.lineTo(-30, -700); k.lineTo(10, -622); k.lineTo(60, -698); k.lineTo(88, -616); k.lineTo(138, -672); k.lineTo(118, -568); k.closePath(); }, g, { shade: (k) => { k.fillStyle = T.shade(g, -0.2); k.fillRect(40, -720, 120, 170); } });
-      [[-130, -686], [-30, -706], [60, -704], [138, -678]].forEach(([x, y]) => T.outlined(ctx, (k) => k.arc(x, y, 13, 0, Math.PI * 2), g, { line: 6 }));
-      T.outlined(ctx, (k) => k.arc(sh * 40, -592, 16, 0, Math.PI * 2), P.red, { line: 6 });
-    } else if (kind === 'laurel') {
-      const g = c.headColor ?? '#6f9a3a';
-      for (const s of [-1, 1]) for (let i = 0; i < 6; i++) {
-        const a = (200 + i * 22) * T.DEG, x = s * Math.cos(a) * -160 + back, y = -476 + Math.sin(a) * 150;
-        ctx.save(); ctx.translate(x, y); ctx.rotate(s * (a + Math.PI / 2.4));
-        T.outlined(ctx, (k) => k.ellipse(0, 0, 34, 15, 0, 0, Math.PI * 2), g, { line: 6 });
-        ctx.restore();
-      }
-    } else if (kind === 'helmet') {
-      const m = c.headColor ?? '#a9aeb4';
-      T.outlined(ctx, (k) => { k.moveTo(-166, -430); k.quadraticCurveTo(-172, -628, 0, -630); k.quadraticCurveTo(172, -628, 166, -430); k.lineTo(132 + sh * 20, -452); k.quadraticCurveTo(sh * 60, -525, -132 + sh * 30, -452); k.closePath(); }, m,
-        { shade: (k) => { k.fillStyle = T.shade(m, -0.18); k.beginPath(); k.ellipse(-150, -520, 90, 150, 0, 0, Math.PI * 2); k.fill(); k.fillStyle = T.shade(m, 0.35); k.beginPath(); k.ellipse(30, -590, 50, 20, -0.3, 0, Math.PI * 2); k.fill(); } });
-      // cheek guards sit on the head's edges; in 3/4 only the back one is visible
-      const guards = sh > 0 ? [-HW * 0.98] : [-HW * 0.98, HW * 0.98 - 46];
-      guards.forEach((gx) => T.outlined(ctx, (k) => T.rrect(k, gx, -478, 46, 128, 20), m, { line: 7 }));
-      const crest = c.crest ?? P.red, sway = Math.sin(lt * 3) * 4;
-      T.outlined(ctx, (k) => { k.moveTo(-130 + back, -605); k.quadraticCurveTo(back + sway, -780, 140 + back, -615); k.quadraticCurveTo(back, -690, -130 + back, -605); }, crest,
-        { shade: (k) => { k.strokeStyle = T.shade(crest, -0.25); k.lineWidth = 5; for (let i = -4; i <= 4; i++) { k.beginPath(); k.moveTo(back + i * 26, -640); k.lineTo(back + i * 30, -740); k.stroke(); } } });
-    } else if (kind === 'hood' || kind === 'pontifex') {
-      const h = c.headColor ?? (kind === 'hood' ? '#7d7a3e' : '#f1eadb');
-      const ox = sh * 50;
-      T.outlined(ctx, (k) => { T.rrect(k, -190 - ox * 0.3, -652, 380, 410, 170); k.moveTo(130 + ox, -445); k.ellipse(ox, -445, 132, 128, 0, 0, Math.PI * 2, true); }, h,
-        { shade: (k) => { k.fillStyle = T.shade(h, -0.22); k.fillRect(-230, -660, 140, 420); } });
-    } else if (kind === 'headband') {
-      ctx.strokeStyle = c.headColor ?? '#e9e2d2'; ctx.lineWidth = 13;
-      ctx.beginPath(); ctx.moveTo(-152, -540); ctx.quadraticCurveTo(0, -590, 152, -540); ctx.stroke();
-    } else if (kind === 'hat') {
-      const h = c.headColor ?? '#b89a72';
-      T.outlined(ctx, (k) => k.ellipse(0, -560, 230, 40, 0, 0, Math.PI * 2), h);
-      T.outlined(ctx, (k) => { k.moveTo(-130, -566); k.quadraticCurveTo(-130, -690, 0, -690); k.quadraticCurveTo(130, -690, 130, -566); k.closePath(); }, h, { shade: (k) => { k.fillStyle = T.shade(h, -0.3); k.fillRect(-140, -600, 280, 30); } });
-    }
+  // Headwear lives in costume.js (T.HEADWEAR); unknown kinds draw nothing.
+  function headwear(ctx, c, lt, sh, view) {
+    const fn = c.head && T.HEADWEAR && T.HEADWEAR[c.head];
+    if (fn) fn(ctx, c, lt, sh, view);
   }
 
   // s: { view, expr, mouthKind (talk override), blink, gazeX, lt, seed }
   function draw(ctx, c, s) {
     const view = s.view, sh = VIEW_SHIFT[view] ?? 0.24, fx = sh * HW + (view === 'front' ? s.gazeX : s.gazeX * 0.4);
     const e = EXPR[s.expr] || EXPR.neutral;
+    if (c.headShape && T.drawAltHead && T.drawAltHead(ctx, c, s)) { headwear(ctx, c, s.lt, sh, view); return; }
     hairBack(ctx, c, s.seed, sh);
-    T.outlined(ctx, headPath, c.skin, {
+    if (c.flag && T.drawFlagHead) T.drawFlagHead(ctx, c, headPath, sh);
+    else T.outlined(ctx, headPath, c.skin, {
       shade: (k) => {
         k.fillStyle = c.skinShade ?? SHADOW;
         if (view === 'front') { k.beginPath(); k.ellipse(HW * 1.15, CY, HW * 0.55, 190, 0, 0, Math.PI * 2); k.fill(); }
@@ -241,20 +243,23 @@
       },
     });
     beard(ctx, c, fx, view);
-    if (view !== 'back') {
+    if (c.tint && T.drawFaceTint) T.drawFaceTint(ctx, c, headPath, s.lt);
+    if (c.mask === 'gas' && T.drawGasMask) T.drawGasMask(ctx, c, fx, view);
+    else if (view !== 'back') {
       ctx.save(); ctx.translate(fx, 0);
       const sp = view === 'side' ? 0 : view === '3q' ? 40 : 52;
       const eyes = view === 'side' ? [[18, 1]] : [[-sp, -1], [sp, 1]];
-      const ek = s.blink && !['wide', 'squint', 'x', 'arc', 'arcDown'].includes(e.eyes) ? 'blink' : e.eyes;
+      const baseEyes = c.flag && c.flagEyes !== false && e.eyes === 'dot' ? 'flag' : e.eyes;
+      const ek = s.blink && !['wide', 'squint', 'x', 'arc', 'arcDown', 'spiral', 'slit'].includes(baseEyes) ? 'blink' : baseEyes;
       eyes.forEach(([x, sg]) => eye(ctx, ek, x, -458, sg, s.lt));
       brows(ctx, e.brows, eyes.map(([x, sg]) => [x, sg]), -508);
-      mouth(ctx, s.mouthKind || e.mouth, view === 'side' ? 26 : view === '3q' ? 10 : 0, -382);
+      if (!(c.flag && c.flagMouth === false)) mouth(ctx, s.mouthKind || e.mouth, view === 'side' ? 26 : view === '3q' ? 10 : 0, -382);
       if (c.blush) { ctx.fillStyle = 'rgba(230,120,120,0.35)'; eyes.forEach(([x]) => { ctx.beginPath(); ctx.ellipse(x * 1.8, -410, 26, 14, 0, 0, Math.PI * 2); ctx.fill(); }); }
       ctx.restore();
       extras(ctx, e, fx, s.lt);
     }
     hairFront(ctx, c, s.seed, sh, view);
-    headwear(ctx, c, s.lt, sh);
+    headwear(ctx, c, s.lt, sh, view);
   }
 
   // Talking mouth: changes every ~3 frames (10 Hz), never the same shape twice in a row (reference: 2–3 shapes on 2s/3s).

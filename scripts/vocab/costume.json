@@ -1,0 +1,111 @@
+{
+  "_doc": "costume.js + outfit.js + face.js additions: headwear kinds (look.head), hair, beards, expressions, color keys.",
+  "head": [
+    "crown",
+    "laurel",
+    "helmet",
+    "hood",
+    "headband",
+    "pontifex",
+    "hat",
+    "brodie",
+    "pickelhaube",
+    "adrian",
+    "dome",
+    "officer-cap",
+    "kepi",
+    "fez",
+    "ushanka",
+    "great-helm",
+    "nasal-helm",
+    "turban",
+    "tophat",
+    "bowler",
+    "fedora",
+    "beret",
+    "safari",
+    "newsboy-cap",
+    "graduation",
+    "jester",
+    "straw-cone",
+    "official-cap",
+    "qing-hat"
+  ],
+  "hair": [
+    "queue"
+  ],
+  "beard": [
+    "long",
+    "walrus"
+  ],
+  "expr": [
+    "mad",
+    "evil",
+    "sick"
+  ],
+  "color_keys": [
+    "headColor2",
+    "headColor3",
+    "tie",
+    "shirt",
+    "vest",
+    "crossColor",
+    "maskColor",
+    "tint",
+    "sashColor",
+    "trim2",
+    "buttonColor",
+    "hornColor",
+    "eyeColor",
+    "shoes",
+    "apron",
+    "spotColor",
+    "muzzle"
+  ],
+  "kinds": {
+    "outfit": [
+      "suit",
+      "tunic",
+      "greatcoat",
+      "hanfu",
+      "kimono",
+      "lamellar",
+      "surcoat",
+      "hivis",
+      "skeleton"
+    ]
+  },
+  "registry": {
+    "outfit": "TOON.OUTFITS"
+  },
+  "outfit": [
+    "suit",
+    "tunic",
+    "greatcoat",
+    "hanfu",
+    "kimono",
+    "lamellar",
+    "surcoat",
+    "hivis",
+    "skeleton"
+  ],
+  "mask": [
+    "gas"
+  ],
+  "headShape": [
+    "bull",
+    "skull"
+  ],
+  "flag": [
+    "h3",
+    "v3",
+    "stripes",
+    "disc",
+    "cross",
+    "nordic",
+    "crescent"
+  ],
+  "crowd_mode": [
+    "lineup"
+  ]
+}

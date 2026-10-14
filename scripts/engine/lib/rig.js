@@ -81,12 +81,12 @@
     ctx.restore();
   }
 
-  function arm(ctx, j, sleeve, skin, hold, lt = 0) {
+  function arm(ctx, j, sleeve, skin, hold, lt = 0, w = ARM_W) {
     const path = () => { ctx.beginPath(); ctx.moveTo(j.sx, j.sy); ctx.quadraticCurveTo(j.ex, j.ey, (j.ex + j.hx) / 2, (j.ey + j.hy) / 2); ctx.lineTo(j.hx, j.hy); };
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.strokeStyle = P.ink; ctx.lineWidth = ARM_W + T.LINE * 2; path(); ctx.stroke();
-    ctx.strokeStyle = sleeve; ctx.lineWidth = ARM_W; path(); ctx.stroke();
-    ctx.strokeStyle = T.shade(sleeve, -0.18); ctx.lineWidth = ARM_W * 0.35; ctx.beginPath(); ctx.moveTo(j.sx - 8, j.sy + 10); ctx.quadraticCurveTo(j.ex - 8, j.ey, j.ex - 6, j.ey + 6); ctx.stroke();
+    ctx.strokeStyle = P.ink; ctx.lineWidth = w + T.LINE * 2; path(); ctx.stroke();
+    ctx.strokeStyle = sleeve; ctx.lineWidth = w; path(); ctx.stroke();
+    ctx.strokeStyle = T.shade(sleeve, -0.18); ctx.lineWidth = w * 0.35; ctx.beginPath(); ctx.moveTo(j.sx - 8, j.sy + 10); ctx.quadraticCurveTo(j.ex - 8, j.ey, j.ex - 6, j.ey + 6); ctx.stroke();
     if (hold && T.drawProp) {
       ctx.save(); ctx.translate(j.hx, j.hy);
       if (hold === 'sword') ctx.rotate(Math.PI - j.dir); // blade follows the forearm
@@ -101,10 +101,17 @@
     for (const [i, x] of [[0, -46], [1, 46]]) {
       const off = gait ? gait.legs[i] : { dx: 0, dy: 0 };
       ctx.save(); ctx.translate(x + off.dx, off.dy);
-      T.outlined(ctx, (k) => T.rrect(k, -25, -88, 50, 88, 20), c.legColor ?? c.skin, { shade: (k) => { k.fillStyle = c.skinShade ?? '#c4c1cd'; k.fillRect(-25, -88, 16, 88); } });
-      ctx.strokeStyle = c.sandal ?? '#6b4423'; ctx.lineWidth = 9;
-      ctx.beginPath(); ctx.moveTo(-22, -18); ctx.lineTo(22, -30); ctx.moveTo(-22, -42); ctx.lineTo(22, -54); ctx.stroke();
-      T.outlined(ctx, (k) => T.rrect(k, -32, -13, 66, 15, 7), c.sandal ?? '#6b4423', { line: 6 });
+      const legCol = c.legColor ?? c.skin;
+      T.outlined(ctx, (k) => T.rrect(k, -25, -88, 50, 88, 20), legCol, { shade: (k) => {
+        k.fillStyle = c.legColor ? T.shade(legCol, -0.2) : c.skinShade ?? '#c4c1cd'; k.fillRect(-25, -88, 16, 88);
+        if (c.puttees) { k.strokeStyle = typeof c.puttees === 'string' ? c.puttees : T.shade(legCol, -0.3); k.lineWidth = 6; for (let y = -70; y < -10; y += 14) { k.beginPath(); k.moveTo(-26, y + 8); k.lineTo(26, y - 4); k.stroke(); } }
+      } });
+      if (c.shoes) T.outlined(ctx, (k) => { k.moveTo(-28, -2); k.lineTo(-28, -30); k.lineTo(14, -30); k.quadraticCurveTo(40, -24, 40, -2); k.closePath(); }, c.shoes, { line: 6 });
+      else {
+        ctx.strokeStyle = c.sandal ?? '#6b4423'; ctx.lineWidth = 9;
+        ctx.beginPath(); ctx.moveTo(-22, -18); ctx.lineTo(22, -30); ctx.moveTo(-22, -42); ctx.lineTo(22, -54); ctx.stroke();
+        T.outlined(ctx, (k) => T.rrect(k, -32, -13, 66, 15, 7), c.sandal ?? '#6b4423', { line: 6 });
+      }
       ctx.restore();
     }
   }
@@ -134,7 +141,9 @@
         if (c.sash) { k.fillStyle = c.sash; k.beginPath(); k.moveTo(-100, -336); k.lineTo(-36, -336); k.lineTo(152, -126); k.lineTo(152, -64); k.closePath(); k.fill(); k.strokeStyle = T.shade(c.sash, -0.22); k.lineWidth = 5; k.stroke(); }
       },
     });
-    if (c.belt) { ctx.strokeStyle = c.belt; ctx.lineWidth = 16; ctx.beginPath(); ctx.moveTo(-124, -186); ctx.quadraticCurveTo(0, -174, 124, -186); ctx.stroke(); }
+    if (c.outfit && T.OUTFITS && T.OUTFITS[c.outfit]) T.OUTFITS[c.outfit](ctx, c, view);
+    if (T.drawOutfitExtras) T.drawOutfitExtras(ctx, c, view);
+    if (c.belt && c.outfit !== 'tunic' && c.outfit !== 'surcoat') { ctx.strokeStyle = c.belt; ctx.lineWidth = 16; ctx.beginPath(); ctx.moveTo(-124, -186); ctx.quadraticCurveTo(0, -174, 124, -186); ctx.stroke(); }
     if (c.armor) {
       T.outlined(ctx, (k) => { k.moveTo(-104, -320); k.quadraticCurveTo(0, -336, 104, -320); k.lineTo(116, -168); k.quadraticCurveTo(0, -150, -116, -168); k.closePath(); }, c.armor, {
         shade: (k) => { k.fillStyle = T.shade(c.armor, -0.2); k.fillRect(back * 50, -340, 90 * back, 200); k.strokeStyle = T.shade(c.armor, -0.38); k.lineWidth = 6; for (let y = -280; y < -170; y += 30) { k.beginPath(); k.moveTo(-110, y); k.quadraticCurveTo(0, y + 10, 110, y); k.stroke(); } },
@@ -156,7 +165,9 @@
   }
 
   T.layers.bean = (ctx, Ly, lt, env) => {
-    const c = { skin: P.skin, robe: P.red, hair: 'short', ...(env.cast[Ly.who] || {}), ...(Ly.look || {}) };
+    const own = { ...(env.cast[Ly.who] || {}), ...(Ly.look || {}) };
+    // outfit defaults (e.g. suit = dark trousers + shoes) sit between the base look and the cast's own values
+    const c = { skin: P.skin, robe: P.red, hair: 'short', ...((T.OUTFIT_DEFAULTS || {})[own.outfit] || {}), ...own };
     const seed = (Ly.who || 'bean') + (Ly.id || '') + (Ly.x ?? '');
     const view = Ly.view ?? c.view ?? '3q';
     const k = (Ly.size ?? 420) / 600;
@@ -194,16 +205,16 @@
     ctx.scale(1 + settle * 0.6, (1 - settle) * (1 + Math.sin(lt * Math.PI * 2 * 0.55 + phase) * 0.012));
 
     const front = FRONT[pt.cur] && !gait;
-    legs(ctx, c, gait);
+    if (Ly.legs !== false) legs(ctx, c, gait); // riders hide their legs
     cape(ctx, c, lt, seed, wind);
     const sleeve = c.sleeve ?? c.robe;
     // back arm (character's left, screen-left in 3/4) goes behind the body unless the pose brings it to the face
-    if (view !== 'front' && !front) arm(ctx, arms[0], sleeve, c.skin, Ly.holdL || c.holdL, lt);
-    if (view === 'back') arm(ctx, arms[1], sleeve, c.skin, Ly.hold || c.hold, lt);
+    if (view !== 'front' && !front) arm(ctx, arms[0], sleeve, c.skin, Ly.holdL || c.holdL, lt, c.sleeveW ?? ARM_W);
+    if (view === 'back') arm(ctx, arms[1], sleeve, c.skin, Ly.hold || c.hold, lt, c.sleeveW ?? ARM_W);
     body(ctx, c, view);
     const drawFrontArms = () => {
-      if (view === 'front' || front) arm(ctx, arms[0], sleeve, c.skin, Ly.holdL || c.holdL, lt);
-      if (view !== 'back') arm(ctx, arms[1], sleeve, c.skin, Ly.hold || c.hold, lt);
+      if (view === 'front' || front) arm(ctx, arms[0], sleeve, c.skin, Ly.holdL || c.holdL, lt, c.sleeveW ?? ARM_W);
+      if (view !== 'back') arm(ctx, arms[1], sleeve, c.skin, Ly.hold || c.hold, lt, c.sleeveW ?? ARM_W);
     };
     if (!front) drawFrontArms();
 

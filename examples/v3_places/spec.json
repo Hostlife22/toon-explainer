@@ -1,0 +1,1383 @@
+{
+ "title": "v3 places tour: every new background, vehicle, foreground and prop",
+ "fps": 30,
+ "seed": 31,
+ "style": {
+  "grain": true,
+  "vignette": 0.3
+ },
+ "cast": {
+  "tommy": {
+   "robe": "#a48a5a",
+   "belt": "#6b4426",
+   "head": "helmet",
+   "headColor": "#6b6a3e",
+   "crest": "#6b6a3e",
+   "hair": "bald",
+   "hold": "rifle"
+  },
+  "host": {
+   "robe": "#2f3238",
+   "sash": "#b8262a",
+   "hair": "short",
+   "hairColor": "#3a2a20"
+  },
+  "monk": {
+   "robe": "#7a5a3a",
+   "head": "hood",
+   "headColor": "#4a3a2a",
+   "hold": "torch"
+  },
+  "scholar": {
+   "robe": "#7a3a7a",
+   "sash": "#e8b840",
+   "hair": "bun",
+   "hairColor": "#1e1e1e",
+   "head": "headband"
+  },
+  "citizen": {
+   "robe": "#c9a86a",
+   "hair": "curly",
+   "hairColor": "#5a3a26",
+   "hold": "placard"
+  },
+  "god": {
+   "robe": "#f1eadb",
+   "sash": "#e8b840",
+   "hair": "curly",
+   "hairColor": "#e9e2d2",
+   "beard": "full",
+   "beardColor": "#f1eadb",
+   "head": "laurel"
+  },
+  "king": {
+   "robe": "#a8322a",
+   "trim": "#e0b040",
+   "hair": "long",
+   "hairColor": "#3a2618",
+   "head": "crown"
+  },
+  "driver": {
+   "robe": "#5a6a8a",
+   "hair": "short",
+   "hairColor": "#2e2018",
+   "mustache": true
+  }
+ },
+ "shots": [
+  {
+   "id": "trench_wait",
+   "dur": 3,
+   "bg": {
+    "kind": "trench"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "tommy",
+     "x": 0.45,
+     "y": 1.18,
+     "size": 950,
+     "expr": "worried",
+     "gaze": 10
+    },
+    {
+     "type": "fg",
+     "kind": "trench-wall",
+     "z": 1.3
+    },
+    {
+     "type": "label",
+     "text": "WAITING",
+     "x": 0.22,
+     "y": 0.2,
+     "at": 0.4,
+     "size": 80,
+     "tag": "WESTERN FRONT"
+    }
+   ],
+   "vo": "For months, nobody moved."
+  },
+  {
+   "id": "over_the_top",
+   "dur": 3,
+   "bg": {
+    "kind": "battlefield",
+    "wire": true
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "who": "tommy",
+     "x": 0.62,
+     "y": 0.9,
+     "count": 6,
+     "spread": 1100,
+     "size": 300,
+     "march": true,
+     "rows": 2,
+     "move": [
+      {
+       "at": 0,
+       "dur": 3,
+       "to": [
+        0.38,
+        0.9
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "arrows",
+     "dir": 1,
+     "at": 0.6,
+     "count": 4
+    }
+   ],
+   "vo": "Then the whistle blew.",
+   "camera": {
+    "zoom": [
+     1,
+     1.04
+    ],
+    "shake": [
+     {
+      "at": 1.2,
+      "dur": 0.4,
+      "amp": 8
+     }
+    ]
+   }
+  },
+  {
+   "id": "tank_reveal",
+   "dur": 3.5,
+   "bg": {
+    "kind": "battlefield",
+    "craters": 10,
+    "trees": 3
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "tank",
+     "x": 0.1,
+     "y": 0.86,
+     "size": 620,
+     "drive": [
+      [
+       0,
+       3.5
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 3.5,
+       "to": [
+        0.62,
+        0.86
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "label",
+     "text": "THE TANK",
+     "x": 0.75,
+     "y": 0.25,
+     "at": 1.5,
+     "size": 80,
+     "tag": "NEW WEAPON"
+    }
+   ],
+   "vo": "And then something new rolled out of the fog."
+  },
+  {
+   "id": "night_fire",
+   "dur": 3,
+   "bg": {
+    "kind": "trench",
+    "night": true,
+    "burning": true
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "tommy",
+     "x": 0.5,
+     "y": 1.2,
+     "size": 980,
+     "expr": "shock",
+     "tremble": [
+      [
+       0,
+       3
+      ]
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "sandbags",
+     "z": 1.3,
+     "h": 0.18
+    }
+   ],
+   "vo": "Night brought no rest.",
+   "grade": "night",
+   "camera": {
+    "zoom": [
+     1,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 0.5,
+      "amount": 0.08
+     }
+    ]
+   }
+  },
+  {
+   "id": "dugout",
+   "dur": 3,
+   "bg": {
+    "kind": "trench-section"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "tommy",
+     "x": 0.42,
+     "y": 0.52,
+     "size": 170,
+     "pose": "hold"
+    },
+    {
+     "type": "bean",
+     "who": "tommy",
+     "x": 0.5,
+     "y": 0.52,
+     "size": 170,
+     "flip": true,
+     "expr": "sleepy"
+    },
+    {
+     "type": "bean",
+     "who": "tommy",
+     "x": 0.31,
+     "y": 0.71,
+     "size": 110,
+     "expr": "happy"
+    }
+   ],
+   "vo": "Underground, men waited in dugouts."
+  },
+  {
+   "id": "fleet",
+   "dur": 3.5,
+   "bg": {
+    "kind": "sea",
+    "preset": "turquoise",
+    "cliffs": "both"
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "caravel",
+     "x": 0.2,
+     "y": 0.62,
+     "size": 300,
+     "move": [
+      {
+       "at": 0,
+       "dur": 3.5,
+       "to": [
+        0.45,
+        0.64
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "vehicle",
+     "kind": "junk",
+     "x": 0.55,
+     "y": 0.75,
+     "size": 340,
+     "dir": -1,
+     "color": "#7a2a6a",
+     "move": [
+      {
+       "at": 0,
+       "dur": 3.5,
+       "to": [
+        0.4,
+        0.75
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "birds",
+     "x": 0.3,
+     "y": 0.2,
+     "count": 5
+    }
+   ],
+   "vo": "Fleets crossed the strait."
+  },
+  {
+   "id": "storm",
+   "dur": 3,
+   "bg": {
+    "kind": "sea",
+    "preset": "storm",
+    "islet": [
+     0.8
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "steamer",
+     "x": 0.45,
+     "y": 0.66,
+     "size": 560,
+     "drive": [
+      [
+       0,
+       3
+      ]
+     ],
+     "rock": 5
+    },
+    {
+     "type": "fx",
+     "kind": "rain",
+     "hud": true
+    },
+    {
+     "type": "fx",
+     "kind": "lightning",
+     "x": 0.75,
+     "y": 0.25,
+     "at": 1.4,
+     "out": 1.7
+    }
+   ],
+   "vo": "The storm hit the convoy.",
+   "grade": "storm"
+  },
+  {
+   "id": "uboat",
+   "dur": 3,
+   "bg": {
+    "kind": "underwater"
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "submarine",
+     "x": 0.85,
+     "y": 0.55,
+     "size": 560,
+     "face": "angry",
+     "drive": [
+      [
+       0,
+       3
+      ]
+     ],
+     "dir": -1,
+     "move": [
+      {
+       "at": 0,
+       "dur": 3,
+       "to": [
+        0.45,
+        0.55
+       ],
+       "ease": "linear"
+      }
+     ]
+    }
+   ],
+   "vo": "Below the surface, something waited."
+  },
+  {
+   "id": "corridor",
+   "dur": 3.5,
+   "bg": {
+    "kind": "corridor",
+    "thread": true
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "monk",
+     "x": 0.5,
+     "y": 0.98,
+     "size": 520,
+     "view": "back",
+     "walk": [
+      [
+       0,
+       3.5
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 3.5,
+       "to": [
+        0.5,
+        0.86
+       ],
+       "scale": 0.6,
+       "ease": "linear"
+      }
+     ]
+    }
+   ],
+   "vo": "He followed the thread into the dark.",
+   "grade": {
+    "preset": "serious",
+    "strength": 0.6
+   }
+  },
+  {
+   "id": "void_flesh",
+   "dur": 3,
+   "bg": {
+    "kind": "void",
+    "variant": "flesh"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "host",
+     "x": 0.2,
+     "y": 0.95,
+     "size": 360,
+     "walk": [
+      [
+       0,
+       3
+      ]
+     ],
+     "expr": "worried",
+     "move": [
+      {
+       "at": 0,
+       "dur": 3,
+       "to": [
+        0.8,
+        0.95
+       ],
+       "ease": "linear"
+      }
+     ]
+    }
+   ],
+   "vo": "Obsession has no exit."
+  },
+  {
+   "id": "void_stage",
+   "dur": 3,
+   "bg": {
+    "kind": "void",
+    "variant": "stage"
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "crate",
+     "x": 0.47,
+     "y": 0.82,
+     "size": 130
+    },
+    {
+     "type": "bean",
+     "who": "host",
+     "x": 0.55,
+     "y": 0.86,
+     "size": 420,
+     "view": "back"
+    }
+   ],
+   "vo": "Alone with his thoughts."
+  },
+  {
+   "id": "void_boil",
+   "dur": 2.5,
+   "bg": {
+    "kind": "void",
+    "variant": "boil"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.5,
+     "y": 1.15,
+     "size": 900,
+     "expr": "smug",
+     "pose": "cross"
+    }
+   ],
+   "vo": "The villain reveals himself."
+  },
+  {
+   "id": "office",
+   "dur": 3,
+   "bg": {
+    "kind": "office",
+    "window": "porthole",
+    "lamp": true
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "host",
+     "x": 0.5,
+     "y": 0.86,
+     "size": 560,
+     "talk": [
+      [
+       0.3,
+       2.5
+      ]
+     ],
+     "pose": "present"
+    },
+    {
+     "type": "prop",
+     "kind": "telephone",
+     "x": 0.72,
+     "y": 0.81,
+     "size": 90
+    },
+    {
+     "type": "prop",
+     "kind": "microphone",
+     "x": 0.33,
+     "y": 0.78,
+     "size": 140
+    }
+   ],
+   "vo": "Welcome to the fact-check office."
+  },
+  {
+   "id": "graveyard",
+   "dur": 3.5,
+   "bg": {
+    "kind": "graveyard"
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "gravestone",
+     "x": 0.55,
+     "y": 0.78,
+     "size": 360,
+     "text": "THE KINGDOM",
+     "enter": "rise"
+    },
+    {
+     "type": "bean",
+     "who": "tommy",
+     "x": 0.3,
+     "y": 0.95,
+     "size": 420,
+     "expr": "sad",
+     "look": {
+      "hold": null
+     }
+    }
+   ],
+   "vo": "Here lies a kingdom.",
+   "camera": {
+    "zoom": [
+     1,
+     1.06
+    ]
+   }
+  },
+  {
+   "id": "eastcity",
+   "dur": 3,
+   "bg": {
+    "kind": "eastcity",
+    "gold": true
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "who": "scholar",
+     "x": 0.5,
+     "y": 0.97,
+     "count": 7,
+     "rows": 2,
+     "spread": 1400,
+     "size": 300
+    },
+    {
+     "type": "vehicle",
+     "kind": "cart",
+     "x": 0.2,
+     "y": 0.92,
+     "size": 260,
+     "load": "crate",
+     "drive": [
+      [
+       0,
+       3
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 3,
+       "to": [
+        0.32,
+        0.92
+       ]
+      }
+     ]
+    }
+   ],
+   "vo": "The capital grew rich."
+  },
+  {
+   "id": "karst",
+   "dur": 3.5,
+   "bg": {
+    "kind": "karst",
+    "pagoda": [
+     0.78
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "rowboat",
+     "x": 0.35,
+     "y": 0.9,
+     "size": 280,
+     "riders": [
+      "scholar"
+     ],
+     "drive": [
+      [
+       0,
+       3.5
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 3.5,
+       "to": [
+        0.48,
+        0.9
+       ]
+      }
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "z": 1.4,
+     "count": 14,
+     "h": 140
+    }
+   ],
+   "vo": "Life on the river was slow."
+  },
+  {
+   "id": "gallery",
+   "dur": 3,
+   "bg": {
+    "kind": "gallery",
+    "frames": [
+     {
+      "x": 0.62,
+      "y": 0.38,
+      "w": 0.36,
+      "h": 0.42,
+      "plaque": "THE TREATY",
+      "top": "#e98a6a",
+      "bottom": "#6b4a2e"
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "host",
+     "x": 0.2,
+     "y": 0.95,
+     "size": 520,
+     "pose": "point",
+     "talk": [
+      [
+       0.2,
+       2
+      ]
+     ]
+    }
+   ],
+   "vo": "To understand it, look at this painting."
+  },
+  {
+   "id": "blueprint",
+   "dur": 4,
+   "bg": {
+    "kind": "blueprint",
+    "stamp": "SARAJEVO, 28 JUNE",
+    "sketch": [
+     {
+      "line": [
+       [
+        0.08,
+        0.72
+       ],
+       [
+        0.45,
+        0.62
+       ],
+       [
+        0.92,
+        0.66
+       ]
+      ],
+      "at": 0,
+      "dur": 1
+     },
+     {
+      "text": "BRIDGE",
+      "x": 0.45,
+      "y": 0.55,
+      "at": 0.8
+     },
+     {
+      "circle": [
+       0.62,
+       0.6,
+       0.04
+      ],
+      "at": 1.4
+     },
+     {
+      "text": "X",
+      "x": 0.62,
+      "y": 0.62,
+      "at": 1.8,
+      "size": 80
+     },
+     {
+      "line": [
+       [
+        0.62,
+        0.6
+       ],
+       [
+        0.8,
+        0.3
+       ]
+      ],
+      "at": 2.2
+     },
+     {
+      "text": "HOSPITAL",
+      "x": 0.82,
+      "y": 0.25,
+      "at": 2.8
+     }
+    ]
+   },
+   "layers": [],
+   "vo": "The plan was simple. It did not go to plan."
+  },
+  {
+   "id": "desert",
+   "dur": 3,
+   "bg": {
+    "kind": "desert",
+    "cacti": 3,
+    "preset": "sunset"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.4,
+     "y": 0.92,
+     "size": 420,
+     "walk": [
+      [
+       0,
+       3
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 3,
+       "to": [
+        0.6,
+        0.92
+       ]
+      }
+     ]
+    }
+   ],
+   "vo": "Across the desert."
+  },
+  {
+   "id": "cave",
+   "dur": 3,
+   "bg": {
+    "kind": "mountains",
+    "variant": "cave"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "monk",
+     "x": 0.5,
+     "y": 0.98,
+     "size": 460,
+     "pose": "hold",
+     "expr": "worried"
+    },
+    {
+     "type": "fx",
+     "kind": "spotlight",
+     "x": 0.5,
+     "y": 0.6,
+     "radius": 420,
+     "strength": 0.6
+    }
+   ],
+   "vo": "The last refuge was a cave."
+  },
+  {
+   "id": "gorge",
+   "dur": 3,
+   "bg": {
+    "kind": "mountains",
+    "variant": "gorge"
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "who": "tommy",
+     "x": 0.5,
+     "y": 0.97,
+     "count": 9,
+     "rows": 2,
+     "spread": 700,
+     "size": 200,
+     "march": true
+    }
+   ],
+   "vo": "The army entered the gorge."
+  },
+  {
+   "id": "stage",
+   "dur": 3,
+   "bg": {
+    "kind": "stage"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "host",
+     "x": 0.5,
+     "y": 0.86,
+     "size": 520,
+     "talk": [
+      [
+       0.2,
+       2.6
+      ]
+     ],
+     "pose": "arms-up",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "microphone",
+     "x": 0.42,
+     "y": 0.84,
+     "size": 160
+    },
+    {
+     "type": "crowd",
+     "who": "citizen",
+     "x": 0.5,
+     "y": 1.12,
+     "count": 9,
+     "spread": 1700,
+     "size": 360,
+     "silhouette": true,
+     "armsUp": true
+    }
+   ],
+   "vo": "The speech hall roared."
+  },
+  {
+   "id": "bar",
+   "dur": 3,
+   "bg": {
+    "kind": "bar"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "host",
+     "x": 0.35,
+     "y": 0.95,
+     "size": 520,
+     "expr": "happy",
+     "talk": [
+      [
+       0.4,
+       2
+      ]
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "citizen",
+     "x": 0.65,
+     "y": 0.95,
+     "size": 520,
+     "flip": true,
+     "expr": "smug",
+     "look": {
+      "hold": null
+     }
+    }
+   ],
+   "vo": "Deals were made over beer."
+  },
+  {
+   "id": "bar_brick",
+   "dur": 2.5,
+   "bg": {
+    "kind": "bar",
+    "brick": true,
+    "mugs": [
+     0.5
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.5,
+     "y": 0.95,
+     "size": 520,
+     "expr": "sleepy",
+     "pose": "facepalm"
+    }
+   ],
+   "vo": "It went badly."
+  },
+  {
+   "id": "hospital",
+   "dur": 3,
+   "bg": {
+    "kind": "hospital"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "tommy",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 480,
+     "expr": "sad",
+     "look": {
+      "hold": null
+     }
+    }
+   ],
+   "vo": "The wounded filled every ward."
+  },
+  {
+   "id": "factory",
+   "dur": 3,
+   "bg": {
+    "kind": "factory",
+    "banner": "#b8262a"
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "who": "citizen",
+     "x": 0.5,
+     "y": 0.98,
+     "count": 7,
+     "spread": 1400,
+     "size": 320,
+     "expr": "angry"
+    }
+   ],
+   "vo": "The workers went on strike."
+  },
+  {
+   "id": "street",
+   "dur": 3.5,
+   "bg": {
+    "kind": "street1920",
+    "obelisk": 0.5
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "car1910",
+     "x": 0.15,
+     "y": 0.92,
+     "size": 420,
+     "riders": [
+      "driver"
+     ],
+     "drive": [
+      [
+       0,
+       3.5
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 3.5,
+       "to": [
+        0.7,
+        0.92
+       ],
+       "ease": "linear"
+      }
+     ]
+    }
+   ],
+   "vo": "An open car drove down the avenue."
+  },
+  {
+   "id": "street_grey",
+   "dur": 3,
+   "bg": {
+    "kind": "street1920",
+    "grey": true
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "citizen",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 460,
+     "expr": "worried",
+     "look": {
+      "hold": null
+     }
+    },
+    {
+     "type": "fg",
+     "kind": "window-grid",
+     "z": 1.2
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "side": "left"
+    }
+   ],
+   "vo": "Then the money ran out."
+  },
+  {
+   "id": "minoan",
+   "dur": 3,
+   "bg": {
+    "kind": "minoan"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.5,
+     "y": 0.92,
+     "size": 560,
+     "expr": "smug",
+     "pose": "hips"
+    }
+   ],
+   "vo": "The king of Crete ruled from his palace."
+  },
+  {
+   "id": "olympus",
+   "dur": 3,
+   "bg": {
+    "kind": "olympus"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "god",
+     "x": 0.5,
+     "y": 0.7,
+     "size": 420,
+     "expr": "content",
+     "pose": "present"
+    }
+   ],
+   "vo": "Far above, the gods watched.",
+   "grade": "gold"
+  },
+  {
+   "id": "chalkboard",
+   "dur": 3.5,
+   "bg": {
+    "kind": "chalkboard",
+    "lines": [
+     {
+      "text": "1914  WAR BEGINS",
+      "at": 0.2
+     },
+     {
+      "text": "1918  ARMISTICE",
+      "at": 1.2
+     },
+     {
+      "text": "= 4 YEARS",
+      "at": 2.2
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "host",
+     "x": 0.85,
+     "y": 0.98,
+     "size": 520,
+     "pose": "point",
+     "flip": true,
+     "talk": [
+      [
+       0.3,
+       3
+      ]
+     ]
+    }
+   ],
+   "vo": "Let's do the math."
+  },
+  {
+   "id": "timelapse",
+   "dur": 4,
+   "bg": {
+    "kind": "sky",
+    "timelapse": {
+     "dayDur": 1.6,
+     "shades": true
+    },
+    "hills": 2,
+    "clouds": 0
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "who": "tommy",
+     "x": 0.5,
+     "y": 0.7,
+     "count": 8,
+     "spread": 900,
+     "size": 110
+    },
+    {
+     "type": "vehicle",
+     "kind": "cannon",
+     "x": 0.2,
+     "y": 0.78,
+     "size": 220,
+     "fire": [
+      0.6,
+      2.2,
+      3.4
+     ]
+    }
+   ],
+   "vo": "They waited. Day after day."
+  },
+  {
+   "id": "biplane",
+   "dur": 3,
+   "bg": {
+    "kind": "sky",
+    "preset": "sepia",
+    "clouds": 5,
+    "hills": 2
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "biplane",
+     "x": -0.1,
+     "y": 0.4,
+     "size": 420,
+     "move": [
+      {
+       "at": 0,
+       "dur": 3,
+       "to": [
+        1.1,
+        0.32
+       ],
+       "ease": "linear"
+      }
+     ],
+     "drive": [
+      [
+       0,
+       3
+      ]
+     ]
+    }
+   ],
+   "vo": "Planes were still a novelty."
+  },
+  {
+   "id": "train",
+   "dur": 3.5,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "ground": "paddy",
+    "hills": 2
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "train",
+     "x": 1.2,
+     "y": 0.86,
+     "size": 1100,
+     "cars": 3,
+     "drive": [
+      [
+       0,
+       3.5
+      ]
+     ],
+     "dir": -1,
+     "move": [
+      {
+       "at": 0,
+       "dur": 3.5,
+       "to": [
+        0.35,
+        0.86
+       ],
+       "ease": "linear"
+      }
+     ]
+    }
+   ],
+   "vo": "A train carried the delegation east."
+  },
+  {
+   "id": "cell",
+   "dur": 3,
+   "bg": {
+    "kind": "corridor",
+    "torches": 1
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.5,
+     "y": 1.05,
+     "size": 700,
+     "expr": "angry",
+     "pose": "fist"
+    },
+    {
+     "type": "fg",
+     "kind": "bars",
+     "z": 1.2
+    }
+   ],
+   "vo": "He ended up behind bars."
+  },
+  {
+   "id": "storyteller",
+   "dur": 3,
+   "bg": {
+    "kind": "office",
+    "window": "porthole",
+    "lamp": true,
+    "desk": false
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.5,
+     "y": 0.62,
+     "size": 260,
+     "text": "MYTHS"
+    },
+    {
+     "type": "fg",
+     "kind": "hands-fpv"
+    }
+   ],
+   "vo": "Let me tell you a story."
+  },
+  {
+   "id": "wire",
+   "dur": 2.5,
+   "bg": {
+    "kind": "battlefield",
+    "fires": 4,
+    "bodies": 3,
+    "haze": true
+   },
+   "layers": [
+    {
+     "type": "fg",
+     "kind": "barbed-wire",
+     "z": 1.4
+    },
+    {
+     "type": "bean",
+     "who": "tommy",
+     "x": 0.6,
+     "y": 0.86,
+     "size": 480,
+     "expr": "dead",
+     "rot": -85,
+     "rock": 0,
+     "blink": false,
+     "look": {
+      "hold": null
+     }
+    }
+   ],
+   "vo": "Few came back.",
+   "grade": "solemn"
+  }
+ ]
+}

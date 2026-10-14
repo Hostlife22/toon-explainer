@@ -11,6 +11,8 @@
     dusk: { cloudStyle: 'streak', stops: ['#2d3561', '#6c4a8c', '#c8697a', '#f3a37a'], sun: [0.5, 0.7], glow: '#ffd2a0', hills: ['#5b4470', '#433256', '#2e2440'], ground: '#3d3450', cloud: '#8e5f8f', cloudHi: '#d48a9a', wisp: '#f5b6a0' },
     night: { stops: ['#070b1f', '#121c40', '#22305f', '#3a4a7a'], sun: [0.78, 0.2], glow: '#dfe8ff', hills: ['#25304f', '#1b2440', '#121a30'], ground: '#1a2238', cloud: '#2c3a66', cloudHi: '#4a5a8a', wisp: '#6070a0', stars: true },
     storm: { stops: ['#2f353d', '#4a525c', '#6c757e', '#9aa2a8'], sun: [0.5, -0.5], glow: '#c8d0d6', hills: ['#56605a', '#434c47', '#323936'], ground: '#4b5446', cloud: '#5a626c', cloudHi: '#7c858e', wisp: '#9aa3ab' },
+    sepia: { stops: ['#b9a273', '#c9b48a', '#ddcca4', '#efe6cf'], sun: [0.7, 0.3], glow: '#fff6dc', hills: ['#b7a98a', '#8f8160', '#6b5f3a'], ground: '#6b5f3a', cloud: '#f3ead3', cloudHi: '#fffaf0', cloudUnder: '#a89070', wisp: '#f3ead3' },
+    overcast: { stops: ['#7d8790', '#98a2aa', '#b4bcc2', '#ccd2d6'], sun: [0.5, -0.5], glow: '#dfe4e8', hills: ['#8a9096', '#6f767c', '#555c62'], ground: '#5d6458', cloud: '#c8ced2', cloudHi: '#e2e6e8', cloudUnder: '#8f979e', wisp: '#d2d8dc' },
     teal: { stops: ['#123c45', '#1f6670', '#3f9a9a', '#8ccfc4'], sun: [0.5, 0.5], glow: '#d8fff4', hills: ['#2f5d55', '#244a44', '#183632'], ground: '#2c4f45', cloud: '#2f7a7a', cloudHi: '#5fb0a8', wisp: '#a8e0d4' },
   };
   T.SKY = SKY;
@@ -165,6 +167,7 @@
 
   function ground(ctx, bg, pal, groundY, seed) {
     const kind = bg.ground ?? 'grass';
+    if (kind === 'paddy' && T.paddy) { T.paddy(ctx, groundY, seed); return; }
     const col = { grass: pal.ground, sand: '#d9b77a', stone: '#9b9184', dirt: '#8a6a45', snow: '#eef2f6' }[kind] || kind;
     ctx.fillStyle = col;
     ctx.fillRect(-OVER, groundY, W + OVER * 2, H - groundY + OVER);
@@ -201,14 +204,45 @@
   }
 
   // ---------- kinds ----------
+  // Shared helpers for other background modules (places*.js).
+  T.ridge = (...a) => ridge(...a);
+  T.groundBand = (ctx, bg, pal, gy, seed) => ground(ctx, bg, pal, gy, seed);
+  T.waterBand = (...a) => water(...a);
+  T.cloudLayer = (ctx, bg, pal, lt, seed) => clouds(ctx, bg, pal, lt, seed);
+  T.OVERSCAN = OVER;
+
+  // Time-lapse sky: a smiling sun crosses on an arc, then a crescent moon; the gradient blends day <-> night.
+  // bg.timelapse = { cycles, dayDur (s per full day), shades (moon sunglasses) }
+  function timelapse(ctx, tl, lt, horizon) {
+    const dayDur = tl.dayDur ?? 1.6, ph = ((lt / dayDur) % 1 + 1) % 1, isDay = ph < 0.5, q = isDay ? ph * 2 : (ph - 0.5) * 2;
+    const edge = Math.min(1, Math.sin(q * Math.PI) * 3); // 0 at sunrise/sunset, 1 mid-day / mid-night
+    const night = isDay ? 1 - edge : edge;
+    const day = ['#4fb0e8', '#8ee3f0', '#f7d08a', '#f7a23a'], nite = ['#0b1430', '#1b2547', '#3a3a6a', '#e8c9a0'];
+    skyGradient(ctx, day.map((c, i) => T.mix(c, nite[i], night)), horizon);
+    const x = T.lerp(W * 0.05, W * 0.95, q), y = horizon - Math.sin(q * Math.PI) * horizon * 0.85;
+    if (isDay) {
+      sunGlow(ctx, x, y, '#fff3c4', 360);
+      ctx.strokeStyle = '#f2a51a'; ctx.lineWidth = 10; ctx.lineCap = 'round';
+      for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2 + lt; ctx.beginPath(); ctx.moveTo(x + Math.cos(a) * 100, y + Math.sin(a) * 100); ctx.lineTo(x + Math.cos(a) * 130, y + Math.sin(a) * 130); ctx.stroke(); }
+      T.outlined(ctx, (k) => k.arc(x, y, 80, 0, Math.PI * 2), '#ffd84a', { line: 8 });
+      ctx.fillStyle = P.ink; for (const d of [-1, 1]) { ctx.beginPath(); ctx.ellipse(x + d * 26, y - 10, 8, 12, 0, 0, Math.PI * 2); ctx.fill(); }
+      ctx.lineWidth = 7; ctx.beginPath(); ctx.arc(x, y + 8, 30, 0.2, Math.PI - 0.2); ctx.stroke();
+    } else {
+      for (let i = 0; i < 60; i++) { ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.fillRect((i * 331) % W, (i * 173) % (horizon * 0.8), 3, 3); }
+      T.outlined(ctx, (k) => { k.arc(x, y, 70, 0, Math.PI * 2); k.moveTo(x + 30 + 60, y - 20); k.arc(x + 30, y - 20, 60, 0, Math.PI * 2, true); }, '#f4efd8', { line: 7 });
+      if (tl.shades) { ctx.fillStyle = '#111'; ctx.fillRect(x - 70, y - 14, 80, 24); }
+    }
+  }
+
   T.bgs.sky = (ctx, bg, lt, env) => {
     const pal = { ...SKY[bg.preset || 'day'], ...(bg.palette || {}) };
     const horizon = (bg.horizon ?? 0.62) * H, seed = env.seed + (bg.seed ?? '');
     ctx.save();
     T.applyCam(ctx, env.cam, 0.15);
-    skyGradient(ctx, pal.stops, horizon);
+    if (bg.timelapse) timelapse(ctx, bg.timelapse === true ? {} : bg.timelapse, lt, horizon);
+    else skyGradient(ctx, pal.stops, horizon);
     const sun = bg.sun || pal.sun;
-    sunGlow(ctx, sun[0] * W, sun[1] * H, pal.glow);
+    if (!bg.timelapse) sunGlow(ctx, sun[0] * W, sun[1] * H, pal.glow);
     if (pal.stars || bg.stars) stars(ctx, lt, seed);
     if (bg.rays) T.drawRays(ctx, sun[0] * W, sun[1] * H, lt, { seed });
     ctx.restore();

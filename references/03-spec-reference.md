@@ -211,11 +211,12 @@ During `talk`, the idle and talk frames alternate at 8 Hz. `blink` shows every ~
 A transition occupies the **start** of the shot it is set on. During it, the previous shot keeps playing (its time runs past `dur`).
 
 ## Extending
-- New layer: `T.layers.<type> = (ctx, L, lt, env) => {…}` in `scripts/engine/lib/*.js`. `lt` is layer time, `env.lt` is shot time. Include the file in `index.html` and add the type to `KNOWN_LAYERS`.
-- New background: `T.bgs.<kind>`, add it to `KNOWN_BGS`.
-- New prop: `T.PROPS.<kind>`, add it to `KNOWN_PROPS`.
-- New fx: `T.FX.<kind>`, add it to `KNOWN_FX`.
-- New pose: `POSES` in `bean.js`, add it to `KNOWN_POSES`.
-- `tests/test_pipeline.py::test_python_vocabulary_matches_engine` fails if you forget to update `KNOWN_*`.
-- Do not call `rng` inside a path function for `T.outlined`: the path is built twice (fill and stroke).
+- New layer: `T.layers.<type> = (ctx, L, lt, env) => {…}` in `scripts/engine/lib/*.js`. `lt` is layer time, `env.lt` is shot time. Add the `<script>` tag to `index.html`.
+- New background `T.bgs.<kind>`, prop `T.PROPS.<kind>`, fx `T.FX.<kind>`, foreground `T.FG.<kind>`, transition `T.transitions.<kind>`, headwear `T.HEADWEAR.<kind>`, pose in `POSES` (`rig.js`).
+- Declare every new name in `scripts/vocab/<module>.json` instead of editing `spec.py`. Keys: `layers`, `bgs`, `fx`, `props`, `fg`, `transitions`, `grades`, `enter`, `poses`, `expr`, `head`, `hair`, `beard`, `sky`, `views`, `color_keys`, plus `kinds` (allowed `kind` values per layer type) and `registry` (the engine registry those kinds must match, for example `"vehicle": "TOON.VEHICLES"`).
+- Tests compare the merged vocabulary with the engine (`test_python_vocabulary_matches_engine`, `test_vocab_kinds_match_engine_registries`), so a missing declaration fails CI.
+- Document new fields in the matching `references/07-*.md` guide.
+- Do not call `rng` inside a path function for `T.outlined`: the path is built twice (fill and stroke). Derive per-item random values from a per-item seed, not from a stream whose consumption depends on time.
 - Randomness only through `T.rng(T.hash(seed))` and `T.noise`. `Math.random` is forbidden: the render must be deterministic, and `tests/test_pipeline.py` checks this.
+
+v3 features are documented in their own guides: [characters](07-characters.md), [places](07-places.md), [graphics](07-graphics.md) and [FX and tone](07-fx-and-tone.md).

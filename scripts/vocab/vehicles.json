@@ -1,0 +1,6 @@
+{
+  "_doc": "Vehicle layer (scripts/engine/lib/vehicles.js). See references/07-places.md.",
+  "layers": ["vehicle"],
+  "kinds": {"vehicle": ["tank", "car1910", "train", "steamer", "submarine", "junk", "caravel", "rowboat", "biplane", "cannon", "cart"]},
+  "registry": {"vehicle": "TOON.VEHICLES"}
+}

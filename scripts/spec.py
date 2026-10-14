@@ -33,10 +33,55 @@ KNOWN_SKY = {"sunset", "day", "dusk", "night", "storm", "teal"}
 KNOWN_HAIR = {"short", "long", "curly", "bun", "bald", "bald-sides"}
 KNOWN_BEARD = {"full", "goatee", "stubble"}
 KNOWN_HEAD = {"crown", "laurel", "helmet", "hood", "headband", "pontifex", "hat"}
+KNOWN_OUTFIT: set[str] = set()
+KNOWN_MASK: set[str] = set()
+KNOWN_HEADSHAPE: set[str] = set()
+KNOWN_FLAG: set[str] = set()
+KNOWN_CROWD_MODE: set[str] = set()
 COLOR_KEYS = ("skin", "skinShade", "robe", "robeShade", "sleeve", "trim", "sash", "belt", "cape", "armor", "hairColor",
               "beardColor", "mustacheColor", "headColor", "crest", "sandal", "legColor")
 HEX_RE = re.compile(r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
 IMAGE_KEYS = ("src", "image", "idle", "talk", "blink")
+
+# ---------- vocabulary extensions ----------
+# Each engine module may ship scripts/vocab/<module>.json, so new layer types, kinds and costume values extend the
+# validator without editing this file:
+#   {"layers": [...], "bgs": [...], "fx": [...], "props": [...], "fg": [...], "transitions": [...], "grades": [...],
+#    "enter": [...], "poses": [...], "expr": [...], "head": [...], "hair": [...], "beard": [...], "sky": [...],
+#    "color_keys": [...],
+#    "kinds": {"<layer type>": ["kind", ...]},            # layer.kind must be one of these for that type
+#    "registry": {"<layer type or set name>": "TOON.<registry>"}}  # checked against the engine by tests
+VOCAB_DIR = Path(__file__).parent / "vocab"
+LAYER_KINDS: dict[str, set[str]] = {}
+REGISTRIES: dict[str, str] = {}
+
+
+def _load_vocab() -> None:
+    global COLOR_KEYS
+    targets = {"layers": KNOWN_LAYERS, "bgs": KNOWN_BGS, "transitions": KNOWN_TRANSITIONS, "enter": KNOWN_ENTER,
+               "props": KNOWN_PROPS, "fx": KNOWN_FX, "fg": KNOWN_FG, "grades": KNOWN_GRADES, "poses": KNOWN_POSES,
+               "expr": KNOWN_EXPR, "sky": KNOWN_SKY, "hair": KNOWN_HAIR, "beard": KNOWN_BEARD, "head": KNOWN_HEAD,
+               "views": KNOWN_VIEWS, "outfit": KNOWN_OUTFIT, "mask": KNOWN_MASK, "headShape": KNOWN_HEADSHAPE,
+               "flag": KNOWN_FLAG, "crowd_mode": KNOWN_CROWD_MODE}
+    extra_colors: list[str] = []
+    for path in sorted(VOCAB_DIR.glob("*.json")):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for key, values in data.items():
+            if key in targets:
+                targets[key].update(values)
+            elif key == "color_keys":
+                extra_colors += values
+            elif key == "kinds":
+                for layer_type, kinds in values.items():
+                    LAYER_KINDS.setdefault(layer_type, set()).update(kinds)
+            elif key == "registry":
+                REGISTRIES.update(values)
+            elif not key.startswith("_"):
+                raise ValueError(f"{path.name}: unknown vocabulary key {key!r}")
+    COLOR_KEYS = tuple(dict.fromkeys(list(COLOR_KEYS) + extra_colors))
+
+
+_load_vocab()
 
 
 class SpecError(ValueError):
@@ -58,9 +103,20 @@ def _check_look(look, where: str, errors: list[str]) -> None:
     if not isinstance(look, dict):
         errors.append(f"{where}: must be an object")
         return
-    for key, allowed in (("hair", KNOWN_HAIR), ("beard", KNOWN_BEARD), ("head", KNOWN_HEAD), ("view", KNOWN_VIEWS)):
-        if look.get(key) is not None and look[key] not in allowed:
+    for key, allowed in (("hair", KNOWN_HAIR), ("beard", KNOWN_BEARD), ("head", KNOWN_HEAD), ("view", KNOWN_VIEWS),
+                         ("outfit", KNOWN_OUTFIT), ("mask", KNOWN_MASK), ("headShape", KNOWN_HEADSHAPE)):
+        if look.get(key) is not None and allowed and look[key] not in allowed:
             errors.append(f"{where}: {key} {look[key]!r} not in {sorted(allowed)}")
+    flag = look.get("flag")
+    if flag is not None:
+        if not isinstance(flag, dict):
+            errors.append(f"{where}: flag must be an object like {{\"pattern\": \"h3\", \"colors\": [...]}}")
+        else:
+            if KNOWN_FLAG and flag.get("pattern") not in KNOWN_FLAG:
+                errors.append(f"{where}: flag pattern {flag.get('pattern')!r} not in {sorted(KNOWN_FLAG)}")
+            for c in flag.get("colors", []) or []:
+                if not (isinstance(c, str) and HEX_RE.match(c)):
+                    errors.append(f"{where}: flag colors must be hex, got {c!r}")
     for hk in ("hold", "holdL"):
         if look.get(hk) is not None and look[hk] not in KNOWN_PROPS:
             errors.append(f"{where}: {hk} {look[hk]!r} not in {sorted(KNOWN_PROPS)}")
@@ -116,6 +172,12 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
             errors.append(f"{where}: pose {layer['pose']!r} not in {sorted(KNOWN_POSES)}")
         if layer.get("expr") and layer["expr"] not in KNOWN_EXPR:
             errors.append(f"{where}: expr {layer['expr']!r} not in {sorted(KNOWN_EXPR)}")
+        if layer.get("mode") and KNOWN_CROWD_MODE and layer["mode"] not in KNOWN_CROWD_MODE:
+            errors.append(f"{where}: crowd mode {layer['mode']!r} not in {sorted(KNOWN_CROWD_MODE)}")
+        if layer.get("creature") and "creature" in LAYER_KINDS and layer["creature"] not in LAYER_KINDS["creature"]:
+            errors.append(f"{where}: crowd creature {layer['creature']!r} not in {sorted(LAYER_KINDS['creature'])}")
+    if kind in LAYER_KINDS and layer.get("kind") not in LAYER_KINDS[kind]:
+        errors.append(f"{where}: {kind} kind {layer.get('kind')!r} not in {sorted(LAYER_KINDS[kind])}")
     if kind == "fg" and layer.get("kind") not in KNOWN_FG:
         errors.append(f"{where}: fg kind {layer.get('kind')!r} not in {sorted(KNOWN_FG)}")
     if kind == "fg" and layer.get("kind") == "ots" and layer.get("who") and layer["who"] not in cast:

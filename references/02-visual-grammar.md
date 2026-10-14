@@ -2,6 +2,8 @@
 
 Each script frame (`vo` + `screen`) becomes one shot in the spec. First pick the **beat type**, then take its recipe and substitute your own content. Recipes are tested `layers` fragments; the full field contract is in `03-spec-reference.md`.
 
+The recipes below (A–P) are the core grammar. Topic-specific recipes live with their toolkits: war, places and vehicles in [07-places.md](07-places.md); fact-check, maps, timelines and documents in [07-graphics.md](07-graphics.md); horror, myth and war effects in [07-fx-and-tone.md](07-fx-and-tone.md); characters and creatures in [07-characters.md](07-characters.md). To choose a toolkit for a new topic, start from the matrix in [06-reference-library.md](06-reference-library.md).
+
 ## Pacing rules (from the reference measurements)
 
 1. A shot lasts 1.5–4 s. If a line runs longer than 5 s, split the shot into 2–3 internal beats: a pose change (`pose:[{at,v}]`), a pop-in caption (`at`), a punch-zoom (`camera.punch`).

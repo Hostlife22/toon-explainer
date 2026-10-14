@@ -6,6 +6,7 @@
   T.W = 1920;
   T.H = 1080;
   T.DEG = Math.PI / 180;
+  T.DPR = 1;
   T.layers = T.layers || {}; // type → draw(ctx, L, lt, env)
   T.bgs = T.bgs || {}; // kind → draw(ctx, bg, lt, env)
   T.images = {};
@@ -68,7 +69,7 @@
     const shots = spec.shots.map((s, i) => {
       const tr = typeof s.transition === 'string' ? { kind: s.transition } : s.transition || { kind: 'cut' };
       const kind = tr.kind || 'cut';
-      const shot = { ...s, index: i, start, transition: { kind, dur: tr.dur ?? T.TRANSITION_DUR[kind] ?? 0 } };
+      const shot = { ...s, index: i, start, transition: { ...tr, kind, dur: tr.dur ?? T.TRANSITION_DUR[kind] ?? 0 } };
       start += s.dur;
       return shot;
     });
@@ -118,11 +119,27 @@
 
   // ---------- layer motion ----------
   const ENTER_DUR = 0.32;
+  // Entrances with their own measured timing (reference: drop + squash settles in ~12 frames, pop-tilt in 6, slam in 3).
+  const ENTER_DUR_BY_KIND = { 'drop-squash': 0.5, 'pop-tilt': 0.22, slam: 0.12 };
   // Default entrance per layer type (measured: characters/backgrounds are already there at the cut; lettering pops).
   T.DEFAULT_ENTER = { bean: 'none', image: 'none', map: 'none', fx: 'none', sign: 'none', timer: 'none', title: 'none', era: 'slide-left', caption: 'fade' };
   function enterExit(kind, p, st, isExit) {
     const q = isExit ? 1 - p : p;
     switch (kind) {
+      case 'drop-squash': { // 2-frame fall, impact squash 150/55, rebound 85/115, settle
+        if (isExit) { st.a *= q; return; }
+        const t = p * 0.5;
+        if (t < 0.067) { st.y -= (1 - t / 0.067) * T.H * 0.9; return; }
+        const k = (t - 0.067) / 0.433, d = Math.exp(-k * 5) * Math.cos(k * Math.PI * 3);
+        st.sx *= 1 + 0.5 * d; st.sy *= 1 - 0.45 * d; return;
+      }
+      case 'pop-tilt': st.s *= isExit ? T.ease.in(q) : Math.max(0, T.ease.outBack(q)); st.r += (1 - q) * (st.flip > 0 ? -5 : 5) * T.DEG; return;
+      case 'slam': {
+        if (isExit) { st.a *= q; return; }
+        st.s *= 1 + 0.6 * (1 - T.ease.outCubic(q));
+        if (q >= 1) return;
+        st.a *= Math.min(1, q * 3); return;
+      }
       case 'none': return;
       case 'fade': st.a *= q; return;
       case 'pop': st.s *= isExit ? T.ease.in(q) : Math.max(0, T.ease.outBack(q)); return;
@@ -139,9 +156,10 @@
   // Returns {x,y,s,r,a,flip} for a layer at shot-local time lt, or null when not visible.
   T.layerState = (L, lt) => {
     const at = L.at ?? 0, out = L.out ?? Infinity;
-    const ed = L.enterDur ?? ENTER_DUR, xd = L.exitDur ?? 0.25;
+    const enterKind = L.enter || T.DEFAULT_ENTER[L.type] || 'pop';
+    const ed = L.enterDur ?? ENTER_DUR_BY_KIND[enterKind] ?? ENTER_DUR, xd = L.exitDur ?? 0.25;
     if (lt < at || lt > out + xd) return null;
-    const st = { x: (L.x ?? 0.5) * T.W, y: (L.y ?? 0.5) * T.H, s: L.scale ?? 1, r: (L.rot ?? 0) * T.DEG, a: L.alpha ?? 1, flip: L.flip ? -1 : 1 };
+    const st = { x: (L.x ?? 0.5) * T.W, y: (L.y ?? 0.5) * T.H, s: L.scale ?? 1, r: (L.rot ?? 0) * T.DEG, a: L.alpha ?? 1, flip: L.flip ? -1 : 1, sx: 1, sy: 1 };
     for (const m of L.move || []) {
       const p = T.easeBy(m.ease || 'inOut')(T.prog(lt, m.at ?? 0, m.dur ?? 0.6));
       if (p <= 0) continue;
@@ -164,7 +182,8 @@
       if (p > 0 && p < 1) st.y -= Math.sin(p * Math.PI) * (j.h ?? 120);
     }
     st.bx = st.x; st.by = st.y; // anchor before entrance/exit offsets (used by the safe-frame clamp)
-    enterExit(L.enter || T.DEFAULT_ENTER[L.type] || 'pop', T.prog(lt, at, ed), st, false);
+    enterExit(enterKind, T.prog(lt, at, ed), st, false);
+    if (enterKind === 'slam') { const d = lt - at - ed; if (d >= 0 && d < 0.2) { st.x += Math.sin(d * 90) * 14 * (1 - d / 0.2); st.y += Math.cos(d * 70) * 8 * (1 - d / 0.2); } }
     if (lt > out) enterExit(L.exit || 'fade', T.prog(lt, out, xd), st, true);
     return st.a <= 0 || st.s <= 0 ? null : st;
   };
@@ -191,14 +210,20 @@
       if (!draw) throw new Error(`Unknown layer type "${L.type}" in shot ${shot.id}`);
       const st = T.layerState(L, lt);
       if (!st) continue;
-      ctx.save();
       const hud = L.hud ?? HUD_DEFAULT[L.type] ?? false;
-      if (!hud) T.applyCam(ctx, cam, L.z ?? 1);
+      const paint = (c) => {
+        c.save();
+        if (!hud) T.applyCam(c, cam, L.z ?? 1);
+        c.translate(st.x, st.y);
+        c.rotate(st.r);
+        c.scale(st.s * st.flip * st.sx, st.s * st.sy);
+        draw(c, L, lt - (L.at ?? 0), { ...shotEnv, st, lt });
+        c.restore();
+      };
+      ctx.save();
       ctx.globalAlpha *= st.a;
-      ctx.translate(st.x, st.y);
-      ctx.rotate(st.r);
-      ctx.scale(st.s * st.flip, st.s);
-      draw(ctx, L, lt - (L.at ?? 0), { ...shotEnv, st, lt });
+      if ((L.glow || L.silhouette || L.lineart) && T.modLayer) T.modLayer(ctx, L, lt, env, paint);
+      else paint(ctx);
       ctx.restore();
     }
     if (T.post) T.post(ctx, lt, shotEnv);
@@ -256,6 +281,7 @@
   // ---------- frame entry point ----------
   T.init = (spec, canvas, opts = {}) => {
     const scale = opts.scale ?? 1;
+    T.DPR = scale; // shadowBlur and other device-pixel values must be multiplied by this
     canvas.width = Math.round((T.W * scale) / 2) * 2; // even sizes: libx264 yuv420p rejects odd dimensions
     canvas.height = Math.round((T.H * scale) / 2) * 2;
     const mk = () => { const c = document.createElement('canvas'); c.width = canvas.width; c.height = canvas.height; return c; };
@@ -272,7 +298,8 @@
         T.drawShot(bufA.getContext('2d'), prev, prev.dur + lt, env);
         T.drawShot(bufB.getContext('2d'), shot, lt, env);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        T.transitions[tr.kind](ctx, bufA, bufB, lt / tr.dur);
+        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height); // start from a clean frame: semi-transparent transitions (whip) must not show the previous render
+        T.transitions[tr.kind](ctx, bufA, bufB, lt / tr.dur, tr);
       } else {
         T.drawShot(ctx, shot, lt, env);
       }

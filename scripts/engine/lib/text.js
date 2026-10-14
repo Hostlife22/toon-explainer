@@ -118,7 +118,7 @@
     T.outlined(ctx, (k) => T.rrect(k, -150, -60, 300, 110, 14), '#3d4a3a', { line: 8 });
     T.outlined(ctx, (k) => T.rrect(k, -132, -46, 264, 82, 8), '#1f2a1e', { line: 4 });
     ctx.font = T.font(64, 800); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#7fe08a'; ctx.shadowColor = '#7fe08a'; ctx.shadowBlur = 12;
+    ctx.fillStyle = '#7fe08a'; ctx.shadowColor = '#7fe08a'; ctx.shadowBlur = (12) * T.DPR;
     ctx.fillText(text, 0, -2);
     ctx.shadowBlur = 0;
   };

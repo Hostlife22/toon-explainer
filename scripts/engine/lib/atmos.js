@@ -129,7 +129,7 @@
   // lightning: jagged bolts that re-randomize every 2 frames. { h, count, color }
   FX.lightning = (ctx, L, lt) => {
     const r = T.rng(T.hash((L.id ?? 'zap') + step2(lt))), h = L.h ?? 500;
-    ctx.strokeStyle = L.color ?? '#fff7a0'; ctx.lineWidth = 12; ctx.lineJoin = 'miter'; ctx.shadowColor = '#bff4ff'; ctx.shadowBlur = 30;
+    ctx.strokeStyle = L.color ?? '#fff7a0'; ctx.lineWidth = 12; ctx.lineJoin = 'miter'; ctx.shadowColor = '#bff4ff'; ctx.shadowBlur = (30) * T.DPR;
     for (let b = 0; b < (L.count ?? 2); b++) {
       ctx.beginPath(); let x = (r() - 0.5) * 200, y = -h / 2; ctx.moveTo(x, y);
       while (y < h / 2) { x += (r() - 0.5) * 110; y += 40 + r() * 50; ctx.lineTo(x, y); }
@@ -162,7 +162,39 @@
     solemn: [['saturation', '#808080', 0.55], ['multiply', '#b8a898']], // grey-brown dusty (crucifixion hill)
     warm: [['soft-light', '#ff9a50'], ['multiply', '#fff0dc']],
     gold: [['soft-light', '#ffd070'], ['screen', '#2a1600']],
+    // v3 (reference library): memory / horror / grief / myth
+    sepia: [['saturation', '#808080', 0.85], ['multiply', '#d9b07a'], ['soft-light', '#5a3410', 0.5], ['vignette', '#3b2410', 0.55]],
+    horror: [['saturation', '#808080', 0.3], ['multiply', '#d49a96'], ['soft-light', '#2a0f12', 0.45], ['vignette', '#050202', 0.6]],
+    cold: [['saturation', '#808080', 0.6], ['multiply', '#9aa6b4'], ['soft-light', '#1c2433', 0.4]],
+    divine: [['bloom', '#fffbe6', 0.55], ['soft-light', '#fff2c0', 0.4]],
+    'mono-red': [['pixel', 'mono-red']], // grayscale world, only blood / roses keep their red
   };
+  // Keep strong reds, desaturate everything else by k (one pass over the physical pixels, ~20 ms at 1080p).
+  function monoRed(ctx, k) {
+    const kk = Math.round(k * 256);
+    T.pixels(ctx, (d) => {
+      for (let i = 0, n = d.length; i < n; i += 4) {
+        const r = d[i], g = d[i + 1], b = d[i + 2];
+        if (r > 90 && r * 10 > g * 17 && r * 10 > b * 17) continue;
+        const y = (r * 77 + g * 150 + b * 29) >> 8;
+        d[i] = r + (((y - r) * kk) >> 8); d[i + 1] = g + (((y - g) * kk) >> 8); d[i + 2] = b + (((y - b) * kk) >> 8);
+      }
+    });
+  }
+  function gradeOp(ctx, op, color, a, k) {
+    if (op === 'pixel') { if (color === 'mono-red') monoRed(ctx, k); return; }
+    if (op === 'vignette') {
+      const g = ctx.createRadialGradient(W / 2, H / 2, H * 0.3, W / 2, H / 2, H * 0.95);
+      g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, color);
+      ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = a * k; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); return;
+    }
+    if (op === 'bloom') {
+      const g = ctx.createRadialGradient(W / 2, H * 0.45, 0, W / 2, H * 0.45, H * 0.9);
+      g.addColorStop(0, color); g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = a * k; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); return;
+    }
+    ctx.globalCompositeOperation = op; ctx.globalAlpha = a * k; ctx.fillStyle = color; ctx.fillRect(0, 0, W, H);
+  }
   T.GRADES = Object.keys(GRADES);
   T.grade = (ctx, lt, env) => {
     const g = env.shot && env.shot.grade;
@@ -173,7 +205,7 @@
     const k = p * (g.strength ?? 1);
     if (k <= 0) return;
     ctx.save();
-    for (const [op, color, a = 1] of ops) { ctx.globalCompositeOperation = op; ctx.globalAlpha = a * k; ctx.fillStyle = color; ctx.fillRect(0, 0, W, H); }
+    for (const [op, color, a = 1] of ops) gradeOp(ctx, op, color, a, k);
     ctx.restore();
   };
 })();

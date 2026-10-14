@@ -38,6 +38,21 @@
     return '#' + [16, 8, 0].map((sh) => Math.round(T.lerp(ch(pa, sh), ch(pb, sh), t)).toString(16).padStart(2, '0')).join('');
   };
 
+  // Draw fn(g) on a scratch canvas with the current transform, then composite it once through a CSS filter.
+  // ctx.filter on many small draw calls is ~10x slower; clips and globalAlpha of ctx still apply. Nesting is safe.
+  const scratch = [];
+  let depth = 0;
+  T.filtered = (ctx, filter, fn) => {
+    const c = ctx.canvas, s = scratch[depth] || (scratch[depth] = document.createElement('canvas'));
+    if (s.width !== c.width || s.height !== c.height) { s.width = c.width; s.height = c.height; }
+    const g = s.getContext('2d');
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, s.width, s.height);
+    g.setTransform(ctx.getTransform());
+    depth++;
+    try { fn(g); } finally { depth--; }
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = filter; ctx.drawImage(s, 0, 0); ctx.restore();
+  };
+
   T.font = (size, weight = 900) => `${Math.round(size)}px "Rubik-${weight}", "Arial Black", sans-serif`;
 
   T.outlined = (ctx, pathFn, fill, { line = T.LINE, ink = T.PAL.ink, shade = null } = {}) => {
@@ -158,7 +173,16 @@
   T.post = (ctx, lt, env) => {
     const st = env.style || {};
     if (T.grade) T.grade(ctx, lt, env);
-    if (st.vignette !== false) {
+    // shot.vignette: {strength, x, y, radius, color} overrides the film vignette (heavy horror vignettes reach 0.85)
+    const sv = env.shot && env.shot.vignette;
+    if (sv) {
+      const cx = (sv.x ?? 0.5) * T.W, cy = (sv.y ?? 0.5) * T.H, rad = (sv.radius ?? 0.55) * T.H;
+      const g = ctx.createRadialGradient(cx, cy, rad * 0.55, cx, cy, rad * 1.9);
+      g.addColorStop(0, 'rgba(0,0,0,0)');
+      g.addColorStop(1, sv.color ?? `rgba(6,3,2,${sv.strength ?? 0.8})`);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, T.W, T.H);
+    } else if (st.vignette !== false) {
       const g = ctx.createRadialGradient(T.W / 2, T.H / 2, T.H * 0.45, T.W / 2, T.H / 2, T.H * 1.05);
       g.addColorStop(0, 'rgba(0,0,0,0)');
       g.addColorStop(1, `rgba(30,10,0,${st.vignette ?? 0.28})`);

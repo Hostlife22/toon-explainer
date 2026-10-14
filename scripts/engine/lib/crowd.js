@@ -1,6 +1,7 @@
 // crowd.js — crowds and army rows the way the reference builds them: one design duplicated N times with phase offsets,
 // back rows smaller / desaturated, optional march cycle, raised arms, or black silhouettes for audiences.
-// Layer: { type:'crowd', who | who:[...], count, rows, spread, size, march, pose, expr, view, silhouette, flipAlt }
+// Layer: { type:'crowd', who | who:[...], count, rows, spread, size, march, pose, expr, view, silhouette, flipAlt,
+//          mode:'lineup' (diagonal overlapping faces, 40% overlap, 5% scale step), creature:'horse' (animal members) }
 (function () {
   'use strict';
   const T = window.TOON;
@@ -23,7 +24,11 @@
       return look;
     };
     const members = [];
-    for (let i = 0; i < count; i++) {
+    if (L.mode === 'lineup') { // diagonal row of big overlapping faces (Fact-Checking 5:00): back first, each 5% smaller
+      const dir = L.dir ?? 1, step = size * 0.5 * 0.6;
+      for (let i = 0; i < count; i++) members.push({ i, row: 0, depth: i / Math.max(1, count - 1) * 0.6, x: -dir * i * step, y: -i * size * 0.04, s: Math.pow(0.95, i), who: who[i % who.length], off: r() * 3 });
+    }
+    for (let i = 0; i < (L.mode === 'lineup' ? 0 : count); i++) {
       const row = i % rows, perRow = Math.ceil(count / rows), col = Math.floor(i / rows);
       const depth = rows === 1 ? 0 : row / (rows - 1); // 0 = front
       members.push({
@@ -47,7 +52,9 @@
         walk: L.march ? [[0, 1e6]] : undefined, gaitRate: L.gaitRate, hold: L.hold, holdL: L.holdL,
         poseBlend: 0.07, look: tinted(m.who, m.depth) || undefined,
       };
-      T.layers.bean(ctx, bean, lt + (L.march ? (L.inStep ? 0 : m.off * 0.05) : m.off), { ...env, st: null });
+      const tl = lt + (L.march ? (L.inStep ? 0 : m.off * 0.05) : m.off);
+      if (L.creature) T.layers.creature(ctx, { type: 'creature', kind: L.creature, id: bean.id, size: size * m.s, walk: bean.walk, run: L.gallop ? [[0, 1e6]] : undefined, rider: m.who, riderHold: L.hold, color: L.color }, tl, { ...env, st: null });
+      else T.layers.bean(ctx, bean, tl, { ...env, st: null });
       ctx.restore();
     }
   };

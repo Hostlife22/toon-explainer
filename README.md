@@ -6,7 +6,7 @@ Turn a narrated script into a cutout-cartoon explainer video with a coding agent
 
 <img src="assets/showcase/hero.png" alt="Rendered toon-explainer frames: a king on a sunset balcony, legionaries marching through a rainy forest, an emperor in a palace seen over a soldier's shoulder, a cheering town, a city on fire and a fallen soldier after battle" width="100%" />
 
-[Quick start](#quick-start) · [Showcase](#showcase) · [What the engine draws](#what-the-engine-draws) · [From script to film](#from-script-to-film) · [Documentation](#documentation)
+[Quick start](#quick-start) · [Showcase](#showcase) · [Toolkits for any topic](#toolkits-for-any-topic) · [What the engine draws](#what-the-engine-draws) · [From script to film](#from-script-to-film) · [Documentation](#documentation)
 
 ## Quick start
 
@@ -68,17 +68,51 @@ All frames below were rendered by the engine from the specs in [`examples/`](exa
 </tr>
 </table>
 
+## Toolkits for any topic
+
+The style grammar was learned from eight studied explainer videos: Rome, China, the Reconquista, World War I, the road to World War II, a speech fact-check show, a Greek myth and a horror biography. Each one added a toolkit, so one engine covers wars of every era, long dynastic histories, mythology, fact-checks and horror. The [reference library](references/06-reference-library.md) maps each film type to its backgrounds, characters, graphics and tone tools.
+
+<table>
+<tr>
+<td width="33%"><img src="assets/showcase/v3/trench-attack.gif" alt="Soldiers in tin helmets advance across a sepia no-man's-land with craters, dead trees and barbed wire" width="100%" /><br/><strong>World War I</strong> · trenches, no-man's-land, uniforms</td>
+<td width="33%"><img src="assets/showcase/v3/tank.gif" alt="A rhomboid tank rolls across a cratered battlefield with scrolling treads" width="100%" /><br/><strong>Vehicles</strong> · tank, train, ships, biplane, cannon</td>
+<td width="33%"><img src="assets/showcase/v3/cavalry.gif" alt="Knights in great helms gallop on horses across a sunset plain" width="100%" /><br/><strong>Medieval</strong> · great helms, horses, gallop on twos</td>
+</tr>
+<tr>
+<td width="33%"><img src="assets/showcase/v3/atlas-map.gif" alt="Two territories with faces fight on an atlas map while an animated front line advances" width="100%" /><br/><strong>Living maps</strong> · faces, weapon arms, fronts, conquests</td>
+<td width="33%"><img src="assets/showcase/v3/countryballs.gif" alt="Characters with national-flag heads and era headwear on a teal burst" width="100%" /><br/><strong>Nations as people</strong> · flag heads, era headwear</td>
+<td width="33%"><img src="assets/showcase/v3/eastcity.gif" alt="Court officials in hanfu walk past pagodas and golden-roofed halls" width="100%" /><br/><strong>East Asia</strong> · pagodas, eaves, hanfu, karst mist</td>
+</tr>
+<tr>
+<td width="33%"><img src="assets/showcase/v3/tv-quote.gif" alt="An oval retro TV plays a speech while karaoke subtitles flag false words in red" width="100%" /><br/><strong>Fact-check</strong> · TV quote player, flagged subtitles, stamps</td>
+<td width="33%"><img src="assets/showcase/v3/horror-lurker.gif" alt="A shadowy figure with red eyes fades in behind an unaware man in a dark study" width="100%" /><br/><strong>Horror</strong> · lurker, heavy vignette, slow dread</td>
+<td width="33%"><img src="assets/showcase/v3/timelapse.gif" alt="A sun with a face and a crescent moon cross the sky in a day-night time-lapse over a waiting army" width="100%" /><br/><strong>Time compression</strong> · day/night time-lapse, timeline HUD, year signs</td>
+</tr>
+</table>
+
+<details>
+<summary>Contact sheets of the v3 examples</summary>
+
+<img src="assets/demo_v3_places.jpg" alt="Contact sheet: a tour of every v3 background and vehicle, from trenches and seas to pagodas, voids, offices and stages" width="100%" />
+<img src="assets/demo_v3_graphics.jpg" alt="Contact sheet: newspapers, checklists, stamps, charts, speech bubbles, a TV quote, signs, a mission card, news, a timeline and maps" width="100%" />
+<img src="assets/demo_v3_fx.jpg" alt="Contact sheet: glitch, mono-red, lurker, jump scare, wall shadow, line art, divine glow, flame shape, ink, mist, sepia memory, CCTV alarm, gas, shell bursts and entrances" width="100%" />
+<img src="assets/demo_v3_characters.jpg" alt="Contact sheet: headwear of every era, outfits, flag heads, masks, a herd of animals, cavalry, the reaper, a minotaur and a skeleton" width="100%" />
+
+</details>
+
 ## What the engine draws
 
 | Area | Included |
 | --- | --- |
-| Characters | Bean-head rig in three-quarter, front, side and back views; 14 expressions; 19 poses with hold-and-snap timing; two-bone arms with glove hands; talking mouth, blink, idle rock, tremble, walk and run cycles; capes, armor, helmets, crowns, laurels, hoods, hats, hair and beards |
-| Crowds | Duplicated designs with phase offsets, depth-tinted rows, marching armies, cheering towns, silhouette audiences |
-| Backgrounds | Sunset, day, dusk, night, storm and teal skies; layered hills; three-depth forests; stone and wooden towns; palace interiors with light wedges; parchment; reaction bursts; image backgrounds |
-| Depth | Foreground framing: bushes, canopy, ledges, tall grass, edge trunks, over-the-shoulder heads, rubble |
-| Atmosphere | Flipbook fire, rain, light beams, birds, smoke, explosions, blood, lightning, arrow volleys, speed lines, splats, spotlights, per-shot color grades |
-| Graphics | Name labels with tags and arrows, titles, dates, era tags, counters, timers, cards, signs, flipping calendars, extruded maps with pins, routes and dot armies |
-| Camera and edit | Drift, focus zoom, pan, punch, shake, Dutch tilt and parallax; cut, dissolve, fade, zoom-punch, whip and iris transitions |
+| Characters | Bean-head rig in three-quarter, front, side and back views; 17 expressions; 19 poses with hold-and-snap timing; two-bone arms with glove hands; talking mouth, blink, idle rock, tremble, walk and run cycles; 29 headwear kinds from laurels to tin hats, great helms, turbans and officer caps; outfits (suit, tunic, greatcoat, hanfu, kimono, lamellar, surcoat); flag heads, gas masks, animal and skull heads |
+| Creatures | Horse, bull, cow, camel and sheep with walk and gallop cycles and riders; reaper, raven, dove and skeleton |
+| Vehicles | Tank, 1910 car, train, paddle steamer, submarine, junk, caravel, rowboat, biplane, cannon, cart |
+| Crowds | Duplicated designs with phase offsets, depth-tinted rows, marching armies, cheering towns, cavalry, face lineups, silhouette audiences |
+| Backgrounds | Skies with day/night time-lapse; hills, forests, towns and palaces; trenches, battlefields, seas, underwater, stone corridors, horror voids, offices, graveyards, East Asian cities, karst mist, galleries, blueprints, deserts, mountains and caves, stages, bars, hospitals, factories, 1920s streets, Minoan halls, Olympus, chalkboards; parchment; reaction bursts; image backgrounds |
+| Depth | Foreground framing: bushes, canopy, ledges, tall grass, edge trunks, over-the-shoulder heads, rubble, sandbags, trench walls, window grids, prison bars, barbed wire, curtains, first-person hands |
+| Atmosphere | Flipbook fire, rain, light beams, birds, smoke, explosions, blood, lightning, arrows, gas clouds, muzzle flashes, shell bursts, mist, whirlpools, red eyes in the dark, wall shadows, ink bursts, glitch and RGB split, CCTV alarm, eyelids POV; grades including sepia, horror, cold, divine and mono-red; glow, silhouette and line-art layer modifiers |
+| Graphics | Labels, titles, dates, era tags, counters, calendars; newspapers, documents and checklists, stamps, line and bar charts, speech bubbles, retro TVs, ID cards, posters, quotes, stat walls, year signs, hanging counters, name tags, ribbons, news lower thirds, mission cards; timeline HUD; karaoke subtitles with flagged words; parchment and atlas maps with faces, conquests, fronts, tokens, burning cities, crosses, rivers and walls |
+| Camera and edit | Drift, focus zoom, pan, punch, shake, Dutch tilt and parallax; cut, dissolve, fade, zoom-punch, whip, iris, ink-blot, slash, peephole, sepia-to-color, torn split, bar wipe and flash-cut transitions; drop-squash, pop-tilt and slam entrances |
 
 Every random choice is seeded, so two renders of the same frame are identical. The bundled Rubik typeface covers Latin and Cyrillic.
 
@@ -151,14 +185,21 @@ For unique characters or locations, generate cutouts with an image model and com
 | [Spec reference](references/03-spec-reference.md) | Every field of the JSON spec, layer types, backgrounds, effects, grades and extension points |
 | [AI assets](references/04-ai-assets.md) | Prompts, chroma keying and compositing for generated cutouts and backgrounds |
 | [Workflow](references/05-workflow.md) | Script to film, voiceover alignment, rendering speed and the QA checklist |
+| [Reference library](references/06-reference-library.md) | The eight studied videos, constants across them, the topic → toolkit matrix and rules for dark material |
+| [Characters](references/07-characters.md) | Headwear, outfits, head modes, expressions, creatures and crowd modes |
+| [Places](references/07-places.md) | v3 backgrounds, vehicles, foreground kinds and props |
+| [Graphics](references/07-graphics.md) | Document widgets, timeline HUD, subtitles and the v3 map |
+| [FX and tone](references/07-fx-and-tone.md) | v3 effects, layer modifiers, entrances, transitions, grades and the horror pattern |
 
 ## Project layout
 
 ```text
 SKILL.md                  agent instructions
 references/               method guides
-examples/                 calendar_445, grammar, v2_showcase, character_sheet
-scripts/engine/           index.html, core.js and lib/ (paint, bg, face, rig, crowd, scenery, text, props, widgets, fx, atmos)
+examples/                 calendar_445, grammar, v2_showcase, character_sheet, v3_characters, v3_places, v3_graphics, v3_fx
+scripts/engine/           index.html, core.js and lib/ (paint, bg, face, rig, costume, outfit, crowd, creatures, spirits, vehicles,
+                          places, scenery, text, props, widgets, docs, hud, mapx, fx, atmos)
+scripts/vocab/            validator vocabulary per engine module
 scripts/render.py         MP4 / stills / contact sheet / preview server
 scripts/spec.py           spec loading and validation
 scripts/script2spec.py    storyboard → spec, SRT alignment, --merge
