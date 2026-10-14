@@ -1,38 +1,38 @@
-# 02 · Визуальная грамматика: какой шот под какую реплику
+# 02 · Visual Grammar: Which Shot for Which Line
 
-Каждый кадр сценария (`vo` + `screen`) превращается в один шот спеки. Сначала выбираешь **тип бита**, потом берёшь рецепт и подставляешь своё. Рецепты — проверенные фрагменты `layers`; полный контракт полей описан в `03-spec-reference.md`.
+Each script frame (`vo` + `screen`) becomes one shot in the spec. First pick the **beat type**, then take its recipe and substitute your own content. Recipes are tested `layers` fragments; the full field contract is in `03-spec-reference.md`.
 
-## Правила темпа (из замеров референса)
+## Pacing rules (from the reference measurements)
 
-1. Шот длится 1,5–4 с. Если реплика длиннее 5 с, дели шот на 2–3 бита внутри: смена позы (`pose:[{at,v}]`), всплывающая подпись (`at`), наезд-удар (`camera.punch`).
-2. Каждый шот движется:
-   - камера дрейфует всегда (по умолчанию `zoom [1, 1.04]`);
-   - у персонажа как минимум дыхание и моргание (это автоматически);
-   - плюс одно главное действие: поза, вход, подпись, счётчик.
-3. Текст на экране появляется **через 0,3–1,0 с после склейки** (`at`), а не на первом кадре: зритель сначала видит картинку.
-4. Ключевое слово реплики = событие в кадре. Если `vo` говорит «445 дней», то на этом слове (с поправкой на `at`) должен выскочить счётчик или ударить камера.
-5. Переходы:
-   - `cut` по умолчанию;
-   - `zoom-punch` на раскрытии или ударной фразе;
-   - `fade-white` на смене эпохи или главы;
-   - `whip` для «а тем временем» или сравнения;
-   - `dissolve` в лирике;
-   - `fade-black` в финале.
-   Не чаще одного «не-cut» на 4–5 шотов.
-6. Персонаж говорит, только когда говорит **он** (`talk`), а не на каждой реплике закадрового голоса.
+1. A shot lasts 1.5–4 s. If a line runs longer than 5 s, split the shot into 2–3 internal beats: a pose change (`pose:[{at,v}]`), a pop-in caption (`at`), a punch-zoom (`camera.punch`).
+2. Every shot moves:
+   - the camera always drifts (default `zoom [1, 1.04]`);
+   - the character at least breathes and blinks (automatic);
+   - plus one main action: a pose, an entrance, a caption, a counter.
+3. On-screen text appears **0.3–1.0 s after the cut** (`at`), not on the first frame: the viewer sees the image first.
+4. The key word of a line = an event in the frame. If `vo` says "445 days", a counter must pop in or the camera must punch on that word (adjusted via `at`).
+5. Transitions:
+   - `cut` by default;
+   - `zoom-punch` on a reveal or a punchline;
+   - `fade-white` on an era or chapter change;
+   - `whip` for "meanwhile" or a comparison;
+   - `dissolve` for lyrical moments;
+   - `fade-black` for the ending.
+   Use no more than one non-`cut` transition per 4–5 shots.
+6. A character talks (`talk`) only when **they** are speaking, not on every voice-over line.
 
-## Правило глубины (v2): каждый шот строится из 3 планов
+## Depth rule (v2): build every shot from 3 planes
 
-1. **Передний план** (`fg`, `z` 1,3–1,6): кусты в углах, свисающие кроны, уступ, высокая трава, ствол у края или затылок «через плечо». Закрывает 10–25 % кадра и темнее среднего плана.
-2. **Средний план**: персонажи (3/4!), толпа, пропсы.
-3. **Задний план**: богатый фон (`forest`, `city`, `sky` с облаками нужного стиля, `interior` с клиньями света).
+1. **Foreground** (`fg`, `z` 1.3–1.6): bushes in the corners, overhanging canopies, a ledge, tall grass, a trunk at the edge, or an over-the-shoulder back of a head. Covers 10–25% of the frame and is darker than the midground.
+2. **Midground**: characters (3/4 view!), crowds, props.
+3. **Background**: a rich backdrop (`forest`, `city`, `sky` with the right cloud style, `interior` with light wedges).
 
-Плюс атмосфера (`fx`: `birds`, `beam`, `rain`, `smoke`, `fire`) и при нужном тоне `grade`. Пустой фон с одиноким персонажем допустим только в реакциях (`burst`) и титрах.
+Add atmosphere (`fx`: `birds`, `beam`, `rain`, `smoke`, `fire`) and, when the tone calls for it, `grade`. An empty background with a lone character is acceptable only for reactions (`burst`) and title cards.
 
-## Рецепты
+## Recipes
 
-### A. Холодный заход / дата
-Пустая локация, потом дата, потом плашка эпохи.
+### A. Cold open / date
+Empty location, then the date, then the era badge.
 ```json
 {"bg":{"kind":"sky","preset":"dusk","clouds":5,"rays":true},
  "camera":{"zoom":[1.0,1.06],"pan":[[0,0],[30,-10]]},
@@ -42,23 +42,23 @@
   {"type":"era","small":"46 до н. э.","parts":[["РИМСКАЯ","#e0393e"],["РЕСПУБЛИКА","#fff"]],"x":0.025,"y":0.95,"at":0.2}]}
 ```
 
-### B. Знакомство с персонажем (имя + тег + стрелка)
-Это самый частый шот референса.
+### B. Character introduction (name + tag + arrow)
+The most common shot in the reference.
 ```json
 {"layers":[
   {"type":"bean","who":"caesar","x":0.62,"y":0.97,"size":680,"expr":"smug","pose":[{"at":0,"v":"hips"},{"at":2,"v":"point"}],"talk":[[2.1,3.5]]},
   {"type":"label","tag":"ДИКТАТОР","text":"ЮЛИЙ ЦЕЗАРЬ","x":0.28,"y":0.36,"at":0.8,"arrow":"down-right","size":88}]}
 ```
-Подпись ставь на **пустую сторону** кадра: x 0,22–0,32, если персонаж справа. Длинное имя → `size` 80–90.
+Place the caption on the **empty side** of the frame: x 0.22–0.32 if the character is on the right. Long name → `size` 80–90.
 
-### C. Придержанная разгадка («Он был не повар. Он был учёный…»)
-Шот 1: силуэт или спина (`expr` не видно, `fx: spotlight`). Шот 2: `zoom-punch` и лицо в `shock` или `smug`, плюс label.
+### C. Held-back reveal ("He wasn't a cook. He was a scientist…")
+Shot 1: a silhouette or the character's back (`expr` not visible, `fx: spotlight`). Shot 2: `zoom-punch` and the face in `shock` or `smug`, plus a label.
 ```json
 {"layers":[{"type":"bean","who":"x","x":0.5,"y":0.98,"size":600},{"type":"fx","kind":"spotlight","x":0.5,"y":0.45,"radius":360}]}
 ```
 
-### D. Контраст «в природе X, а сейчас Y» / сравнение
-Два персонажа или два предмета по сторонам, второй появляется позже, переход `whip`.
+### D. Contrast "in nature X, but now Y" / comparison
+Two characters or two objects on opposite sides; the second appears later; `whip` transition.
 ```json
 {"layers":[
   {"type":"bean","who":"a","x":0.3,"y":0.95,"size":520,"expr":[{"at":0,"v":"neutral"},{"at":0.8,"v":"happy"}],"pose":[{"at":0.8,"v":"arms-up"}],"jump":[{"at":0.9,"h":70}]},
@@ -67,16 +67,16 @@
   {"type":"label","text":"−1 МЕСЯЦ","x":0.72,"y":0.18,"at":2.1,"color":"#ff6b6b"}]}
 ```
 
-### E. Конкретика: число, сумма, год (доверие)
-Фон `burst`, крупный счётчик и наезд-удар в момент, когда число досчитало.
+### E. Specifics: a number, amount, or year (credibility)
+`burst` background, a large counter, and a punch-zoom the moment the number finishes counting.
 ```json
 {"bg":{"kind":"burst","color":"#2f8f8a"},"camera":{"punch":[{"at":2.4,"amount":0.12}]},
  "layers":[{"type":"counter","x":0.5,"y":0.55,"from":0,"to":20000,"dur":2.2,"suffix":" СОЛДАТ","size":150,"color":"#ffe066"},
            {"type":"fx","kind":"speedlines","x":0.5,"y":0.5,"at":2.4,"out":3.2}]}
 ```
-Для документа или исследования используй `card` (название, год, 2–3 строки), для дня, месяца или срока — `calendar`.
+For a document or study, use `card` (title, year, 2–3 lines); for a day, month, or deadline, use `calendar`.
 
-### F. Карта / география / распространение
+### F. Map / geography / spread
 ```json
 {"bg":{"kind":"parchment"},"layers":[{"type":"map","land":[[0.45,0.55,0.25,0.18],[0.7,0.4,0.2,0.2]],
   "regions":[{"pts":[[0.38,0.5],[0.5,0.45],[0.55,0.6],[0.42,0.66]],"at":0.5,"dur":1.5}],
@@ -84,56 +84,56 @@
   "routes":[{"pts":[[0.47,0.55],[0.6,0.45],[0.72,0.38]],"at":1.2,"dur":1.4}]},
   {"type":"bean","who":"x","x":0.62,"y":0.6,"size":260}]}
 ```
-Для реальной географии подложи `map.image`: карту в стиле пергамента от ИИ или PNG-контуры. Код отвечает за заливки, пины и маршруты.
+For real geography, supply a `map.image`: an AI-generated parchment-style map or PNG outlines. The code handles fills, pins, and routes.
 
-### G. Поворот к «злодею» / системе
-Тёмный пресет (`night`, `storm`), злодей снизу крупно (`size` 750+, `y` 1.02), `expr:"smug"`, медленный наезд `zoom [1, 1.12]` с `ease:"out"`, `fx: spotlight` или `rays` тёмного цвета. Подпись-тег: «ИНДУСТРИЯ», «КОРПОРАЦИЯ», «СЕНАТ».
+### G. Turn to the "villain" / the system
+Dark preset (`night`, `storm`), villain large from below (`size` 750+, `y` 1.02), `expr:"smug"`, slow push-in `zoom [1, 1.12]` with `ease:"out"`, `fx: spotlight` or dark-colored `rays`. Tag caption: "ИНДУСТРИЯ", "КОРПОРАЦИЯ", "СЕНАТ".
 
-### H. Кинематографичная сцена-эпизод (закрытая встреча, эксперимент)
-5–8 коротких шотов (1–2 с) в одной локации `interior`:
-- общий план;
-- крупный план лица (`size` 1100, `y` 1.35 — голова во весь кадр);
-- деталь (`prop` крупно);
-- реакция (`burst` + `shock`).
-Темп ускоряется к кульминации (так в референсе, медиана 0,87 с).
+### H. Cinematic episode scene (closed-door meeting, experiment)
+5–8 short shots (1–2 s) in a single `interior` location:
+- wide shot;
+- face close-up (`size` 1100, `y` 1.35 — head fills the frame);
+- detail (`prop` large);
+- reaction (`burst` + `shock`).
+Speed up toward the climax (as in the reference, median 0.87 s).
 
-### I. Финал-переворот (на «ты»)
-Персонаж-зритель `who:"you"` (нейтральная одежда), `expr:"worried"`, потом `"neutral"`. Ключевая фраза идёт `title` по буквам. Последний шот `fade-black`, камера медленно отъезжает: `zoom [1.08, 1.0]`.
+### I. Twist ending (addressing "you")
+A viewer-stand-in character `who:"you"` (neutral clothing), `expr:"worried"`, then `"neutral"`. The key phrase appears letter by letter as a `title`. The last shot uses `fade-black`, with the camera slowly pulling out: `zoom [1.08, 1.0]`.
 
-### J. Засада / серьёзная сцена (Тевтобург, 20:44–24:10)
-`forest` + `fg: canopy` + `fg: bushes`. Ряд `crowd` с `march`. На повороте `grade: {preset:"serious", at, dur:0.5}` и `fx: rain` с тем же `at`. Затем крупный план: `size` 900–1000, `tremble`, `expr` от `worried` к `shock`, `fx: arrows`, `camera.shake`.
+### J. Ambush / serious scene (Teutoburg, 20:44–24:10)
+`forest` + `fg: canopy` + `fg: bushes`. A `crowd` row with `march`. At the turn, `grade: {preset:"serious", at, dur:0.5}` and `fx: rain` with the same `at`. Then a close-up: `size` 900–1000, `tremble`, `expr` from `worried` to `shock`, `fx: arrows`, `camera.shake`.
 
-### K. Марш / армия
-`crowd` (`who` легионер с `holdL:"shield"`, `hold:"sword"`), `count` 6–9, `march: true`. Камера `pan` 100–200 px за шот: параллакс фона сам даёт движение.
+### K. March / army
+`crowd` (`who` a legionary with `holdL:"shield"`, `hold:"sword"`), `count` 6–9, `march: true`. Camera `pan` 100–200 px per shot: background parallax supplies the motion on its own.
 
-### L. Пожар / катастрофа
-`city` с `preset: "night"` или `grade: "night"`. Порядок слоёв: `fx: smoke`, затем `fx: fire` (w 1700, count 8), затем `explosion` на ударном слове, затем персонаж `expr:"scream"` + `pose:"clutch-head"` + `tremble`. Плюс `camera.shake`.
+### L. Fire / disaster
+`city` with `preset: "night"` or `grade: "night"`. Layer order: `fx: smoke`, then `fx: fire` (w 1700, count 8), then `explosion` on the key word, then a character with `expr:"scream"` + `pose:"clutch-head"` + `tremble`. Add `camera.shake`.
 
-### M. Погоня / гонец
-`run` на всё окно шота. Персонаж стоит на месте или едет `move`, камера `pan` 500–700 px, `fg: grass` с `z` 1,6, чтобы трава проносилась. Плащ развевается сам.
+### M. Chase / messenger
+`run` for the whole shot window. The character stays in place or travels via `move`; camera `pan` 500–700 px; `fg: grass` with `z` 1.6 so the grass rushes past. The cloak billows automatically.
 
-### N. После битвы
-`grade: "solemn"`, `forest` без `path`. Павший: `expr:"dead"`, `rot:-88`, `rock:0`, `blink:false` + `fx: blood`. Победитель: `pose:"sword-up"`, `flip`. Камера медленно отъезжает (`zoom [1.06, 1.0]`).
+### N. After the battle
+`grade: "solemn"`, `forest` without `path`. The fallen: `expr:"dead"`, `rot:-88`, `rock:0`, `blink:false` + `fx: blood`. The victor: `pose:"sword-up"`, `flip`. The camera slowly pulls out (`zoom [1.06, 1.0]`).
 
-### O. Ликование / народ
-`city` (`style: stone` или `wood`) + `crowd` (2 ряда, `armsUp`, `expr: "happy"`, `flipAlt`) + `fx: confetti` + `fg: grass`.
+### O. Celebration / the people
+`city` (`style: stone` or `wood`) + `crowd` (2 rows, `armsUp`, `expr: "happy"`, `flipAlt`) + `fx: confetti` + `fg: grass`.
 
-### P. Разговор «через плечо»
-`fg: ots` (`who` — собеседник, `side` противоположна говорящему) + говорящий в 3/4 с `talk`, сменой поз и подписью. Подпись ставь **после** `ots` в списке слоёв, чтобы затылок её не перекрыл.
+### P. Over-the-shoulder conversation
+`fg: ots` (`who` is the listener, `side` opposite the speaker) + the speaker in 3/4 view with `talk`, pose changes, and a caption. Put the caption **after** `ots` in the layer list so the back of the head doesn't cover it.
 
-## Тон: холодный против комедийного
+## Tone: cold vs. comedic
 
-| | Холодный (MASTER_PROMPT) | Комедийный (как в рефе) |
+| | Cold (MASTER_PROMPT) | Comedic (as in the reference) |
 |---|---|---|
-| Пресеты неба | `dusk`, `night`, `storm`, `teal` | `sunset`, `day` |
-| Выражения | `neutral`, `worried`, `smug`, `shock` | `scream`, `happy`, `angry` |
-| FX | `spotlight`, `rays` (тусклые), `flash` | `splat`, `confetti`, `sweat`, `speedlines` |
-| Переходы | `cut`, `fade-black`, `dissolve` | `zoom-punch`, `whip` |
-| Леттеринг | белый, теги приглушённые | цветные теги, `title` с подпрыгиванием |
-| `style.vignette` | 0,35–0,45 | 0,25 |
+| Sky presets | `dusk`, `night`, `storm`, `teal` | `sunset`, `day` |
+| Expressions | `neutral`, `worried`, `smug`, `shock` | `scream`, `happy`, `angry` |
+| FX | `spotlight`, `rays` (dim), `flash` | `splat`, `confetti`, `sweat`, `speedlines` |
+| Transitions | `cut`, `fade-black`, `dissolve` | `zoom-punch`, `whip` |
+| Lettering | white, muted tags | colored tags, bouncing `title` |
+| `style.vignette` | 0.35–0.45 | 0.25 |
 | `grade` | `serious`, `storm`, `night`, `solemn` | `warm`, `gold` |
-| Удержание позы | 1,5–3 с, мало смен | 0,4–1 с, частые смены поз |
+| Pose holds | 1.5–3 s, few changes | 0.4–1 s, frequent pose changes |
 
-## Лист персонажей = `cast`
+## Character sheet = `cast`
 
-Повторяющиеся герои описываются **один раз** в `spec.cast` и вызываются через `who`. Так персонаж выглядит одинаково во всех шотах: это аналог «листа персонажей» из MASTER_PROMPT. Поля внешности перечислены в `03-spec-reference.md` → bean.
+Define recurring characters **once** in `spec.cast` and reference them via `who`. This keeps a character looking the same in every shot: it's the equivalent of the "character sheet" from MASTER_PROMPT. Appearance fields are listed in `03-spec-reference.md` → bean.

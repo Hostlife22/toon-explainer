@@ -1,0 +1,112 @@
+name: CI and release
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Validate and package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PLAYWRIGHT_VERSION: '1.63.0'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+
+      - name: Install Python and Chromium
+        run: |
+          uv python install 3.12
+          uv run --isolated --python 3.12 --with "playwright==$PLAYWRIGHT_VERSION" playwright install --with-deps chromium
+
+      - name: Check source and documentation
+        run: uv run --python 3.12 python scripts/check_repository.py
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+
+      - name: Run tests (pipeline, determinism, release packaging)
+        run: uv run --isolated --python 3.12 --with "playwright==$PLAYWRIGHT_VERSION" --with pytest --with pillow --with numpy pytest tests -v
+
+      - name: Smoke-test contact sheets and a short film
+        run: |
+          for spec in examples/*/spec.json; do
+            name=$(basename "$(dirname "$spec")")
+            uv run --isolated --python 3.12 --with "playwright==$PLAYWRIGHT_VERSION" python scripts/render.py "$spec" --sheet "renders/$name-sheet.jpg" --scale 0.5
+          done
+          uv run --isolated --python 3.12 --with "playwright==$PLAYWRIGHT_VERSION" python scripts/render.py examples/v2_showcase/spec.json --shot v02_forest_march --scale 0.25 --out renders/forest.mp4
+
+      - name: Build release archives
+        run: uv run --python 3.12 python scripts/build_release.py
+
+      - name: Save release assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-assets
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Download verified archives
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-assets
+          path: dist
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dist
+          sha256sum --check SHA256SUMS
+          release_args=(--verify-tag --generate-notes --title "toon-explainer $RELEASE_TAG")
+          edit_args=(--draft=false)
+          if [[ "$RELEASE_TAG" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+-[0-9A-Za-z.-]+(\+[0-9A-Za-z.-]+)?$ ]]; then
+            release_args+=(--prerelease --latest=false)
+            edit_args+=(--prerelease --latest=false)
+          fi
+          if draft=$(gh release view --json isDraft --jq '.isDraft' -- "$RELEASE_TAG" 2>/dev/null); then
+            if [[ "$draft" == 'true' ]]; then
+              gh release upload --clobber -- "$RELEASE_TAG" toon-explainer.zip toon-explainer.tar.gz SHA256SUMS
+              gh release edit "${edit_args[@]}" -- "$RELEASE_TAG"
+            else
+              echo "Release already published: $RELEASE_TAG"
+            fi
+            exit 0
+          fi
+          gh release create "${release_args[@]}" -- "$RELEASE_TAG" toon-explainer.zip toon-explainer.tar.gz SHA256SUMS

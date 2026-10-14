@@ -1,6 +1,29 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python
 __pycache__/
 .pytest_cache/
-.DS_Store
-*.noaudio.mp4
-renders/
-film/
+
+# Rendered and synthesized outputs (regenerable)
+/dist/
+/renders/
+/film/
+*.mp4
+*.mov
+*.wav
+
+# Local credentials and private working files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.log
+.venv/
+node_modules/
+_archive/
+_private/

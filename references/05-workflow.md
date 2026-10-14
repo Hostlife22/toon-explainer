@@ -1,74 +1,82 @@
-# 05 · От сценария к готовому видео
+# 05 · From script to finished video
 
-Связь с `new/MASTER_PROMPT.md`: шаги 1–5 мастер-промпта дают сценарий-раскадровку. Этот скилл заменяет или дополняет шаги 6–7 (промты картинок и анимаций): вместо 100+ сгенерированных картинок большинство кадров **рисуется и анимируется кодом**. ИИ нужен только для уникальных персонажей и фонов (см. 04).
+Relation to the companion master prompt (MASTER_PROMPT.md, step 5 storyboard format): steps 1–5 of the master prompt produce the script-storyboard. This skill replaces or complements steps 6–7 (image and animation prompts): instead of 100+ generated images, most shots are **drawn and animated by code**. AI is needed only for unique characters and backgrounds (see 04).
 
-## Пайплайн
+## Storyboard format
+
+The parser accepts both Russian and English labels:
+
+- `**Кадр N**` (Shot N) or `**Shot N**`, optionally followed by 🎬;
+- `— Озвучка:` (Voiceover) or `— Voiceover:` / `— VO:`;
+- `— На экране:` (On screen) or `— On screen:` / `— Screen:`.
+
+## Pipeline
 
 ```
-сценарий.md ──script2spec──► spec.json (скелет, тайминги, .srt)
+script.md ──script2spec──► spec.json (skeleton, timings, .srt)
                      │
-        Claude: заполнить cast + layers по 02-visual-grammar
+        Claude: fill in cast + layers following 02-visual-grammar
                      │
-            spec.py (валидация) ──► render --sheet (раскадровка) ──► правки
+            spec.py (validation) ──► render --sheet (storyboard) ──► fixes
                      │
-     озвучка готова? ──► Whisper/CapCut .srt ──► script2spec --srt (точные тайминги, слои сохранить)
+     voiceover ready? ──► Whisper/CapCut .srt ──► script2spec --srt (exact timings, layers kept)
                      │
-        render --scale 0.5 --workers 4 (превью) ──► просмотр ──► render финал + --audio
+        render --scale 0.5 --workers 4 (preview) ──► review ──► final render + --audio
 ```
 
-### 1. Скелет
+### 1. Skeleton
 ```sh
 python3 scripts/script2spec.py film/script.md --out film/spec.json --wpm 160
 ```
-Каждый `**Кадр N**` становится шотом `kNN` с длительностью по числу слов. Поля `vo`, `screen`, `anim` (🎬) сохраняются. Шот получает заглушку `caption` с пометкой `todo`.
+Each `**Кадр N**` (or `**Shot N**`) becomes a shot `kNN` whose duration is based on its word count. The `vo`, `screen` and `anim` (🎬) fields are preserved. Each shot gets a placeholder `caption` marked `todo`.
 
-### 2. Заполнение (работа Claude)
-Для каждого шота:
-1. Определи тип бита (A–I в `02-visual-grammar.md`) по `vo` и `screen`.
-2. Заведи повторяющихся героев в `cast` один раз.
-3. Замени заглушку на слои рецепта. Подписи — это **ключевые слова реплики**, а не вся фраза.
-4. Расставь `at` по тексту реплики: появление подписи ≈ позиция ключевого слова в `vo` × длительность шота.
-5. 🎬-кадры получают главное действие (смена позы, `move`, `jump`, `punch`). Остальные — только дрейф и вход подписи.
-6. Каждые 4–5 шотов один «не-cut» переход.
+### 2. Filling in (Claude's job)
+For each shot:
+1. Identify the beat type (A–I in `02-visual-grammar.md`) from `vo` and `screen`.
+2. Add recurring characters to `cast` once.
+3. Replace the placeholder with the recipe's layers. Labels are the **key words of the line**, not the whole sentence.
+4. Set `at` from the line's text: label appearance ≈ position of the key word in `vo` × shot duration.
+5. 🎬 shots get a main action (pose change, `move`, `jump`, `punch`). The rest get only camera drift and a label entrance.
+6. Use one non-cut transition every 4–5 shots.
 
-Большие фильмы заполняй пачками по 15–20 шотов (как в шаге 6 MASTER_PROMPT) и проверяй раскадровку после каждой пачки.
+Fill in long films in batches of 15–20 shots (as in step 6 of the master prompt) and check the storyboard after each batch.
 
-### 3. Проверка раскадровки
+### 3. Storyboard check
 ```sh
 python3 scripts/spec.py film/spec.json
 uv run --with playwright python scripts/render.py film/spec.json --sheet film/sheet.jpg
 ```
-Смотри `sheet.jpg` (кадр на 75 % каждого шота):
-- текст не вылезает за кадр;
-- подпись не перекрывает лицо;
-- персонажи стоят на земле;
-- один фокус на кадр;
-- цвета не повторяются три шота подряд.
+Review `sheet.jpg` (a frame at 75% of each shot):
+- text stays inside the frame;
+- labels do not cover faces;
+- characters stand on the ground;
+- one focal point per frame;
+- colors do not repeat three shots in a row.
 
-### 4. Тайминги по реальной озвучке
-Сделай SRT озвучки (Whisper: `whisper vo.mp3 --language ru --output_format srt`, или экспорт из CapCut). Затем:
+### 4. Timing to the real voiceover
+Make an SRT of the voiceover (Whisper: `whisper vo.mp3 --language ru --output_format srt` — set `--language` to your narration language — or an export from CapCut). Then:
 ```sh
 python3 scripts/script2spec.py film/script.md --srt vo.srt --merge film/spec.json
 ```
-`--merge` меняет только `dur` у шотов `kNN`, слои не трогает и пересобирает `spec.srt`. Начало каждого шота совпадёт с первым словом его реплики. Время слоёв (`at`) локальное, поэтому подписи сдвинутся вместе с шотом. Проверь только шоты, которые сильно укоротились.
+`--merge` changes only the `dur` of `kNN` shots, leaves layers untouched and rebuilds `spec.srt`. Each shot starts on the first word of its line. Layer times (`at`) are local, so labels move together with their shot. Only re-check shots that became much shorter.
 
-### 5. Превью и финал
+### 5. Preview and final
 ```sh
 uv run --with playwright python scripts/render.py film/spec.json --out film/preview.mp4 --scale 0.5 --workers 4
-uv run --with playwright python scripts/render.py film/spec.json --shot k07,k08 --out film/k07.mp4   # точечная проверка
+uv run --with playwright python scripts/render.py film/spec.json --shot k07,k08 --out film/k07.mp4   # spot check
 uv run --with playwright python scripts/render.py film/spec.json --out film/final.mp4 --audio vo.mp3 --workers 4
 ```
-Замер 14.10.2026 (этот Mac): 25 с видео — 30 с при `--scale 0.5 --workers 3` и 2 мин 22 с в 1080p при `--workers 4` (≈5,7 с рендера на 1 с видео). Фильм на 7 минут в 1080p ≈ 40 минут. Превью делай на 0.5.
+Benchmark from 14.10.2026 (on a Mac): 25 s of video takes 30 s at `--scale 0.5 --workers 3` and 2 min 22 s at 1080p with `--workers 4` (≈5.7 s of rendering per 1 s of video). A 7-minute film at 1080p takes ≈40 minutes. Render previews at 0.5.
 
-Интерактивный просмотр (пробел — play, стрелки — покадрово, ползунок — перемотка):
+Interactive viewer (space to play, arrow keys to step frame by frame, slider to scrub):
 ```sh
-uv run --with playwright python scripts/render.py film/spec.json --serve   # печатает URL
+uv run --with playwright python scripts/render.py film/spec.json --serve   # prints the URL
 ```
 
-## QA перед сдачей
-- [ ] `spec.py` без ошибок, `pytest tests` зелёный.
-- [ ] Ни одного шота длиннее 5 с без внутреннего бита.
-- [ ] Ключевое слово реплики совпадает с событием в кадре (±0,3 с).
-- [ ] Текст читается на телефоне: `size` не меньше 56 для подписей, 44 для caption.
-- [ ] Тон соответствует выбранному (таблица в 02).
-- [ ] Независимый просмотр: отдай `preview.mp4` агенту, который не писал спеку, и попроси найти 5 худших моментов.
+## QA before delivery
+- [ ] `spec.py` reports no errors, `pytest tests` is green.
+- [ ] No shot longer than 5 s without an internal beat.
+- [ ] The key word of each line coincides with an on-screen event (±0.3 s).
+- [ ] Text is readable on a phone: `size` at least 56 for labels, 44 for caption.
+- [ ] The tone matches the one chosen (table in 02).
+- [ ] Independent review: hand `preview.mp4` to an agent that did not write the spec and ask it to find the 5 worst moments.

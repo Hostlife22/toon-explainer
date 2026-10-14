@@ -1,120 +1,120 @@
-# 01 · Разбор референса: «The ENTIRE History of ROME» (канал Historically)
+# 01 · Reference Breakdown: "The ENTIRE History of ROME" (Historically channel)
 
-Источник: `new/The ENTIRE History of ROME [No AI].mp4`, 38:29, 854×428 @ 30 fps, транскрипт `new/transc.txt`.
-Разобран 14.10.2026 с помощью `scripts/analyze_ref.py` (склейки и ритм) и покадровых полос 2–15 fps.
+Source: a locally supplied copy of the video and its transcript, 38:29, 854×428 @ 30 fps.
+Analyzed on 2026-10-14 with `scripts/analyze_ref.py` (cuts and pacing) and frame strips at 2–15 fps.
 
-## 1. Как это сделано (техника)
+## 1. How it's made (technique)
 
-Это **cutout / puppet-анимация** в духе Toon Boom Harmony или After Effects, а не покадровая рисовка:
+This is **cutout / puppet animation** in the vein of Toon Boom Harmony or After Effects, not frame-by-frame drawing:
 
-| Слой | Как устроен | Что повторяем в коде |
+| Layer | How it's built | What we replicate in code |
 |---|---|---|
-| Фон | Нарисованная «живописная» картинка: градиентное небо (закат, день), стилизованные облака-«запятые», холмы с тёмной обводкой, трава штрихами | `bg: sky / interior / parchment / burst` или `bg.image` от ИИ |
-| Персонажи | «Бобовые» головы: белое лицо, точки-глаза, простой рот, толстый тёмно-коричневый контур, короткое тело-балахон, ручки-сосиски | `bean`-риг (код) или `image`-вырезки от ИИ |
-| Движение персонажа | Смена поз ключами (pose-to-pose за 4–6 кадров), моргание, рот «болтается» во время реплики, дыхание, тряска от страха или злости | `pose: [{at,v}]`, `talk`, `shake`, `jump`, авто-моргание и дыхание |
-| Камера | Почти всегда медленный наезд или дрейф (Ken Burns) на 2–6 %; резкие «наезды-удары» на эмоциональных словах | `camera.zoom`, `camera.pan`, `camera.punch` |
-| Леттеринг | Жирный округлый гротеск, белая заливка, толстая чёрная обводка, тень; маленький цветной тег над именем («KING» жёлтым над «NUMITOR»), толстая белая стрелка на персонажа | `label` (tag + arrow), `date`, `era`, `title` |
-| Инфографика | Пергаментная карта, территория заливается красным, на карте стоит персонаж; плашка эпохи внизу слева («ROMAN KINGDOM» красным и белым); таймер спидрана | `map`, `era`, `timer` |
-| Эффекты | Лучи света, аниме-лучи скорости, капли пота, чернильная клякса с текстом («K.O.»), вспышка в белое | `fx: rays / speedlines / sweat / splat / flash` |
-| Переходы | 80 % — жёсткая склейка; остальное — быстрый наезд с уходом в белое, растворение, свайп | `transition: cut / zoom-punch / fade-white / dissolve / whip` |
+| Background | A painted "storybook" image: gradient sky (sunset, day), stylized comma-shaped clouds, hills with dark outlines, grass drawn as strokes | `bg: sky / interior / parchment / burst` or an AI-generated `bg.image` |
+| Characters | "Bean" heads: white face, dot eyes, simple mouth, thick dark-brown outline, short robe-like body, sausage arms | `bean` rig (code) or AI-generated `image` cutouts |
+| Character motion | Pose-to-pose keys (over 4–6 frames), blinking, a mouth that flaps during dialogue, breathing, shaking from fear or anger | `pose: [{at,v}]`, `talk`, `shake`, `jump`, auto blink and breathing |
+| Camera | Almost always a slow push-in or drift (Ken Burns) of 2–6%; sharp "punch-zooms" on emotional words | `camera.zoom`, `camera.pan`, `camera.punch` |
+| Lettering | Bold rounded sans-serif, white fill, thick black outline, drop shadow; a small colored tag above the name ("KING" in yellow above "NUMITOR"), a thick white arrow pointing at the character | `label` (tag + arrow), `date`, `era`, `title` |
+| Infographics | Parchment map, territory fills in red, a character stands on the map; era badge in the lower left ("ROMAN KINGDOM" in red and white); speedrun timer | `map`, `era`, `timer` |
+| Effects | Light rays, anime speed lines, sweat drops, an ink splat with text ("K.O."), flash to white | `fx: rays / speedlines / sweat / splat / flash` |
+| Transitions | 80% hard cuts; the rest are a fast push-in into white, a dissolve, or a swipe | `transition: cut / zoom-punch / fade-white / dissolve / whip` |
 
-## 2. Замеры ритма (`analyze_ref.py`)
+## 2. Pacing measurements (`analyze_ref.py`)
 
-| Окно | Склеек за 2 мин | Средний шот | Медиана | Кадров без движения* |
+| Window | Cuts per 2 min | Mean shot | Median | Motionless frames* |
 |---|---|---|---|---|
-| 0:00–2:00 (комедийное начало) | 52 | 2,26 с | 1,43 с | 22 % |
-| 16:40–18:40 (спокойная часть) | 34 | 3,43 с | 2,0 с | 41 % |
-| 21:40–23:40 (Тевтобург, серьёзная сцена) | 67 | 1,76 с | 0,87 с | 15 % |
+| 0:00–2:00 (comedic opening) | 52 | 2.26 s | 1.43 s | 22% |
+| 16:40–18:40 (calm section) | 34 | 3.43 s | 2.0 s | 41% |
+| 21:40–23:40 (Teutoburg, serious scene) | 67 | 1.76 s | 0.87 s | 15% |
 
-\* «Без движения» означает разницу между кадрами < 0,5 (только дрейф камеры). Ещё ~45 % кадров дают небольшую разницу: персонаж двигает частью тела, всплывает текст.
+\* "Motionless" means the frame-to-frame difference is < 0.5 (camera drift only). Another ~45% of frames show a small difference: a character moves a body part, or text pops in.
 
-Выводы для движка:
-- **Ни одного полностью статичного шота.** Даже «пустой» кадр дрейфует камерой (zoom 1.00→1.04–1.06 за шот). Поэтому в движке камера по умолчанию `zoom [1, 1.04]`.
-- **Новая картинка каждые 1,5–3,5 с.** Это совпадает с темпом из MASTER_PROMPT (15–18 картинок в минуту). Шоты дольше 5 с делим на 2–3 бита внутри: смена позы, всплывающая подпись, наезд-удар.
-- Кластеры «склеек» через 0,23 с — это не склейки, а быстрый наезд с белой вспышкой (кадры 0:12.0–0:13.2) или пачка флеш-кадров. В движке это `zoom-punch`.
-- В кульминации (засада в лесу) темп **ускоряется**, а не замедляется: медиана 0,87 с.
+Takeaways for the engine:
+- **Not a single fully static shot.** Even an "empty" frame drifts the camera (zoom 1.00→1.04–1.06 per shot). That's why the engine's default camera is `zoom [1, 1.04]`.
+- **A new image every 1.5–3.5 s.** This matches the pace in MASTER_PROMPT (15–18 images per minute). Split shots longer than 5 s into 2–3 internal beats: a pose change, a pop-in caption, a punch-zoom.
+- Clusters of "cuts" 0.23 s apart aren't cuts but a fast push-in with a white flash (frames 0:12.0–0:13.2) or a burst of flash frames. In the engine this is `zoom-punch`.
+- At the climax (the forest ambush) the pace **speeds up** rather than slows down: median 0.87 s.
 
-## 3. Хронометраж приёмов (примеры)
+## 3. Technique timings (examples)
 
-- **0:05–0:12** Карта Европы, на ней сидит персонаж. Флаг «ALBA LONGA» выскакивает с овершутом (~0,3 с), плашка эпохи меняется с «ROMAN KINGDOM» на «ROME», камера медленно наезжает, в конце быстрый наезд в белое.
-- **0:13.5–0:22** Пустой балкон на закате, лучи, потом всплывает дата «771 BC». Склейка: король на балконе, через 1 с подпись «KING / NUMITOR» и стрелка. Из-за края кадра выезжает брат.
-- **1:07–1:10** Быстрая серия: титр-эмблема, крупный план, клякса «K.O.», затем сцена праздника с силуэтами.
-- **18:20–18:27** Карта империи залита красным, персонаж на карте. Пластырь прилетает из-за кадра и «заклеивает» карту. Склейка на статую.
+- **0:05–0:12** Map of Europe with a character sitting on it. An "ALBA LONGA" flag pops in with overshoot (~0.3 s), the era badge switches from "ROMAN KINGDOM" to "ROME", the camera slowly pushes in, ending in a fast push-in to white.
+- **0:13.5–0:22** Empty balcony at sunset, rays, then the date "771 BC" pops in. Cut: the king on the balcony; after 1 s the "KING / NUMITOR" caption and arrow appear. His brother slides in from the edge of the frame.
+- **1:07–1:10** Rapid sequence: emblem title card, close-up, "K.O." splat, then a celebration scene with silhouettes.
+- **18:20–18:27** The empire map is filled red, a character on the map. A bandage flies in from off-screen and "patches" the map. Cut to a statue.
 
-## 4. Цвет и линия
+## 4. Color and line
 
-- Контур тёмно-коричневый, а не чёрный (`#2a1c15`), толщина ≈ 1,2 % высоты персонажа.
-- Кожа тёплая белая (`#f6f2ea`) с одной холодно-серой тенью сбоку (`#d8d0c4`), тени цел-шейдингом, без градиентов на персонажах.
-- Градиенты разрешены только в небе и в свечении.
-- Одежда насыщенная: красный `#c8323a`, золото `#f2c230`, оливковый `#8a8b4a`, пурпур, голубой.
-- Небо: розово-оранжевые закаты `#b84a63 → #fde3a0`, дневное `#4f9fe0 → #eef8fb`. Для реакций нужен бирюзовый фон-«взрыв» с крапинками.
-- Лёгкое зерно и тёплая виньетка по краям.
+- Outline is dark brown, not black (`#2a1c15`), thickness ≈ 1.2% of character height.
+- Skin is warm white (`#f6f2ea`) with a single cool-gray shadow on one side (`#d8d0c4`); cel-shaded, no gradients on characters.
+- Gradients are allowed only in the sky and in glows.
+- Clothing is saturated: red `#c8323a`, gold `#f2c230`, olive `#8a8b4a`, purple, light blue.
+- Sky: pink-orange sunsets `#b84a63 → #fde3a0`, daytime `#4f9fe0 → #eef8fb`. Reactions need a teal speckled "burst" background.
+- Light grain and a warm vignette at the edges.
 
-## 5. Чем мы отличаемся от референса (сознательно)
+## 5. How we deliberately differ from the reference
 
-Канал из MASTER_PROMPT холодный, «триллер-расследование». Поэтому визуальную грамматику берём один в один, а тон меняем палитрой и FX:
-- пресеты `dusk`, `night`, `storm`, `teal` вместо вечного заката;
-- `fx: spotlight` для «допросной» темноты;
-- меньше клоунских `splat` и `confetti`.
-См. раздел «Тон» в `02-visual-grammar.md`.
+The target channel (MASTER_PROMPT) has a cold, investigative tone. So we take the visual grammar one-to-one but shift the tone through palette and FX:
+- presets `dusk`, `night`, `storm`, `teal` instead of a perpetual sunset;
+- `fx: spotlight` for "interrogation room" darkness;
+- fewer clownish `splat` and `confetti` effects.
+See the "Tone" section in `02-visual-grammar.md`.
 
-## 6. Полный разбор всего видео (0:00–38:29, 4 параллельных анализа, 14.10.2026)
+## 6. Full breakdown of the entire video (0:00–38:29, 4 parallel analyses, 2026-10-14)
 
-Метод: обзорные листы всего видео (кадр каждые 4 с, около 580 кадров), 80+ полос движения на 10–15 и 30 fps, около 80 полноразмерных кадров фонов. Ниже итоги, которые воплощены в движке v2.
+Method: contact sheets of the whole video (one frame every 4 s, about 580 frames), 80+ motion strips at 10–15 and 30 fps, about 80 full-size background frames. Below are the findings implemented in engine v2.
 
-### Персонаж
-- Голова занимает 45–50 % роста. Форма яйцевидная: шире в скулах, сужение к подбородку. Тело — наклонённый «колокол», ноги-обрубки, всего ~2,2 головы.
-- **Ракурс 3/4 в 60–70 % кадров.** Черты смещены к стороне взгляда, затылочная треть головы в большой холодно-серой тени `#c4c1cd`. Есть также front, side, back и сверхкрупные планы (лицо на полкадра).
-- Руки — гнущиеся сужающиеся трубки, **не прямые линии**. Кисти — белые перчатки с 3–4 пальцами: кулак, указание, ладонь, большой палец, хват.
-- Лицо:
-  - глаза — точки или вертикальные овалы без белков;
-  - эмоцию несут толстые брови;
-  - рот «D» с розовым языком `#e8828a` и полосой верхних зубов, оскал с сеткой зубов, волнистый рот при плаче.
-- Дополнения: X-глаза (смерть), «> <» (натуга), ручьи слёз, капли пота, вена злости.
-- Волосы — цельная масса со светлой прядью, у 3/4 закрывает затылок. Борода — масса ниже глаз.
-- Легионер:
-  - серая сегментная броня, красная юбка в складку;
-  - шлем с гребнем-щёткой и нащёчниками;
-  - большой красный щит с жёлтыми «крыльями», короткий меч.
+### Character
+- The head takes up 45–50% of total height. Egg-shaped: wider at the cheekbones, tapering to the chin. The body is a tilted "bell" with stubby legs, about 2.2 heads tall overall.
+- **3/4 view in 60–70% of frames.** Features shift toward the gaze direction; the back third of the head sits in a large cool-gray shadow `#c4c1cd`. There are also front, side, back, and extreme close-up shots (face filling half the frame).
+- Arms are bendable tapering tubes, **not straight lines**. Hands are white gloves with 3–4 fingers: fist, point, open palm, thumbs-up, grip.
+- Face:
+  - eyes are dots or vertical ovals without whites;
+  - thick eyebrows carry the emotion;
+  - a "D" mouth with a pink tongue `#e8828a` and a strip of upper teeth, a snarl with a grid of teeth, a wavy mouth when crying.
+- Extras: X eyes (death), "> <" (strain), streams of tears, sweat drops, an anger vein.
+- Hair is a single solid mass with a light highlight streak; in 3/4 view it covers the back of the head. Beard is a mass below the eyes.
+- Legionary:
+  - gray segmented armor, red pleated skirt;
+  - helmet with a brush crest and cheek guards;
+  - large red shield with yellow "wings", short sword.
 
-### Анимация персонажа (самое важное отличие от v1)
-- **Limited animation, hold-and-snap.** Поза держится 0,4–4 с и меняется **за 0–1 кадр**, затем идёт короткая осадка (~4 %, 3–4 кадра). Плавные переходы между позами почти не встречаются (1:17, 12:41, 24:12, 31:36).
-- Речь: 2–3 формы рта, каждая держится 2–4 кадра (≈8–12 смен в секунду). Голова покачивается на 1–3°, челюсть не двигается.
-- Покой: тело качается вокруг ступней на ±1,5–3° с периодом 1,5–2 с, голова наклоняется в противофазе, дыхание ~1–2 %. Моргание редкое, 2–3 кадра.
-- Ходьба и бег на «двойках»: шаг 6–8 кадров, подпрыгивание ~3 % роста. Персонаж часто стоит на месте, а мимо едет фон с параллаксом (3:40, 22:36).
-- Страх: дрожь ±1–2 px каждые 2 кадра. Удар: замах (4 кадра), смаз (1 кадр), фаза удара, затем удержание с микротряской.
-- Плащи развеваются (лаг + синус около 3 Гц). Гребни и волосы почти жёсткие.
-- Толпы и армии: одна модель, скопированная со сдвигом фазы; задние ряды мельче и тусклее (15:04, 22:36). На картах армии — кластеры точек.
+### Character animation (the biggest difference from v1)
+- **Limited animation, hold-and-snap.** A pose holds for 0.4–4 s and changes **within 0–1 frames**, followed by a short settle (~4%, 3–4 frames). Smooth transitions between poses are rare (1:17, 12:41, 24:12, 31:36).
+- Speech: 2–3 mouth shapes, each held for 2–4 frames (≈8–12 changes per second). The head bobs 1–3°; the jaw doesn't move.
+- Idle: the body sways around the feet by ±1.5–3° with a 1.5–2 s period, the head tilts in counter-phase, breathing ~1–2%. Blinks are rare, 2–3 frames long.
+- Walking and running on "twos": a step every 6–8 frames, a bounce of ~3% of height. Often the character stays in place while the background scrolls past with parallax (3:40, 22:36).
+- Fear: a ±1–2 px tremble every 2 frames. A strike: wind-up (4 frames), smear (1 frame), impact, then a hold with micro-shake.
+- Cloaks billow (lag + a sine wave of about 3 Hz). Crests and hair are nearly rigid.
+- Crowds and armies: one model duplicated with phase offsets; back rows are smaller and dimmer (15:04, 22:36). On maps, armies are clusters of dots.
 
-### Фоны
-- **Почти в каждом кадре есть передний план, закрывающий 10–25 % кадра:**
-  - тёмные кусты в углах;
-  - свисающие кроны;
-  - диагональный уступ или балюстрада;
-  - высокие пучки травы;
-  - ствол у края;
-  - затылок «через плечо».
+### Backgrounds
+- **Almost every frame has a foreground element covering 10–25% of the frame:**
+  - dark bushes in the corners;
+  - overhanging tree canopies;
+  - a diagonal ledge or balustrade;
+  - tall tufts of grass;
+  - a tree trunk at the edge;
+  - an over-the-shoulder back of a head.
 
-  Это главный источник глубины (0:12, 3:36, 21:00, 29:32, 35:28).
-- Пейзаж:
-  - 2–4 полосы холмов, дальние светлее и ближе к цвету горизонта;
-  - подсвеченный гребень, тень у подножия, мазки кистью.
-- Облака двух типов:
-  - закатные «дольки» с кремовой нижней кромкой;
-  - дневные кучевые с контуром, сине-серым низом и завитками.
-- Лес в три глубины, кроны с серповидными бликами, светлые пятна, лучи (2:48, 21:00).
-- Интерьеры дворцов:
-  - горчичная стена, винная панель внизу с золотой полосой;
-  - золотые колонны по краям;
-  - **диагональные клинья тени примерно под 30°**, блики на полу.
-- Атмосфера:
-  - флипбук-огонь: формы меняются каждые 2 кадра, 3 цвета, искры;
-  - дождь в 2 слоя, начинается посреди шота вместе с перекраской;
-  - лучи из угла, стаи птиц, дым, взрывы, кровь, стрелы.
-- Карты:
-  - территории — плиты с тёмным торцом 5–15 px, светлое свечение вдоль берегов;
-  - заливка расширяется, территории убираются ступенями по ~1 с;
-  - армии точками.
-- Настроение задаётся перекраской:
-  - серьёзные сцены — обесцвеченный тёмно-бирюзовый, длинные удержания, медленные наезды;
-  - комедийные — тёплые цвета, «взрывы», быстрые вставки.
+  This is the main source of depth (0:12, 3:36, 21:00, 29:32, 35:28).
+- Landscape:
+  - 2–4 bands of hills, with distant ones lighter and closer to the horizon color;
+  - a lit ridge, shadow at the base, visible brush strokes.
+- Two types of clouds:
+  - sunset "segments" with a cream lower edge;
+  - daytime cumulus with an outline, blue-gray underside, and curls.
+- Forest in three depth layers, canopies with crescent highlights, dappled light, rays (2:48, 21:00).
+- Palace interiors:
+  - mustard wall, wine-colored lower panel with a gold stripe;
+  - gold columns at the edges;
+  - **diagonal shadow wedges at roughly 30°**, highlights on the floor.
+- Atmosphere:
+  - flipbook fire: shapes change every 2 frames, 3 colors, sparks;
+  - rain in 2 layers, starting mid-shot together with a color regrade;
+  - rays from a corner, flocks of birds, smoke, explosions, blood, arrows.
+- Maps:
+  - territories are slabs with a dark 5–15 px edge and a light glow along the coasts;
+  - fills expand, and territories are removed in steps of ~1 s;
+  - armies as dots.
+- Mood is set by color regrading:
+  - serious scenes: desaturated dark teal, long holds, slow push-ins;
+  - comedic scenes: warm colors, "bursts", quick inserts.
