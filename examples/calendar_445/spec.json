@@ -1,0 +1,546 @@
+{
+  "title": "Год, который длился 445 дней — демо",
+  "fps": 30,
+  "seed": 445,
+  "style": {
+    "grain": true,
+    "vignette": 0.3
+  },
+  "cast": {
+    "pontifex": {
+      "robe": "#efe6d4",
+      "sash": "#c8323a",
+      "head": "pontifex",
+      "hair": "bald",
+      "beard": "full",
+      "beardColor": "#d9d3c7",
+      "belt": "#b8861b"
+    },
+    "caesar": {
+      "robe": "#f1eadb",
+      "cape": "#c8323a",
+      "sash": "#8f1f27",
+      "hair": "short",
+      "hairColor": "#3b2a20",
+      "head": "laurel",
+      "belt": "#b8861b"
+    },
+    "senator": {
+      "robe": "#e9e2d2",
+      "sash": "#7a3b8f",
+      "hair": "curly",
+      "hairColor": "#5a3a26"
+    },
+    "rival": {
+      "robe": "#5f7a9a",
+      "hair": "short",
+      "hairColor": "#2e2018",
+      "beard": "goatee"
+    },
+    "you": {
+      "robe": "#4f7fb8",
+      "hair": "short",
+      "hairColor": "#6b4a30"
+    }
+  },
+  "shots": [
+    {
+      "id": "k01",
+      "dur": 4.0,
+      "vo": "В сорок шестом году до нашей эры римляне прожили год длиной в четыреста сорок пять дней.",
+      "bg": {
+        "kind": "sky",
+        "preset": "sunset",
+        "clouds": 6,
+        "rays": true,
+        "trees": [
+          [
+            0.12,
+            0.8,
+            0.32
+          ],
+          [
+            0.9,
+            0.82,
+            0.28
+          ]
+        ]
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.06
+        ],
+        "pan": [
+          [
+            0,
+            0
+          ],
+          [
+            30,
+            -10
+          ]
+        ]
+      },
+      "layers": [
+        {
+          "type": "crowd",
+          "who": "senator",
+          "x": 0.5,
+          "y": 0.83,
+          "count": 6,
+          "spread": 900,
+          "size": 150,
+          "z": 0.85
+        },
+        {
+          "type": "prop",
+          "kind": "temple",
+          "x": 0.5,
+          "y": 0.8,
+          "size": 420,
+          "enter": "none",
+          "z": 0.8
+        },
+        {
+          "type": "fx",
+          "kind": "birds",
+          "x": 0.25,
+          "y": 0.2,
+          "count": 5,
+          "speed": 60
+        },
+        {
+          "type": "fg",
+          "kind": "grass",
+          "z": 1.4,
+          "count": 22,
+          "h": 140
+        },
+        {
+          "type": "date",
+          "text": "46",
+          "suffix": "до н. э.",
+          "x": 0.5,
+          "y": 0.22,
+          "at": 0.4,
+          "size": 130
+        },
+        {
+          "type": "era",
+          "small": "46 до н. э.",
+          "parts": [
+            [
+              "РИМСКАЯ",
+              "#e0393e"
+            ],
+            [
+              "РЕСПУБЛИКА",
+              "#ffffff"
+            ]
+          ],
+          "x": 0.025,
+          "y": 0.95,
+          "at": 0.2
+        }
+      ]
+    },
+    {
+      "id": "k02",
+      "dur": 4.0,
+      "transition": "zoom-punch",
+      "vo": "Не ошибка. Не опечатка. Четыреста сорок пять дней.",
+      "bg": {
+        "kind": "burst",
+        "color": "#2f8f8a"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ],
+        "punch": [
+          {
+            "at": 2.4,
+            "amount": 0.12
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "calendar",
+          "x": 0.36,
+          "y": 0.52,
+          "size": 520,
+          "head": "ГОД 708 AUC",
+          "from": 1,
+          "to": 445,
+          "dur": 2.4,
+          "rot": -4
+        },
+        {
+          "type": "counter",
+          "x": 0.72,
+          "y": 0.58,
+          "from": 365,
+          "to": 445,
+          "dur": 2.4,
+          "suffix": " ДНЕЙ",
+          "size": 140,
+          "color": "#ffe066"
+        },
+        {
+          "type": "fx",
+          "kind": "speedlines",
+          "x": 0.5,
+          "y": 0.5,
+          "at": 2.4,
+          "out": 3.4,
+          "inner": 520
+        }
+      ]
+    },
+    {
+      "id": "k03",
+      "dur": 4.5,
+      "transition": "cut",
+      "vo": "Календарём в Риме управляли жрецы. И они решали, сколько длится твой год.",
+      "bg": {
+        "kind": "interior",
+        "wall": "#e7c48f",
+        "columns": [
+          0.1,
+          0.9
+        ],
+        "drapes": [
+          0.28,
+          0.72
+        ]
+      },
+      "camera": {
+        "zoom": [
+          1.02,
+          1.08
+        ],
+        "focus": [
+          0.55,
+          0.45
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "pontifex",
+          "x": 0.56,
+          "y": 0.96,
+          "size": 640,
+          "expr": "smug",
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 1.6,
+              "v": "present"
+            }
+          ],
+          "talk": [
+            [
+              0.3,
+              1.5
+            ],
+            [
+              2.2,
+              3.8
+            ]
+          ],
+          "hold": "scroll"
+        },
+        {
+          "type": "label",
+          "tag": "ВЕРХОВНЫЙ ЖРЕЦ",
+          "text": "ПОНТИФИК",
+          "x": 0.24,
+          "y": 0.42,
+          "at": 0.6,
+          "arrow": "down-right",
+          "size": 92
+        },
+        {
+          "type": "fx",
+          "kind": "beam",
+          "x": 0.5,
+          "y": 0.5,
+          "from": "tl",
+          "strength": 0.22
+        }
+      ]
+    },
+    {
+      "id": "k04",
+      "dur": 4.0,
+      "transition": "whip",
+      "vo": "Другу — лишний месяц у власти. Врагу — срок покороче.",
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 5,
+        "ground": "stone"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.03
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "senator",
+          "x": 0.3,
+          "y": 0.95,
+          "size": 520,
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 0.8,
+              "v": "happy"
+            }
+          ],
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 0.8,
+              "v": "arms-up"
+            }
+          ],
+          "jump": [
+            {
+              "at": 0.9,
+              "h": 70
+            }
+          ]
+        },
+        {
+          "type": "prop",
+          "kind": "coin",
+          "spin": true,
+          "x": 0.3,
+          "y": 0.3,
+          "at": 0.8,
+          "size": 120,
+          "bob": 10
+        },
+        {
+          "type": "label",
+          "text": "+1 МЕСЯЦ",
+          "x": 0.3,
+          "y": 0.18,
+          "at": 0.9,
+          "color": "#9be07f",
+          "size": 84
+        },
+        {
+          "type": "bean",
+          "who": "rival",
+          "x": 0.72,
+          "y": 0.95,
+          "size": 520,
+          "flip": true,
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 2.0,
+              "v": "shock"
+            }
+          ],
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 2.0,
+              "v": "scared"
+            }
+          ],
+          "shake": [
+            {
+              "at": 2.0,
+              "dur": 0.5,
+              "amp": 10
+            }
+          ]
+        },
+        {
+          "type": "label",
+          "text": "−1 МЕСЯЦ",
+          "x": 0.72,
+          "y": 0.18,
+          "at": 2.1,
+          "color": "#ff6b6b",
+          "size": 84
+        },
+        {
+          "type": "fx",
+          "kind": "sweat",
+          "x": 0.79,
+          "y": 0.42,
+          "at": 2.2
+        },
+        {
+          "type": "fg",
+          "kind": "bushes",
+          "sides": [
+            "bl",
+            "br"
+          ],
+          "z": 1.4
+        }
+      ]
+    },
+    {
+      "id": "k05",
+      "dur": 4.0,
+      "transition": "zoom-punch",
+      "vo": "А потом пришёл человек, которому это надоело. Гай Юлий Цезарь.",
+      "bg": {
+        "kind": "sky",
+        "preset": "dusk",
+        "clouds": 4,
+        "rays": true,
+        "sun": [
+          0.62,
+          0.55
+        ]
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.1
+        ],
+        "focus": [
+          0.62,
+          0.5
+        ],
+        "ease": "out"
+      },
+      "layers": [
+        {
+          "type": "fx",
+          "kind": "rays",
+          "x": 0.62,
+          "y": 0.45,
+          "color": "rgba(255,230,180,0.18)"
+        },
+        {
+          "type": "bean",
+          "who": "caesar",
+          "x": 0.62,
+          "y": 0.97,
+          "size": 700,
+          "expr": "smug",
+          "pose": [
+            {
+              "at": 0,
+              "v": "hips"
+            },
+            {
+              "at": 2.2,
+              "v": "point"
+            }
+          ],
+          "talk": [
+            [
+              2.3,
+              3.6
+            ]
+          ]
+        },
+        {
+          "type": "fg",
+          "kind": "ots",
+          "who": "senator",
+          "side": "left",
+          "z": 1.3
+        },
+        {
+          "type": "label",
+          "tag": "ДИКТАТОР",
+          "text": "ЮЛИЙ ЦЕЗАРЬ",
+          "x": 0.28,
+          "y": 0.36,
+          "at": 1.0,
+          "arrow": "down-right",
+          "size": 88
+        }
+      ],
+      "grade": "gold"
+    },
+    {
+      "id": "k06",
+      "dur": 4.5,
+      "transition": "fade-white",
+      "vo": "Он отобрал календарь у жрецов. И ты до сих пор живёшь по его правилам.",
+      "bg": {
+        "kind": "burst",
+        "color": "#c8623a",
+        "center": "#ffd9a0",
+        "edge": "#4a1a0f"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ]
+      },
+      "layers": [
+        {
+          "type": "calendar",
+          "x": 0.5,
+          "y": 0.5,
+          "size": 560,
+          "pages": [
+            {
+              "head": "QUINTILIS",
+              "num": "V"
+            },
+            {
+              "head": "ИЮЛЬ",
+              "num": "VII",
+              "headColor": "#b8861b"
+            }
+          ],
+          "every": 1.4
+        },
+        {
+          "type": "fx",
+          "kind": "sparkle",
+          "x": 0.5,
+          "y": 0.45,
+          "radius": 340,
+          "at": 1.4
+        },
+        {
+          "type": "title",
+          "text": "ИЮЛЬ = ЮЛИЙ",
+          "x": 0.5,
+          "y": 0.92,
+          "at": 1.8,
+          "size": 110,
+          "color": "#ffe066"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>toon-explainer</title>
+<style>
+  html, body { margin: 0; background: #111; color: #ddd; font: 14px system-ui, sans-serif; }
+  canvas { display: block; width: 100%; max-width: 1920px; height: auto; }
+  #ui { display: none; padding: 8px; gap: 8px; align-items: center; }
+  #ui.on { display: flex; }
+  #scrub { flex: 1; }
+  #err { color: #ff7b7b; white-space: pre-wrap; padding: 8px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="ui"><button id="play">▶</button><input id="scrub" type="range" min="0" max="1000" value="0"><span id="info"></span></div>
+<div id="err"></div>
+<script src="core.js"></script>
+<script src="lib/paint.js"></script>
+<script src="lib/bg.js"></script>
+<script src="lib/face.js"></script>
+<script src="lib/rig.js"></script>
+<script src="lib/text.js"></script>
+<script src="lib/props.js"></script>
+<script src="lib/widgets.js"></script>
+<script src="lib/fx.js"></script>
+<script src="lib/atmos.js"></script>
+<script src="lib/scenery.js"></script>
+<script src="lib/crowd.js"></script>
+<script>
+(async () => {
+  const q = new URLSearchParams(location.search);
+  const isRender = q.get('render') === '1';
+  try {
+    for (const w of [800, 900]) {
+      const f = new FontFace('Rubik-' + w, `url(lib/fonts/Rubik-${w}.woff2)`);
+      document.fonts.add(await f.load());
+    }
+    let spec = window.FILM_SPEC;
+    if (!spec && q.get('spec')) spec = await (await fetch(q.get('spec'))).json();
+    if (!spec) throw new Error('No spec: inject window.FILM_SPEC or pass ?spec=path/to/spec.json');
+    await TOON.loadImages(TOON.collectImages(spec));
+    const canvas = document.getElementById('c');
+    const film = TOON.init(spec, canvas, { scale: Number(q.get('scale') || spec.renderScale || 1) });
+    window.__canvas = canvas;
+    window.__total = film.timeline.total;
+    window.__shots = film.timeline.shots.map((s) => ({ id: s.id, start: s.start, dur: s.dur }));
+    window.renderFrame = (t) => film.render(t);
+    film.render(Number(q.get('t') || 0));
+    window.__ready = true;
+    if (!isRender) preview(film);
+  } catch (e) {
+    window.__bootFailed = String(e && e.stack || e);
+    document.getElementById('err').textContent = window.__bootFailed;
+    console.error(e);
+  }
+})();
+
+function preview(film) {
+  const ui = document.getElementById('ui'), scrub = document.getElementById('scrub'), info = document.getElementById('info'), btn = document.getElementById('play');
+  ui.classList.add('on');
+  const total = film.timeline.total;
+  let t = 0, playing = false, last = 0;
+  const show = () => { const r = film.render(t); info.textContent = `${t.toFixed(2)}s / ${total.toFixed(1)}s · ${r.shot} (+${r.lt.toFixed(2)})`; scrub.value = (t / total) * 1000; };
+  scrub.oninput = () => { t = (scrub.value / 1000) * total; show(); };
+  btn.onclick = () => { playing = !playing; btn.textContent = playing ? '❚❚' : '▶'; last = performance.now(); };
+  document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); btn.onclick(); } if (e.code === 'ArrowRight') { t = Math.min(total, t + 1 / 30); show(); } if (e.code === 'ArrowLeft') { t = Math.max(0, t - 1 / 30); show(); } });
+  const loop = (now) => { if (playing) { t += (now - last) / 1000; if (t >= total) t = 0; show(); } last = now; requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+  show();
+}
+</script>
+</body>
+</html>

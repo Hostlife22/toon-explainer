@@ -1,0 +1,6 @@
+__pycache__/
+.pytest_cache/
+.DS_Store
+*.noaudio.mp4
+renders/
+film/
