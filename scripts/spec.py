@@ -38,6 +38,8 @@ KNOWN_MASK: set[str] = set()
 KNOWN_HEADSHAPE: set[str] = set()
 KNOWN_FLAG: set[str] = set()
 KNOWN_CROWD_MODE: set[str] = set()
+KNOWN_BUILD: set[str] = set()  # body proportions (rig.js T.BUILDS), filled from scripts/vocab
+KNOWN_AGE: set[str] = set()
 COLOR_KEYS = ("skin", "skinShade", "robe", "robeShade", "sleeve", "trim", "sash", "belt", "cape", "armor", "hairColor",
               "beardColor", "mustacheColor", "headColor", "crest", "sandal", "legColor")
 HEX_RE = re.compile(r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
@@ -62,7 +64,8 @@ def _load_vocab() -> None:
                "props": KNOWN_PROPS, "fx": KNOWN_FX, "fg": KNOWN_FG, "grades": KNOWN_GRADES, "poses": KNOWN_POSES,
                "expr": KNOWN_EXPR, "sky": KNOWN_SKY, "hair": KNOWN_HAIR, "beard": KNOWN_BEARD, "head": KNOWN_HEAD,
                "views": KNOWN_VIEWS, "outfit": KNOWN_OUTFIT, "mask": KNOWN_MASK, "headShape": KNOWN_HEADSHAPE,
-               "flag": KNOWN_FLAG, "crowd_mode": KNOWN_CROWD_MODE}
+               "flag": KNOWN_FLAG, "crowd_mode": KNOWN_CROWD_MODE,
+               "build": KNOWN_BUILD, "age": KNOWN_AGE}
     extra_colors: list[str] = []
     for path in sorted(VOCAB_DIR.glob("*.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -104,7 +107,8 @@ def _check_look(look, where: str, errors: list[str]) -> None:
         errors.append(f"{where}: must be an object")
         return
     for key, allowed in (("hair", KNOWN_HAIR), ("beard", KNOWN_BEARD), ("head", KNOWN_HEAD), ("view", KNOWN_VIEWS),
-                         ("outfit", KNOWN_OUTFIT), ("mask", KNOWN_MASK), ("headShape", KNOWN_HEADSHAPE)):
+                         ("outfit", KNOWN_OUTFIT), ("mask", KNOWN_MASK), ("headShape", KNOWN_HEADSHAPE),
+                         ("build", KNOWN_BUILD), ("age", KNOWN_AGE)):
         if look.get(key) is not None and allowed and look[key] not in allowed:
             errors.append(f"{where}: {key} {look[key]!r} not in {sorted(allowed)}")
     flag = look.get("flag")
@@ -190,9 +194,53 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         errors.append(f"{where}: {kind} needs non-empty text")
     if kind == "image" and not (layer.get("src") or (layer.get("frames") or {}).get("idle")):
         errors.append(f"{where}: image needs src or frames.idle")
+    _check_common(layer, where, cast, errors)
     for win in layer.get("talk", []) or []:
         if not (isinstance(win, list) and len(win) == 2 and all(isinstance(v, (int, float)) for v in win) and win[0] <= win[1]):
             errors.append(f"{where}: talk windows must be [[start, end], ...] with start <= end")
+
+
+def _is_num(v) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def _check_number_or_timeline(value, where: str, errors: list[str]) -> None:
+    if value is None or _is_num(value):
+        return
+    if isinstance(value, list) and all(isinstance(k, dict) and _is_num(k.get("at", 0)) and _is_num(k.get("v")) for k in value):
+        return
+    errors.append(f"{where}: must be a number or a [{{at, v}}] timeline of numbers")
+
+
+def _check_common(layer: dict, where: str, cast: dict, errors: list[str]) -> None:
+    """Fields every layer type accepts in v4: swap, blur, jitter, swing."""
+    swaps = layer.get("swap")
+    if swaps is not None:  # v3 doc hangsign keeps its own object form {at, value}
+        if not isinstance(swaps, list):
+            if not (layer.get("type") == "doc" and isinstance(swaps, dict)):
+                errors.append(f"{where}: swap must be a list of {{at, ...fields}}")
+        else:
+            for k, entry in enumerate(swaps):
+                if not (isinstance(entry, dict) and _is_num(entry.get("at"))):
+                    errors.append(f"{where}.swap[{k}]: needs a numeric at (shot time)")
+                    continue
+                if "type" in entry:
+                    errors.append(f"{where}.swap[{k}]: type cannot be swapped; use two layers with at/out")
+                if isinstance(entry.get("look"), dict):
+                    _check_look({kk: vv for kk, vv in entry["look"].items() if vv is not None}, f"{where}.swap[{k}].look", errors)
+                merged = {**{kk: vv for kk, vv in layer.items() if kk != "swap"}, **{kk: vv for kk, vv in entry.items() if kk not in ("at", "look") and vv is not None}}
+                if any(kk in entry for kk in ("kind", "pose", "expr", "hold", "holdL", "view", "who")):
+                    _check_layer({**merged, "swap": None}, f"{where}.swap[{k}]", cast, errors)
+    _check_number_or_timeline(layer.get("blur"), f"{where}: blur", errors)
+    for key in ("move", "shake", "jump"):
+        if layer.get(key) is not None and not (isinstance(layer[key], list) and all(isinstance(x, dict) for x in layer[key])):
+            errors.append(f"{where}: {key} must be a list of objects like [{{\"at\": 1.0, ...}}]")
+    jit = layer.get("jitter")
+    if jit is not None and not (isinstance(jit, dict) or _is_num(jit) or jit is True):
+        errors.append(f"{where}: jitter must be true, a number (px) or {{amp, on, from, to}}")
+    sw = layer.get("swing")
+    if sw is not None and not (sw is True or isinstance(sw, dict)):
+        errors.append(f"{where}: swing must be an object {{at, amp, period, decay}}")
 
 
 def _check_bg(bg, where: str, errors: list[str]) -> None:
@@ -204,6 +252,9 @@ def _check_bg(bg, where: str, errors: list[str]) -> None:
         errors.append(f"{where}: unknown bg kind {kind!r} (known: {sorted(KNOWN_BGS)})")
     if kind in ("sky", "city") and bg.get("preset", "day") not in KNOWN_SKY:
         errors.append(f"{where}: sky preset {bg.get('preset')!r} not in {sorted(KNOWN_SKY)}")
+    for tr in bg.get("trees") if isinstance(bg.get("trees"), list) else []:  # some bgs take a tree count instead
+        if isinstance(tr, list) and len(tr) >= 3 and _is_num(tr[2]) and tr[2] > 1.5:
+            errors.append(f"{where}: trees [x, y, h] use fractions of the frame (h {tr[2]} looks like pixels; 0.35 = a third of the height)")
     if kind == "image" and not (bg.get("image") or bg.get("src")):
         errors.append(f"{where}: image bg needs image")
     if kind == "interior" and bg.get("windowSky", "day") not in KNOWN_SKY:
@@ -250,10 +301,16 @@ def validate(spec: dict) -> list[str]:
         if tr_kind not in KNOWN_TRANSITIONS:
             errors.append(f"{where}: transition {tr_kind!r} not in {sorted(KNOWN_TRANSITIONS)}")
         grade = shot.get("grade")
-        if grade is not None:
-            g = grade.get("preset") if isinstance(grade, dict) else grade
+        for g in (grade if isinstance(grade, list) else [grade] if grade is not None else []):
+            if isinstance(g, dict) and g.get("target", "frame") not in ("frame", "bg"):
+                errors.append(f"{where}: grade target {g.get('target')!r} must be 'frame' or 'bg'")
+            g = g.get("preset") if isinstance(g, dict) else g
             if g not in KNOWN_GRADES:
                 errors.append(f"{where}: grade {g!r} not in {sorted(KNOWN_GRADES)}")
+        ids = {L.get("id") for L in shot.get("layers", []) or [] if isinstance(L, dict) and L.get("id")}
+        for k, f in enumerate(shot.get("focus", []) or []):
+            if not (isinstance(f, dict) and _is_num(f.get("at", 0)) and (f.get("on") in ids or f.get("on") == "bg")):
+                errors.append(f"{where}.focus[{k}]: needs at and on=<id of a layer in this shot>")
         bgs = shot.get("bg", {"kind": "sky"})
         for j, bg in enumerate(bgs if isinstance(bgs, list) else [bgs]):
             _check_bg(bg, f"{where}.bg[{j}]", errors)
@@ -262,6 +319,18 @@ def validate(spec: dict) -> list[str]:
                 errors.append(f"{where}.layers[{j}]: must be an object")
                 continue
             _check_layer(layer, f"{where}.layers[{j}]<{layer.get('type')}>", cast, errors)
+    overlays = spec.get("overlays", []) or []
+    if not isinstance(overlays, list):
+        errors.append("overlays must be a list of {from, to, layer}")
+        overlays = []
+    for k, ov in enumerate(overlays):
+        where = f"overlays[{k}]"
+        if not (isinstance(ov, dict) and _is_num(ov.get("from", 0)) and isinstance(ov.get("layer"), dict)):
+            errors.append(f"{where}: needs from (film seconds) and a layer object")
+            continue
+        if ov.get("to") is not None and not (_is_num(ov["to"]) and ov["to"] > ov.get("from", 0)):
+            errors.append(f"{where}: to must be a number greater than from")
+        _check_layer(ov["layer"], f"{where}.layer<{ov['layer'].get('type')}>", cast, errors)
     return errors
 
 

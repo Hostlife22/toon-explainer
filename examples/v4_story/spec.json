@@ -1,0 +1,5150 @@
+{
+  "title": "How Coffee Conquered the World",
+  "fps": 30,
+  "seed": 7,
+  "style": {
+    "grain": true,
+    "vignette": 0.28
+  },
+  "cast": {
+    "worker": {
+      "robe": "#4a5a78",
+      "outfit": "suit",
+      "hair": "short",
+      "hairColor": "#3a2a20"
+    },
+    "kaldi": {
+      "robe": "#c2622d",
+      "sleeve": "#c2622d",
+      "hair": "curly",
+      "hairColor": "#1e1410",
+      "skin": "#a8714a",
+      "skinShade": "#7a4e32",
+      "head": "hat",
+      "headColor": "#8a6a3a"
+    },
+    "monk": {
+      "robe": "#e8e0cc",
+      "head": "turban",
+      "headColor": "#f4f1ea",
+      "hair": "short",
+      "hairColor": "#2a1d18",
+      "beard": "full",
+      "beardColor": "#2a1d18",
+      "skin": "#b07a52",
+      "skinShade": "#84593a"
+    },
+    "monk2": {
+      "robe": "#7a8a5a",
+      "head": "turban",
+      "headColor": "#d8c890",
+      "hair": "short",
+      "hairColor": "#2a1d18",
+      "beard": "goatee",
+      "beardColor": "#2a1d18",
+      "skin": "#a8714a",
+      "skinShade": "#7a4e32"
+    },
+    "patron": {
+      "robe": "#2f6d8a",
+      "head": "fez",
+      "headColor": "#b8302a",
+      "hair": "short",
+      "hairColor": "#2a1d18",
+      "mustache": true,
+      "mustacheColor": "#2a1d18"
+    },
+    "patron2": {
+      "robe": "#8a3a5a",
+      "head": "turban",
+      "headColor": "#e8d8a8",
+      "hair": "short",
+      "hairColor": "#2a1d18",
+      "beard": "full",
+      "beardColor": "#3a2a20"
+    },
+    "sultan": {
+      "robe": "#7a2a8a",
+      "outfit": "robe-royal",
+      "trim": "#e8b52c",
+      "head": "turban",
+      "headColor": "#f4f1ea",
+      "headColor2": "#2fae6a",
+      "hair": "short",
+      "hairColor": "#1e1410",
+      "beard": "full",
+      "beardColor": "#5a3a26"
+    },
+    "priest": {
+      "robe": "#2a2a30",
+      "outfit": "habit",
+      "hair": "bald-sides",
+      "hairColor": "#6b4a30"
+    },
+    "pope": {
+      "robe": "#f4f1ea",
+      "outfit": "robe-royal",
+      "trim": "#e8b52c",
+      "head": "pontifex",
+      "headColor": "#f4f1ea",
+      "hair": "short",
+      "hairColor": "#d8d4cc",
+      "age": "elder"
+    },
+    "guard": {
+      "robe": "#3a6e4a",
+      "head": "turban",
+      "headColor": "#d8c890",
+      "hair": "short",
+      "hairColor": "#1e1410",
+      "beard": "full",
+      "beardColor": "#1e1410",
+      "skin": "#a8714a",
+      "skinShade": "#7a4e32"
+    },
+    "dutch": {
+      "robe": "#2a2a34",
+      "outfit": "cloak",
+      "cape": "#1a1a22",
+      "head": "wide-brim",
+      "headColor": "#1a1a22",
+      "hair": "long",
+      "hairColor": "#c89a50",
+      "mustache": true,
+      "mustacheColor": "#6b4a30"
+    }
+  },
+  "overlays": [
+    {
+      "from": 5.84,
+      "to": 72.72,
+      "layer": {
+        "type": "hud",
+        "kind": "counter",
+        "id": "cups",
+        "icon": "mug",
+        "prefix": "",
+        "suffix": " CUPS/DAY",
+        "size": 54,
+        "x": 0.66,
+        "y": 0.075,
+        "value": [
+          {
+            "at": 0,
+            "v": 0
+          },
+          {
+            "at": 8.52,
+            "v": 1
+          },
+          {
+            "at": 15.06,
+            "v": 12
+          },
+          {
+            "at": 18.94,
+            "v": 900
+          },
+          {
+            "at": 21.52,
+            "v": 9000
+          },
+          {
+            "at": 31.35,
+            "v": 0
+          },
+          {
+            "at": 33.55,
+            "v": 9001
+          },
+          {
+            "at": 35.45,
+            "v": 40000
+          },
+          {
+            "at": 44.84,
+            "v": 250000
+          },
+          {
+            "at": 56.26,
+            "v": 3
+          },
+          {
+            "at": 57.21,
+            "v": 40
+          },
+          {
+            "at": 58.16,
+            "v": 300
+          },
+          {
+            "at": 60.41,
+            "v": 900
+          },
+          {
+            "at": 63.28,
+            "v": 2
+          }
+        ],
+        "swap": [
+          {
+            "at": 8.52,
+            "suffix": " CUP/DAY"
+          },
+          {
+            "at": 15.06,
+            "suffix": " CUPS/DAY"
+          },
+          {
+            "at": 50.7,
+            "alpha": 0
+          },
+          {
+            "at": 53.28,
+            "alpha": 1
+          },
+          {
+            "at": 56.26,
+            "suffix": " MILLION CUPS"
+          },
+          {
+            "at": 61.03,
+            "alpha": 0
+          },
+          {
+            "at": 63.28,
+            "alpha": 1,
+            "suffix": " BILLION CUPS!"
+          }
+        ],
+        "sep": ","
+      }
+    },
+    {
+      "from": 43.21,
+      "to": 51.96,
+      "layer": {
+        "type": "hud",
+        "kind": "chip",
+        "corner": "tl",
+        "slot": 0,
+        "size": 34,
+        "text": "IS COFFEE EVIL?",
+        "key": "EVIL",
+        "answerAt": 7.47
+      }
+    }
+  ],
+  "shots": [
+    {
+      "id": "k01",
+      "dur": 2.92,
+      "vo": "Two billion cups of coffee. Every single day.",
+      "screen": "a groggy office bean gulps a mug; the cup counter slams in and spins up.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "office",
+        "window": "grid",
+        "windowX": 0.88,
+        "lamp": true,
+        "desk": true,
+        "chair": false
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.06
+        ],
+        "punch": [
+          {
+            "at": 2.05,
+            "amount": 0.18
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "w1",
+          "who": "worker",
+          "x": 0.24,
+          "y": 1.02,
+          "size": 640,
+          "expr": [
+            {
+              "at": 0,
+              "v": "sleep-drool"
+            },
+            {
+              "at": 0.9,
+              "v": "content"
+            },
+            {
+              "at": 1.9,
+              "v": "hollow"
+            }
+          ],
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 0.5,
+              "v": "drink"
+            },
+            {
+              "at": 1.2,
+              "v": "idle"
+            },
+            {
+              "at": 1.9,
+              "v": "arms-up"
+            }
+          ],
+          "hold": "mug",
+          "antic": true,
+          "swap": [
+            {
+              "at": 1.9,
+              "look": {
+                "hair": "spikes"
+              }
+            },
+            {
+              "at": 1.97,
+              "look": {
+                "hair": "short"
+              }
+            }
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "id": "zz1",
+          "mark": "zzz",
+          "target": "w1",
+          "at": 0,
+          "dur": 0.6
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "id": "tk1",
+          "mark": "ticks",
+          "variant": "realize",
+          "target": "w1",
+          "at": 1.9,
+          "dur": 0.3
+        },
+        {
+          "type": "counter",
+          "x": 0.58,
+          "y": 0.3,
+          "to": 2000000000,
+          "dur": 1.2,
+          "delay": 0,
+          "sep": ",",
+          "size": 110,
+          "color": "#ffe066",
+          "at": 0.35,
+          "enter": "slam",
+          "from": 0
+        },
+        {
+          "type": "label",
+          "text": "CUPS. PER DAY.",
+          "x": 0.58,
+          "y": 0.52,
+          "size": 80,
+          "at": 2.0,
+          "enter": "slam",
+          "color": "#fff"
+        }
+      ]
+    },
+    {
+      "id": "k02",
+      "dur": 2.92,
+      "vo": "And we owe it all to a goat.",
+      "screen": "hard cut, a goat pops up on a gold burst; punch on \"goat\".",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "mood",
+        "variant": "rays",
+        "preset": "gold",
+        "spin": 6
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ],
+        "punch": [
+          {
+            "at": 2.15,
+            "amount": 0.22
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "id": "qm",
+          "kind": "question",
+          "x": 0.5,
+          "y": 0.5,
+          "size": 360,
+          "at": 0.3,
+          "enter": "pop",
+          "out": 2.15,
+          "exitDur": 0,
+          "swing": {
+            "at": 0.5,
+            "amp": 14,
+            "period": 0.8,
+            "decay": 3
+          },
+          "jump": [
+            {
+              "at": 1.2,
+              "dur": 0.3,
+              "h": 40
+            }
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "poof",
+          "id": "gpoof",
+          "at": 2.08,
+          "x": 0.5,
+          "y": 0.55,
+          "w": 620,
+          "h": 460,
+          "word": "GOAT!"
+        },
+        {
+          "type": "creature",
+          "id": "goat0",
+          "kind": "goat",
+          "x": 0.5,
+          "y": 0.86,
+          "size": 520,
+          "expr": "happy",
+          "alpha": 0,
+          "swap": [
+            {
+              "at": 2.15,
+              "alpha": 1
+            }
+          ],
+          "sway": 4,
+          "swayHz": 1.2
+        },
+        {
+          "type": "label",
+          "text": "A GOAT",
+          "tag": "THE REAL HERO",
+          "x": 0.24,
+          "y": 0.22,
+          "size": 96,
+          "at": 2.3,
+          "enter": "slam",
+          "arrow": "down-right"
+        }
+      ]
+    },
+    {
+      "id": "k03",
+      "dur": 4.92,
+      "vo": "Ethiopia, about a thousand years ago. A goat herder named Kaldi noticed something odd.",
+      "screen": "green hills, Kaldi with his staff, nameplate KALDI, goats grazing.",
+      "anim": false,
+      "transition": {
+        "kind": "cloud-wipe",
+        "dur": 0.9
+      },
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 4,
+        "hills": 3,
+        "ground": "grass",
+        "trees": [
+          [
+            0.08,
+            0.66,
+            0.22
+          ],
+          [
+            0.93,
+            0.64,
+            0.16
+          ]
+        ]
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ],
+        "pan": [
+          [
+            0,
+            0
+          ],
+          [
+            -60,
+            0
+          ]
+        ],
+        "jump": [
+          {
+            "at": 3.3,
+            "zoom": 1.25,
+            "focus": [
+              0.32,
+              0.5
+            ]
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "kal",
+          "who": "kaldi",
+          "x": 0.3,
+          "y": 0.94,
+          "size": 520,
+          "pose": [
+            {
+              "at": 0,
+              "v": "hips"
+            },
+            {
+              "at": 3.3,
+              "v": "wave"
+            },
+            {
+              "at": 4.2,
+              "v": "think"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "content"
+            },
+            {
+              "at": 3.3,
+              "v": "happy"
+            },
+            {
+              "at": 4.2,
+              "v": "side-eye"
+            }
+          ]
+        },
+        {
+          "type": "creature",
+          "id": "g0",
+          "kind": "goat",
+          "x": 0.62,
+          "y": 0.84,
+          "size": 230,
+          "expr": "neutral",
+          "flip": false,
+          "walk": [
+            [
+              0,
+              1.5
+            ]
+          ]
+        },
+        {
+          "type": "creature",
+          "id": "g1",
+          "kind": "goat",
+          "x": 0.76,
+          "y": 0.86,
+          "size": 260,
+          "expr": "neutral",
+          "flip": true
+        },
+        {
+          "type": "creature",
+          "id": "g2",
+          "kind": "goat",
+          "x": 0.88,
+          "y": 0.82,
+          "size": 200,
+          "expr": "neutral",
+          "flip": false,
+          "walk": [
+            [
+              1,
+              3
+            ]
+          ]
+        },
+        {
+          "type": "doc",
+          "kind": "nameplate",
+          "id": "np_k",
+          "style": "hand",
+          "name": "KALDI",
+          "sub": "GOAT HERDER",
+          "x": 0.52,
+          "y": 0.3,
+          "at": 3.3,
+          "arrow": "hook-left",
+          "arrowTo": [
+            0.4,
+            0.55
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "id": "q3",
+          "mark": "question",
+          "target": "kal",
+          "at": 4.3,
+          "dur": 0.6
+        },
+        {
+          "type": "fx",
+          "kind": "birds",
+          "id": "b3",
+          "count": 5,
+          "x": 0.6,
+          "y": 0.2
+        },
+        {
+          "type": "fg",
+          "kind": "grass",
+          "z": 1.4,
+          "count": 26
+        },
+        {
+          "type": "era",
+          "small": "ABOUT 850 AD",
+          "parts": [
+            [
+              "ETHIOPIA",
+              "#f2c230"
+            ],
+            [
+              "LEGEND",
+              "#fff"
+            ]
+          ],
+          "x": 0.025,
+          "y": 0.95,
+          "at": 0.9
+        }
+      ]
+    },
+    {
+      "id": "k04",
+      "dur": 1.6,
+      "vo": "His goats were dancing.",
+      "screen": "the goats hop and spin; Kaldi's jaw drops.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 4,
+        "hills": 3,
+        "ground": "grass"
+      },
+      "camera": {
+        "zoom": [
+          1.04,
+          1.08
+        ],
+        "jump": [
+          {
+            "at": 0.75,
+            "zoom": 1.2,
+            "focus": [
+              0.62,
+              0.62
+            ]
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "kal4",
+          "who": "kaldi",
+          "x": 0.27,
+          "y": 1.0,
+          "size": 600,
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 0.75,
+              "v": "jaw-drop"
+            }
+          ],
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 0.75,
+              "v": "cheeks"
+            }
+          ]
+        },
+        {
+          "type": "creature",
+          "id": "d0",
+          "kind": "goat",
+          "x": 0.55,
+          "y": 0.9,
+          "size": 260,
+          "expr": "happy",
+          "flip": false,
+          "jump": [
+            {
+              "at": 0.0,
+              "dur": 0.33,
+              "h": 90
+            },
+            {
+              "at": 0.4,
+              "dur": 0.33,
+              "h": 90
+            },
+            {
+              "at": 0.8,
+              "dur": 0.33,
+              "h": 90
+            },
+            {
+              "at": 1.2000000000000002,
+              "dur": 0.33,
+              "h": 90
+            }
+          ],
+          "rot": [
+            {
+              "at": 0,
+              "v": 0
+            },
+            {
+              "at": 0.5,
+              "v": 12
+            },
+            {
+              "at": 0.9,
+              "v": -12
+            },
+            {
+              "at": 1.3,
+              "v": 0
+            }
+          ]
+        },
+        {
+          "type": "creature",
+          "id": "d1",
+          "kind": "goat",
+          "x": 0.72,
+          "y": 0.9,
+          "size": 300,
+          "expr": "happy",
+          "flip": true,
+          "jump": [
+            {
+              "at": 0.13,
+              "dur": 0.33,
+              "h": 90
+            },
+            {
+              "at": 0.53,
+              "dur": 0.33,
+              "h": 90
+            },
+            {
+              "at": 0.93,
+              "dur": 0.33,
+              "h": 90
+            },
+            {
+              "at": 1.33,
+              "dur": 0.33,
+              "h": 90
+            }
+          ],
+          "rot": [
+            {
+              "at": 0,
+              "v": 0
+            },
+            {
+              "at": 0.63,
+              "v": 12
+            },
+            {
+              "at": 1.03,
+              "v": -12
+            },
+            {
+              "at": 1.3,
+              "v": 0
+            }
+          ]
+        },
+        {
+          "type": "creature",
+          "id": "d2",
+          "kind": "goat",
+          "x": 0.88,
+          "y": 0.9,
+          "size": 240,
+          "expr": "happy",
+          "flip": false,
+          "jump": [
+            {
+              "at": 0.27,
+              "dur": 0.33,
+              "h": 90
+            },
+            {
+              "at": 0.67,
+              "dur": 0.33,
+              "h": 90
+            },
+            {
+              "at": 1.07,
+              "dur": 0.33,
+              "h": 90
+            },
+            {
+              "at": 1.4700000000000002,
+              "dur": 0.33,
+              "h": 90
+            }
+          ],
+          "rot": [
+            {
+              "at": 0,
+              "v": 0
+            },
+            {
+              "at": 0.77,
+              "v": 12
+            },
+            {
+              "at": 1.17,
+              "v": -12
+            },
+            {
+              "at": 1.3,
+              "v": 0
+            }
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "sparkle",
+          "id": "sp4",
+          "x": 0.7,
+          "y": 0.55,
+          "radius": 320,
+          "count": 10,
+          "at": 0.75
+        },
+        {
+          "type": "label",
+          "text": "DANCING?!",
+          "x": 0.6,
+          "y": 0.36,
+          "size": 110,
+          "at": 0.75,
+          "enter": "pop-tilt",
+          "color": "#ffe066"
+        },
+        {
+          "type": "fg",
+          "kind": "bushes",
+          "sides": [
+            "bl",
+            "br"
+          ],
+          "z": 1.4
+        }
+      ]
+    },
+    {
+      "id": "k05",
+      "dur": 3.92,
+      "vo": "They had eaten little red berries. So Kaldi tried some too.",
+      "screen": "red berry bush; Kaldi eats; POOF; he comes out wired, spiky hair, star eyes, his hat flies off.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "sky",
+        "preset": "sunset",
+        "clouds": 3,
+        "hills": 2,
+        "ground": "grass"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.06
+        ],
+        "focus": [
+          0.5,
+          0.5
+        ],
+        "shake": [
+          {
+            "at": 2.95,
+            "dur": 0.2,
+            "amp": 8
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "obj",
+          "id": "bush",
+          "shape": "blob",
+          "color": "#3f7d36",
+          "size": 420,
+          "x": 0.7,
+          "y": 0.88,
+          "face": false
+        },
+        {
+          "type": "obj",
+          "id": "be0",
+          "shape": "disc",
+          "color": "#d42020",
+          "size": 46,
+          "x": 0.66,
+          "y": 0.55,
+          "face": false,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "be1",
+          "shape": "disc",
+          "color": "#d42020",
+          "size": 46,
+          "x": 0.72,
+          "y": 0.62,
+          "face": false,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "be2",
+          "shape": "disc",
+          "color": "#d42020",
+          "size": 46,
+          "x": 0.62,
+          "y": 0.66,
+          "face": false,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "be3",
+          "shape": "disc",
+          "color": "#d42020",
+          "size": 46,
+          "x": 0.77,
+          "y": 0.52,
+          "face": false,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "be4",
+          "shape": "disc",
+          "color": "#d42020",
+          "size": 46,
+          "x": 0.7,
+          "y": 0.48,
+          "face": false,
+          "enter": "none"
+        },
+        {
+          "type": "bean",
+          "id": "kal5",
+          "who": "kaldi",
+          "x": 0.33,
+          "y": 0.96,
+          "size": 600,
+          "pose": [
+            {
+              "at": 0,
+              "v": "point"
+            },
+            {
+              "at": 1.9,
+              "v": "eat"
+            },
+            {
+              "at": 2.97,
+              "v": "arms-up"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "squint"
+            },
+            {
+              "at": 1.9,
+              "v": "content"
+            },
+            {
+              "at": 2.97,
+              "v": "star-eyes"
+            }
+          ],
+          "swap": [
+            {
+              "at": 2.97,
+              "look": {
+                "hair": "spikes",
+                "head": null
+              }
+            }
+          ],
+          "jitter": {
+            "amp": 3,
+            "on": 2,
+            "from": 3.0
+          },
+          "antic": true
+        },
+        {
+          "type": "label",
+          "text": "RED BERRIES",
+          "x": 0.72,
+          "y": 0.22,
+          "size": 84,
+          "at": 0.8,
+          "enter": "pop-tilt",
+          "arrow": "down",
+          "color": "#ff6b6b"
+        },
+        {
+          "type": "fx",
+          "kind": "poof",
+          "id": "kpoof",
+          "at": 2.9,
+          "x": 0.33,
+          "y": 0.62,
+          "w": 520,
+          "h": 440
+        },
+        {
+          "type": "fx",
+          "kind": "hat",
+          "id": "khat",
+          "at": 2.97,
+          "mode": "fly",
+          "target": "kal5",
+          "head": "hat",
+          "color": "#8a6a3a",
+          "dir": -1
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "id": "sh5",
+          "mark": "shout-jag",
+          "target": "kal5",
+          "at": 3.05,
+          "dur": 0.8
+        },
+        {
+          "type": "fg",
+          "kind": "grass",
+          "z": 1.4,
+          "count": 22
+        }
+      ]
+    },
+    {
+      "id": "k06",
+      "dur": 2.92,
+      "vo": "The berries crossed the Red Sea to Yemen,",
+      "screen": "map spine, atlas map, Ethiopia with a face, an arrow across the sea to Yemen.",
+      "anim": false,
+      "transition": "cut",
+      "bg": {
+        "kind": "flat",
+        "color": "#5b72d6"
+      },
+      "camera": {
+        "zoom": [
+          1.35,
+          1.45
+        ],
+        "focus": [
+          0.58,
+          0.52
+        ],
+        "ease": "outCubic"
+      },
+      "layers": [
+        {
+          "type": "map",
+          "id": "world",
+          "style": "atlas",
+          "land": [
+            [
+              0.6,
+              0.27,
+              0.27,
+              0.13
+            ],
+            [
+              0.5,
+              0.62,
+              0.1,
+              0.2
+            ],
+            [
+              0.665,
+              0.47,
+              0.045,
+              0.06
+            ],
+            [
+              0.19,
+              0.3,
+              0.09,
+              0.13
+            ],
+            [
+              0.26,
+              0.66,
+              0.06,
+              0.15
+            ],
+            [
+              0.8,
+              0.7,
+              0.06,
+              0.022
+            ],
+            [
+              0.22,
+              0.45,
+              0.03,
+              0.02
+            ]
+          ],
+          "regions": [
+            {
+              "id": "ethiopia",
+              "pts": [
+                [
+                  0.5962,
+                  0.53
+                ],
+                [
+                  0.5895,
+                  0.548
+                ],
+                [
+                  0.5798,
+                  0.5612
+                ],
+                [
+                  0.5693,
+                  0.5719
+                ],
+                [
+                  0.5563,
+                  0.5745
+                ],
+                [
+                  0.5436,
+                  0.5754
+                ],
+                [
+                  0.5277,
+                  0.5783
+                ],
+                [
+                  0.514,
+                  0.5677
+                ],
+                [
+                  0.5136,
+                  0.5465
+                ],
+                [
+                  0.5162,
+                  0.53
+                ],
+                [
+                  0.5143,
+                  0.5138
+                ],
+                [
+                  0.5185,
+                  0.4969
+                ],
+                [
+                  0.5293,
+                  0.4853
+                ],
+                [
+                  0.5424,
+                  0.476
+                ],
+                [
+                  0.5575,
+                  0.4769
+                ],
+                [
+                  0.5677,
+                  0.4917
+                ],
+                [
+                  0.5753,
+                  0.5034
+                ],
+                [
+                  0.5888,
+                  0.5123
+                ]
+              ],
+              "color": "#6b3f22",
+              "dur": 0.001,
+              "at": 0,
+              "face": {
+                "mood": "happy"
+              },
+              "label": {
+                "text": "ETHIOPIA",
+                "size": 40
+              }
+            },
+            {
+              "id": "yemen",
+              "pts": [
+                [
+                  0.7012,
+                  0.5
+                ],
+                [
+                  0.6985,
+                  0.5104
+                ],
+                [
+                  0.6918,
+                  0.5187
+                ],
+                [
+                  0.6818,
+                  0.5224
+                ],
+                [
+                  0.6732,
+                  0.5274
+                ],
+                [
+                  0.6616,
+                  0.5339
+                ],
+                [
+                  0.6496,
+                  0.5299
+                ],
+                [
+                  0.6448,
+                  0.5183
+                ],
+                [
+                  0.6415,
+                  0.509
+                ],
+                [
+                  0.6372,
+                  0.5
+                ],
+                [
+                  0.6384,
+                  0.4899
+                ],
+                [
+                  0.6428,
+                  0.4802
+                ],
+                [
+                  0.6498,
+                  0.4704
+                ],
+                [
+                  0.662,
+                  0.4683
+                ],
+                [
+                  0.6727,
+                  0.4748
+                ],
+                [
+                  0.6816,
+                  0.478
+                ],
+                [
+                  0.6938,
+                  0.4797
+                ],
+                [
+                  0.7016,
+                  0.4885
+                ]
+              ],
+              "color": "#6b3f22",
+              "dur": 0.3,
+              "at": 1.9,
+              "face": {
+                "mood": [
+                  {
+                    "at": 0,
+                    "v": "shock"
+                  },
+                  {
+                    "at": 0.5,
+                    "v": "happy"
+                  }
+                ]
+              },
+              "label": {
+                "text": "YEMEN",
+                "size": 40,
+                "at": 2.0
+              }
+            },
+            {
+              "id": "ottoman",
+              "pts": [
+                [
+                  0.6847,
+                  0.34
+                ],
+                [
+                  0.6719,
+                  0.3564
+                ],
+                [
+                  0.6508,
+                  0.3667
+                ],
+                [
+                  0.6381,
+                  0.3813
+                ],
+                [
+                  0.6162,
+                  0.3973
+                ],
+                [
+                  0.5845,
+                  0.395
+                ],
+                [
+                  0.5622,
+                  0.3809
+                ],
+                [
+                  0.5433,
+                  0.3697
+                ],
+                [
+                  0.5283,
+                  0.3563
+                ],
+                [
+                  0.5247,
+                  0.34
+                ],
+                [
+                  0.5215,
+                  0.3221
+                ],
+                [
+                  0.5283,
+                  0.3024
+                ],
+                [
+                  0.5581,
+                  0.2947
+                ],
+                [
+                  0.5884,
+                  0.2988
+                ],
+                [
+                  0.6123,
+                  0.2965
+                ],
+                [
+                  0.6422,
+                  0.2943
+                ],
+                [
+                  0.6659,
+                  0.3054
+                ],
+                [
+                  0.6787,
+                  0.3221
+                ]
+              ],
+              "color": "#c9b48a",
+              "dur": 0.001,
+              "at": 0,
+              "halftone": true
+            },
+            {
+              "id": "europe",
+              "pts": [
+                [
+                  0.5133,
+                  0.23
+                ],
+                [
+                  0.4989,
+                  0.2495
+                ],
+                [
+                  0.498,
+                  0.2744
+                ],
+                [
+                  0.4822,
+                  0.3003
+                ],
+                [
+                  0.4469,
+                  0.3045
+                ],
+                [
+                  0.4149,
+                  0.2965
+                ],
+                [
+                  0.3867,
+                  0.2883
+                ],
+                [
+                  0.3662,
+                  0.2717
+                ],
+                [
+                  0.3529,
+                  0.2518
+                ],
+                [
+                  0.3333,
+                  0.23
+                ],
+                [
+                  0.3298,
+                  0.2016
+                ],
+                [
+                  0.3601,
+                  0.1844
+                ],
+                [
+                  0.3922,
+                  0.1791
+                ],
+                [
+                  0.4156,
+                  0.1666
+                ],
+                [
+                  0.4462,
+                  0.1587
+                ],
+                [
+                  0.4767,
+                  0.1671
+                ],
+                [
+                  0.5041,
+                  0.1817
+                ],
+                [
+                  0.5221,
+                  0.2039
+                ]
+              ],
+              "color": "#d8c7a0",
+              "dur": 0.001,
+              "at": 0,
+              "halftone": true
+            }
+          ],
+          "arrows": [
+            {
+              "from": "ethiopia",
+              "to": "yemen",
+              "at": 0.9,
+              "color": "#f2c230",
+              "draw": 0.8,
+              "style": "hook"
+            }
+          ],
+          "words": [
+            {
+              "text": "RED SEA",
+              "x": 0.612,
+              "y": 0.6,
+              "size": 40,
+              "style": "toon",
+              "at": 0.8,
+              "rot": -80
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "k07",
+      "dur": 4.58,
+      "vo": "where monks brewed them into a drink to stay awake through night prayers.",
+      "screen": "night room, candle; a monk dozes (zzz), sips, eyes snap open; window cycles day and night.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "interior",
+        "wall": "#c88a52",
+        "trim": "#7a3a1a",
+        "floor": "#6a4a30",
+        "lattice": true,
+        "window": [
+          0.62,
+          0.18,
+          0.2,
+          0.34
+        ],
+        "windowSky": "night",
+        "dado": "#7a2a2a"
+      },
+      "grade": {
+        "preset": "night",
+        "strength": 0.5
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.06
+        ],
+        "jump": [
+          {
+            "at": 3.25,
+            "zoom": 1.3,
+            "focus": [
+              0.36,
+              0.5
+            ]
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "id": "wc",
+          "kind": "window-cycle",
+          "x": 0.72,
+          "y": 0.35,
+          "size": 330,
+          "period": 0.9,
+          "cycles": 5,
+          "start": "night",
+          "enter": "none"
+        },
+        {
+          "type": "bean",
+          "id": "mk2",
+          "who": "monk2",
+          "x": 0.72,
+          "y": 0.95,
+          "size": 440,
+          "pose": "kneel-pray",
+          "expr": "sleep-drool",
+          "flip": true
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "id": "zz7",
+          "mark": "zzz",
+          "target": "mk2",
+          "at": 0.2
+        },
+        {
+          "type": "bean",
+          "id": "mk1",
+          "who": "monk",
+          "x": 0.34,
+          "y": 0.97,
+          "size": 560,
+          "hold": "mug",
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 1.6,
+              "v": "drink"
+            },
+            {
+              "at": 3.25,
+              "v": "arms-up"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "sleepy"
+            },
+            {
+              "at": 1.6,
+              "v": "content"
+            },
+            {
+              "at": 3.25,
+              "v": "hollow"
+            }
+          ],
+          "swap": [
+            {
+              "at": 3.25,
+              "look": {
+                "hair": "spikes"
+              }
+            },
+            {
+              "at": 3.32,
+              "look": {
+                "hair": "short"
+              }
+            }
+          ],
+          "antic": true
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "id": "tk7",
+          "mark": "ticks",
+          "variant": "realize",
+          "target": "mk1",
+          "at": 3.25,
+          "dur": 0.3
+        },
+        {
+          "type": "prop",
+          "id": "cdl",
+          "kind": "candle",
+          "x": 0.53,
+          "y": 0.8,
+          "size": 120,
+          "enter": "none"
+        },
+        {
+          "type": "label",
+          "text": "WIDE AWAKE",
+          "tag": "NIGHT PRAYERS",
+          "x": 0.3,
+          "y": 0.3,
+          "size": 84,
+          "at": 3.3,
+          "enter": "pop-tilt"
+        }
+      ]
+    },
+    {
+      "id": "k08",
+      "dur": 2.58,
+      "vo": "From there, coffee conquered the Ottoman Empire.",
+      "screen": "back to the map; brown blotch spreads north; Istanbul pops in.",
+      "anim": false,
+      "transition": "cut",
+      "bg": {
+        "kind": "flat",
+        "color": "#5b72d6"
+      },
+      "camera": {
+        "zoom": [
+          1.25,
+          1.32
+        ],
+        "focus": [
+          0.58,
+          0.42
+        ]
+      },
+      "layers": [
+        {
+          "type": "map",
+          "id": "world",
+          "style": "atlas",
+          "land": [
+            [
+              0.6,
+              0.27,
+              0.27,
+              0.13
+            ],
+            [
+              0.5,
+              0.62,
+              0.1,
+              0.2
+            ],
+            [
+              0.665,
+              0.47,
+              0.045,
+              0.06
+            ],
+            [
+              0.19,
+              0.3,
+              0.09,
+              0.13
+            ],
+            [
+              0.26,
+              0.66,
+              0.06,
+              0.15
+            ],
+            [
+              0.8,
+              0.7,
+              0.06,
+              0.022
+            ],
+            [
+              0.22,
+              0.45,
+              0.03,
+              0.02
+            ]
+          ],
+          "regions": [
+            {
+              "id": "ethiopia",
+              "pts": [
+                [
+                  0.5962,
+                  0.53
+                ],
+                [
+                  0.5895,
+                  0.548
+                ],
+                [
+                  0.5798,
+                  0.5612
+                ],
+                [
+                  0.5693,
+                  0.5719
+                ],
+                [
+                  0.5563,
+                  0.5745
+                ],
+                [
+                  0.5436,
+                  0.5754
+                ],
+                [
+                  0.5277,
+                  0.5783
+                ],
+                [
+                  0.514,
+                  0.5677
+                ],
+                [
+                  0.5136,
+                  0.5465
+                ],
+                [
+                  0.5162,
+                  0.53
+                ],
+                [
+                  0.5143,
+                  0.5138
+                ],
+                [
+                  0.5185,
+                  0.4969
+                ],
+                [
+                  0.5293,
+                  0.4853
+                ],
+                [
+                  0.5424,
+                  0.476
+                ],
+                [
+                  0.5575,
+                  0.4769
+                ],
+                [
+                  0.5677,
+                  0.4917
+                ],
+                [
+                  0.5753,
+                  0.5034
+                ],
+                [
+                  0.5888,
+                  0.5123
+                ]
+              ],
+              "color": "#6b3f22",
+              "dur": 0.001,
+              "at": 0,
+              "face": {
+                "mood": "happy"
+              }
+            },
+            {
+              "id": "yemen",
+              "pts": [
+                [
+                  0.7012,
+                  0.5
+                ],
+                [
+                  0.6985,
+                  0.5104
+                ],
+                [
+                  0.6918,
+                  0.5187
+                ],
+                [
+                  0.6818,
+                  0.5224
+                ],
+                [
+                  0.6732,
+                  0.5274
+                ],
+                [
+                  0.6616,
+                  0.5339
+                ],
+                [
+                  0.6496,
+                  0.5299
+                ],
+                [
+                  0.6448,
+                  0.5183
+                ],
+                [
+                  0.6415,
+                  0.509
+                ],
+                [
+                  0.6372,
+                  0.5
+                ],
+                [
+                  0.6384,
+                  0.4899
+                ],
+                [
+                  0.6428,
+                  0.4802
+                ],
+                [
+                  0.6498,
+                  0.4704
+                ],
+                [
+                  0.662,
+                  0.4683
+                ],
+                [
+                  0.6727,
+                  0.4748
+                ],
+                [
+                  0.6816,
+                  0.478
+                ],
+                [
+                  0.6938,
+                  0.4797
+                ],
+                [
+                  0.7016,
+                  0.4885
+                ]
+              ],
+              "color": "#6b3f22",
+              "dur": 0.001,
+              "at": 0,
+              "face": {
+                "mood": "smug"
+              }
+            },
+            {
+              "id": "ottoman",
+              "pts": [
+                [
+                  0.6847,
+                  0.34
+                ],
+                [
+                  0.6719,
+                  0.3564
+                ],
+                [
+                  0.6508,
+                  0.3667
+                ],
+                [
+                  0.6381,
+                  0.3813
+                ],
+                [
+                  0.6162,
+                  0.3973
+                ],
+                [
+                  0.5845,
+                  0.395
+                ],
+                [
+                  0.5622,
+                  0.3809
+                ],
+                [
+                  0.5433,
+                  0.3697
+                ],
+                [
+                  0.5283,
+                  0.3563
+                ],
+                [
+                  0.5247,
+                  0.34
+                ],
+                [
+                  0.5215,
+                  0.3221
+                ],
+                [
+                  0.5283,
+                  0.3024
+                ],
+                [
+                  0.5581,
+                  0.2947
+                ],
+                [
+                  0.5884,
+                  0.2988
+                ],
+                [
+                  0.6123,
+                  0.2965
+                ],
+                [
+                  0.6422,
+                  0.2943
+                ],
+                [
+                  0.6659,
+                  0.3054
+                ],
+                [
+                  0.6787,
+                  0.3221
+                ]
+              ],
+              "color": "#c9b48a",
+              "dur": 0.001,
+              "at": 0,
+              "face": {
+                "mood": [
+                  {
+                    "at": 0,
+                    "v": "neutral"
+                  },
+                  {
+                    "at": 1.6,
+                    "v": "happy"
+                  }
+                ]
+              },
+              "conquer": {
+                "by": "#6b3f22",
+                "at": 0.6,
+                "dur": 1.2,
+                "pattern": "blotch",
+                "chunk": [
+                  0.6,
+                  0.38
+                ],
+                "mood": "happy"
+              }
+            },
+            {
+              "id": "europe",
+              "pts": [
+                [
+                  0.5133,
+                  0.23
+                ],
+                [
+                  0.4989,
+                  0.2495
+                ],
+                [
+                  0.498,
+                  0.2744
+                ],
+                [
+                  0.4822,
+                  0.3003
+                ],
+                [
+                  0.4469,
+                  0.3045
+                ],
+                [
+                  0.4149,
+                  0.2965
+                ],
+                [
+                  0.3867,
+                  0.2883
+                ],
+                [
+                  0.3662,
+                  0.2717
+                ],
+                [
+                  0.3529,
+                  0.2518
+                ],
+                [
+                  0.3333,
+                  0.23
+                ],
+                [
+                  0.3298,
+                  0.2016
+                ],
+                [
+                  0.3601,
+                  0.1844
+                ],
+                [
+                  0.3922,
+                  0.1791
+                ],
+                [
+                  0.4156,
+                  0.1666
+                ],
+                [
+                  0.4462,
+                  0.1587
+                ],
+                [
+                  0.4767,
+                  0.1671
+                ],
+                [
+                  0.5041,
+                  0.1817
+                ],
+                [
+                  0.5221,
+                  0.2039
+                ]
+              ],
+              "color": "#d8c7a0",
+              "dur": 0.001,
+              "at": 0,
+              "halftone": true
+            }
+          ],
+          "arrows": [
+            {
+              "from": "yemen",
+              "to": "ottoman",
+              "at": 0.3,
+              "color": "#f2c230",
+              "style": "block"
+            }
+          ],
+          "cities": [
+            {
+              "x": 0.565,
+              "y": 0.31,
+              "icon": "dome",
+              "at": 1.7,
+              "label": "ISTANBUL"
+            }
+          ],
+          "words": [
+            {
+              "text": "OTTOMAN EMPIRE",
+              "x": 0.66,
+              "y": 0.28,
+              "size": 46,
+              "style": "extrude",
+              "at": 1.2,
+              "rot": -8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "k09",
+      "dur": 4.58,
+      "vo": "In Istanbul, coffeehouses were packed with people talking, playing chess and arguing politics.",
+      "screen": "coffeehouse counter, patrons arguing, a chess piece, mugs.",
+      "anim": false,
+      "transition": "cut",
+      "bg": {
+        "kind": "bar",
+        "brick": true,
+        "lamps": [
+          0.25,
+          0.5,
+          0.75
+        ],
+        "counter": true,
+        "counterY": 0.8,
+        "mugs": [
+          0.12,
+          0.3,
+          0.86
+        ]
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ],
+        "pan": [
+          [
+            0,
+            0
+          ],
+          [
+            -40,
+            0
+          ]
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "p1",
+          "who": "patron",
+          "x": 0.24,
+          "y": 0.98,
+          "size": 560,
+          "talk": [
+            [
+              0.2,
+              1.4
+            ]
+          ],
+          "pose": [
+            {
+              "at": 0,
+              "v": "point"
+            },
+            {
+              "at": 3.0,
+              "v": "fist"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "happy"
+            },
+            {
+              "at": 3.0,
+              "v": "angry"
+            }
+          ]
+        },
+        {
+          "type": "prop",
+          "id": "ch1",
+          "kind": "chess",
+          "piece": "knight",
+          "side": "black",
+          "x": 0.47,
+          "y": 0.8,
+          "size": 110,
+          "at": 1.5,
+          "enter": "drop-squash"
+        },
+        {
+          "type": "prop",
+          "id": "ch2",
+          "kind": "chess",
+          "piece": "king",
+          "side": "white",
+          "x": 0.53,
+          "y": 0.8,
+          "size": 130,
+          "at": 1.6,
+          "enter": "drop-squash",
+          "topple": {
+            "at": 2.4,
+            "dir": 1
+          }
+        },
+        {
+          "type": "bean",
+          "id": "p2",
+          "who": "patron2",
+          "x": 0.76,
+          "y": 0.98,
+          "size": 560,
+          "flip": true,
+          "talk": [
+            [
+              3.0,
+              4.3
+            ]
+          ],
+          "pose": [
+            {
+              "at": 0,
+              "v": "think"
+            },
+            {
+              "at": 2.4,
+              "v": "facepalm"
+            },
+            {
+              "at": 3.0,
+              "v": "spread"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "squint"
+            },
+            {
+              "at": 2.4,
+              "v": "grimace"
+            },
+            {
+              "at": 3.0,
+              "v": "rage"
+            }
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "id": "sj9",
+          "mark": "shout-jag",
+          "target": "p2",
+          "at": 3.0,
+          "dur": 1.2
+        },
+        {
+          "type": "label",
+          "text": "TALKING",
+          "x": 0.2,
+          "y": 0.17,
+          "size": 70,
+          "at": 1.0,
+          "enter": "pop-tilt",
+          "color": "#fff"
+        },
+        {
+          "type": "label",
+          "text": "CHESS",
+          "x": 0.5,
+          "y": 0.13,
+          "size": 70,
+          "at": 1.9,
+          "enter": "pop-tilt",
+          "color": "#ffe066"
+        },
+        {
+          "type": "label",
+          "text": "POLITICS!",
+          "x": 0.78,
+          "y": 0.26,
+          "size": 70,
+          "at": 3.0,
+          "enter": "pop-tilt",
+          "color": "#ff6b6b"
+        }
+      ]
+    },
+    {
+      "id": "k10",
+      "dur": 2.58,
+      "vo": "People called them schools of the wise.",
+      "screen": "lettering SCHOOLS OF THE WISE slams over the room; a patron in a graduation cap.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "bar",
+        "brick": true,
+        "lamps": [
+          0.25,
+          0.5,
+          0.75
+        ],
+        "counter": true,
+        "counterY": 0.8,
+        "mugs": [
+          0.12,
+          0.3,
+          0.86
+        ]
+      },
+      "camera": {
+        "zoom": [
+          1.12,
+          1.16
+        ],
+        "focus": [
+          0.3,
+          0.5
+        ],
+        "punch": [
+          {
+            "at": 1.1,
+            "amount": 0.14
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "p10",
+          "who": "patron",
+          "x": 0.28,
+          "y": 1.0,
+          "size": 640,
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 1.0,
+              "v": "point-up"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 1.0,
+              "v": "smug-closed"
+            }
+          ],
+          "headTilt": 6,
+          "swap": [
+            {
+              "at": 1.0,
+              "look": {
+                "head": "graduation",
+                "headColor": "#1a1a22"
+              }
+            }
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "hat",
+          "id": "grad",
+          "at": 0.87,
+          "mode": "drop",
+          "target": "p10",
+          "head": "graduation",
+          "color": "#1a1a22",
+          "bonk": true
+        },
+        {
+          "type": "title",
+          "text": "SCHOOLS OF THE WISE",
+          "x": 0.62,
+          "y": 0.3,
+          "size": 104,
+          "at": 0.6,
+          "color": "#ffe066",
+          "sub": "(OPEN ALL NIGHT)",
+          "subColor": "#fff"
+        }
+      ]
+    },
+    {
+      "id": "k11",
+      "dur": 2.92,
+      "vo": "The sultan did not like people talking politics.",
+      "screen": "throne hall, the sultan, a hat drops on him, menace face.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "palace",
+        "variant": "ochre",
+        "throne": {
+          "x": 0.5,
+          "h": 560,
+          "color": "#2f6a4a"
+        },
+        "floorY": 0.8,
+        "shafts": true,
+        "fgColumns": [
+          0.05,
+          0.95
+        ]
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.08
+        ],
+        "jump": [
+          {
+            "at": 2.1,
+            "zoom": 1.3,
+            "focus": [
+              0.5,
+              0.42
+            ]
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "sul",
+          "who": "sultan",
+          "x": 0.5,
+          "y": 0.97,
+          "size": 600,
+          "pose": [
+            {
+              "at": 0,
+              "v": "steeple"
+            },
+            {
+              "at": 2.1,
+              "v": "cross"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "smug"
+            },
+            {
+              "at": 2.1,
+              "v": "evil"
+            }
+          ]
+        },
+        {
+          "type": "fg",
+          "kind": "bg-front"
+        },
+        {
+          "type": "doc",
+          "kind": "nameplate",
+          "id": "np_s",
+          "style": "rank",
+          "rank": "HIS MAJESTY",
+          "name": "THE SULTAN",
+          "anchor": "bottom-left",
+          "at": 0.4,
+          "hud": true
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "id": "g11",
+          "mark": "gloom",
+          "target": "sul",
+          "at": 2.1
+        },
+        {
+          "type": "label",
+          "text": "POLITICS?",
+          "x": 0.78,
+          "y": 0.36,
+          "size": 80,
+          "at": 2.1,
+          "enter": "pop-tilt",
+          "color": "#ff6b6b"
+        }
+      ]
+    },
+    {
+      "id": "k12",
+      "dur": 1.6,
+      "vo": "So he banned coffee.",
+      "screen": "a giant foot stomps a coffee pot; a no-coffee sign slams.",
+      "anim": true,
+      "transition": {
+        "kind": "flash-cut",
+        "dur": 0.1
+      },
+      "bg": {
+        "kind": "mood",
+        "variant": "rays",
+        "preset": "crimson",
+        "spin": 8
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.0
+        ],
+        "shake": [
+          {
+            "at": 0.75,
+            "dur": 0.2,
+            "amp": 10
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "obj",
+          "id": "mug12",
+          "prop": "mug",
+          "size": 300,
+          "x": 0.5,
+          "y": 0.82,
+          "face": {
+            "mood": [
+              {
+                "at": 0,
+                "v": "happy"
+              },
+              {
+                "at": 0.4,
+                "v": "shock"
+              }
+            ],
+            "pos": [
+              0,
+              -0.5
+            ],
+            "scale": 1.1
+          },
+          "swap": [
+            {
+              "at": 0.75,
+              "scale": 0.3,
+              "alpha": 0
+            }
+          ]
+        },
+        {
+          "type": "arm",
+          "id": "foot",
+          "kind": "foot",
+          "from": "top",
+          "stomp": [
+            0.75
+          ],
+          "reach": [
+            {
+              "to": [
+                0.5,
+                0.8
+              ]
+            }
+          ],
+          "boot": "#3a2a20",
+          "leg": "#7a2a8a",
+          "width": 130
+        },
+        {
+          "type": "fx",
+          "kind": "prohibit",
+          "id": "ban",
+          "at": 0.95,
+          "x": 0.5,
+          "y": 0.45,
+          "size": 520,
+          "icon": "mug",
+          "jolt": true
+        },
+        {
+          "type": "label",
+          "text": "BANNED!",
+          "x": 0.5,
+          "y": 0.12,
+          "size": 120,
+          "at": 0.95,
+          "enter": "slam",
+          "color": "#fff"
+        }
+      ]
+    },
+    {
+      "id": "k13",
+      "dur": 2.25,
+      "vo": "Everyone kept drinking it anyway. Quietly.",
+      "screen": "dark alley, drinkers peek out with mugs, side-eye, sip.",
+      "anim": false,
+      "transition": "cut",
+      "bg": {
+        "kind": "alley",
+        "barrel": true,
+        "barrelX": 0.5,
+        "windows": 0.4
+      },
+      "grade": {
+        "preset": "moonlit",
+        "strength": 0.6
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "a1",
+          "who": "patron",
+          "x": 0.06,
+          "y": 1.02,
+          "size": 620,
+          "at": 0.1,
+          "enter": "peek",
+          "peek": {
+            "side": "left",
+            "tilt": 16
+          },
+          "hold": "mug",
+          "expr": [
+            {
+              "at": 0,
+              "v": "side-eye"
+            },
+            {
+              "at": 1.3,
+              "v": "smug-closed"
+            }
+          ],
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 1.3,
+              "v": "drink"
+            }
+          ]
+        },
+        {
+          "type": "bean",
+          "id": "a2",
+          "who": "patron2",
+          "x": 0.94,
+          "y": 1.02,
+          "size": 620,
+          "flip": true,
+          "at": 0.4,
+          "enter": "peek",
+          "peek": {
+            "side": "right",
+            "tilt": 16
+          },
+          "hold": "teacup",
+          "expr": [
+            {
+              "at": 0,
+              "v": "side-eye"
+            },
+            {
+              "at": 1.4,
+              "v": "smug-closed"
+            }
+          ],
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 1.4,
+              "v": "drink"
+            }
+          ]
+        },
+        {
+          "type": "bean",
+          "id": "a3",
+          "who": "monk2",
+          "x": 0.5,
+          "y": 0.86,
+          "size": 300,
+          "at": 1.0,
+          "enter": "ground",
+          "hold": "mug",
+          "pose": "drink",
+          "expr": "content"
+        },
+        {
+          "type": "label",
+          "text": "...QUIETLY",
+          "x": 0.5,
+          "y": 0.18,
+          "size": 76,
+          "at": 1.3,
+          "enter": "pop",
+          "color": "#cfe0ff"
+        }
+      ]
+    },
+    {
+      "id": "k14",
+      "dur": 2.92,
+      "vo": "Then coffee sailed to Europe, and Europe panicked.",
+      "screen": "map; arrow to Europe; Europe region face snaps to shock.",
+      "anim": false,
+      "transition": "cut",
+      "bg": {
+        "kind": "flat",
+        "color": "#5b72d6"
+      },
+      "camera": {
+        "zoom": [
+          1.05,
+          1.12
+        ],
+        "focus": [
+          0.5,
+          0.45
+        ],
+        "punch": [
+          {
+            "at": 2.2,
+            "amount": 0.16
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "map",
+          "id": "world",
+          "style": "atlas",
+          "land": [
+            [
+              0.6,
+              0.27,
+              0.27,
+              0.13
+            ],
+            [
+              0.5,
+              0.62,
+              0.1,
+              0.2
+            ],
+            [
+              0.665,
+              0.47,
+              0.045,
+              0.06
+            ],
+            [
+              0.19,
+              0.3,
+              0.09,
+              0.13
+            ],
+            [
+              0.26,
+              0.66,
+              0.06,
+              0.15
+            ],
+            [
+              0.8,
+              0.7,
+              0.06,
+              0.022
+            ],
+            [
+              0.22,
+              0.45,
+              0.03,
+              0.02
+            ]
+          ],
+          "regions": [
+            {
+              "id": "ethiopia",
+              "pts": [
+                [
+                  0.5962,
+                  0.53
+                ],
+                [
+                  0.5895,
+                  0.548
+                ],
+                [
+                  0.5798,
+                  0.5612
+                ],
+                [
+                  0.5693,
+                  0.5719
+                ],
+                [
+                  0.5563,
+                  0.5745
+                ],
+                [
+                  0.5436,
+                  0.5754
+                ],
+                [
+                  0.5277,
+                  0.5783
+                ],
+                [
+                  0.514,
+                  0.5677
+                ],
+                [
+                  0.5136,
+                  0.5465
+                ],
+                [
+                  0.5162,
+                  0.53
+                ],
+                [
+                  0.5143,
+                  0.5138
+                ],
+                [
+                  0.5185,
+                  0.4969
+                ],
+                [
+                  0.5293,
+                  0.4853
+                ],
+                [
+                  0.5424,
+                  0.476
+                ],
+                [
+                  0.5575,
+                  0.4769
+                ],
+                [
+                  0.5677,
+                  0.4917
+                ],
+                [
+                  0.5753,
+                  0.5034
+                ],
+                [
+                  0.5888,
+                  0.5123
+                ]
+              ],
+              "color": "#6b3f22",
+              "dur": 0.001,
+              "at": 0
+            },
+            {
+              "id": "yemen",
+              "pts": [
+                [
+                  0.7012,
+                  0.5
+                ],
+                [
+                  0.6985,
+                  0.5104
+                ],
+                [
+                  0.6918,
+                  0.5187
+                ],
+                [
+                  0.6818,
+                  0.5224
+                ],
+                [
+                  0.6732,
+                  0.5274
+                ],
+                [
+                  0.6616,
+                  0.5339
+                ],
+                [
+                  0.6496,
+                  0.5299
+                ],
+                [
+                  0.6448,
+                  0.5183
+                ],
+                [
+                  0.6415,
+                  0.509
+                ],
+                [
+                  0.6372,
+                  0.5
+                ],
+                [
+                  0.6384,
+                  0.4899
+                ],
+                [
+                  0.6428,
+                  0.4802
+                ],
+                [
+                  0.6498,
+                  0.4704
+                ],
+                [
+                  0.662,
+                  0.4683
+                ],
+                [
+                  0.6727,
+                  0.4748
+                ],
+                [
+                  0.6816,
+                  0.478
+                ],
+                [
+                  0.6938,
+                  0.4797
+                ],
+                [
+                  0.7016,
+                  0.4885
+                ]
+              ],
+              "color": "#6b3f22",
+              "dur": 0.001,
+              "at": 0
+            },
+            {
+              "id": "ottoman",
+              "pts": [
+                [
+                  0.6847,
+                  0.34
+                ],
+                [
+                  0.6719,
+                  0.3564
+                ],
+                [
+                  0.6508,
+                  0.3667
+                ],
+                [
+                  0.6381,
+                  0.3813
+                ],
+                [
+                  0.6162,
+                  0.3973
+                ],
+                [
+                  0.5845,
+                  0.395
+                ],
+                [
+                  0.5622,
+                  0.3809
+                ],
+                [
+                  0.5433,
+                  0.3697
+                ],
+                [
+                  0.5283,
+                  0.3563
+                ],
+                [
+                  0.5247,
+                  0.34
+                ],
+                [
+                  0.5215,
+                  0.3221
+                ],
+                [
+                  0.5283,
+                  0.3024
+                ],
+                [
+                  0.5581,
+                  0.2947
+                ],
+                [
+                  0.5884,
+                  0.2988
+                ],
+                [
+                  0.6123,
+                  0.2965
+                ],
+                [
+                  0.6422,
+                  0.2943
+                ],
+                [
+                  0.6659,
+                  0.3054
+                ],
+                [
+                  0.6787,
+                  0.3221
+                ]
+              ],
+              "color": "#6b3f22",
+              "dur": 0.001,
+              "at": 0,
+              "face": {
+                "mood": "smug"
+              }
+            },
+            {
+              "id": "europe",
+              "pts": [
+                [
+                  0.5133,
+                  0.23
+                ],
+                [
+                  0.4989,
+                  0.2495
+                ],
+                [
+                  0.498,
+                  0.2744
+                ],
+                [
+                  0.4822,
+                  0.3003
+                ],
+                [
+                  0.4469,
+                  0.3045
+                ],
+                [
+                  0.4149,
+                  0.2965
+                ],
+                [
+                  0.3867,
+                  0.2883
+                ],
+                [
+                  0.3662,
+                  0.2717
+                ],
+                [
+                  0.3529,
+                  0.2518
+                ],
+                [
+                  0.3333,
+                  0.23
+                ],
+                [
+                  0.3298,
+                  0.2016
+                ],
+                [
+                  0.3601,
+                  0.1844
+                ],
+                [
+                  0.3922,
+                  0.1791
+                ],
+                [
+                  0.4156,
+                  0.1666
+                ],
+                [
+                  0.4462,
+                  0.1587
+                ],
+                [
+                  0.4767,
+                  0.1671
+                ],
+                [
+                  0.5041,
+                  0.1817
+                ],
+                [
+                  0.5221,
+                  0.2039
+                ]
+              ],
+              "color": "#b88ad0",
+              "dur": 0.001,
+              "at": 0,
+              "face": {
+                "mood": [
+                  {
+                    "at": 0,
+                    "v": "sleepy"
+                  },
+                  {
+                    "at": 2.2,
+                    "v": "shock"
+                  }
+                ]
+              },
+              "label": {
+                "text": "EUROPE",
+                "size": 56,
+                "at": 0.6,
+                "dy": -60
+              }
+            }
+          ],
+          "tokens": [
+            {
+              "icon": "ship",
+              "pts": [
+                [
+                  0.56,
+                  0.33
+                ],
+                [
+                  0.5,
+                  0.3
+                ],
+                [
+                  0.46,
+                  0.25
+                ]
+              ],
+              "at": 0.3,
+              "dur": 1.4,
+              "count": 3,
+              "every": 0.3,
+              "size": 60
+            }
+          ],
+          "arrows": [
+            {
+              "from": "ottoman",
+              "to": "europe",
+              "at": 0.5,
+              "color": "#f2c230",
+              "draw": 0.8
+            }
+          ]
+        },
+        {
+          "type": "label",
+          "text": "PANIC!",
+          "x": 0.22,
+          "y": 0.55,
+          "size": 110,
+          "at": 2.2,
+          "enter": "slam",
+          "color": "#ff6b6b"
+        }
+      ]
+    },
+    {
+      "id": "k15",
+      "dur": 2.58,
+      "vo": "Priests called it the devil's drink.",
+      "screen": "a mug with a menacing face on a vortex; DEVIL'S DRINK lettering; inferno grade.",
+      "anim": true,
+      "transition": {
+        "kind": "zoom-punch",
+        "dur": 0.3
+      },
+      "bg": {
+        "kind": "mood",
+        "variant": "vortex",
+        "center": "#a02a2a",
+        "edge": "#2a0a10",
+        "spin": 6
+      },
+      "grade": {
+        "preset": "inferno",
+        "strength": 0.6,
+        "target": "bg"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.08
+        ],
+        "jump": [
+          {
+            "at": 1.6,
+            "zoom": 1.2,
+            "focus": [
+              0.55,
+              0.45
+            ]
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "obj",
+          "id": "devilmug",
+          "prop": "mug",
+          "size": 420,
+          "x": 0.6,
+          "y": 0.86,
+          "face": {
+            "mood": [
+              {
+                "at": 0,
+                "v": "neutral"
+              },
+              {
+                "at": 1.6,
+                "v": "menace"
+              }
+            ],
+            "pos": [
+              0,
+              -0.5
+            ],
+            "scale": 1.1
+          },
+          "glow": {
+            "color": "#ff3a1a"
+          },
+          "arms": {
+            "pose": "crossed"
+          }
+        },
+        {
+          "type": "bean",
+          "id": "pr1",
+          "who": "priest",
+          "x": 0.18,
+          "y": 1.02,
+          "size": 600,
+          "pose": [
+            {
+              "at": 0,
+              "v": "point"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "shock"
+            },
+            {
+              "at": 1.6,
+              "v": "scream"
+            }
+          ],
+          "tremble": [
+            [
+              1.6,
+              2.6
+            ]
+          ]
+        },
+        {
+          "type": "title",
+          "text": "THE DEVIL'S DRINK",
+          "x": 0.56,
+          "y": 0.3,
+          "size": 96,
+          "at": 1.4,
+          "color": "#ff3a1a"
+        }
+      ]
+    },
+    {
+      "id": "k16",
+      "dur": 2.92,
+      "vo": "So the pope decided to taste it himself.",
+      "screen": "worried priests in the foreground; focus racks to the pope sipping.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "palace",
+        "variant": "gothic",
+        "throne": {
+          "x": 0.62,
+          "h": 520,
+          "color": "#b3202a"
+        },
+        "floorY": 0.8
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ]
+      },
+      "focus": [
+        {
+          "at": 0,
+          "on": "prA",
+          "px": 9
+        },
+        {
+          "at": 0.75,
+          "on": "pope",
+          "dur": 0.4
+        }
+      ],
+      "layers": [
+        {
+          "type": "bean",
+          "id": "pope",
+          "who": "pope",
+          "x": 0.62,
+          "y": 0.9,
+          "size": 460,
+          "hold": "teacup",
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 1.6,
+              "v": "drink"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 1.6,
+              "v": "squint"
+            }
+          ]
+        },
+        {
+          "type": "bean",
+          "id": "prA",
+          "who": "priest",
+          "x": 0.13,
+          "y": 1.35,
+          "size": 1050,
+          "expr": "worried",
+          "view": "3q",
+          "tremble": [
+            [
+              0,
+              2.9
+            ]
+          ]
+        },
+        {
+          "type": "bean",
+          "id": "prB",
+          "who": "priest",
+          "x": 0.93,
+          "y": 1.4,
+          "size": 980,
+          "expr": "worried",
+          "flip": true
+        },
+        {
+          "type": "doc",
+          "kind": "nameplate",
+          "style": "slant",
+          "name": "THE POPE",
+          "at": 0.8,
+          "anchor": "head",
+          "who": "pope"
+        },
+        {
+          "type": "fx",
+          "kind": "sweat-spray",
+          "id": "sw16",
+          "target": "prA",
+          "rate": 3,
+          "at": 0.2
+        }
+      ]
+    },
+    {
+      "id": "k17",
+      "dur": 3.25,
+      "vo": "His verdict: too delicious to leave to the devil.",
+      "screen": "the devil mug, POOF, it has a halo; APPROVED stamp; the open question chip turns green.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "mood",
+        "variant": "rays",
+        "preset": "gold",
+        "spin": 5
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.06
+        ],
+        "punch": [
+          {
+            "at": 1.97,
+            "amount": 0.15
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "obj",
+          "id": "angelmug",
+          "prop": "mug",
+          "size": 420,
+          "x": 0.62,
+          "y": 0.86,
+          "face": {
+            "mood": [
+              {
+                "at": 0,
+                "v": "menace"
+              },
+              {
+                "at": 1.07,
+                "v": "cute"
+              }
+            ],
+            "pos": [
+              0,
+              -0.5
+            ],
+            "scale": 1.1
+          },
+          "arms": {
+            "pose": "crossed"
+          },
+          "swap": [
+            {
+              "at": 1.07,
+              "head": "halo",
+              "arms": {
+                "pose": "wave"
+              }
+            }
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "poof",
+          "id": "p17",
+          "at": 1.0,
+          "x": 0.62,
+          "y": 0.68,
+          "w": 560,
+          "h": 460
+        },
+        {
+          "type": "bean",
+          "id": "pope17",
+          "who": "pope",
+          "x": 0.2,
+          "y": 1.0,
+          "size": 600,
+          "hold": "teacup",
+          "pose": [
+            {
+              "at": 0,
+              "v": "drink"
+            },
+            {
+              "at": 1.0,
+              "v": "thumbs-up"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "star-eyes"
+            },
+            {
+              "at": 1.0,
+              "v": "happy"
+            }
+          ],
+          "talk": [
+            [
+              0.1,
+              0.9
+            ]
+          ]
+        },
+        {
+          "type": "doc",
+          "kind": "stamp",
+          "id": "ok17",
+          "text": "APPROVED",
+          "color": "#2a9a3a",
+          "x": 0.62,
+          "y": 0.3,
+          "at": 1.97,
+          "size": 120
+        },
+        {
+          "type": "fx",
+          "kind": "confetti",
+          "id": "cf17",
+          "at": 2.0
+        }
+      ]
+    },
+    {
+      "id": "k18",
+      "dur": 4.58,
+      "vo": "But Arab traders guarded their monopoly. No fertile seed could leave the port.",
+      "screen": "harbor at dusk; a guard with a spear; a Dutch merchant lurking.",
+      "anim": false,
+      "transition": {
+        "kind": "whip",
+        "dur": 0.3
+      },
+      "bg": {
+        "kind": "harbor",
+        "time": "sunset",
+        "ship": true,
+        "shipX": 0.78
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ]
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "id": "sp18",
+          "kind": "signpost",
+          "text": "MOCHA PORT",
+          "stack": [
+            "NO SEEDS OUT!"
+          ],
+          "x": 0.5,
+          "y": 0.9,
+          "size": 400,
+          "at": 1.9,
+          "enter": "drop-squash"
+        },
+        {
+          "type": "bean",
+          "id": "gd",
+          "who": "guard",
+          "x": 0.26,
+          "y": 0.97,
+          "size": 560,
+          "hold": "spear",
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 1.0,
+              "v": "cross"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 1.0,
+              "v": "smug"
+            }
+          ]
+        },
+        {
+          "type": "prop",
+          "id": "crate18",
+          "kind": "crate",
+          "text": "BEANS",
+          "x": 0.82,
+          "y": 0.86,
+          "size": 230,
+          "enter": "none"
+        },
+        {
+          "type": "bean",
+          "id": "dt",
+          "who": "dutch",
+          "x": 0.88,
+          "y": 1.0,
+          "size": 560,
+          "flip": true,
+          "at": 3.0,
+          "enter": "peek",
+          "peek": {
+            "side": "right",
+            "tilt": 12
+          },
+          "expr": "side-eye",
+          "pose": "rub-hands"
+        },
+        {
+          "type": "label",
+          "text": "MONOPOLY",
+          "x": 0.25,
+          "y": 0.18,
+          "size": 84,
+          "at": 1.0,
+          "enter": "pop-tilt",
+          "color": "#ffe066"
+        }
+      ]
+    },
+    {
+      "id": "k19",
+      "dur": 2.58,
+      "vo": "The Dutch wanted plants of their own.",
+      "screen": "split screen, the guard versus the merchant, VS.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "flat",
+        "color": "#0b0806"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.0
+        ]
+      },
+      "layers": [
+        {
+          "type": "panel",
+          "id": "vs19",
+          "hud": true,
+          "layout": "split",
+          "seam": "jagged",
+          "vs": true,
+          "cells": [
+            {
+              "shot": "k18",
+              "from": 1.2,
+              "focus": [
+                0.26,
+                0.5
+              ],
+              "zoom": 1.6,
+              "label": "THE GUARD"
+            },
+            {
+              "shot": "k18",
+              "from": 3.4,
+              "focus": [
+                0.86,
+                0.55
+              ],
+              "zoom": 1.6,
+              "label": "THE DUTCH"
+            }
+          ],
+          "slideIn": false
+        },
+        {
+          "type": "obj",
+          "id": "want19",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 150,
+          "x": 0.75,
+          "y": 0.42,
+          "face": {
+            "mood": "heart"
+          },
+          "at": 1.15,
+          "enter": "pop-tilt",
+          "sticker": true,
+          "hud": true
+        },
+        {
+          "type": "label",
+          "text": "WANTS PLANTS",
+          "x": 0.75,
+          "y": 0.16,
+          "size": 70,
+          "at": 1.15,
+          "enter": "pop-tilt",
+          "color": "#8cf05a",
+          "hud": true
+        }
+      ]
+    },
+    {
+      "id": "k20",
+      "dur": 2.58,
+      "vo": "So in 1616, they smuggled one out.",
+      "screen": "game parody: MISSION card, a rubber arm snatches the potted plant, notice +1 COFFEE PLANT.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "harbor",
+        "time": "night",
+        "ship": true,
+        "shipX": 0.2
+      },
+      "grade": {
+        "preset": "night-violet",
+        "strength": 0.5,
+        "target": "bg"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ]
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "id": "crate20",
+          "kind": "crate",
+          "x": 0.62,
+          "y": 0.88,
+          "size": 240,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pl20",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 160,
+          "x": 0.62,
+          "y": 0.79,
+          "face": {
+            "mood": [
+              {
+                "at": 0,
+                "v": "sleepy"
+              },
+              {
+                "at": 1.25,
+                "v": "shock"
+              }
+            ]
+          }
+        },
+        {
+          "type": "bean",
+          "id": "gd20",
+          "who": "guard",
+          "x": 0.3,
+          "y": 0.97,
+          "size": 520,
+          "hold": "spear",
+          "pose": "idle",
+          "expr": "sleep-drool"
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "id": "zz20",
+          "mark": "zzz",
+          "target": "gd20"
+        },
+        {
+          "type": "arm",
+          "id": "grab",
+          "kind": "rubber",
+          "from": "right",
+          "y": 0.6,
+          "label": "VOC",
+          "reach": [
+            {
+              "at": 1.0,
+              "to": [
+                0.62,
+                0.62
+              ],
+              "hold": 0.35,
+              "back": 0.33
+            }
+          ],
+          "state": [
+            {
+              "at": 0,
+              "v": "open"
+            },
+            {
+              "at": 1.15,
+              "v": "grab"
+            }
+          ],
+          "take": [
+            "pl20"
+          ]
+        },
+        {
+          "type": "doc",
+          "kind": "mission",
+          "id": "mis",
+          "small": "MISSION:",
+          "word": "SMUGGLE",
+          "size": 180,
+          "at": 0.05,
+          "out": 0.95,
+          "y": 0.3
+        },
+        {
+          "type": "hud",
+          "kind": "notice",
+          "id": "nt20",
+          "lines": [
+            {
+              "at": 1.5,
+              "text": "+1 COFFEE PLANT",
+              "color": "#8cf05a"
+            },
+            {
+              "at": 1.9,
+              "text": "GUARD: STILL ASLEEP"
+            }
+          ],
+          "life": 1.6,
+          "size": 56
+        },
+        {
+          "type": "date",
+          "text": "1616",
+          "x": 0.84,
+          "y": 0.28,
+          "at": 0.95,
+          "size": 90
+        }
+      ]
+    },
+    {
+      "id": "k21",
+      "dur": 3.25,
+      "vo": "Dutch plantations in Java. Then the Caribbean. Then Brazil.",
+      "screen": "tilted map; brown regions annex one by one; mug squads march.",
+      "anim": false,
+      "transition": "cut",
+      "bg": {
+        "kind": "flat",
+        "color": "#5b72d6"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "map",
+          "id": "world",
+          "style": "atlas",
+          "land": [
+            [
+              0.6,
+              0.27,
+              0.27,
+              0.13
+            ],
+            [
+              0.5,
+              0.62,
+              0.1,
+              0.2
+            ],
+            [
+              0.665,
+              0.47,
+              0.045,
+              0.06
+            ],
+            [
+              0.19,
+              0.3,
+              0.09,
+              0.13
+            ],
+            [
+              0.26,
+              0.66,
+              0.06,
+              0.15
+            ],
+            [
+              0.8,
+              0.7,
+              0.06,
+              0.022
+            ],
+            [
+              0.22,
+              0.45,
+              0.03,
+              0.02
+            ]
+          ],
+          "regions": [
+            {
+              "id": "ethiopia",
+              "pts": [
+                [
+                  0.5962,
+                  0.53
+                ],
+                [
+                  0.5895,
+                  0.548
+                ],
+                [
+                  0.5798,
+                  0.5612
+                ],
+                [
+                  0.5693,
+                  0.5719
+                ],
+                [
+                  0.5563,
+                  0.5745
+                ],
+                [
+                  0.5436,
+                  0.5754
+                ],
+                [
+                  0.5277,
+                  0.5783
+                ],
+                [
+                  0.514,
+                  0.5677
+                ],
+                [
+                  0.5136,
+                  0.5465
+                ],
+                [
+                  0.5162,
+                  0.53
+                ],
+                [
+                  0.5143,
+                  0.5138
+                ],
+                [
+                  0.5185,
+                  0.4969
+                ],
+                [
+                  0.5293,
+                  0.4853
+                ],
+                [
+                  0.5424,
+                  0.476
+                ],
+                [
+                  0.5575,
+                  0.4769
+                ],
+                [
+                  0.5677,
+                  0.4917
+                ],
+                [
+                  0.5753,
+                  0.5034
+                ],
+                [
+                  0.5888,
+                  0.5123
+                ]
+              ],
+              "color": "#6b3f22",
+              "dur": 0.001,
+              "at": 0
+            },
+            {
+              "id": "yemen",
+              "pts": [
+                [
+                  0.7012,
+                  0.5
+                ],
+                [
+                  0.6985,
+                  0.5104
+                ],
+                [
+                  0.6918,
+                  0.5187
+                ],
+                [
+                  0.6818,
+                  0.5224
+                ],
+                [
+                  0.6732,
+                  0.5274
+                ],
+                [
+                  0.6616,
+                  0.5339
+                ],
+                [
+                  0.6496,
+                  0.5299
+                ],
+                [
+                  0.6448,
+                  0.5183
+                ],
+                [
+                  0.6415,
+                  0.509
+                ],
+                [
+                  0.6372,
+                  0.5
+                ],
+                [
+                  0.6384,
+                  0.4899
+                ],
+                [
+                  0.6428,
+                  0.4802
+                ],
+                [
+                  0.6498,
+                  0.4704
+                ],
+                [
+                  0.662,
+                  0.4683
+                ],
+                [
+                  0.6727,
+                  0.4748
+                ],
+                [
+                  0.6816,
+                  0.478
+                ],
+                [
+                  0.6938,
+                  0.4797
+                ],
+                [
+                  0.7016,
+                  0.4885
+                ]
+              ],
+              "color": "#6b3f22",
+              "dur": 0.001,
+              "at": 0
+            },
+            {
+              "id": "ottoman",
+              "pts": [
+                [
+                  0.6847,
+                  0.34
+                ],
+                [
+                  0.6719,
+                  0.3564
+                ],
+                [
+                  0.6508,
+                  0.3667
+                ],
+                [
+                  0.6381,
+                  0.3813
+                ],
+                [
+                  0.6162,
+                  0.3973
+                ],
+                [
+                  0.5845,
+                  0.395
+                ],
+                [
+                  0.5622,
+                  0.3809
+                ],
+                [
+                  0.5433,
+                  0.3697
+                ],
+                [
+                  0.5283,
+                  0.3563
+                ],
+                [
+                  0.5247,
+                  0.34
+                ],
+                [
+                  0.5215,
+                  0.3221
+                ],
+                [
+                  0.5283,
+                  0.3024
+                ],
+                [
+                  0.5581,
+                  0.2947
+                ],
+                [
+                  0.5884,
+                  0.2988
+                ],
+                [
+                  0.6123,
+                  0.2965
+                ],
+                [
+                  0.6422,
+                  0.2943
+                ],
+                [
+                  0.6659,
+                  0.3054
+                ],
+                [
+                  0.6787,
+                  0.3221
+                ]
+              ],
+              "color": "#6b3f22",
+              "dur": 0.001,
+              "at": 0
+            },
+            {
+              "id": "europe",
+              "pts": [
+                [
+                  0.5133,
+                  0.23
+                ],
+                [
+                  0.4989,
+                  0.2495
+                ],
+                [
+                  0.498,
+                  0.2744
+                ],
+                [
+                  0.4822,
+                  0.3003
+                ],
+                [
+                  0.4469,
+                  0.3045
+                ],
+                [
+                  0.4149,
+                  0.2965
+                ],
+                [
+                  0.3867,
+                  0.2883
+                ],
+                [
+                  0.3662,
+                  0.2717
+                ],
+                [
+                  0.3529,
+                  0.2518
+                ],
+                [
+                  0.3333,
+                  0.23
+                ],
+                [
+                  0.3298,
+                  0.2016
+                ],
+                [
+                  0.3601,
+                  0.1844
+                ],
+                [
+                  0.3922,
+                  0.1791
+                ],
+                [
+                  0.4156,
+                  0.1666
+                ],
+                [
+                  0.4462,
+                  0.1587
+                ],
+                [
+                  0.4767,
+                  0.1671
+                ],
+                [
+                  0.5041,
+                  0.1817
+                ],
+                [
+                  0.5221,
+                  0.2039
+                ]
+              ],
+              "color": "#6b3f22",
+              "dur": 0.001,
+              "at": 0,
+              "face": {
+                "mood": "happy"
+              }
+            },
+            {
+              "id": "java",
+              "pts": [
+                [
+                  0.8411,
+                  0.7
+                ],
+                [
+                  0.8478,
+                  0.7063
+                ],
+                [
+                  0.8434,
+                  0.7131
+                ],
+                [
+                  0.8263,
+                  0.7164
+                ],
+                [
+                  0.8087,
+                  0.7178
+                ],
+                [
+                  0.7915,
+                  0.7174
+                ],
+                [
+                  0.7778,
+                  0.7138
+                ],
+                [
+                  0.7655,
+                  0.7104
+                ],
+                [
+                  0.7478,
+                  0.7068
+                ],
+                [
+                  0.7411,
+                  0.7
+                ],
+                [
+                  0.7538,
+                  0.6939
+                ],
+                [
+                  0.7668,
+                  0.69
+                ],
+                [
+                  0.7763,
+                  0.6852
+                ],
+                [
+                  0.7913,
+                  0.6823
+                ],
+                [
+                  0.8088,
+                  0.682
+                ],
+                [
+                  0.8278,
+                  0.6826
+                ],
+                [
+                  0.8421,
+                  0.6873
+                ],
+                [
+                  0.8418,
+                  0.6945
+                ]
+              ],
+              "color": "#c9b48a",
+              "dur": 0.001,
+              "at": 0,
+              "annex": {
+                "at": 0.4,
+                "to": "#6b3f22"
+              },
+              "label": {
+                "text": "JAVA",
+                "size": 60,
+                "at": 0.4
+              }
+            },
+            {
+              "id": "carib",
+              "pts": [
+                [
+                  0.249,
+                  0.45
+                ],
+                [
+                  0.2488,
+                  0.4567
+                ],
+                [
+                  0.2424,
+                  0.4621
+                ],
+                [
+                  0.2347,
+                  0.4663
+                ],
+                [
+                  0.2248,
+                  0.4674
+                ],
+                [
+                  0.2159,
+                  0.465
+                ],
+                [
+                  0.2072,
+                  0.4642
+                ],
+                [
+                  0.1956,
+                  0.4632
+                ],
+                [
+                  0.1897,
+                  0.4571
+                ],
+                [
+                  0.193,
+                  0.45
+                ],
+                [
+                  0.1962,
+                  0.4444
+                ],
+                [
+                  0.1995,
+                  0.4389
+                ],
+                [
+                  0.2067,
+                  0.4351
+                ],
+                [
+                  0.2151,
+                  0.432
+                ],
+                [
+                  0.2256,
+                  0.4296
+                ],
+                [
+                  0.2352,
+                  0.433
+                ],
+                [
+                  0.2385,
+                  0.44
+                ],
+                [
+                  0.2423,
+                  0.4448
+                ]
+              ],
+              "color": "#c9b48a",
+              "dur": 0.001,
+              "at": 0,
+              "annex": {
+                "at": 1.35,
+                "to": "#6b3f22"
+              },
+              "label": {
+                "text": "CARIBBEAN",
+                "size": 44,
+                "at": 1.35,
+                "dy": -50
+              }
+            },
+            {
+              "id": "brazil",
+              "pts": [
+                [
+                  0.3226,
+                  0.63
+                ],
+                [
+                  0.3197,
+                  0.6589
+                ],
+                [
+                  0.3117,
+                  0.6859
+                ],
+                [
+                  0.2941,
+                  0.6969
+                ],
+                [
+                  0.2771,
+                  0.6945
+                ],
+                [
+                  0.2618,
+                  0.704
+                ],
+                [
+                  0.2412,
+                  0.7097
+                ],
+                [
+                  0.2273,
+                  0.6873
+                ],
+                [
+                  0.2245,
+                  0.6565
+                ],
+                [
+                  0.2226,
+                  0.63
+                ],
+                [
+                  0.2257,
+                  0.6042
+                ],
+                [
+                  0.2351,
+                  0.5831
+                ],
+                [
+                  0.2441,
+                  0.5583
+                ],
+                [
+                  0.2597,
+                  0.5369
+                ],
+                [
+                  0.2792,
+                  0.5464
+                ],
+                [
+                  0.2912,
+                  0.5711
+                ],
+                [
+                  0.3039,
+                  0.5845
+                ],
+                [
+                  0.3185,
+                  0.6018
+                ]
+              ],
+              "color": "#c9b48a",
+              "dur": 0.001,
+              "at": 0,
+              "annex": {
+                "at": 2.3,
+                "to": "#6b3f22"
+              },
+              "face": {
+                "mood": [
+                  {
+                    "at": 0,
+                    "v": "neutral"
+                  },
+                  {
+                    "at": 2.5,
+                    "v": "happy"
+                  }
+                ]
+              },
+              "label": {
+                "text": "BRAZIL",
+                "size": 64,
+                "at": 2.3
+              }
+            }
+          ],
+          "view": "tilt",
+          "tilt": {
+            "deg": 32,
+            "vp": 0.18
+          },
+          "tokens": [
+            {
+              "icon": "ship",
+              "pts": [
+                [
+                  0.5,
+                  0.3
+                ],
+                [
+                  0.64,
+                  0.5
+                ],
+                [
+                  0.74,
+                  0.64
+                ]
+              ],
+              "at": 0.0,
+              "dur": 0.5,
+              "size": 54
+            },
+            {
+              "icon": "ship",
+              "pts": [
+                [
+                  0.4,
+                  0.3
+                ],
+                [
+                  0.3,
+                  0.38
+                ],
+                [
+                  0.24,
+                  0.44
+                ]
+              ],
+              "at": 0.9,
+              "dur": 0.5,
+              "size": 54
+            },
+            {
+              "icon": "ship",
+              "pts": [
+                [
+                  0.4,
+                  0.32
+                ],
+                [
+                  0.36,
+                  0.5
+                ],
+                [
+                  0.31,
+                  0.6
+                ]
+              ],
+              "at": 1.8,
+              "dur": 0.5,
+              "size": 54
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "k22",
+      "dur": 1.92,
+      "vo": "One stolen plant became billions.",
+      "screen": "a smiling plant multiplies into rows.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "sky",
+        "preset": "sunset",
+        "clouds": 3,
+        "hills": 2,
+        "ground": "grass"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.1
+        ],
+        "jump": [
+          {
+            "at": 1.3,
+            "zoom": 0.9,
+            "focus": [
+              0.5,
+              0.6
+            ]
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "obj",
+          "id": "pt11",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.94,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pt10",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.8600000000000001,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pt9",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.78,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pt8",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.7,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pt7",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.6200000000000001,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pt6",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.54,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pt5",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.46,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pt4",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.38,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pt3",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.3,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pt2",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.22,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pt1",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.14,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pt0",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 90,
+          "x": 0.06,
+          "y": 0.62,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 1.3,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pc8",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 150,
+          "x": 0.88,
+          "y": 0.8,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 0.8,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pc7",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 150,
+          "x": 0.785,
+          "y": 0.8,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 0.8,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pc6",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 150,
+          "x": 0.6900000000000001,
+          "y": 0.8,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 0.8,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pc5",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 150,
+          "x": 0.595,
+          "y": 0.8,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 0.8,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pc4",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 150,
+          "x": 0.5,
+          "y": 0.8,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 0.8,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pc3",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 150,
+          "x": 0.405,
+          "y": 0.8,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 0.8,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pc2",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 150,
+          "x": 0.31,
+          "y": 0.8,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 0.8,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pc1",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 150,
+          "x": 0.215,
+          "y": 0.8,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 0.8,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pc0",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 150,
+          "x": 0.12,
+          "y": 0.8,
+          "face": {
+            "mood": "happy"
+          },
+          "at": 0.8,
+          "enter": "none"
+        },
+        {
+          "type": "obj",
+          "id": "pl22",
+          "shape": "blob",
+          "color": "#3f8a3a",
+          "size": 320,
+          "x": 0.5,
+          "y": 0.95,
+          "face": {
+            "mood": [
+              {
+                "at": 0,
+                "v": "happy"
+              },
+              {
+                "at": 0.8,
+                "v": "smug-closed"
+              }
+            ]
+          },
+          "arms": {
+            "pose": "flex",
+            "sprout": true
+          }
+        },
+        {
+          "type": "label",
+          "text": "BILLIONS",
+          "x": 0.5,
+          "y": 0.2,
+          "size": 120,
+          "at": 1.3,
+          "enter": "slam",
+          "color": "#ffe066"
+        },
+        {
+          "type": "fg",
+          "kind": "grass",
+          "z": 1.4,
+          "count": 26
+        }
+      ]
+    },
+    {
+      "id": "k23",
+      "dur": 2.25,
+      "vo": "Today, two billion cups a day.",
+      "screen": "office lineup of hollow-eyed beans with mugs; counter slams to two billion.",
+      "anim": true,
+      "transition": {
+        "kind": "cloud-wipe",
+        "dur": 0.9
+      },
+      "bg": {
+        "kind": "office",
+        "window": "grid",
+        "windowX": 0.9,
+        "lamp": true,
+        "desk": false
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ],
+        "punch": [
+          {
+            "at": 1.6,
+            "amount": 0.2
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "crowd",
+          "who": "worker",
+          "mode": "lineup",
+          "x": 0.44,
+          "y": 1.0,
+          "count": 5,
+          "size": 520,
+          "expr": "hollow",
+          "hold": "mug",
+          "pose": "drink"
+        },
+        {
+          "type": "counter",
+          "x": 0.62,
+          "y": 0.3,
+          "to": 2000000000,
+          "dur": 0.6,
+          "delay": 0.9,
+          "sep": ",",
+          "size": 110,
+          "color": "#ffe066",
+          "at": 0.6,
+          "from": 1000000000
+        },
+        {
+          "type": "label",
+          "text": "CUPS. EVERY. DAY.",
+          "x": 0.62,
+          "y": 0.5,
+          "size": 74,
+          "at": 1.6,
+          "enter": "slam",
+          "color": "#fff"
+        }
+      ]
+    },
+    {
+      "id": "k24",
+      "dur": 3.6,
+      "vo": "And nobody ever thanked the goats.",
+      "screen": "the goat in sunglasses at a desk with a mug; nameplate KALDI is struck out to THE GOATS; fade to black.",
+      "anim": true,
+      "transition": "cut",
+      "bg": {
+        "kind": "office",
+        "window": "grid",
+        "windowX": 0.9,
+        "lamp": true,
+        "desk": true,
+        "chair": false
+      },
+      "camera": {
+        "zoom": [
+          1.06,
+          1.0
+        ]
+      },
+      "layers": [
+        {
+          "type": "creature",
+          "id": "boss",
+          "kind": "goat",
+          "pose": "biped",
+          "x": 0.55,
+          "y": 0.92,
+          "size": 560,
+          "expr": "happy",
+          "hold": "mug",
+          "jump": [
+            {
+              "at": 1.6,
+              "dur": 0.35,
+              "h": 60
+            }
+          ]
+        },
+        {
+          "type": "doc",
+          "kind": "nameplate",
+          "id": "np24",
+          "style": "hand",
+          "name": "KALDI",
+          "x": 0.25,
+          "y": 0.3,
+          "at": 0.2,
+          "strike": {
+            "at": 0.35,
+            "new": "THE GOATS"
+          },
+          "size": 110
+        },
+        {
+          "type": "label",
+          "text": "THANK YOU",
+          "tag": "FINALLY",
+          "x": 0.76,
+          "y": 0.3,
+          "size": 84,
+          "at": 1.6,
+          "enter": "pop-tilt",
+          "color": "#ffe066"
+        },
+        {
+          "type": "fx",
+          "kind": "confetti",
+          "id": "cf24",
+          "at": 1.6
+        }
+      ]
+    }
+  ]
+}
