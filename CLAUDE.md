@@ -32,6 +32,11 @@ uv run --with playwright python scripts/render.py examples/showcase/spec.json --
 python3 scripts/script2spec.py film/script.md --out film/spec.json
 python3 scripts/script2spec.py film/script.md --srt vo.srt --merge film/spec.json
 
+# Rebuild README pictures (GIFs, contact sheets, hero, character sheet) from assets/media.json; pass words to filter
+uv run --with playwright --with pillow python scripts/make_media.py hero stories/
+# Regenerate gallery.html after editing assets/media.json or README captions (make_media.py also does this)
+python3 scripts/make_gallery.py
+
 # Release archives (reads committed files only, not the working tree)
 python scripts/build_release.py --ref HEAD --out dist
 ```

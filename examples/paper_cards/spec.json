@@ -939,6 +939,188 @@
           }
         }
       ]
+    },
+    {
+      "id": "d21_chat",
+      "dur": 5.0,
+      "vo": "The plan was made, as always, in the group chat.",
+      "bg": {
+        "kind": "office",
+        "window": "porthole",
+        "lamp": true
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "chat",
+          "x": 0.38,
+          "y": 0.5,
+          "scale": 1.0,
+          "title": "SECRET COUNCIL",
+          "messages": [
+            {
+              "from": "Queen",
+              "who": "queen",
+              "text": "Who invaded the neighbours?",
+              "at": 0.7,
+              "side": "left"
+            },
+            {
+              "from": "General",
+              "who": "general",
+              "text": "Not me.",
+              "at": 1.6,
+              "side": "left"
+            },
+            {
+              "from": "Clerk",
+              "who": "clerk",
+              "text": "I only signed the papers.",
+              "at": 2.5,
+              "side": "left"
+            },
+            {
+              "from": "Boss",
+              "who": "boss",
+              "text": "Define \"invaded\".",
+              "at": 3.4,
+              "side": "right"
+            },
+            {
+              "from": "Queen",
+              "who": "queen",
+              "text": "BOSS.",
+              "at": 4.3,
+              "side": "left"
+            }
+          ],
+          "w": 760
+        },
+        {
+          "type": "bean",
+          "id": "boss",
+          "who": "boss",
+          "x": 0.82,
+          "y": 1.0,
+          "size": 540,
+          "flip": true,
+          "pose": "rub-hands",
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 3.4,
+              "v": "smug"
+            },
+            {
+              "at": 4.3,
+              "v": "shock"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d22_tierlist",
+      "dur": 4.2,
+      "vo": "Historians ranked the generals.",
+      "bg": {
+        "kind": "studio"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "tierlist",
+          "x": 0.37,
+          "y": 0.5,
+          "scale": 1.15,
+          "items": [
+            {
+              "row": "S",
+              "prop": "sword",
+              "text": "BOLD",
+              "at": 0.5
+            },
+            {
+              "row": "A",
+              "prop": "shield",
+              "text": "CAREFUL",
+              "at": 0.9
+            },
+            {
+              "row": "B",
+              "prop": "scroll",
+              "text": "CLEVER",
+              "at": 1.3
+            },
+            {
+              "row": "C",
+              "prop": "hourglass",
+              "text": "SLOW",
+              "at": 1.7
+            },
+            {
+              "row": "A",
+              "prop": "spear",
+              "text": "STEADY",
+              "at": 2.0
+            },
+            {
+              "row": "D",
+              "prop": "white-flag",
+              "text": "GAVE UP",
+              "at": 2.3
+            },
+            {
+              "row": "S",
+              "prop": "castle",
+              "text": "WON",
+              "at": 2.7
+            }
+          ],
+          "mark": {
+            "row": "S",
+            "at": 3.1
+          }
+        },
+        {
+          "type": "bean",
+          "id": "host",
+          "who": "host",
+          "x": 0.87,
+          "y": 1.0,
+          "size": 520,
+          "flip": true,
+          "pose": [
+            {
+              "at": 0,
+              "v": "present"
+            },
+            {
+              "at": 3.0,
+              "v": "point"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "happy"
+            },
+            {
+              "at": 3.0,
+              "v": "star-eyes"
+            }
+          ],
+          "talk": [
+            [
+              0.3,
+              2.6
+            ]
+          ]
+        }
+      ]
     }
   ]
 }

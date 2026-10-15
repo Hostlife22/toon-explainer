@@ -1,0 +1,305 @@
+#!/usr/bin/env python3
+"""Write gallery.html: every picture from assets/media.json with links to its spec, storyboard and contact sheet.
+
+Titles and captions come from the README cell next to each picture (falling back to the example's `title`), so the
+gallery and the README never disagree. The page is static, needs no server and works from a clone or GitHub Pages.
+
+  python3 scripts/make_gallery.py           # write gallery.html
+  python3 scripts/make_gallery.py --check   # exit 1 if gallery.html is out of date
+  python3 scripts/make_gallery.py --out _site/index.html --source-base https://github.com/OWNER/REPO/blob/main/
+                                            # GitHub Pages build: spec and storyboard links open on GitHub
+"""
+from __future__ import annotations
+
+import argparse
+import html
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from make_media import load_manifest  # noqa: E402
+
+OUT = ROOT / "gallery.html"
+GROUPS = [  # (folder in assets/, label, blurb)
+    ("stories", "Story films", "Twelve short films on non-historical topics, each a 6-9 s stretch of its film."),
+    ("features", "Toolkit features", "One feature per clip, taken from the catalog films."),
+    ("showcase", "Classic scenes", "The first showcase scenes, re-rendered with the current engine."),
+    ("characters", "Characters", "Every view, age, build, expression, pose, headwear and outfit."),
+    ("sheets", "Contact sheets", "One labelled still per shot of every example film."),
+]
+CELL = re.compile(r'<img src="assets/(?P<src>[^"]+)" alt="(?P<alt>[^"]*)"[^>]*/>(?:<br/><strong>(?P<title>.*?)</strong>'
+                  r'(?: · (?P<caption>[^<]*))?)?')
+TAG = re.compile(r"<[^>]+>")
+
+
+def readme_cells() -> dict[str, dict]:
+    text = (ROOT / "README.md").read_text(encoding="utf-8")
+    cells = {}
+    for m in CELL.finditer(text):
+        cells.setdefault(m["src"], {"alt": html.unescape(m["alt"]),
+                                    "title": html.unescape(TAG.sub("", m["title"] or "")),
+                                    "caption": html.unescape((m["caption"] or "").strip())})
+    return cells
+
+
+def example_of(spec: str) -> str:
+    return Path(spec).parent.name
+
+
+def sources(e: dict) -> list[str]:
+    specs = [e.get("spec") or e.get("sheet")] if ("spec" in e or "sheet" in e) else [g[0] for g in e["grid"]]
+    return list(dict.fromkeys(example_of(s) for s in specs))
+
+
+def where(e: dict) -> str:
+    if "shot" in e:
+        where = "shot " + e["shot"].replace(",", " + ")
+    elif "from" in e:
+        where = f"{e['from']:g}-{e['to']:g} s"
+    else:
+        return "every shot" if "sheet" in e else f"{len(e['grid'])} stills"
+    if "trim" in e:
+        where += f" (trim {e['trim'][0]:g}-{e['trim'][1]:g} s)"
+    return where
+
+
+def entries(base: str = "") -> list[dict]:
+    cells, built = readme_cells(), {e["out"] for e in load_manifest()}
+    items = []
+    for e in load_manifest():
+        group = e["out"].split("/")[0]
+        exs = sources(e)
+        titles = {x: json.loads((ROOT / "examples" / x / "spec.json").read_text(encoding="utf-8")).get("title", x) for x in exs}
+        cell = cells.get(e["out"], {})
+        title = cell.get("title") or (titles[exs[0]] if len(exs) == 1 else "Hero mosaic")
+        if group == "sheets":
+            title = titles[exs[0]]
+        links = []
+        for x in exs:
+            ex = {"name": x, "title": titles[x], "spec": f"{base}examples/{x}/spec.json"}
+            if (ROOT / "examples" / x / "script.md").is_file():
+                ex["script"] = f"{base}examples/{x}/script.md"
+            if f"sheets/{x}.jpg" in built and e["out"] != f"sheets/{x}.jpg":
+                ex["sheet"] = f"assets/sheets/{x}.jpg"
+            links.append(ex)
+        items.append({"src": f"assets/{e['out']}", "group": group, "title": title,
+                      "caption": cell.get("caption", ""), "alt": cell.get("alt") or f"{title}: contact sheet",
+                      "where": where(e), "vertical": e.get("width") == 300, "examples": links})
+    order = {g: i for i, (g, _, _) in enumerate(GROUPS)}
+    return sorted(items, key=lambda it: (order.get(it["group"], 99), it["group"] == "sheets" and it["src"]))
+
+
+def render(base: str = "") -> str:
+    data = json.dumps(entries(base), ensure_ascii=False, indent=None).replace("</", "<\\/")
+    groups = json.dumps([{"id": g, "label": l, "blurb": b} for g, l, b in GROUPS])
+    return TEMPLATE.replace("/*DATA*/", data).replace("/*GROUPS*/", groups).replace("/*README*/", f"{base}README.md")
+
+
+TEMPLATE = r"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>toon-explainer gallery</title>
+<meta name="description" content="Every rendered toon-explainer picture with links to its spec and storyboard. Generated by scripts/make_gallery.py from assets/media.json.">
+<style>
+@font-face { font-family: Rubik; font-weight: 800; src: url(scripts/engine/lib/fonts/Rubik-800.woff2) format("woff2"); }
+@font-face { font-family: Rubik; font-weight: 900; src: url(scripts/engine/lib/fonts/Rubik-900.woff2) format("woff2"); }
+:root {
+  --paper: #f4efe4; --card: #fffaf0; --ink: #2a1c15; --muted: #7a6a5c; --line: #e2d7c4;
+  --accent: #c8323a; --gold: #f2b01a; --chip: #efe5d3; --shadow: 0 1px 0 #2a1c1514, 0 8px 24px -14px #2a1c1566;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #1a130f; --card: #241a15; --ink: #f4ead9; --muted: #b3a08c; --line: #3a2c23;
+  --accent: #ff5b5b; --gold: #f2b01a; --chip: #2f231c; --shadow: 0 8px 24px -14px #000c; } }
+:root[data-theme="dark"] {
+  --paper: #1a130f; --card: #241a15; --ink: #f4ead9; --muted: #b3a08c; --line: #3a2c23;
+  --accent: #ff5b5b; --gold: #f2b01a; --chip: #2f231c; --shadow: 0 8px 24px -14px #000c; }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: inherit; }
+header { padding: 40px 16px 8px; max-width: 1280px; margin: 0 auto; }
+h1 { font: 900 clamp(30px, 6vw, 52px)/1 Rubik, system-ui, sans-serif; margin: 0 0 10px; letter-spacing: .5px;
+     -webkit-text-stroke: 1.5px var(--ink); color: var(--gold); paint-order: stroke fill; text-shadow: 3px 3px 0 var(--ink); }
+.lede { color: var(--muted); margin: 0 0 18px; max-width: 70ch; }
+.bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--paper) 92%, transparent);
+       backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.bar-in { max-width: 1280px; margin: 0 auto; padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { border: 1.5px solid var(--ink); background: var(--card); color: var(--ink); border-radius: 999px; padding: 5px 12px;
+        font: 800 13px/1 Rubik, system-ui, sans-serif; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.chip small { font-weight: 700; opacity: .65; margin-left: 4px; }
+input[type=search] { flex: 1 1 200px; min-width: 0; border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+                     border-radius: 10px; padding: 7px 12px; font: inherit; }
+.theme { margin-left: auto; }
+main { max-width: 1280px; margin: 0 auto; padding: 8px 16px 64px; }
+section h2 { font: 900 24px/1.1 Rubik, system-ui, sans-serif; margin: 28px 0 2px; }
+section p.blurb { color: var(--muted); margin: 0 0 14px; }
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.grid.wide { grid-template-columns: 1fr; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow);
+        display: flex; flex-direction: column; }
+.thumb { all: unset; cursor: zoom-in; display: block; background: #120d0a; aspect-ratio: 16 / 9; position: relative; }
+.thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+.grid.wide .thumb { aspect-ratio: auto; }
+.grid.wide .thumb img { position: static; height: auto; }
+.thumb:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+.body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.title { font: 800 16px/1.25 Rubik, system-ui, sans-serif; margin: 0; }
+.caption { color: var(--muted); margin: 0; font-size: 13.5px; }
+.meta { font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); overflow-wrap: anywhere; }
+.links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px; }
+.btn { text-decoration: none; font: 800 12.5px/1 Rubik, system-ui, sans-serif; padding: 7px 10px; border-radius: 8px;
+       background: var(--chip); border: 1px solid var(--line); }
+.btn:hover { border-color: var(--ink); }
+.btn.spec { background: var(--accent); color: #fff; border-color: transparent; }
+.srcs { margin: 0; padding: 0 0 0 16px; font-size: 13px; columns: 2 180px; }
+.srcs li { break-inside: avoid; margin: 2px 0; }
+.lb-foot .srcs { text-align: left; color: #f4ead9; }
+.ex { font-size: 12px; color: var(--muted); width: 100%; margin-top: 4px; }
+.empty { color: var(--muted); padding: 40px 0; text-align: center; }
+dialog { border: 0; padding: 0; background: transparent; max-width: 100vw; max-height: 100vh; width: 100vw; height: 100vh; }
+dialog::backdrop { background: #0d0907ee; }
+.lb { width: 100%; height: 100%; display: grid; grid-template-rows: 1fr auto; color: #f4ead9; }
+.lb-img { min-height: 0; display: grid; place-items: center; padding: 16px 56px; }
+.lb-img img { width: 100%; height: 100%; object-fit: contain; }
+.lb-foot { padding: 12px 16px 18px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; text-align: center; }
+.lb-foot .title { color: #f2b01a; }
+.lb-foot .btn { background: #2f231c; border-color: #4a382c; color: #f4ead9; }
+.lb-foot .btn.spec { background: #c8323a; }
+.nav { position: fixed; top: 50%; transform: translateY(-50%); background: #2f231ccc; color: #fff; border: 0; width: 44px; height: 64px;
+       border-radius: 10px; font-size: 26px; cursor: pointer; }
+.nav.prev { left: 6px; } .nav.next { right: 6px; }
+.close { position: fixed; top: 10px; right: 10px; background: #2f231ccc; color: #fff; border: 0; border-radius: 10px; width: 44px; height: 44px; font-size: 22px; cursor: pointer; }
+@media (max-width: 600px) { .lb-img { padding: 12px 8px 60px; } .nav { top: auto; bottom: 86px; transform: none; height: 44px; } }
+footer { max-width: 1280px; margin: 0 auto; padding: 0 16px 40px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>toon-explainer gallery</h1>
+  <p class="lede">Every picture in the README, rendered by the engine from the specs in <code>examples/</code>. Open a clip full size, then jump to the spec that made it or the storyboard behind the film. <a href="/*README*/">README</a></p>
+</header>
+<div class="bar"><div class="bar-in" role="toolbar" aria-label="Filter">
+  <span id="chips"></span>
+  <input type="search" id="q" placeholder="Search titles, features, examples" aria-label="Search">
+  <button class="chip theme" id="theme" type="button" aria-label="Toggle colour theme">Theme</button>
+</div></div>
+<main id="main"></main>
+<footer>Generated by <code>scripts/make_gallery.py</code> from <code>assets/media.json</code>. Rebuild the pictures with <code>scripts/make_media.py</code>.</footer>
+<dialog id="lb" aria-label="Picture viewer">
+  <div class="lb">
+    <div class="lb-img"><img id="lb-img" alt=""></div>
+    <div class="lb-foot" id="lb-foot"></div>
+  </div>
+  <button class="nav prev" id="prev" type="button" aria-label="Previous">&#8249;</button>
+  <button class="nav next" id="next" type="button" aria-label="Next">&#8250;</button>
+  <button class="close" id="close" type="button" aria-label="Close">&#215;</button>
+</dialog>
+<script>
+const ITEMS = /*DATA*/;
+const GROUPS = /*GROUPS*/;
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+                set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+let group = 'all', query = '', shown = [];
+
+function links(it) {
+  if (it.examples.length > 2) return `<ul class="srcs">${it.examples.map((ex) => `<li><a href="${esc(ex.spec)}">${esc(ex.title)}</a>`
+    + (ex.script ? ` · <a href="${esc(ex.script)}">storyboard</a>` : '') + '</li>').join('')}</ul>`;
+  return it.examples.map((ex) => {
+    const b = [`<a class="btn spec" href="${esc(ex.spec)}">Spec</a>`];
+    if (ex.script) b.push(`<a class="btn" href="${esc(ex.script)}">Storyboard</a>`);
+    if (ex.sheet) b.push(`<a class="btn" href="${esc(ex.sheet)}">Contact sheet</a>`);
+    const name = it.examples.length > 1 ? `<span class="ex">${esc(ex.title)}</span>` : '';
+    return name + b.join('');
+  }).join('');
+}
+function card(it, i) {
+  const exs = it.examples.length > 2 ? `${it.examples.length} films` : 'examples/' + it.examples.map((e) => e.name).join(', ');
+  return `<article class="card${it.vertical ? ' vertical' : ''}">
+    <button class="thumb" type="button" data-i="${i}" aria-label="Open ${esc(it.title)} full size">
+      <img src="${esc(it.src)}" alt="${esc(it.alt)}" loading="lazy" decoding="async"></button>
+    <div class="body"><h3 class="title">${esc(it.title)}</h3>
+      ${it.caption ? `<p class="caption">${esc(it.caption)}</p>` : ''}
+      <div class="meta">${esc(exs)} · ${esc(it.where)}</div>
+      <div class="links">${links(it)}</div></div></article>`;
+}
+function matches(it) {
+  if (group !== 'all' && it.group !== group) return false;
+  if (!query) return true;
+  const hay = [it.title, it.caption, it.alt, it.src, ...it.examples.map((e) => e.name + ' ' + e.title)].join(' ').toLowerCase();
+  return query.split(/\s+/).every((w) => hay.includes(w));
+}
+function draw() {
+  shown = ITEMS.filter(matches);
+  const html = GROUPS.map((g) => {
+    const list = shown.map((it, i) => [it, i]).filter(([it]) => it.group === g.id);
+    if (!list.length) return '';
+    return `<section aria-labelledby="h-${g.id}"><h2 id="h-${g.id}">${esc(g.label)} <small>(${list.length})</small></h2>
+      <p class="blurb">${esc(g.blurb)}</p>
+      <div class="grid${g.id === 'characters' ? ' wide' : ''}">${list.map(([it, i]) => card(it, i)).join('')}</div></section>`;
+  }).join('');
+  $('#main').innerHTML = html || '<p class="empty">Nothing matches.</p>';
+}
+function chips() {
+  const all = [{ id: 'all', label: 'All', n: ITEMS.length }, ...GROUPS.map((g) => ({ ...g, n: ITEMS.filter((it) => it.group === g.id).length }))];
+  $('#chips').innerHTML = all.map((g) => `<button class="chip" type="button" data-g="${g.id}" aria-pressed="${g.id === group}">${esc(g.label)}<small>${g.n}</small></button> `).join('');
+}
+let cur = 0;
+function open(i) {
+  cur = (i + shown.length) % shown.length; const it = shown[cur];
+  $('#lb-img').src = it.src; $('#lb-img').alt = it.alt;
+  $('#lb-foot').innerHTML = `<div style="width:100%"><div class="title">${esc(it.title)}</div>
+    <div class="caption" style="color:#c9b8a4">${esc(it.caption || it.alt)}</div></div>${links(it)}<a class="btn" href="${esc(it.src)}">Open file</a>`;
+  if (!$('#lb').open) $('#lb').showModal();
+}
+$('#chips').addEventListener('click', (e) => { const b = e.target.closest('[data-g]'); if (!b) return; group = b.dataset.g; store.set('gallery-group', group); chips(); draw(); });
+$('#q').addEventListener('input', (e) => { query = e.target.value.trim().toLowerCase(); draw(); });
+$('#main').addEventListener('click', (e) => { const t = e.target.closest('.thumb'); if (t) open(+t.dataset.i); });
+$('#prev').addEventListener('click', () => open(cur - 1));
+$('#next').addEventListener('click', () => open(cur + 1));
+$('#close').addEventListener('click', () => $('#lb').close());
+$('#lb').addEventListener('click', (e) => { if (e.target.classList.contains('lb-img')) $('#lb').close(); });
+document.addEventListener('keydown', (e) => {
+  if (!$('#lb').open) return;
+  if (e.key === 'ArrowLeft') open(cur - 1); else if (e.key === 'ArrowRight') open(cur + 1);
+});
+$('#theme').addEventListener('click', () => {
+  const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.dataset.theme = dark ? 'light' : 'dark'; store.set('gallery-theme', document.documentElement.dataset.theme);
+});
+const savedTheme = store.get('gallery-theme'); if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+const savedGroup = store.get('gallery-group'); if (savedGroup && (savedGroup === 'all' || GROUPS.some((g) => g.id === savedGroup))) group = savedGroup;
+chips(); draw();
+</script>
+</body>
+</html>
+"""
+
+
+def main(argv=None) -> None:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--check", action="store_true", help="fail if gallery.html is out of date")
+    ap.add_argument("--out", type=Path, default=OUT, help="where to write the page (default: gallery.html)")
+    ap.add_argument("--source-base", default="", help="prefix for spec and storyboard links, e.g. a GitHub blob URL")
+    args = ap.parse_args(argv)
+    page = render(args.source_base)
+    if args.check:
+        if not args.out.is_file() or args.out.read_text(encoding="utf-8") != page:
+            raise SystemExit(f"❌ {args.out.name} is out of date: run python3 scripts/make_gallery.py")
+        print(f"{args.out.name} is up to date")
+        return
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(page, encoding="utf-8")
+    print(f"{args.out}  {len(entries(args.source_base))} items")
+
+
+if __name__ == "__main__":
+    main()

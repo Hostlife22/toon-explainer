@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.6.0 · 2026-10-15
+
+More pictures, more examples and a reproducible showcase.
+
+- Twelve story films in `examples/story_*` on non-historical topics, each with a storyboard: the moon race, a vaccine, a museum heist, a banana-peel investigation, a startup, the simulation hypothesis, a disputed island, the emu war, a lighthouse horror, a volcano and two 9:16 shorts (cats and gravity, honey that never spoils).
+- The catalog films demo every feature added since 3.2 (43 new shots): transitions `burn`, `swarm`, `swirl`, `pixelate`; `glitch` styles; `fg` `aperture`; vertical `fg-pass`; `title` `arc`; `panel` photo and circle; grades `mono` and `negative`; fx `crack`, `petrify`, `pile`, `hatch`; `doc` `chat` and `tierlist`; `hud` `ecg`, vertical `meter`, `carousel` `snap`; `cctv` camcorder; props `claw-crane`, `rosette`, `meat-bone`, `bucket`, `meat-grinder`, `cobweb`, `banana-peel`, `region`, `coin-gavel`, `iso-tile`; map `fights`, `throws`, `morphs`; bg `grid`, blueprint erase, time-lapse keys and `accel`; `smear`, `dropShadow`, `redeyes` `close`, `xray`.
+- `examples/character_sheet` now shows every expression (35), pose (65), headwear (58) and outfit (29), plus ages and builds.
+- `scripts/make_media.py` rebuilds every README picture from `assets/media.json` (GIFs render without film grain, which triples GIF size); a test keeps the manifest, the README and `assets/` in sync.
+- `gallery.html` ([live](https://hostlife22.github.io/toon-explainer/)) shows every picture full size with buttons to its spec, storyboard and contact sheet, with filters and search. `scripts/make_gallery.py` writes it from the manifest and the README captions; `.github/workflows/gallery.yml` publishes it to GitHub Pages when pictures, specs, storyboards or the generator change on `main`.
+- README: a new hero, 12 story GIFs, 29 new feature GIFs, all older GIFs re-rendered with the current engine, contact sheets for all 31 examples, and current counts. Unused pictures were removed.
+
 ## 3.5.0 · 2026-10-15
 
 The last open caveats of the technique library.

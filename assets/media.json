@@ -1,0 +1,618 @@
+{
+ "media": [
+  {
+   "out": "showcase/hero.jpg",
+   "grid": [
+    [
+     "examples/story_moon_race/spec.json",
+     10.4
+    ],
+    [
+     "examples/story_volcano/spec.json",
+     11.4
+    ],
+    [
+     "examples/story_museum_heist/spec.json",
+     14.6
+    ],
+    [
+     "examples/story_simulation/spec.json",
+     11.6
+    ],
+    [
+     "examples/story_border/spec.json",
+     18.4
+    ],
+    [
+     "examples/story_emu_war/spec.json",
+     10.6
+    ],
+    [
+     "examples/story_lighthouse/spec.json",
+     7.6
+    ],
+    [
+     "examples/story_vaccine/spec.json",
+     15.6
+    ],
+    [
+     "examples/story_banana_caper/spec.json",
+     16.4
+    ]
+   ],
+   "cols": 3,
+   "width": 1920,
+   "gap": 6,
+   "scale": 0.5,
+   "quality": 88
+  },
+  {
+   "out": "showcase/forest-rain.gif",
+   "spec": "examples/showcase/spec.json",
+   "shot": "s02_forest_march"
+  },
+  {
+   "out": "showcase/palace-talk.gif",
+   "spec": "examples/showcase/spec.json",
+   "shot": "s04_palace"
+  },
+  {
+   "out": "showcase/city-fire.gif",
+   "spec": "examples/showcase/spec.json",
+   "shot": "s06_fire"
+  },
+  {
+   "out": "showcase/messenger-run.gif",
+   "spec": "examples/showcase/spec.json",
+   "shot": "s07_run"
+  },
+  {
+   "out": "showcase/map-armies.gif",
+   "spec": "examples/showcase/spec.json",
+   "shot": "s05_map"
+  },
+  {
+   "out": "showcase/calendar-count.gif",
+   "spec": "examples/calendar_445/spec.json",
+   "shot": "k02"
+  },
+  {
+   "out": "showcase/trench-attack.gif",
+   "spec": "examples/places_tour/spec.json",
+   "shot": "over_the_top"
+  },
+  {
+   "out": "showcase/tank.gif",
+   "spec": "examples/places_tour/spec.json",
+   "shot": "tank_reveal"
+  },
+  {
+   "out": "showcase/cavalry.gif",
+   "spec": "examples/eras_wardrobe/spec.json",
+   "shot": "cavalry_charge"
+  },
+  {
+   "out": "showcase/atlas-map.gif",
+   "spec": "examples/paper_and_maps/spec.json",
+   "shot": "g14_atlas",
+   "trim": [
+    0.5,
+    5.0
+   ]
+  },
+  {
+   "out": "showcase/countryballs.gif",
+   "spec": "examples/eras_wardrobe/spec.json",
+   "shot": "countryballs"
+  },
+  {
+   "out": "showcase/eastcity.gif",
+   "spec": "examples/places_tour/spec.json",
+   "shot": "eastcity"
+  },
+  {
+   "out": "showcase/tv-quote.gif",
+   "spec": "examples/paper_and_maps/spec.json",
+   "shot": "g07_tv_quote",
+   "trim": [
+    0.3,
+    4.5
+   ]
+  },
+  {
+   "out": "showcase/horror-lurker.gif",
+   "spec": "examples/tone_and_horror/spec.json",
+   "shot": "lurker"
+  },
+  {
+   "out": "showcase/timelapse.gif",
+   "spec": "examples/places_tour/spec.json",
+   "shot": "timelapse"
+  },
+  {
+   "out": "showcase/coffee-film.gif",
+   "spec": "examples/coffee_film/spec.json",
+   "shot": "k16,k17",
+   "width": 560
+  },
+  {
+   "out": "showcase/poof-swap.gif",
+   "spec": "examples/acting_gags/spec.json",
+   "shot": "poof"
+  },
+  {
+   "out": "showcase/map-split.gif",
+   "spec": "examples/living_maps/spec.json",
+   "shot": "m05_split"
+  },
+  {
+   "out": "showcase/palace.gif",
+   "spec": "examples/sets_rooms/spec.json",
+   "shot": "palace_red"
+  },
+  {
+   "out": "showcase/versus.gif",
+   "spec": "examples/game_ui/spec.json",
+   "shot": "g08_versus_jagged"
+  },
+  {
+   "out": "showcase/brawl.gif",
+   "spec": "examples/action_fx/spec.json",
+   "shot": "brawl"
+  },
+  {
+   "out": "showcase/challenger.gif",
+   "spec": "examples/game_ui/spec.json",
+   "shot": "g10_challenger"
+  },
+  {
+   "out": "showcase/picto-bubble.gif",
+   "spec": "examples/paper_cards/spec.json",
+   "shot": "d06_bubble_icons"
+  },
+  {
+   "out": "showcase/wings.gif",
+   "spec": "examples/expressions_wardrobe/spec.json",
+   "shot": "wings_halo_devil"
+  },
+  {
+   "out": "characters/character-sheet.jpg",
+   "grid": [
+    [
+     "examples/character_sheet/spec.json",
+     0.5
+    ],
+    [
+     "examples/character_sheet/spec.json",
+     5.5
+    ],
+    [
+     "examples/character_sheet/spec.json",
+     1.5
+    ],
+    [
+     "examples/character_sheet/spec.json",
+     2.5
+    ],
+    [
+     "examples/character_sheet/spec.json",
+     3.5
+    ],
+    [
+     "examples/character_sheet/spec.json",
+     4.5
+    ]
+   ],
+   "cols": 2,
+   "width": 1920,
+   "gap": 8,
+   "bg": "#d8d2c6"
+  },
+  {
+   "out": "stories/moon-race.gif",
+   "spec": "examples/story_moon_race/spec.json",
+   "from": 8.3,
+   "to": 16.9,
+   "width": 560
+  },
+  {
+   "out": "stories/vaccine.gif",
+   "spec": "examples/story_vaccine/spec.json",
+   "from": 12.8,
+   "to": 21.8,
+   "width": 560
+  },
+  {
+   "out": "stories/cat-physics.gif",
+   "spec": "examples/story_cat_physics/spec.json",
+   "from": 10.3,
+   "to": 16.9,
+   "width": 300
+  },
+  {
+   "out": "stories/honey.gif",
+   "spec": "examples/story_honey/spec.json",
+   "from": 4.6,
+   "to": 12.8,
+   "width": 300
+  },
+  {
+   "out": "stories/startup.gif",
+   "spec": "examples/story_startup/spec.json",
+   "from": 12.6,
+   "to": 20.8,
+   "width": 560
+  },
+  {
+   "out": "stories/simulation.gif",
+   "spec": "examples/story_simulation/spec.json",
+   "from": 8.6,
+   "to": 17.4,
+   "width": 560
+  },
+  {
+   "out": "stories/lighthouse.gif",
+   "spec": "examples/story_lighthouse/spec.json",
+   "from": 5.0,
+   "to": 12.5,
+   "width": 560
+  },
+  {
+   "out": "stories/volcano.gif",
+   "spec": "examples/story_volcano/spec.json",
+   "from": 7.3,
+   "to": 14.5,
+   "width": 560
+  },
+  {
+   "out": "stories/island.gif",
+   "spec": "examples/story_border/spec.json",
+   "from": 14.6,
+   "to": 21.8,
+   "width": 560
+  },
+  {
+   "out": "stories/emu-war.gif",
+   "spec": "examples/story_emu_war/spec.json",
+   "from": 6.4,
+   "to": 14.8,
+   "width": 560
+  },
+  {
+   "out": "stories/museum-heist.gif",
+   "spec": "examples/story_museum_heist/spec.json",
+   "from": 6.8,
+   "to": 15.0,
+   "width": 560
+  },
+  {
+   "out": "stories/banana-caper.gif",
+   "spec": "examples/story_banana_caper/spec.json",
+   "from": 14.8,
+   "to": 22.0,
+   "width": 560
+  },
+  {
+   "out": "features/map-fights.gif",
+   "spec": "examples/living_maps/spec.json",
+   "shot": "m21_fights"
+  },
+  {
+   "out": "features/map-throws.gif",
+   "spec": "examples/living_maps/spec.json",
+   "shot": "m22_throws"
+  },
+  {
+   "out": "features/meat-grinder.gif",
+   "spec": "examples/props_creatures/spec.json",
+   "shot": "p38_meat_grinder"
+  },
+  {
+   "out": "features/claw-crane.gif",
+   "spec": "examples/props_creatures/spec.json",
+   "shot": "p35_claw_crane"
+  },
+  {
+   "out": "features/region-prop.gif",
+   "spec": "examples/props_creatures/spec.json",
+   "shot": "p40_region"
+  },
+  {
+   "out": "features/coin-gavel.gif",
+   "spec": "examples/props_creatures/spec.json",
+   "shot": "p41_coin_gavel"
+  },
+  {
+   "out": "features/timelapse-accel.gif",
+   "spec": "examples/places_tour/spec.json",
+   "shot": "timelapse_accel"
+  },
+  {
+   "out": "features/blueprint-erase.gif",
+   "spec": "examples/places_tour/spec.json",
+   "shot": "blueprint_erase"
+  },
+  {
+   "out": "features/grid-void.gif",
+   "spec": "examples/places_tour/spec.json",
+   "shot": "grid_void"
+  },
+  {
+   "out": "features/smear-turn.gif",
+   "spec": "examples/acting_gags/spec.json",
+   "shot": "smear_turn"
+  },
+  {
+   "out": "features/xray.gif",
+   "spec": "examples/expressions_wardrobe/spec.json",
+   "shot": "xray_reveal"
+  },
+  {
+   "out": "features/drop-shadow.gif",
+   "spec": "examples/acting_gags/spec.json",
+   "shot": "drop_shadow"
+  },
+  {
+   "out": "features/burn.gif",
+   "spec": "examples/transitions_lens/spec.json",
+   "shot": "banner,burned",
+   "trim": [
+    1.4,
+    5.2
+   ]
+  },
+  {
+   "out": "features/swarm.gif",
+   "spec": "examples/transitions_lens/spec.json",
+   "shot": "burned,night_fell",
+   "trim": [
+    2.0,
+    5.8
+   ]
+  },
+  {
+   "out": "features/swirl.gif",
+   "spec": "examples/transitions_lens/spec.json",
+   "shot": "night_fell,spun_away",
+   "trim": [
+    2.0,
+    5.6
+   ]
+  },
+  {
+   "out": "features/glitch-corrupt.gif",
+   "spec": "examples/transitions_lens/spec.json",
+   "shot": "corrupt_tape"
+  },
+  {
+   "out": "features/aperture.gif",
+   "spec": "examples/transitions_lens/spec.json",
+   "shot": "barrel_view"
+  },
+  {
+   "out": "features/rise-up.gif",
+   "spec": "examples/transitions_lens/spec.json",
+   "shot": "rise_up",
+   "trim": [
+    0.35,
+    3.0
+   ]
+  },
+  {
+   "out": "features/old-photo.gif",
+   "spec": "examples/transitions_lens/spec.json",
+   "shot": "old_photo"
+  },
+  {
+   "out": "features/crack.gif",
+   "spec": "examples/action_fx/spec.json",
+   "shot": "crack"
+  },
+  {
+   "out": "features/petrify.gif",
+   "spec": "examples/action_fx/spec.json",
+   "shot": "petrify"
+  },
+  {
+   "out": "features/pile.gif",
+   "spec": "examples/action_fx/spec.json",
+   "shot": "pile"
+  },
+  {
+   "out": "features/hatch.gif",
+   "spec": "examples/action_fx/spec.json",
+   "shot": "hatch"
+  },
+  {
+   "out": "features/chat.gif",
+   "spec": "examples/paper_cards/spec.json",
+   "shot": "d21_chat"
+  },
+  {
+   "out": "features/tierlist.gif",
+   "spec": "examples/paper_cards/spec.json",
+   "shot": "d22_tierlist"
+  },
+  {
+   "out": "features/ecg.gif",
+   "spec": "examples/game_ui/spec.json",
+   "shot": "g27_ecg"
+  },
+  {
+   "out": "features/camcorder.gif",
+   "spec": "examples/tone_and_horror/spec.json",
+   "shot": "camcorder",
+   "trim": [
+    0.3,
+    3.2
+   ]
+  },
+  {
+   "out": "features/vertical-short.gif",
+   "spec": "examples/vertical_short/spec.json",
+   "shot": "k03,k04",
+   "width": 300
+  },
+  {
+   "out": "features/money-film.gif",
+   "spec": "examples/money_film/spec.json",
+   "shot": "m09,m10",
+   "width": 480
+  },
+  {
+   "out": "sheets/acting_gags.jpg",
+   "sheet": "examples/acting_gags/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/action_fx.jpg",
+   "sheet": "examples/action_fx/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/calendar_445.jpg",
+   "sheet": "examples/calendar_445/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/coffee_film.jpg",
+   "sheet": "examples/coffee_film/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/eras_wardrobe.jpg",
+   "sheet": "examples/eras_wardrobe/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/expressions_wardrobe.jpg",
+   "sheet": "examples/expressions_wardrobe/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/game_ui.jpg",
+   "sheet": "examples/game_ui/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/grammar.jpg",
+   "sheet": "examples/grammar/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/living_maps.jpg",
+   "sheet": "examples/living_maps/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/money_film.jpg",
+   "sheet": "examples/money_film/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/paper_and_maps.jpg",
+   "sheet": "examples/paper_and_maps/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/paper_cards.jpg",
+   "sheet": "examples/paper_cards/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/places_tour.jpg",
+   "sheet": "examples/places_tour/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/props_creatures.jpg",
+   "sheet": "examples/props_creatures/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/sets_rooms.jpg",
+   "sheet": "examples/sets_rooms/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/showcase.jpg",
+   "sheet": "examples/showcase/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_banana_caper.jpg",
+   "sheet": "examples/story_banana_caper/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_border.jpg",
+   "sheet": "examples/story_border/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_cat_physics.jpg",
+   "sheet": "examples/story_cat_physics/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_emu_war.jpg",
+   "sheet": "examples/story_emu_war/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_honey.jpg",
+   "sheet": "examples/story_honey/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_lighthouse.jpg",
+   "sheet": "examples/story_lighthouse/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_moon_race.jpg",
+   "sheet": "examples/story_moon_race/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_museum_heist.jpg",
+   "sheet": "examples/story_museum_heist/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_simulation.jpg",
+   "sheet": "examples/story_simulation/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_startup.jpg",
+   "sheet": "examples/story_startup/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_vaccine.jpg",
+   "sheet": "examples/story_vaccine/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/story_volcano.jpg",
+   "sheet": "examples/story_volcano/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/tone_and_horror.jpg",
+   "sheet": "examples/tone_and_horror/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/transitions_lens.jpg",
+   "sheet": "examples/transitions_lens/spec.json",
+   "scale": 0.3
+  },
+  {
+   "out": "sheets/vertical_short.jpg",
+   "sheet": "examples/vertical_short/spec.json",
+   "scale": 0.3
+  }
+ ]
+}

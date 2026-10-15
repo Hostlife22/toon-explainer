@@ -1,0 +1,1373 @@
+{
+ "title": "The Museum Heist",
+ "fps": 30,
+ "seed": 41,
+ "style": {
+  "grain": true,
+  "vignette": 0.3
+ },
+ "cast": {
+  "velvet": {
+   "outfit": "suit",
+   "robe": "#3a2440",
+   "tie": "#c8323a",
+   "head": "fedora",
+   "headColor": "#2a1c2a",
+   "hair": "long-straight",
+   "hairColor": "#c0402a",
+   "mask": "eye",
+   "maskColor": "#1a1416"
+  },
+  "gizmo": {
+   "build": "thin",
+   "robe": "#2f6a5a",
+   "head": "beret",
+   "headColor": "#1e2a28",
+   "hair": "short",
+   "hairColor": "#2a1d18",
+   "glasses": "round",
+   "mask": "eye",
+   "maskColor": "#1a1416"
+  },
+  "tank": {
+   "build": "brute",
+   "outfit": "stripes",
+   "stripeColor": "#3a3a44",
+   "head": "bucket-hat",
+   "headColor": "#4a4a54",
+   "hair": "bald",
+   "beard": "stubble",
+   "beardColor": "#3a2a20",
+   "mask": "eye",
+   "maskColor": "#1a1416"
+  },
+  "guard": {
+   "outfit": "tunic",
+   "robe": "#34466a",
+   "head": "officer-cap",
+   "headColor": "#26324e",
+   "headColor2": "#e2b23c",
+   "hair": "short",
+   "hairColor": "#5a3a22",
+   "mustache": true,
+   "mustacheColor": "#5a3a22",
+   "build": "fat"
+  }
+ },
+ "overlays": [
+  {
+   "from": 0.3,
+   "to": 19.6,
+   "hideIn": [
+    "h08_news",
+    "h10_split"
+   ],
+   "layer": {
+    "type": "hud",
+    "kind": "chip",
+    "corner": "tl",
+    "slot": 0,
+    "size": 38,
+    "text": "STEAL THE RUBY STAR",
+    "key": "RUBY STAR",
+    "answerAt": 17.85
+   }
+  },
+  {
+   "from": 11.65,
+   "to": 14.1,
+   "layer": {
+    "type": "fx",
+    "kind": "alarm",
+    "id": "alarm_ov",
+    "strength": 0.55
+   }
+  }
+ ],
+ "shots": [
+  {
+   "id": "h01_plan",
+   "dur": 2.6,
+   "vo": "The plan: one museum, one priceless ruby.",
+   "screen": "blueprint; the museum, the RUBY STAR circled, a giant hand taps it; the board is wiped and step 2 (claw swap) is drawn",
+   "bg": {
+    "kind": "blueprint",
+    "stamp": "TOP SECRET",
+    "tilt": -1.5,
+    "sketch": [
+     {
+      "line": [
+       [
+        0.14,
+        0.8
+       ],
+       [
+        0.14,
+        0.4
+       ],
+       [
+        0.5,
+        0.16
+       ],
+       [
+        0.86,
+        0.4
+       ],
+       [
+        0.86,
+        0.8
+       ],
+       [
+        0.14,
+        0.8
+       ]
+      ],
+      "at": 0.0,
+      "dur": 0.55
+     },
+     {
+      "line": [
+       [
+        0.3,
+        0.8
+       ],
+       [
+        0.3,
+        0.45
+       ]
+      ],
+      "at": 0.3,
+      "dur": 0.2
+     },
+     {
+      "line": [
+       [
+        0.7,
+        0.8
+       ],
+       [
+        0.7,
+        0.45
+       ]
+      ],
+      "at": 0.35,
+      "dur": 0.2
+     },
+     {
+      "circle": [
+       0.5,
+       0.62,
+       0.07
+      ],
+      "at": 0.55,
+      "dur": 0.3
+     },
+     {
+      "text": "RUBY STAR",
+      "x": 0.5,
+      "y": 0.43,
+      "size": 60,
+      "at": 0.65,
+      "dur": 0.2
+     },
+     {
+      "line": [
+       [
+        0.42,
+        0.06
+       ],
+       [
+        0.42,
+        0.36
+       ]
+      ],
+      "at": 1.6,
+      "dur": 0.2
+     },
+     {
+      "line": [
+       [
+        0.35,
+        0.5
+       ],
+       [
+        0.35,
+        0.4
+       ],
+       [
+        0.42,
+        0.36
+       ],
+       [
+        0.49,
+        0.4
+       ],
+       [
+        0.49,
+        0.5
+       ]
+      ],
+      "at": 1.8,
+      "dur": 0.2
+     },
+     {
+      "text": "CLAW",
+      "x": 0.3,
+      "y": 0.3,
+      "size": 44,
+      "at": 1.85,
+      "dur": 0.15
+     },
+     {
+      "text": "STEP 2: SWAP IT",
+      "x": 0.5,
+      "y": 0.72,
+      "size": 72,
+      "at": 1.95,
+      "dur": 0.2
+     },
+     {
+      "circle": [
+       0.62,
+       0.52,
+       0.045
+      ],
+      "at": 2.05,
+      "dur": 0.25
+     },
+     {
+      "text": "FAKE",
+      "x": 0.62,
+      "y": 0.535,
+      "size": 40,
+      "at": 2.2,
+      "dur": 0.15
+     }
+    ],
+    "clear": [
+     1.5
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "punch": [
+     {
+      "at": 0.75,
+      "amount": 0.06
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "arm",
+     "id": "plan_hand",
+     "kind": "hand",
+     "from": "br",
+     "sleeve": "#3a2440",
+     "reach": [
+      {
+       "at": 0.6,
+       "to": [
+        0.56,
+        0.66
+       ],
+       "dur": 0.12,
+       "hold": 0.6,
+       "back": 0.17
+      }
+     ],
+     "state": "point"
+    }
+   ]
+  },
+  {
+   "id": "h02_crew",
+   "dur": 2.0,
+   "vo": "The crew: a boss, a brain and a lot of muscle.",
+   "screen": "night alley; three masked crooks; game markers BOSS, BRAIN, MUSCLE pop over their heads",
+   "bg": {
+    "kind": "alley",
+    "windows": 0.3,
+    "barrelX": 0.95
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "c_tank",
+     "who": "tank",
+     "x": 0.4,
+     "y": 0.95,
+     "size": 460,
+     "pose": "flex",
+     "expr": "angry"
+    },
+    {
+     "type": "bean",
+     "id": "c_boss",
+     "who": "velvet",
+     "x": 0.6,
+     "y": 0.93,
+     "size": 440,
+     "pose": "hips",
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.4,
+       "v": "smug"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "c_giz",
+     "who": "gizmo",
+     "x": 0.8,
+     "y": 0.94,
+     "size": 420,
+     "pose": "hold",
+     "hold": "remote",
+     "expr": "happy",
+     "flip": true
+    },
+    {
+     "type": "hud",
+     "kind": "marker",
+     "follow": "c_boss",
+     "text": "P1",
+     "color": "#c8323a",
+     "delay": 0.15,
+     "size": 1.8
+    },
+    {
+     "type": "hud",
+     "kind": "marker",
+     "follow": "c_giz",
+     "text": "P2",
+     "color": "#2f7fd6",
+     "delay": 0.6,
+     "size": 1.8
+    },
+    {
+     "type": "hud",
+     "kind": "marker",
+     "follow": "c_tank",
+     "text": "P3",
+     "color": "#e8a020",
+     "delay": 1.05,
+     "size": 1.8
+    },
+    {
+     "type": "hud",
+     "kind": "notice",
+     "size": 46,
+     "y": 0.92,
+     "life": 3,
+     "max": 3,
+     "lines": [
+      {
+       "at": 0.15,
+       "text": "VELVET (BOSS) JOINED",
+       "color": "#ff8a8a"
+      },
+      {
+       "at": 0.6,
+       "text": "GIZMO (BRAIN) JOINED",
+       "color": "#8ac4ff"
+      },
+      {
+       "at": 1.05,
+       "text": "TANK (MUSCLE) JOINED",
+       "color": "#ffd070"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "h03_cctv",
+   "dur": 2.2,
+   "transition": {
+    "kind": "pixelate",
+    "dur": 0.35
+   },
+   "vo": "Midnight. Camera three sees nothing unusual.",
+   "screen": "tilted security-camera view of the gallery; the guard snores on a chair; three crooks tiptoe behind him",
+   "bg": {
+    "kind": "gallery",
+    "frames": [
+     {
+      "x": 0.2,
+      "y": 0.34,
+      "w": 0.16,
+      "h": 0.26,
+      "top": "#e8a24a",
+      "bottom": "#6a8a4a",
+      "plaque": "SUNSET"
+     },
+     {
+      "x": 0.8,
+      "y": 0.34,
+      "w": 0.16,
+      "h": 0.26,
+      "top": "#5a7ac8",
+      "bottom": "#2a3a6a",
+      "plaque": "NIGHT SEA"
+     }
+    ]
+   },
+   "grade": "crt-cyan",
+   "camera": {
+    "zoom": [
+     1.08,
+     1.12
+    ],
+    "rot": [
+     -4,
+     -4
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "crate",
+     "x": 0.5,
+     "y": 0.73,
+     "size": 200,
+     "color": "#8a6a4a",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "emblem3d",
+     "id": "ruby3",
+     "x": 0.5,
+     "y": 0.64,
+     "size": 150,
+     "shape": "star",
+     "color": "#d0203a",
+     "enter": "none",
+     "glow": {
+      "color": "#ff6080",
+      "blur": 30
+     }
+    },
+    {
+     "type": "bean",
+     "id": "sneak1",
+     "who": "velvet",
+     "x": 0.12,
+     "y": 0.8,
+     "size": 300,
+     "pose": "hands-up",
+     "expr": "smug",
+     "walk": [
+      [
+       0,
+       2.2
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.2,
+       "to": [
+        0.42,
+        0.8
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "sneak2",
+     "who": "gizmo",
+     "x": 0.02,
+     "y": 0.8,
+     "size": 290,
+     "pose": "hands-up",
+     "expr": "worried",
+     "walk": [
+      [
+       0,
+       2.2
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.2,
+       "to": [
+        0.3,
+        0.8
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "sneak3",
+     "who": "tank",
+     "x": -0.1,
+     "y": 0.8,
+     "size": 310,
+     "pose": "hands-up",
+     "expr": "grimace",
+     "walk": [
+      [
+       0,
+       2.2
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.2,
+       "to": [
+        0.17,
+        0.8
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "sleeper",
+     "who": "guard",
+     "x": 0.76,
+     "y": 0.95,
+     "size": 420,
+     "pose": "sit-slump",
+     "expr": "sleep-drool",
+     "flip": true,
+     "rock": 0.6
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "mark": "zzz",
+     "target": "sleeper"
+    },
+    {
+     "type": "fx",
+     "kind": "cctv",
+     "id": "cam3",
+     "label": "CAM 3"
+    }
+   ]
+  },
+  {
+   "id": "h04_swap",
+   "dur": 2.4,
+   "transition": {
+    "kind": "whip",
+    "dir": "left"
+   },
+   "vo": "A hook lifts the real ruby, and the claw drops in a fake.",
+   "screen": "close on the pedestal; a hook lifts the glowing ruby away; a claw crane lowers an identical fake; labels REAL and FAKE",
+   "bg": {
+    "kind": "gallery",
+    "frames": [
+     {
+      "x": 0.14,
+      "y": 0.3,
+      "w": 0.14,
+      "h": 0.24,
+      "top": "#e8a24a",
+      "bottom": "#6a8a4a"
+     }
+    ]
+   },
+   "grade": {
+    "preset": "night",
+    "strength": 0.4
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "crate",
+     "x": 0.5,
+     "y": 0.8,
+     "size": 260,
+     "color": "#8a6a4a",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "emblem3d",
+     "id": "ruby4",
+     "x": 0.5,
+     "y": 0.684,
+     "size": 220,
+     "shape": "star",
+     "color": "#d0203a",
+     "enter": "none",
+     "glow": {
+      "color": "#ff6080",
+      "blur": 34
+     }
+    },
+    {
+     "type": "arm",
+     "id": "hook4",
+     "kind": "hook",
+     "reach": [
+      {
+       "at": 0.0,
+       "to": [
+        0.5,
+        0.48
+       ],
+       "dur": 0.55,
+       "hold": 0.15,
+       "back": 0.45
+      }
+     ],
+     "take": [
+      "ruby4"
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "claw-crane",
+     "x": 0.5,
+     "y": 0.62,
+     "size": 440,
+     "enter": "none",
+     "at": 1.15,
+     "load": "emblem3d",
+     "drop": {
+      "at": 0,
+      "dur": 0.5,
+      "from": 0.9
+     },
+     "releaseAt": 0.6
+    },
+    {
+     "type": "label",
+     "text": "REAL",
+     "x": 0.78,
+     "y": 0.42,
+     "size": 76,
+     "color": "#ffe066",
+     "at": 0.25,
+     "arrow": "left",
+     "out": 1.2
+    },
+    {
+     "type": "label",
+     "text": "FAKE",
+     "x": 0.78,
+     "y": 0.5,
+     "size": 76,
+     "color": "#ff6b6b",
+     "at": 1.85,
+     "arrow": "left"
+    },
+    {
+     "type": "fx",
+     "kind": "sparkle",
+     "id": "sp4",
+     "x": 0.5,
+     "y": 0.6,
+     "radius": 140,
+     "at": 0.0,
+     "out": 0.9
+    }
+   ]
+  },
+  {
+   "id": "h05_disguise",
+   "dur": 2.0,
+   "vo": "Then the boss changed into something more comfortable.",
+   "screen": "the boss pockets the real ruby; POOF; she steps out as a museum guard, smug; label DISGUISE",
+   "bg": {
+    "kind": "gallery",
+    "frames": [
+     {
+      "x": 0.5,
+      "y": 0.34,
+      "w": 0.24,
+      "h": 0.32,
+      "top": "#c86a8a",
+      "bottom": "#5a3a6a",
+      "plaque": "PORTRAIT"
+     }
+    ]
+   },
+   "grade": {
+    "preset": "night",
+    "strength": 0.4
+   },
+   "camera": {
+    "zoom": [
+     1.02,
+     1.08
+    ],
+    "punch": [
+     {
+      "at": 0.8,
+      "amount": 0.08
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "boss5",
+     "who": "velvet",
+     "x": 0.5,
+     "y": 0.95,
+     "size": 520,
+     "pose": [
+      {
+       "at": 0,
+       "v": "rub-hands"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "evil"
+      }
+     ],
+     "swap": [
+      {
+       "at": 0.77,
+       "look": {
+        "outfit": "tunic",
+        "robe": "#34466a",
+        "head": "officer-cap",
+        "headColor": "#26324e",
+        "headColor2": "#e2b23c",
+        "mask": null,
+        "hair": "short",
+        "hairColor": "#c0402a",
+        "tie": null
+       },
+       "expr": "smug-closed",
+       "pose": "hips"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "poof",
+     "id": "poof5",
+     "at": 0.7,
+     "x": 0.5,
+     "y": 0.62,
+     "w": 480,
+     "h": 420
+    },
+    {
+     "type": "label",
+     "tag": "THE BOSS",
+     "text": "DISGUISE",
+     "x": 0.2,
+     "y": 0.4,
+     "size": 84,
+     "at": 1.0,
+     "arrow": "right"
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "mark": "ticks",
+     "target": "boss5",
+     "at": 1.1
+    }
+   ]
+  },
+  {
+   "id": "h06_button",
+   "dur": 1.4,
+   "vo": "And she hit the alarm.",
+   "screen": "close: the fake guard slams a big red button; red strobe and an INTRUDER warning",
+   "bg": {
+    "kind": "office",
+    "window": "none",
+    "desk": false,
+    "chair": false,
+    "wall": "#5a4a6a"
+   },
+   "camera": {
+    "zoom": [
+     1.1,
+     1.14
+    ],
+    "focus": [
+     0.5,
+     0.6
+    ],
+    "shake": [
+     {
+      "at": 0.45,
+      "dur": 0.3,
+      "amp": 10
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "boss6",
+     "who": "velvet",
+     "look": {
+      "outfit": "tunic",
+      "robe": "#34466a",
+      "head": "officer-cap",
+      "headColor": "#26324e",
+      "headColor2": "#e2b23c",
+      "mask": null,
+      "hair": "short",
+      "hairColor": "#c0402a",
+      "tie": null
+     },
+     "x": 0.34,
+     "y": 1.0,
+     "size": 560,
+     "pose": [
+      {
+       "at": 0,
+       "v": "throw-windup"
+      },
+      {
+       "at": 0.4,
+       "v": "point"
+      }
+     ],
+     "expr": "evil",
+     "antic": true
+    },
+    {
+     "type": "prop",
+     "kind": "big-button",
+     "x": 0.64,
+     "y": 0.92,
+     "size": 340,
+     "press": [
+      0.42
+     ],
+     "enter": "none"
+    },
+    {
+     "type": "hud",
+     "kind": "warning",
+     "text": "INTRUDER ALERT",
+     "at": 0.5,
+     "glitch": true,
+     "y": 0.2
+    }
+   ]
+  },
+  {
+   "id": "h07_caught",
+   "dur": 2.4,
+   "vo": "The crew ran... straight into a cage.",
+   "screen": "the crew freezes, a red ! over each head, they run; a cage slams down over them; guard points THEM!",
+   "bg": {
+    "kind": "gallery",
+    "frames": [
+     {
+      "x": 0.5,
+      "y": 0.32,
+      "w": 0.2,
+      "h": 0.28,
+      "top": "#86c3ee",
+      "bottom": "#9fb86a"
+     }
+    ]
+   },
+   "grade": {
+    "preset": "red-flash",
+    "strength": 0.35
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ],
+    "shake": [
+     {
+      "at": 1.45,
+      "dur": 0.3,
+      "amp": 14
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "run_tank",
+     "who": "tank",
+     "x": 0.64,
+     "y": 0.92,
+     "size": 400,
+     "flip": true,
+     "expr": [
+      {
+       "at": 0,
+       "v": "shock"
+      },
+      {
+       "at": 1.45,
+       "v": "scream"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "scared"
+      },
+      {
+       "at": 1.45,
+       "v": "hands-up"
+      }
+     ],
+     "run": [
+      [
+       0.5,
+       1.45
+      ]
+     ],
+     "move": [
+      {
+       "at": 0.5,
+       "dur": 0.95,
+       "to": [
+        0.35,
+        0.92
+       ],
+       "ease": "inOut"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "run_giz",
+     "who": "gizmo",
+     "x": 0.8,
+     "y": 0.92,
+     "size": 370,
+     "flip": true,
+     "expr": [
+      {
+       "at": 0,
+       "v": "shock"
+      },
+      {
+       "at": 1.45,
+       "v": "wail"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "scared"
+      },
+      {
+       "at": 1.45,
+       "v": "clutch-head"
+      }
+     ],
+     "run": [
+      [
+       0.5,
+       1.45
+      ]
+     ],
+     "move": [
+      {
+       "at": 0.5,
+       "dur": 0.95,
+       "to": [
+        0.55,
+        0.92
+       ],
+       "ease": "inOut"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "mark": "exclaim",
+     "target": "run_tank",
+     "at": 0.1,
+     "dur": 0.4
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "mark": "exclaim",
+     "target": "run_giz",
+     "at": 0.15,
+     "dur": 0.4
+    },
+    {
+     "type": "fx",
+     "kind": "sweat-spray",
+     "target": "run_giz",
+     "rate": 5,
+     "at": 0.4
+    },
+    {
+     "type": "fx",
+     "kind": "speedlines",
+     "id": "sl7",
+     "x": 0.45,
+     "y": 0.6,
+     "at": 0.5,
+     "out": 1.4,
+     "inner": 420
+    },
+    {
+     "type": "prop",
+     "kind": "cage",
+     "id": "cage7",
+     "x": 0.45,
+     "y": 0.93,
+     "size": 760,
+     "drop": {
+      "at": 1.4
+     },
+     "lock": true
+    },
+    {
+     "type": "bean",
+     "id": "fake7",
+     "who": "velvet",
+     "look": {
+      "outfit": "tunic",
+      "robe": "#34466a",
+      "head": "officer-cap",
+      "headColor": "#26324e",
+      "headColor2": "#e2b23c",
+      "mask": null,
+      "hair": "short",
+      "hairColor": "#c0402a",
+      "tie": null
+     },
+     "x": 0.88,
+     "y": 0.94,
+     "size": 420,
+     "flip": true,
+     "at": 1.7,
+     "enter": "peek",
+     "peek": {
+      "side": "right",
+      "tilt": 14
+     },
+     "pose": "point",
+     "expr": "smug"
+    },
+    {
+     "type": "doc",
+     "kind": "bubble",
+     "style": "shout",
+     "text": "THEM!",
+     "x": 0.8,
+     "y": 0.3,
+     "w": 360,
+     "h": 200,
+     "size": 70,
+     "at": 1.85,
+     "tail": [
+      0.1,
+      0.8
+     ]
+    }
+   ]
+  },
+  {
+   "id": "h08_news",
+   "dur": 2.2,
+   "transition": {
+    "kind": "zoom-punch"
+   },
+   "vo": "Next morning: heist foiled, ruby safe, the heroic guard nowhere to be found.",
+   "screen": "spinning front page MUSEUM THIEVES CAUGHT with a photo of the caged brute; stamp CASE CLOSED",
+   "bg": {
+    "kind": "burst",
+    "color": "#2f5a8a",
+    "center": "#bfe0f8",
+    "edge": "#0f2440"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "newspaper",
+     "id": "paper8",
+     "x": 0.5,
+     "y": 0.52,
+     "masthead": "THE CITY CRIER",
+     "date": "TUESDAY",
+     "headline": "THIEVES CAUGHT!",
+     "subhead": "RUBY STAR SAFE, SAYS MUSEUM",
+     "photo": {
+      "who": "tank"
+     },
+     "grayscale": true,
+     "w": 720,
+     "h": 900,
+     "rot": 4,
+     "move": [
+      {
+       "at": 0,
+       "dur": 0.01,
+       "scale": 0.05,
+       "rot": -700
+      },
+      {
+       "at": 0.01,
+       "dur": 0.55,
+       "scale": 1,
+       "rot": 4,
+       "ease": "outCubic"
+      }
+     ]
+    },
+    {
+     "type": "doc",
+     "kind": "stamp",
+     "text": "CASE CLOSED",
+     "x": 0.66,
+     "y": 0.72,
+     "size": 96,
+     "at": 1.25,
+     "tilt": -14
+    }
+   ]
+  },
+  {
+   "id": "h09_twist",
+   "dur": 2.4,
+   "transition": {
+    "kind": "wave",
+    "dir": "right"
+   },
+   "vo": "Safe? The one in the museum is the fake.",
+   "screen": "sunset harbour; the guard poofs back into the boss, who holds up the real glowing ruby; the quest chip ticks",
+   "bg": {
+    "kind": "harbor",
+    "time": "sunset",
+    "shipX": 0.9
+   },
+   "grade": "golden-hour",
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "punch": [
+     {
+      "at": 0.95,
+      "amount": 0.08
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "boss9",
+     "who": "velvet",
+     "look": {
+      "outfit": "tunic",
+      "robe": "#34466a",
+      "head": "officer-cap",
+      "headColor": "#26324e",
+      "headColor2": "#e2b23c",
+      "mask": null,
+      "hair": "short",
+      "hairColor": "#c0402a",
+      "tie": null
+     },
+     "x": 0.42,
+     "y": 0.95,
+     "size": 520,
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 0.57,
+       "v": "hold-high"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.57,
+       "v": "smug-closed"
+      }
+     ],
+     "swap": [
+      {
+       "at": 0.57,
+       "look": {
+        "outfit": "suit",
+        "robe": "#3a2440",
+        "tie": "#c8323a",
+        "head": "fedora",
+        "headColor": "#2a1c2a",
+        "hair": "long-straight",
+        "hairColor": "#c0402a",
+        "mask": "eye"
+       }
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "poof",
+     "id": "poof9",
+     "at": 0.5,
+     "x": 0.42,
+     "y": 0.62,
+     "w": 460,
+     "h": 420,
+     "word": "TA-DA!"
+    },
+    {
+     "type": "prop",
+     "kind": "emblem3d",
+     "id": "ruby9",
+     "x": 0.55,
+     "y": 0.34,
+     "size": 170,
+     "shape": "star",
+     "color": "#d0203a",
+     "at": 0.6,
+     "enter": "pop",
+     "glow": {
+      "color": "#ff6080",
+      "blur": 40
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "sparkle",
+     "id": "sp9",
+     "x": 0.55,
+     "y": 0.28,
+     "radius": 170,
+     "at": 0.7
+    },
+    {
+     "type": "label",
+     "tag": "THE REAL",
+     "text": "RUBY STAR",
+     "x": 0.76,
+     "y": 0.24,
+     "size": 84,
+     "color": "#ffe066",
+     "at": 1.1,
+     "arrow": "left"
+    }
+   ]
+  },
+  {
+   "id": "h10_split",
+   "dur": 2.4,
+   "transition": {
+    "kind": "torn-split"
+   },
+   "vo": "The crew got ten years. The boss got a boat.",
+   "screen": "jagged split: the caged crew (THE CREW: 10 YEARS) vs the boss at sunset (THE BOSS: A BOAT); to be continued",
+   "bg": {
+    "kind": "flat",
+    "color": "#0b0806"
+   },
+   "layers": [
+    {
+     "type": "panel",
+     "id": "split10",
+     "hud": true,
+     "layout": "split",
+     "seam": "jagged",
+     "vs": false,
+     "labels": false,
+     "cells": [
+      {
+       "shot": "h07_caught",
+       "t": 2.3,
+       "zoom": 1.2,
+       "focus": [
+        0.45,
+        0.62
+       ]
+      },
+      {
+       "shot": "h09_twist",
+       "t": 2.3,
+       "zoom": 1.15,
+       "focus": [
+        0.5,
+        0.55
+       ]
+      }
+     ]
+    },
+    {
+     "type": "label",
+     "tag": "THE CREW",
+     "text": "10 YEARS",
+     "x": 0.25,
+     "y": 0.2,
+     "size": 84,
+     "color": "#ff6b6b",
+     "at": 0.45,
+     "enter": "slam"
+    },
+    {
+     "type": "label",
+     "tag": "THE BOSS",
+     "text": "A BOAT",
+     "x": 0.75,
+     "y": 0.2,
+     "size": 84,
+     "color": "#ffe066",
+     "at": 0.85,
+     "enter": "slam"
+    },
+    {
+     "type": "doc",
+     "kind": "tbc",
+     "at": 1.4,
+     "text": "To Be Continued"
+    }
+   ]
+  }
+ ]
+}

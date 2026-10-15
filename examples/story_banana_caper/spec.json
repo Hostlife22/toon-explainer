@@ -1,0 +1,1198 @@
+{
+ "title": "Who Left the Banana Peel?",
+ "fps": 30,
+ "seed": 58,
+ "style": {
+  "grain": true,
+  "vignette": 0.28
+ },
+ "cast": {
+  "mayor": {
+   "build": "fat",
+   "outfit": "frockcoat",
+   "robe": "#2a2a3a",
+   "vest": "#c8323a",
+   "sash": "#e2b23c",
+   "head": "tophat",
+   "headColor": "#1e1e24",
+   "headColor2": "#c8323a",
+   "hair": "short",
+   "hairColor": "#9a9a9a",
+   "beard": "walrus",
+   "beardColor": "#b8b8b8",
+   "medals": 3
+  },
+  "crumb": {
+   "outfit": "greatcoat",
+   "robe": "#b8945e",
+   "hair": "short",
+   "hairColor": "#4a2e1f",
+   "mustache": true,
+   "mustacheColor": "#4a2e1f",
+   "shoes": "#3a2a20"
+  },
+  "chef": {
+   "outfit": "overalls",
+   "robe": "#f4f1ea",
+   "bibColor": "#f4f1ea",
+   "legColor": "#3a3a44",
+   "head": "chef-hat",
+   "beard": "walrus",
+   "hairColor": "#2a1d18"
+  },
+  "gardener": {
+   "outfit": "overalls",
+   "robe": "#e8dcc4",
+   "bibColor": "#4a7a3a",
+   "legColor": "#4a7a3a",
+   "head": "straw-boater",
+   "headColor": "#e8c870",
+   "headColor2": "#c8323a",
+   "hair": "curly",
+   "hairColor": "#8a4a22",
+   "skin": "#c8946a"
+  },
+  "clown": {
+   "robe": "#4a8ad8",
+   "sleeve": "#f2c230",
+   "head": "clown-wig",
+   "headColor": "#e8502a",
+   "headColor2": "#d0302a",
+   "blush": true
+  },
+  "citizen": {
+   "outfit": "suit",
+   "robe": "#4a5a78",
+   "hair": "short",
+   "hairColor": "#3a2a20"
+  },
+  "citizen2": {
+   "robe": "#8a3a5a",
+   "hair": "bun",
+   "hairColor": "#6a3a22"
+  }
+ },
+ "overlays": [
+  {
+   "from": 0.2,
+   "to": 22.0,
+   "hideIn": [
+    "b07_pick",
+    "b09_grid"
+   ],
+   "layer": {
+    "type": "hud",
+    "kind": "counter",
+    "icon": "banana-peel",
+    "prefix": "",
+    "suffix": " SLIPS",
+    "size": 64,
+    "x": 0.8,
+    "y": 0.09,
+    "value": [
+     {
+      "at": 0,
+      "v": 0
+     },
+     {
+      "at": 3.02,
+      "v": 1
+     },
+     {
+      "at": 20.55,
+      "v": 2
+     }
+    ],
+    "swap": [
+     {
+      "at": 3.02,
+      "suffix": " SLIP"
+     },
+     {
+      "at": 20.55,
+      "suffix": " SLIPS"
+     }
+    ]
+   }
+  }
+ ],
+ "shots": [
+  {
+   "id": "b01_ceremony",
+   "dur": 2.4,
+   "vo": "Grand opening day. Mayor Pompworth, the most important man in town.",
+   "screen": "town square, banner GRAND OPENING; the mayor struts in toward the camera's right; a banana peel already lies in his path",
+   "bg": {
+    "kind": "city",
+    "preset": "day",
+    "style": "wood"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "ribbon",
+     "text": "GRAND OPENING",
+     "x": 0.5,
+     "y": 0.16,
+     "w": 1000,
+     "h": 120,
+     "size": 70,
+     "color": "#f2d8a0"
+    },
+    {
+     "type": "prop",
+     "kind": "banana-peel",
+     "id": "peel1",
+     "x": 0.66,
+     "y": 0.9,
+     "size": 170,
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "mayor1",
+     "who": "mayor",
+     "x": 0.18,
+     "y": 0.92,
+     "size": 480,
+     "expr": "smug-closed",
+     "pose": "hips",
+     "walk": [
+      [
+       0,
+       2.4
+      ]
+     ],
+     "headTilt": 6,
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.4,
+       "to": [
+        0.46,
+        0.92
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "doc",
+     "kind": "nameplate",
+     "style": "rank",
+     "rank": "VERY IMPORTANT",
+     "name": "MAYOR POMPWORTH",
+     "size": 80,
+     "x": 0.72,
+     "y": 0.42,
+     "at": 0.4
+    },
+    {
+     "type": "crowd",
+     "who": [
+      "citizen",
+      "citizen2"
+     ],
+     "x": 0.5,
+     "y": 1.22,
+     "count": 8,
+     "size": 360,
+     "armsUp": true,
+     "expr": "happy",
+     "spread": 2000,
+     "id": "fans1"
+    }
+   ]
+  },
+  {
+   "id": "b02_slip",
+   "dur": 1.8,
+   "vo": "Then: the peel.",
+   "screen": "close: the mayor's foot hits the peel; he flies up flailing, his top hat spins away; WHOOPS!; he lands flat",
+   "bg": {
+    "kind": "city",
+    "preset": "day",
+    "style": "wood"
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.08
+    ],
+    "focus": [
+     0.58,
+     0.6
+    ],
+    "shake": [
+     {
+      "at": 0.82,
+      "dur": 0.3,
+      "amp": 16
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "banana-peel",
+     "id": "peel2",
+     "x": 0.62,
+     "y": 0.86,
+     "size": 170,
+     "enter": "none",
+     "move": [
+      {
+       "at": 0.12,
+       "dur": 0.3,
+       "to": [
+        0.82,
+        0.86
+       ],
+       "rot": 50,
+       "ease": "outCubic"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "mayor2",
+     "who": "mayor",
+     "x": 0.58,
+     "y": 0.86,
+     "size": 460,
+     "expr": [
+      {
+       "at": 0,
+       "v": "smug-closed"
+      },
+      {
+       "at": 0.12,
+       "v": "scream"
+      },
+      {
+       "at": 0.82,
+       "v": "dead"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "hips"
+      },
+      {
+       "at": 0.12,
+       "v": "flail"
+      }
+     ],
+     "jump": [
+      {
+       "at": 0.12,
+       "dur": 0.7,
+       "h": 260
+      }
+     ],
+     "swap": [
+      {
+       "at": 0.12,
+       "look": {
+        "head": null
+       }
+      }
+     ],
+     "out": 0.82,
+     "exit": "pivot-fall",
+     "exitDur": 1.0,
+     "fall": {
+      "dir": 1,
+      "snap": true
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "hat",
+     "id": "hatfly",
+     "target": "mayor2",
+     "at": 0.12,
+     "mode": "fly",
+     "head": "tophat",
+     "color": "#1e1e24",
+     "color2": "#c8323a",
+     "dir": 1,
+     "vx": 330
+    },
+    {
+     "type": "fx",
+     "kind": "onomatopoeia",
+     "id": "whoops",
+     "text": "WHOOPS!",
+     "x": 0.36,
+     "y": 0.34,
+     "size": 280,
+     "at": 0.15,
+     "dur": 1.6
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "id": "dust2",
+     "x": 0.5,
+     "y": 0.86,
+     "at": 0.84,
+     "count": 10
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "mark": "whoosh",
+     "target": "mayor2",
+     "at": 0.14
+    }
+   ]
+  },
+  {
+   "id": "b03_case",
+   "dur": 2.2,
+   "transition": {
+    "kind": "cloud-wipe",
+    "word": "OUCH!",
+    "dur": 0.4
+   },
+   "vo": "City Hall wanted a culprit, so they called Inspector Crumb.",
+   "screen": "office; a giant cuffed hand from City Hall shoves a case file at the detective; his deerstalker drops onto his head; nameplate",
+   "bg": {
+    "kind": "office",
+    "window": "arched",
+    "windowX": 0.8,
+    "lamp": true,
+    "deskX": 0.72,
+    "chair": false
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "crumb3",
+     "who": "crumb",
+     "x": 0.36,
+     "y": 0.95,
+     "size": 500,
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 0.75,
+       "v": "hold"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.75,
+       "v": "shock"
+      },
+      {
+       "at": 1.4,
+       "v": "smug"
+      }
+     ],
+     "swap": [
+      {
+       "at": 0.75,
+       "hold": "scroll"
+      },
+      {
+       "at": 1.38,
+       "look": {
+        "head": "deerstalker",
+        "headColor": "#8a6a3a",
+        "headColor2": "#5a4426"
+       }
+      }
+     ]
+    },
+    {
+     "type": "arm",
+     "id": "cityhand",
+     "kind": "hand",
+     "from": "right",
+     "y": 0.74,
+     "label": "CITY HALL",
+     "bracelet": "#e2b23c",
+     "hold": "scroll",
+     "reach": [
+      {
+       "at": 0.42,
+       "to": [
+        0.45,
+        0.74
+       ],
+       "dur": 0.15,
+       "hold": 0.3,
+       "back": 0.2
+      }
+     ],
+     "state": "grab",
+     "at": 0
+    },
+    {
+     "type": "fx",
+     "kind": "hat",
+     "id": "hatdrop",
+     "target": "crumb3",
+     "at": 1.25,
+     "mode": "drop",
+     "head": "deerstalker",
+     "color": "#8a6a3a",
+     "bonk": true
+    },
+    {
+     "type": "doc",
+     "kind": "nameplate",
+     "style": "rank",
+     "rank": "DETECTIVE",
+     "name": "INSPECTOR CRUMB",
+     "size": 80,
+     "x": 0.68,
+     "y": 0.3,
+     "at": 1.45
+    }
+   ]
+  },
+  {
+   "id": "b04_archive",
+   "dur": 2.2,
+   "transition": {
+    "kind": "glow-open",
+    "mode": "glow",
+    "at": [
+     0.5,
+     0.5
+    ]
+   },
+   "vo": "First, the dusty archive: who bought bananas today?",
+   "screen": "dim archive, cobwebs with a spider; the detective sweeps a magnifier over the BANANA SALES ledger",
+   "bg": {
+    "kind": "office",
+    "planks": "horizontal",
+    "window": "none",
+    "lamp": true,
+    "desk": false,
+    "chair": false,
+    "wall": "#6a4a32",
+    "carpet": "#3a2a22"
+   },
+   "grade": "gaslight",
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "cobweb",
+     "x": 0.1,
+     "y": 0.18,
+     "size": 360,
+     "corner": "tl",
+     "spider": true,
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "cobweb",
+     "x": 0.92,
+     "y": 0.14,
+     "size": 260,
+     "corner": "tr",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "crate",
+     "x": 0.12,
+     "y": 0.79,
+     "size": 220,
+     "text": "1987",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.12,
+     "y": 0.6,
+     "size": 150,
+     "text": "SLIPS",
+     "rot": -8,
+     "enter": "none"
+    },
+    {
+     "type": "doc",
+     "kind": "document",
+     "id": "ledger",
+     "x": 0.6,
+     "y": 0.5,
+     "w": 820,
+     "title": "BANANA SALES: TODAY",
+     "titleColor": "#7a2a10",
+     "lines": [
+      "1. THE CHEF",
+      "2. THE GARDENER",
+      "3. THE CLOWN",
+      "4. ~~~~~~~~~"
+     ],
+     "lineSize": 50,
+     "rot": -2
+    },
+    {
+     "type": "bean",
+     "id": "crumb4",
+     "who": "crumb",
+     "look": {
+      "head": "deerstalker",
+      "headColor": "#8a6a3a",
+      "headColor2": "#5a4426"
+     },
+     "x": 0.25,
+     "y": 1.02,
+     "size": 560,
+     "pose": "point",
+     "expr": "squint",
+     "flip": false
+    },
+    {
+     "type": "prop",
+     "kind": "magnifier",
+     "id": "mag4",
+     "x": 0.48,
+     "y": 0.42,
+     "size": 300,
+     "zoom": 1.5,
+     "enter": "none",
+     "move": [
+      {
+       "at": 0.2,
+       "dur": 1.6,
+       "to": [
+        0.62,
+        0.66
+       ],
+       "ease": "inOut"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "id": "dust4",
+     "x": 0.12,
+     "y": 0.56,
+     "at": 0.3,
+     "count": 7,
+     "color": "#c8b89a"
+    }
+   ]
+  },
+  {
+   "id": "b05_board",
+   "dur": 2.2,
+   "vo": "Three buyers. Three suspects. All connected to the peel.",
+   "screen": "corkboard WHO DID IT?; notes CHEF, GARDENER, CLOWN, THE PEEL; red strings snap from the peel to each; detective thinks",
+   "bg": {
+    "kind": "corkboard",
+    "sign": "WHO DID IT?",
+    "vignette": 0.4,
+    "notes": [
+     {
+      "text": "CHEF",
+      "at": 0.1,
+      "color": "#f2ede0"
+     },
+     "",
+     {
+      "text": "GARDENER",
+      "at": 0.3,
+      "color": "#cfe2f0"
+     },
+     "",
+     "",
+     {
+      "text": "THE\nPEEL",
+      "at": 0.0,
+      "color": "#f2d23a"
+     },
+     "",
+     "",
+     {
+      "text": "CLOWN",
+      "at": 0.5,
+      "color": "#f2ede0"
+     },
+     "",
+     "",
+     ""
+    ],
+    "strings": [
+     [
+      5,
+      0,
+      0.7
+     ],
+     [
+      5,
+      2,
+      1.0
+     ],
+     [
+      5,
+      8,
+      1.3
+     ]
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "crumb5",
+     "who": "crumb",
+     "look": {
+      "head": "deerstalker",
+      "headColor": "#8a6a3a",
+      "headColor2": "#5a4426"
+     },
+     "x": 0.86,
+     "y": 1.12,
+     "size": 660,
+     "pose": "think",
+     "expr": "side-eye",
+     "flip": true
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "mark": "question",
+     "target": "crumb5",
+     "at": 1.4
+    }
+   ]
+  },
+  {
+   "id": "b06_lineup",
+   "dur": 2.0,
+   "transition": {
+    "kind": "slash"
+   },
+   "vo": "The usual suspects. Every one of them sweating.",
+   "screen": "dark room; a diagonal lineup of the chef, the gardener and the clown under a hard spotlight; THE SUSPECTS",
+   "bg": {
+    "kind": "void",
+    "variant": "spots"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ]
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "mode": "lineup",
+     "who": [
+      "chef",
+      "gardener",
+      "clown"
+     ],
+     "x": 0.6,
+     "y": 1.0,
+     "count": 3,
+     "size": 640,
+     "dir": 1,
+     "expr": "worried",
+     "id": "lineup6"
+    },
+    {
+     "type": "fx",
+     "kind": "spotlight",
+     "id": "spot6",
+     "x": 0.6,
+     "y": 0.5,
+     "radius": 560,
+     "strength": 0.75
+    },
+    {
+     "type": "label",
+     "tag": "ALL THREE",
+     "text": "SUSPECTS",
+     "x": 0.2,
+     "y": 0.3,
+     "size": 96,
+     "at": 0.3,
+     "color": "#ffe066"
+    },
+    {
+     "type": "fx",
+     "kind": "sweat",
+     "id": "sw6",
+     "x": 0.42,
+     "y": 0.3,
+     "at": 0.6
+    }
+   ]
+  },
+  {
+   "id": "b07_pick",
+   "dur": 2.0,
+   "transition": {
+    "kind": "barwipe",
+    "dur": 0.5
+   },
+   "vo": "Chef? Alibi. Gardener? Alibi. Clown? Alibi. So who...?",
+   "screen": "game-style suspect select: the picker snaps CHEF, GARDENER, CLOWN, then lands on a mystery card ???",
+   "bg": {
+    "kind": "flat",
+    "color": "#2d3340"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "carousel",
+     "snap": true,
+     "items": [
+      {
+       "prop": "croissant",
+       "label": "CHEF"
+      },
+      {
+       "prop": "broom",
+       "label": "GARDENER"
+      },
+      {
+       "prop": "whistle",
+       "label": "CLOWN"
+      },
+      {
+       "prop": "question",
+       "label": "???"
+      }
+     ],
+     "select": [
+      {
+       "at": 0.4,
+       "i": 1
+      },
+      {
+       "at": 0.8,
+       "i": 2
+      },
+      {
+       "at": 1.25,
+       "i": 3
+      }
+     ]
+    },
+    {
+     "type": "title",
+     "text": "SELECT SUSPECT",
+     "x": 0.5,
+     "y": 0.16,
+     "size": 90,
+     "color": "#ffe066"
+    }
+   ]
+  },
+  {
+   "id": "b08_interro",
+   "dur": 2.6,
+   "transition": {
+    "kind": "peephole",
+    "at": [
+     0.55,
+     0.45
+    ]
+   },
+   "vo": "\"Mayor, do you eat bananas?\" \"Never! I hate bananas!\"",
+   "screen": "interrogation room, hard lamp cone on the bandaged mayor; a giant finger points; he denies it and his nose grows; sweat",
+   "bg": {
+    "kind": "void",
+    "variant": "black"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.08
+    ],
+    "punch": [
+     {
+      "at": 1.6,
+      "amount": 0.08
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "spotcone",
+     "id": "lamp8",
+     "x": 0.55,
+     "floor": 0.95,
+     "w": 0.4,
+     "alpha": 0.22,
+     "dark": 0.8
+    },
+    {
+     "type": "bean",
+     "id": "mayor8",
+     "who": "mayor",
+     "look": {
+      "bandage": "head",
+      "nose": {
+       "grow": [
+        1.0,
+        2.2
+       ],
+       "len": 0.85,
+       "pops": true
+      }
+     },
+     "x": 0.55,
+     "y": 0.96,
+     "size": 560,
+     "expr": [
+      {
+       "at": 0,
+       "v": "worried"
+      },
+      {
+       "at": 0.4,
+       "v": "smug-closed"
+      },
+      {
+       "at": 1.6,
+       "v": "grimace"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "scared"
+      },
+      {
+       "at": 0.4,
+       "v": "cross"
+      },
+      {
+       "at": 1.6,
+       "v": "scared"
+      }
+     ],
+     "talk": [
+      [
+       0.4,
+       1.1
+      ]
+     ],
+     "jitter": {
+      "amp": 2,
+      "on": 2,
+      "from": 1.6
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "sweat-spray",
+     "target": "mayor8",
+     "at": 1.3,
+     "rate": 5
+    },
+    {
+     "type": "arm",
+     "id": "accuse",
+     "kind": "hand",
+     "from": "left",
+     "sleeve": "#b8945e",
+     "y": 0.55,
+     "reach": [
+      {
+       "at": 0.0,
+       "to": [
+        0.27,
+        0.46
+       ],
+       "dur": 0.15,
+       "hold": 2.4,
+       "back": 0.1
+      }
+     ],
+     "state": "point"
+    },
+    {
+     "type": "doc",
+     "kind": "bubble",
+     "style": "speech",
+     "text": "I NEVER EAT\nBANANAS!",
+     "x": 0.8,
+     "y": 0.24,
+     "w": 520,
+     "h": 220,
+     "size": 52,
+     "at": 0.4,
+     "tail": [
+      -0.3,
+      0.8
+     ]
+    },
+    {
+     "type": "label",
+     "text": "LIAR!",
+     "x": 0.82,
+     "y": 0.62,
+     "size": 110,
+     "color": "#ff5a5a",
+     "at": 1.9,
+     "enter": "slam"
+    }
+   ]
+  },
+  {
+   "id": "b09_grid",
+   "dur": 2.0,
+   "transition": {
+    "kind": "flash-cut"
+   },
+   "vo": "The ledger. The peel. The nose. The mayor dropped it himself.",
+   "screen": "comic page: the smudged ledger, the peel, the slip, the nose; a GUILTY stamp slams across it",
+   "bg": {
+    "kind": "flat",
+    "color": "#f2e6c8"
+   },
+   "layers": [
+    {
+     "type": "panel",
+     "id": "grid9",
+     "hud": true,
+     "layout": "grid",
+     "cols": 2,
+     "rows": 2,
+     "tilt": 2.5,
+     "every": 0.12,
+     "gutterColor": "#f2e6c8",
+     "labels": false,
+     "cells": [
+      {
+       "shot": "b04_archive",
+       "t": 1.9,
+       "label": "THE LEDGER"
+      },
+      {
+       "shot": "b01_ceremony",
+       "t": 0.6,
+       "label": "THE PEEL",
+       "zoom": 2.4,
+       "focus": [
+        0.64,
+        0.84
+       ]
+      },
+      {
+       "shot": "b02_slip",
+       "t": 0.45,
+       "label": "THE SLIP"
+      },
+      {
+       "shot": "b08_interro",
+       "t": 2.5,
+       "label": "THE NOSE",
+       "zoom": 1.4,
+       "focus": [
+        0.55,
+        0.45
+       ]
+      }
+     ]
+    },
+    {
+     "type": "doc",
+     "kind": "stamp",
+     "text": "GUILTY: THE MAYOR",
+     "x": 0.5,
+     "y": 0.6,
+     "size": 100,
+     "at": 1.0,
+     "tilt": -8
+    }
+   ]
+  },
+  {
+   "id": "b10_again",
+   "dur": 2.6,
+   "transition": {
+    "kind": "iris"
+   },
+   "vo": "Case closed. Though somebody should really pick up that peel.",
+   "screen": "town square again; the mayor wails; the smug detective strolls off, steps on the same peel and tumbles away, hat flying",
+   "bg": {
+    "kind": "city",
+    "preset": "day",
+    "style": "wood"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "shake": [
+     {
+      "at": 1.3,
+      "dur": 0.25,
+      "amp": 12
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "banana-peel",
+     "id": "peel10",
+     "x": 0.7,
+     "y": 0.9,
+     "size": 170,
+     "enter": "none",
+     "move": [
+      {
+       "at": 1.3,
+       "dur": 0.3,
+       "to": [
+        0.86,
+        0.9
+       ],
+       "rot": 60,
+       "ease": "outCubic"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "mayor10",
+     "who": "mayor",
+     "look": {
+      "bandage": "head",
+      "head": null
+     },
+     "x": 0.2,
+     "y": 0.92,
+     "size": 440,
+     "expr": "wail",
+     "pose": "sit-floor"
+    },
+    {
+     "type": "fx",
+     "kind": "tear-stream",
+     "target": "mayor10"
+    },
+    {
+     "type": "bean",
+     "id": "crumb10",
+     "who": "crumb",
+     "look": {
+      "head": "deerstalker",
+      "headColor": "#8a6a3a",
+      "headColor2": "#5a4426"
+     },
+     "x": 0.4,
+     "y": 0.92,
+     "size": 470,
+     "expr": [
+      {
+       "at": 0,
+       "v": "smug-closed"
+      },
+      {
+       "at": 1.3,
+       "v": "shock"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "thumbs-up"
+      },
+      {
+       "at": 1.3,
+       "v": "flail"
+      }
+     ],
+     "walk": [
+      [
+       0,
+       1.3
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 1.3,
+       "to": [
+        0.66,
+        0.92
+       ],
+       "ease": "linear"
+      }
+     ],
+     "out": 1.3,
+     "exit": "tumble",
+     "exitDur": 0.8,
+     "tumble": {
+      "dir": 1,
+      "detach": "head",
+      "vy": -900
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "onomatopoeia",
+     "id": "again",
+     "text": "NOT AGAIN!",
+     "x": 0.74,
+     "y": 0.32,
+     "size": 300,
+     "at": 1.35,
+     "dur": 1.25
+    },
+    {
+     "type": "doc",
+     "kind": "stamp",
+     "text": "CASE CLOSED",
+     "x": 0.26,
+     "y": 0.3,
+     "size": 90,
+     "at": 0.35,
+     "tilt": -12
+    }
+   ]
+  }
+ ]
+}

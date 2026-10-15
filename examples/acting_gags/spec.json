@@ -1246,6 +1246,151 @@
           }
         }
       ]
+    },
+    {
+      "id": "smear_turn",
+      "dur": 3.0,
+      "bg": {
+        "kind": "interior",
+        "wall": "#9aa6b8",
+        "floor": "#5a5a6a"
+      },
+      "vo": "He despaired, then snapped round, ready to fight.",
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "heir",
+          "x": 0.5,
+          "y": 0.9,
+          "size": 560,
+          "id": "hero",
+          "pose": [
+            {
+              "at": 0,
+              "v": "clutch-head"
+            },
+            {
+              "at": 1.2,
+              "v": "fist"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "sad"
+            },
+            {
+              "at": 1.2,
+              "v": "angry"
+            }
+          ],
+          "snapTilt": 8,
+          "smear": [
+            {
+              "at": 1.2,
+              "dir": 1,
+              "strength": 1.2
+            }
+          ],
+          "swap": [
+            {
+              "at": 1.2,
+              "flip": true
+            }
+          ]
+        },
+        {
+          "type": "label",
+          "text": "SNAP TURN",
+          "x": 0.2,
+          "y": 0.2,
+          "size": 72,
+          "tag": "HAIR SMEAR",
+          "at": 1.25,
+          "enter": "slam"
+        }
+      ]
+    },
+    {
+      "id": "drop_shadow",
+      "dur": 2.8,
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 3,
+        "ground": "grass"
+      },
+      "vo": "A shadow grew on the grass. Then the general arrived.",
+      "camera": {
+        "zoom": [
+          1.0,
+          1.03
+        ],
+        "shake": [
+          {
+            "at": 1.1,
+            "dur": 0.2,
+            "amp": 9
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "peasant",
+          "x": 0.25,
+          "y": 0.88,
+          "size": 400,
+          "pose": [
+            {
+              "at": 0,
+              "v": "shade-eyes"
+            },
+            {
+              "at": 1.1,
+              "v": "scared"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "worried"
+            },
+            {
+              "at": 1.1,
+              "v": "shock"
+            }
+          ]
+        },
+        {
+          "type": "bean",
+          "who": "officer",
+          "x": 0.62,
+          "y": 0.88,
+          "size": 460,
+          "flip": true,
+          "at": 1.0,
+          "enter": "drop-squash",
+          "dropShadow": 0.6,
+          "pose": "hips",
+          "expr": "smug"
+        },
+        {
+          "type": "label",
+          "text": "DROP SHADOW",
+          "x": 0.5,
+          "y": 0.15,
+          "size": 72,
+          "tag": "BEFORE THE DROP",
+          "at": 0.2
+        }
+      ]
     }
   ]
 }

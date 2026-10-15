@@ -1441,6 +1441,239 @@
    ],
    "vo": "Footage on a monitor.",
    "grade": "crt-cyan"
+  },
+  {
+   "id": "crack",
+   "dur": 3.0,
+   "bg": {
+    "kind": "gallery"
+   },
+   "layers": [
+    {
+     "type": "panel",
+     "id": "portrait",
+     "layout": "frame",
+     "frame": "gilt",
+     "labels": false,
+     "plaque": "THE KING",
+     "cells": [
+      {
+       "shot": "pile",
+       "t": 0.3,
+       "focus": "auto",
+       "zoom": 1.6
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "crack",
+     "id": "portrait_crack",
+     "x": 0.5,
+     "y": 0.36,
+     "size": 360,
+     "at": 1.0
+    },
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.14,
+     "y": 0.97,
+     "size": 460,
+     "pose": "idle",
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 1.0,
+       "v": "shock"
+      }
+     ],
+     "snapTilt": 4
+    },
+    {
+     "type": "label",
+     "tag": "FX: CRACK",
+     "text": "MEANWHILE, FAR AWAY...",
+     "x": 0.5,
+     "y": 0.92,
+     "at": 1.2,
+     "enter": "pop-tilt",
+     "size": 72
+    }
+   ],
+   "camera": {
+    "punch": [
+     {
+      "at": 1.0,
+      "amount": 0.08
+     }
+    ]
+   },
+   "vo": "Far away, at that very moment, his portrait cracked."
+  },
+  {
+   "id": "petrify",
+   "dur": 3.0,
+   "bg": {
+    "kind": "olympus"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "monk",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 560,
+     "pose": "point",
+     "expr": "evil",
+     "talk": [
+      [
+       0.1,
+       0.8
+      ]
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "hands-fpv"
+    },
+    {
+     "type": "label",
+     "tag": "FX: PETRIFY",
+     "text": "AND YOU TURNED TO STONE",
+     "x": 0.5,
+     "y": 0.14,
+     "at": 0.3,
+     "enter": "pop-tilt",
+     "size": 80
+    },
+    {
+     "type": "fx",
+     "kind": "petrify",
+     "id": "viewer_stone",
+     "at": 0.9,
+     "stage2": 1.2
+    }
+   ],
+   "vo": "And you, dear viewer, turned to stone."
+  },
+  {
+   "id": "pile",
+   "dur": 3.0,
+   "bg": {
+    "kind": "office"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 560,
+     "pose": [
+      {
+       "at": 0,
+       "v": "rub-hands"
+      },
+      {
+       "at": 1.2,
+       "v": "hands-up"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "dollar"
+      },
+      {
+       "at": 1.2,
+       "v": "shock"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "pile",
+     "id": "coin_pile",
+     "prop": "coin",
+     "level": 0.32,
+     "dur": 1.2,
+     "at": 0.4
+    },
+    {
+     "type": "label",
+     "tag": "FX: PILE",
+     "text": "UP TO HIS CHIN IN GOLD",
+     "x": 0.5,
+     "y": 0.14,
+     "at": 1.6,
+     "enter": "pop-tilt",
+     "size": 80
+    }
+   ],
+   "vo": "The taxes piled up to his chin."
+  },
+  {
+   "id": "hatch",
+   "dur": 3.0,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 520,
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 1.0,
+       "v": "scared"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "happy"
+      },
+      {
+       "at": 1.0,
+       "v": "worried"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "hatch",
+     "id": "world_net",
+     "wash": "#ffd6e0",
+     "washAt": 0.9,
+     "from": "left",
+     "dur": 0.5,
+     "at": 0.3
+    },
+    {
+     "type": "label",
+     "tag": "FX: HATCH + WASH",
+     "text": "THE WORLD STOPPED RENDERING",
+     "x": 0.5,
+     "y": 0.14,
+     "at": 1.8,
+     "enter": "pop-tilt",
+     "size": 76
+    }
+   ],
+   "vo": "Then the world simply stopped rendering."
   }
  ]
 }

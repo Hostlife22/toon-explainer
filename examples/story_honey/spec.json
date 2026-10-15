@@ -1,0 +1,1271 @@
+{
+ "title": "The Honey That Never Spoils",
+ "format": "vertical",
+ "seed": 73,
+ "fps": 30,
+ "style": {
+  "vignette": 0.25
+ },
+ "cast": {
+  "arch": {
+   "head": "safari",
+   "outfit": "overalls",
+   "robe": "#e8dcc4",
+   "bibColor": "#a48a5a",
+   "legColor": "#7a5a3a",
+   "shoes": "#4a3322",
+   "hair": "ponytail",
+   "hairColor": "#6b3a20"
+  },
+  "bee": {
+   "robe": "#f2c230",
+   "outfit": "stripes",
+   "stripeColor": "#2a1c15",
+   "sleeve": "#2a1c15",
+   "legColor": "#2a1c15",
+   "wings": "insect",
+   "age": "child",
+   "hair": "bald",
+   "skin": "#f6d860",
+   "horns": "devil",
+   "devilColor": "#2a1c15",
+   "blush": true
+  },
+  "germ": {
+   "skin": "#8fd04a",
+   "robe": "#5aa02a",
+   "hair": "bald",
+   "horns": "devil",
+   "devilColor": "#4a8a22"
+  },
+  "mummy": {
+   "outfit": "skeleton",
+   "headShape": "skull",
+   "robe": "#efe6d4"
+  }
+ },
+ "shots": [
+  {
+   "id": "h01_tomb",
+   "dur": 2.4,
+   "vo": "This honey is three thousand years old.",
+   "screen": "a torchlit tomb corridor; the archaeologist's torch light finds a glowing jar on the floor; she gasps",
+   "bg": {
+    "kind": "corridor",
+    "torches": 2
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.12
+    ],
+    "focus": [
+     0.52,
+     0.66
+    ],
+    "ease": "inOut",
+    "punch": [
+     {
+      "at": -0.08,
+      "amount": 0.08
+     },
+     {
+      "at": 1.1,
+      "amount": 0.08
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "id": "jar1",
+     "kind": "region",
+     "x": 0.565,
+     "y": 0.8,
+     "size": 230,
+     "rough": 0,
+     "color": "#c98a4a",
+     "label": "HONEY",
+     "labelSize": 34,
+     "pts": [
+      [
+       -0.12,
+       -0.5
+      ],
+      [
+       0.12,
+       -0.5
+      ],
+      [
+       0.1,
+       -0.42
+      ],
+      [
+       0.3,
+       -0.25
+      ],
+      [
+       0.34,
+       0.1
+      ],
+      [
+       0.25,
+       0.4
+      ],
+      [
+       0.1,
+       0.5
+      ],
+      [
+       -0.1,
+       0.5
+      ],
+      [
+       -0.25,
+       0.4
+      ],
+      [
+       -0.34,
+       0.1
+      ],
+      [
+       -0.3,
+       -0.25
+      ],
+      [
+       -0.1,
+       -0.42
+      ]
+     ],
+     "enter": "none",
+     "glow": {
+      "color": "#ffd77a",
+      "blur": 30
+     }
+    },
+    {
+     "type": "bean",
+     "id": "arch1",
+     "who": "arch",
+     "x": 0.43,
+     "y": 1.02,
+     "size": 600,
+     "hold": "torch",
+     "pose": [
+      {
+       "at": 0,
+       "v": "hold"
+      },
+      {
+       "at": 1.1,
+       "v": "hold"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "worried"
+      },
+      {
+       "at": 1.1,
+       "v": "shock"
+      }
+     ],
+     "snapTilt": 8
+    },
+    {
+     "type": "fx",
+     "kind": "lightpool",
+     "id": "h01_light",
+     "follow": "arch1",
+     "part": "hand",
+     "r": 460,
+     "dark": 0.8,
+     "open": {
+      "at": 0,
+      "dur": 0.5
+     }
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "tag": "THIS HONEY IS",
+     "text": "3,000 YEARS",
+     "x": 0.5,
+     "y": 0.13,
+     "size": 76,
+     "color": "#ffd24a",
+     "at": 0.1
+    },
+    {
+     "type": "label",
+     "text": "OLD",
+     "x": 0.5,
+     "y": 0.21,
+     "size": 76,
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "id": "h02_edible",
+   "dur": 2.2,
+   "vo": "And you could still eat it.",
+   "screen": "close on the jar: a god beam lands on it and it sparkles; the archaeologist peeks in from the side",
+   "bg": {
+    "kind": "corridor",
+    "torches": 2
+   },
+   "grade": {
+    "preset": "divine",
+    "at": 0.3,
+    "dur": 0.4,
+    "strength": 0.6
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ],
+    "jump": [
+     {
+      "at": 1.0,
+      "zoom": 1.15,
+      "focus": [
+       0.5,
+       0.6
+      ]
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "godbeam",
+     "id": "h02_beam",
+     "from": "t",
+     "target": [
+      0.5,
+      0.62
+     ],
+     "width": 260,
+     "at": 0.2
+    },
+    {
+     "type": "prop",
+     "id": "jar2",
+     "kind": "region",
+     "x": 0.5,
+     "y": 0.56,
+     "size": 380,
+     "rough": 0,
+     "color": "#c98a4a",
+     "label": "HONEY",
+     "labelSize": 54,
+     "pts": [
+      [
+       -0.12,
+       -0.5
+      ],
+      [
+       0.12,
+       -0.5
+      ],
+      [
+       0.1,
+       -0.42
+      ],
+      [
+       0.3,
+       -0.25
+      ],
+      [
+       0.34,
+       0.1
+      ],
+      [
+       0.25,
+       0.4
+      ],
+      [
+       0.1,
+       0.5
+      ],
+      [
+       -0.1,
+       0.5
+      ],
+      [
+       -0.25,
+       0.4
+      ],
+      [
+       -0.34,
+       0.1
+      ],
+      [
+       -0.3,
+       -0.25
+      ],
+      [
+       -0.1,
+       -0.42
+      ]
+     ],
+     "enter": "none",
+     "glow": {
+      "color": "#ffe08a",
+      "blur": 40
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "sparkle",
+     "id": "h02_sparkle",
+     "x": 0.5,
+     "y": 0.54,
+     "radius": 220,
+     "count": 7,
+     "at": 0.4
+    },
+    {
+     "type": "bean",
+     "id": "arch2",
+     "who": "arch",
+     "x": 0.38,
+     "y": 1.28,
+     "size": 660,
+     "enter": "peek",
+     "at": 0.9,
+     "peek": {
+      "side": "left",
+      "tilt": 16
+     },
+     "expr": "jaw-drop",
+     "flip": false
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "text": "STILL EDIBLE",
+     "x": 0.5,
+     "y": 0.14,
+     "size": 74,
+     "color": "#ffd24a",
+     "at": 1.0,
+     "enter": "pop-tilt"
+    }
+   ]
+  },
+  {
+   "id": "h03_timelapse",
+   "dur": 2.8,
+   "transition": {
+    "kind": "cloud-wipe",
+    "dur": 0.6,
+    "from": "bottom"
+   },
+   "vo": "It sat sealed in a tomb while three thousand years went by.",
+   "screen": "a desert tomb under a time-lapse sky: the sun and moon whirl faster and faster while a counter races to 3,000 years",
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "ground": "sand",
+    "horizon": 0.66,
+    "groundY": 0.8,
+    "hills": 2,
+    "timelapse": {
+     "accel": {
+      "from": 1.6,
+      "to": 0.12,
+      "over": 2.2,
+      "at": 0.3
+     },
+     "phase": 0.1,
+     "shades": true
+    }
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "temple",
+     "x": 0.5,
+     "y": 0.72,
+     "size": 300,
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "id": "jar3",
+     "kind": "region",
+     "x": 0.5,
+     "y": 0.88,
+     "size": 140,
+     "rough": 0,
+     "color": "#c98a4a",
+     "pts": [
+      [
+       -0.12,
+       -0.5
+      ],
+      [
+       0.12,
+       -0.5
+      ],
+      [
+       0.1,
+       -0.42
+      ],
+      [
+       0.3,
+       -0.25
+      ],
+      [
+       0.34,
+       0.1
+      ],
+      [
+       0.25,
+       0.4
+      ],
+      [
+       0.1,
+       0.5
+      ],
+      [
+       -0.1,
+       0.5
+      ],
+      [
+       -0.25,
+       0.4
+      ],
+      [
+       -0.34,
+       0.1
+      ],
+      [
+       -0.3,
+       -0.25
+      ],
+      [
+       -0.1,
+       -0.42
+      ]
+     ],
+     "enter": "none",
+     "material": {
+      "kind": "stone",
+      "cracks": 2
+     }
+    }
+   ],
+   "pinned": [
+    {
+     "type": "counter",
+     "from": 0,
+     "to": 3000,
+     "dur": 2.2,
+     "delay": 0.3,
+     "ease": "in",
+     "sep": ",",
+     "suffix": "",
+     "x": 0.5,
+     "y": 0.13,
+     "size": 120,
+     "color": "#ffe066",
+     "at": 0.5
+    },
+    {
+     "type": "label",
+     "text": "YEARS",
+     "x": 0.5,
+     "y": 0.22,
+     "size": 60,
+     "at": 0.6
+    }
+   ]
+  },
+  {
+   "id": "h04_bees",
+   "dur": 2.6,
+   "transition": {
+    "kind": "swirl",
+    "at": [
+     0.5,
+     0.5
+    ]
+   },
+   "vo": "Bees make it from flower nectar...",
+   "screen": "a bee buzzes from flower to flower over a pastel flower collage, wings fluttering, sparkles of nectar",
+   "bg": {
+    "kind": "mood",
+    "variant": "collage"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "bee4",
+     "who": "bee",
+     "x": 0.4,
+     "y": 0.75,
+     "size": 440,
+     "expr": "happy",
+     "bob": 14,
+     "bobHz": 2,
+     "flap": [
+      [
+       0,
+       2.6
+      ]
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "arms-up"
+      },
+      {
+       "at": 1.4,
+       "v": "hold"
+      }
+     ],
+     "hold": "bucket",
+     "move": [
+      {
+       "at": 0.1,
+       "dur": 1.0,
+       "to": [
+        0.58,
+        0.6
+       ],
+       "ease": "inOut"
+      },
+      {
+       "at": 1.3,
+       "dur": 1.0,
+       "to": [
+        0.47,
+        0.8
+       ],
+       "ease": "inOut"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "sparkle",
+     "id": "h04_sp1",
+     "x": 0.58,
+     "y": 0.45,
+     "radius": 120,
+     "count": 5,
+     "at": 1.0
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "h04_whoosh",
+     "mark": "whoosh",
+     "target": "bee4",
+     "at": 0.2,
+     "dur": 0.8
+    }
+   ],
+   "pinned": [
+    {
+     "type": "title",
+     "text": "NECTAR",
+     "x": 0.5,
+     "y": 0.12,
+     "size": 100,
+     "color": "#f2c230",
+     "at": 0.2
+    },
+    {
+     "type": "label",
+     "text": "+ BEE ENZYMES",
+     "x": 0.5,
+     "y": 0.22,
+     "size": 52,
+     "at": 1.4
+    }
+   ]
+  },
+  {
+   "id": "h05_germ",
+   "dur": 2.8,
+   "vo": "Bacteria need water to live. Honey is only seventeen percent water.",
+   "screen": "a germ marches up to a smug personified jar; the jar's picture bubble shows germ, arrow, WATER, and WATER gets struck out",
+   "bg": {
+    "kind": "mood",
+    "variant": "rays",
+    "preset": "yellow"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 1.9,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "obj",
+     "id": "jar5",
+     "prop": "region",
+     "x": 0.55,
+     "y": 0.92,
+     "size": 380,
+     "rough": 0,
+     "color": "#c98a4a",
+     "label": "HONEY",
+     "labelSize": 44,
+     "pts": [
+      [
+       -0.12,
+       -0.5
+      ],
+      [
+       0.12,
+       -0.5
+      ],
+      [
+       0.1,
+       -0.42
+      ],
+      [
+       0.3,
+       -0.25
+      ],
+      [
+       0.34,
+       0.1
+      ],
+      [
+       0.25,
+       0.4
+      ],
+      [
+       0.1,
+       0.5
+      ],
+      [
+       -0.1,
+       0.5
+      ],
+      [
+       -0.25,
+       0.4
+      ],
+      [
+       -0.34,
+       0.1
+      ],
+      [
+       -0.3,
+       -0.25
+      ],
+      [
+       -0.1,
+       -0.42
+      ]
+     ],
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "neutral"
+       },
+       {
+        "at": 1.9,
+        "v": "smug"
+       }
+      ],
+      "pos": [
+       0,
+       -0.72
+      ],
+      "scale": 0.55
+     },
+     "arms": {
+      "pose": [
+       {
+        "at": 0,
+        "v": "idle"
+       },
+       {
+        "at": 1.9,
+        "v": "crossed"
+       }
+      ],
+      "span": 0.62,
+      "y": -0.42
+     },
+     "enter": "none"
+    },
+    {
+     "type": "obj",
+     "id": "germ5",
+     "shape": "blob",
+     "color": "#7ac83a",
+     "x": 0.34,
+     "y": 0.93,
+     "size": 170,
+     "legs": true,
+     "walk": [
+      [
+       0,
+       1.2
+      ]
+     ],
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "menace"
+       },
+       {
+        "at": 1.9,
+        "v": "shock"
+       }
+      ]
+     },
+     "move": [
+      {
+       "at": 0,
+       "dur": 1.2,
+       "to": [
+        0.4,
+        0.93
+       ],
+       "ease": "linear"
+      }
+     ]
+    }
+   ],
+   "pinned": [
+    {
+     "type": "doc",
+     "kind": "pictobubble",
+     "style": "speech",
+     "x": 0.5,
+     "y": 0.2,
+     "w": 520,
+     "h": 230,
+     "tail": [
+      60,
+      190
+     ],
+     "every": 0.35,
+     "icons": [
+      {
+       "who": "germ",
+       "expr": "evil",
+       "at": 0.3
+      },
+      {
+       "arrow": true,
+       "at": 0.6
+      },
+      {
+       "prop": "bottle",
+       "text": "H2O",
+       "color": "#3a8ad0",
+       "label": "#e8f4ff",
+       "textColor": "#1d4a7a",
+       "at": 0.9,
+       "strike": 1.9
+      }
+     ]
+    },
+    {
+     "type": "counter",
+     "from": 0,
+     "to": 17,
+     "suffix": "% WATER",
+     "dur": 0.8,
+     "x": 0.5,
+     "y": 0.4,
+     "size": 72,
+     "color": "#ffffff",
+     "at": 1.2
+    }
+   ]
+  },
+  {
+   "id": "h06_dry",
+   "dur": 2.4,
+   "transition": "flash-cut",
+   "vo": "Worse, the sugar sucks the water right out of them.",
+   "screen": "honey floods up around the germ; it panics, then crumbles into an ash pile; label DRIED OUT",
+   "bg": {
+    "kind": "mood",
+    "variant": "rays",
+    "preset": "crimson"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "shake": [
+     {
+      "at": 1.3,
+      "dur": 0.4,
+      "amp": 10
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "flood",
+     "id": "h06_flood",
+     "color": "#e0a028",
+     "foam": "",
+     "level": 0.3,
+     "dur": 1.0,
+     "at": 0.1
+    },
+    {
+     "type": "obj",
+     "id": "germ6",
+     "shape": "blob",
+     "color": "#7ac83a",
+     "x": 0.5,
+     "y": 0.72,
+     "size": 360,
+     "legs": true,
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "menace"
+       },
+       {
+        "at": 0.5,
+        "v": "shock"
+       },
+       {
+        "at": 0.9,
+        "v": "squeeze"
+       }
+      ]
+     },
+     "jitter": {
+      "amp": 4,
+      "on": 2,
+      "from": 0.5,
+      "to": 1.3
+     },
+     "swap": [
+      {
+       "at": 1.3,
+       "alpha": 0
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "disintegrate",
+     "id": "h06_ash",
+     "target": "germ6",
+     "at": 1.3,
+     "pieces": 24
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "text": "DRIED OUT",
+     "x": 0.5,
+     "y": 0.16,
+     "size": 80,
+     "color": "#ffe066",
+     "at": 1.5,
+     "enter": "slam"
+    }
+   ]
+  },
+  {
+   "id": "h07_armor",
+   "dur": 2.4,
+   "vo": "Low water, acidic, a dash of natural peroxide. It's armour.",
+   "screen": "a checklist on parchment ticks LOW WATER, ACIDIC, PEROXIDE one by one; a red stamp slams UNSPOILABLE",
+   "bg": {
+    "kind": "parchment"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 1.75,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "checklist",
+     "id": "h07_list",
+     "title": "HONEY",
+     "x": 0.5,
+     "y": 0.5,
+     "w": 600,
+     "lineSize": 56,
+     "rowH": 96,
+     "every": 0.15,
+     "lines": [
+      "LOW WATER",
+      "ACIDIC",
+      "PEROXIDE"
+     ],
+     "checks": [
+      {
+       "row": 0,
+       "at": 0.4
+      },
+      {
+       "row": 1,
+       "at": 0.8
+      },
+      {
+       "row": 2,
+       "at": 1.2
+      }
+     ],
+     "stamp": {
+      "text": "UNSPOILABLE",
+      "at": 1.7,
+      "size": 60,
+      "tilt": -14
+     },
+     "scale": 0.78
+    }
+   ],
+   "pinned": [
+    {
+     "type": "title",
+     "text": "ARMOUR",
+     "x": 0.5,
+     "y": 0.12,
+     "size": 100,
+     "color": "#c8323a",
+     "at": 0.1
+    }
+   ]
+  },
+  {
+   "id": "h08_taste",
+   "dur": 2.6,
+   "transition": {
+    "kind": "whip",
+    "dir": "up"
+   },
+   "vo": "So of course, somebody had to taste it.",
+   "screen": "back in the corridor (callback framing): the archaeologist dips a finger, sweats, tastes... and her eyes turn to stars",
+   "bg": {
+    "kind": "corridor",
+    "torches": 2
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.08
+    ],
+    "focus": [
+     0.5,
+     0.55
+    ],
+    "jump": [
+     {
+      "at": 1.8,
+      "zoom": 1.2,
+      "focus": [
+       0.5,
+       0.42
+      ]
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "arch8",
+     "who": "arch",
+     "x": 0.48,
+     "y": 1.12,
+     "size": 820,
+     "pose": [
+      {
+       "at": 0,
+       "v": "hold"
+      },
+      {
+       "at": 0.7,
+       "v": "eat"
+      },
+      {
+       "at": 1.8,
+       "v": "arms-up"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "worried"
+      },
+      {
+       "at": 0.7,
+       "v": "squint"
+      },
+      {
+       "at": 1.8,
+       "v": "star-eyes"
+      }
+     ],
+     "talk": [
+      [
+       0.8,
+       1.5
+      ]
+     ],
+     "antic": true,
+     "jump": [
+      {
+       "at": 1.8,
+       "dur": 0.45,
+       "h": 60
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "sweat-spray",
+     "id": "h08_sweat",
+     "target": "arch8",
+     "rate": 4,
+     "dur": 1.6
+    },
+    {
+     "type": "fx",
+     "kind": "sparkle",
+     "id": "h08_sparkle",
+     "x": 0.5,
+     "y": 0.35,
+     "radius": 260,
+     "count": 7,
+     "at": 1.8
+    },
+    {
+     "type": "fx",
+     "kind": "lightpool",
+     "id": "h08_light",
+     "x": 0.5,
+     "y": 0.45,
+     "r": 520,
+     "dark": 0.65
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "text": "...",
+     "x": 0.5,
+     "y": 0.14,
+     "size": 90,
+     "at": 0.8,
+     "out": 1.75,
+     "exitDur": 0
+    },
+    {
+     "type": "label",
+     "text": "MMM!",
+     "x": 0.5,
+     "y": 0.14,
+     "size": 100,
+     "color": "#ffd24a",
+     "at": 1.8,
+     "enter": "slam"
+    }
+   ]
+  },
+  {
+   "id": "h09_verdict",
+   "dur": 2.4,
+   "vo": "Best before... never.",
+   "screen": "gold sunburst: a BEST BEFORE sign drops in with 1200 BC, the year is struck and NEVER lands; stamp STILL GOOD",
+   "bg": {
+    "kind": "mood",
+    "variant": "rays",
+    "preset": "gold"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 1.2,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "yearsign",
+     "id": "h09_sign",
+     "text": "BEST BEFORE",
+     "num": "1200 BC",
+     "strike": {
+      "at": 1.0,
+      "num": "NEVER"
+     },
+     "splash": false,
+     "x": 0.5,
+     "y": 0.5,
+     "w": 520,
+     "tilt": -8,
+     "at": 0.1,
+     "scale": 0.85
+    },
+    {
+     "type": "doc",
+     "kind": "stamp",
+     "id": "h09_stamp",
+     "text": "STILL GOOD",
+     "x": 0.5,
+     "y": 0.78,
+     "size": 76,
+     "tilt": -10,
+     "at": 1.6
+    }
+   ]
+  },
+  {
+   "id": "h10_owner",
+   "dur": 1.9,
+   "transition": {
+    "kind": "whip",
+    "dir": "down"
+   },
+   "vo": "Its original owner disagrees.",
+   "screen": "in the dark tomb a skeleton pops into frame, furious, and points: MY SNACK; hard stop",
+   "bg": {
+    "kind": "corridor",
+    "torches": 2
+   },
+   "grade": {
+    "preset": "horror",
+    "strength": 0.5
+   },
+   "camera": {
+    "zoom": [
+     1.05,
+     1.1
+    ],
+    "punch": [
+     {
+      "at": 0.45,
+      "amount": 0.12
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "mummy10",
+     "who": "mummy",
+     "x": 0.52,
+     "y": 1.06,
+     "size": 680,
+     "enter": "peek",
+     "at": 0.25,
+     "peek": {
+      "side": "right",
+      "tilt": 14
+     },
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 0.45,
+       "v": "point"
+      }
+     ],
+     "expr": "evil",
+     "flip": true,
+     "talk": [
+      [
+       0.5,
+       1.4
+      ]
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "h10_jag",
+     "mark": "shout-jag",
+     "target": "mummy10",
+     "at": 0.5,
+     "dur": 0.9
+    },
+    {
+     "type": "fx",
+     "kind": "anger",
+     "id": "h10_vein",
+     "x": 0.58,
+     "y": 0.36,
+     "at": 0.5,
+     "scale": 1.6
+    }
+   ],
+   "pinned": [
+    {
+     "type": "doc",
+     "kind": "bubble",
+     "style": "speech",
+     "text": "MY SNACK!",
+     "x": 0.5,
+     "y": 0.16,
+     "w": 480,
+     "h": 180,
+     "size": 64,
+     "tail": [
+      -60,
+      120
+     ],
+     "at": 0.5
+    }
+   ]
+  }
+ ]
+}

@@ -1,5 +1,5 @@
 {
-  "title": "Character sheet: views, expressions, poses, costumes",
+  "title": "Character sheet: views, every expression, pose, headwear and outfit, ages and builds, costumes",
   "fps": 30,
   "seed": 3,
   "style": {
@@ -37,6 +37,593 @@
       "hairColor": "#8a8a8a",
       "mustache": true,
       "head": "hat"
+    },
+    "h_adrian": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "head": "adrian"
+    },
+    "h_barrister-wig": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "head": "barrister-wig"
+    },
+    "h_beret": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#7a8a4a",
+      "head": "beret"
+    },
+    "h_bowler": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#d0812a",
+      "head": "bowler"
+    },
+    "h_brodie": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#6a4a8a",
+      "head": "brodie"
+    },
+    "h_bucket-hat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#3a8a7a",
+      "head": "bucket-hat"
+    },
+    "h_bucket-helmet": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#c8a040",
+      "head": "bucket-helmet"
+    },
+    "h_chef-hat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#8a5a3a",
+      "head": "chef-hat"
+    },
+    "h_clown-wig": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "head": "clown-wig"
+    },
+    "h_court-hat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "head": "court-hat"
+    },
+    "h_crested-bronze": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#7a8a4a",
+      "head": "crested-bronze"
+    },
+    "h_crown": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#d0812a",
+      "head": "crown"
+    },
+    "h_deerstalker": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#6a4a8a",
+      "head": "deerstalker"
+    },
+    "h_dome": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#3a8a7a",
+      "head": "dome"
+    },
+    "h_dotted-cap": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#c8a040",
+      "head": "dotted-cap"
+    },
+    "h_fedora": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#8a5a3a",
+      "head": "fedora"
+    },
+    "h_fez": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "head": "fez"
+    },
+    "h_fur-cap": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "head": "fur-cap"
+    },
+    "h_graduation": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#7a8a4a",
+      "head": "graduation"
+    },
+    "h_great-helm": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#d0812a",
+      "head": "great-helm"
+    },
+    "h_halo": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#6a4a8a",
+      "head": "halo"
+    },
+    "h_hard-hat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#3a8a7a",
+      "head": "hard-hat"
+    },
+    "h_hat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#c8a040",
+      "head": "hat"
+    },
+    "h_headband": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#8a5a3a",
+      "head": "headband"
+    },
+    "h_helmet": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "head": "helmet"
+    },
+    "h_hijab": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "head": "hijab"
+    },
+    "h_hood": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#7a8a4a",
+      "head": "hood"
+    },
+    "h_hood-dark": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#d0812a",
+      "head": "hood-dark"
+    },
+    "h_imperial-helmet": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#6a4a8a",
+      "head": "imperial-helmet"
+    },
+    "h_jester": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#3a8a7a",
+      "head": "jester"
+    },
+    "h_kepi": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#c8a040",
+      "head": "kepi"
+    },
+    "h_kettle-hat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#8a5a3a",
+      "head": "kettle-hat"
+    },
+    "h_laurel": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "head": "laurel"
+    },
+    "h_mail-coif": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "head": "mail-coif"
+    },
+    "h_mianguan": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#7a8a4a",
+      "head": "mianguan"
+    },
+    "h_nasal-helm": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#d0812a",
+      "head": "nasal-helm"
+    },
+    "h_newsboy-cap": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#6a4a8a",
+      "head": "newsboy-cap"
+    },
+    "h_nightcap": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#3a8a7a",
+      "head": "nightcap"
+    },
+    "h_officer-cap": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#c8a040",
+      "head": "officer-cap"
+    },
+    "h_official-cap": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#8a5a3a",
+      "head": "official-cap"
+    },
+    "h_party-hat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "head": "party-hat"
+    },
+    "h_phoenix-crown": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "head": "phoenix-crown"
+    },
+    "h_phrygian": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#7a8a4a",
+      "head": "phrygian"
+    },
+    "h_pickelhaube": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#d0812a",
+      "head": "pickelhaube"
+    },
+    "h_pontifex": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#6a4a8a",
+      "head": "pontifex"
+    },
+    "h_qing-hat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#3a8a7a",
+      "head": "qing-hat"
+    },
+    "h_safari": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#c8a040",
+      "head": "safari"
+    },
+    "h_shako": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#8a5a3a",
+      "head": "shako"
+    },
+    "h_star-tophat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "head": "star-tophat"
+    },
+    "h_straw-boater": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "head": "straw-boater"
+    },
+    "h_straw-cone": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#7a8a4a",
+      "head": "straw-cone"
+    },
+    "h_tophat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#d0812a",
+      "head": "tophat"
+    },
+    "h_turban": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#6a4a8a",
+      "head": "turban"
+    },
+    "h_ushanka": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#3a8a7a",
+      "head": "ushanka"
+    },
+    "h_veil-wrap": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#c8a040",
+      "head": "veil-wrap"
+    },
+    "h_visor-helmet": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#8a5a3a",
+      "head": "visor-helmet"
+    },
+    "h_wide-brim": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "head": "wide-brim"
+    },
+    "h_winged-helm": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "head": "winged-helm"
+    },
+    "o_boxers": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "outfit": "boxers"
+    },
+    "o_chiton": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "outfit": "chiton"
+    },
+    "o_cloak": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#7a8a4a",
+      "outfit": "cloak"
+    },
+    "o_cow-suit": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#d0812a",
+      "outfit": "cow-suit"
+    },
+    "o_cuirass": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#6a4a8a",
+      "outfit": "cuirass"
+    },
+    "o_dress": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#3a8a7a",
+      "outfit": "dress"
+    },
+    "o_frockcoat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#c8a040",
+      "outfit": "frockcoat"
+    },
+    "o_fur-vest": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#8a5a3a",
+      "outfit": "fur-vest"
+    },
+    "o_gown": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "outfit": "gown"
+    },
+    "o_greatcoat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "outfit": "greatcoat"
+    },
+    "o_habit": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#7a8a4a",
+      "outfit": "habit"
+    },
+    "o_hanfu": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#d0812a",
+      "outfit": "hanfu"
+    },
+    "o_hivis": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#6a4a8a",
+      "outfit": "hivis"
+    },
+    "o_jersey": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#3a8a7a",
+      "outfit": "jersey"
+    },
+    "o_judge-robe": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#c8a040",
+      "outfit": "judge-robe"
+    },
+    "o_kimono": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#8a5a3a",
+      "outfit": "kimono"
+    },
+    "o_labcoat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "outfit": "labcoat"
+    },
+    "o_lamellar": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "outfit": "lamellar"
+    },
+    "o_overalls": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#7a8a4a",
+      "outfit": "overalls"
+    },
+    "o_party-tunic": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#d0812a",
+      "outfit": "party-tunic"
+    },
+    "o_rags": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#6a4a8a",
+      "outfit": "rags"
+    },
+    "o_robe-royal": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#3a8a7a",
+      "outfit": "robe-royal"
+    },
+    "o_skeleton": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#c8a040",
+      "outfit": "skeleton"
+    },
+    "o_stripes": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#8a5a3a",
+      "outfit": "stripes"
+    },
+    "o_suit": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#b8323a",
+      "outfit": "suit"
+    },
+    "o_surcoat": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#2f6db8",
+      "outfit": "surcoat"
+    },
+    "o_toga": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#7a8a4a",
+      "outfit": "toga"
+    },
+    "o_tracht": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#d0812a",
+      "outfit": "tracht"
+    },
+    "o_tunic": {
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "robe": "#6a4a8a",
+      "outfit": "tunic"
+    },
+    "a_baby": {
+      "robe": "#b8323a",
+      "hair": "bald",
+      "hairColor": "#6a4022",
+      "age": "baby"
+    },
+    "a_toddler": {
+      "robe": "#2f6db8",
+      "hair": "short",
+      "hairColor": "#6a4022",
+      "age": "toddler"
+    },
+    "a_child": {
+      "robe": "#7a8a4a",
+      "hair": "short",
+      "hairColor": "#6a4022",
+      "age": "child"
+    },
+    "a_adult": {
+      "robe": "#d0812a",
+      "hair": "short",
+      "hairColor": "#6a4022",
+      "age": "adult"
+    },
+    "a_elder": {
+      "robe": "#6a4a8a",
+      "hair": "bald-sides",
+      "hairColor": "#6a4022",
+      "age": "elder",
+      "beard": "long",
+      "beardColor": "#e6e2da"
+    },
+    "b_thin": {
+      "robe": "#3a8a7a",
+      "hair": "short",
+      "hairColor": "#6a4022",
+      "build": "thin"
+    },
+    "b_adult": {
+      "robe": "#c8a040",
+      "hair": "short",
+      "hairColor": "#6a4022",
+      "build": "adult"
+    },
+    "b_fat": {
+      "robe": "#8a5a3a",
+      "hair": "short",
+      "hairColor": "#6a4022",
+      "build": "fat"
+    },
+    "b_muscle": {
+      "robe": "#b8323a",
+      "hair": "short",
+      "hairColor": "#6a4022",
+      "build": "muscle"
+    },
+    "b_brute": {
+      "robe": "#2f6db8",
+      "hair": "short",
+      "hairColor": "#6a4022",
+      "build": "brute",
+      "bare": true,
+      "plates": true,
+      "sleeve": "#f6f2ea"
     }
   },
   "shots": [
@@ -113,142 +700,317 @@
         {
           "type": "bean",
           "who": "citizen",
-          "x": 0.07,
-          "y": 0.47,
-          "size": 300,
-          "expr": "neutral",
-          "blink": false,
-          "legs": true
-        },
-        {
-          "type": "bean",
-          "who": "citizen",
-          "x": 0.213,
-          "y": 0.47,
-          "size": 300,
-          "expr": "happy",
-          "blink": false,
-          "legs": true
-        },
-        {
-          "type": "bean",
-          "who": "citizen",
-          "x": 0.356,
-          "y": 0.47,
-          "size": 300,
-          "expr": "content",
-          "blink": false,
-          "legs": true
-        },
-        {
-          "type": "bean",
-          "who": "citizen",
-          "x": 0.49899999999999994,
-          "y": 0.47,
-          "size": 300,
-          "expr": "smug",
-          "blink": false,
-          "legs": true
-        },
-        {
-          "type": "bean",
-          "who": "citizen",
-          "x": 0.6419999999999999,
-          "y": 0.47,
-          "size": 300,
+          "x": 0.0714,
+          "y": 0.215,
+          "size": 210,
           "expr": "angry",
-          "blink": false,
-          "legs": true
+          "blink": false
         },
         {
           "type": "bean",
           "who": "citizen",
-          "x": 0.7849999999999999,
-          "y": 0.47,
-          "size": 300,
-          "expr": "rage",
-          "blink": false,
-          "legs": true
+          "x": 0.2143,
+          "y": 0.215,
+          "size": 210,
+          "expr": "bruised",
+          "blink": false
         },
         {
           "type": "bean",
           "who": "citizen",
-          "x": 0.9279999999999999,
-          "y": 0.47,
-          "size": 300,
-          "expr": "sad",
-          "blink": false,
-          "legs": true
+          "x": 0.3571,
+          "y": 0.215,
+          "size": 210,
+          "expr": "content",
+          "blink": false
         },
         {
           "type": "bean",
           "who": "citizen",
-          "x": 0.07,
-          "y": 0.97,
-          "size": 300,
-          "expr": "worried",
-          "blink": false,
-          "legs": true
-        },
-        {
-          "type": "bean",
-          "who": "citizen",
-          "x": 0.213,
-          "y": 0.97,
-          "size": 300,
-          "expr": "shock",
-          "blink": false,
-          "legs": true
-        },
-        {
-          "type": "bean",
-          "who": "citizen",
-          "x": 0.356,
-          "y": 0.97,
-          "size": 300,
-          "expr": "scream",
-          "blink": false,
-          "legs": true
-        },
-        {
-          "type": "bean",
-          "who": "citizen",
-          "x": 0.49899999999999994,
-          "y": 0.97,
-          "size": 300,
-          "expr": "squint",
-          "blink": false,
-          "legs": true
-        },
-        {
-          "type": "bean",
-          "who": "citizen",
-          "x": 0.6419999999999999,
-          "y": 0.97,
-          "size": 300,
+          "x": 0.5,
+          "y": 0.215,
+          "size": 210,
           "expr": "cry",
-          "blink": false,
-          "legs": true
+          "blink": false
         },
         {
           "type": "bean",
           "who": "citizen",
-          "x": 0.7849999999999999,
-          "y": 0.97,
-          "size": 300,
+          "x": 0.6429,
+          "y": 0.215,
+          "size": 210,
+          "expr": "cute",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.7857,
+          "y": 0.215,
+          "size": 210,
           "expr": "dead",
-          "blink": false,
-          "legs": true
+          "blink": false
         },
         {
           "type": "bean",
           "who": "citizen",
-          "x": 0.9279999999999999,
-          "y": 0.97,
-          "size": 300,
+          "x": 0.9286,
+          "y": 0.215,
+          "size": 210,
+          "expr": "dollar",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.0714,
+          "y": 0.41,
+          "size": 210,
+          "expr": "dying",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.2143,
+          "y": 0.41,
+          "size": 210,
+          "expr": "evil",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.3571,
+          "y": 0.41,
+          "size": 210,
+          "expr": "grimace",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.5,
+          "y": 0.41,
+          "size": 210,
+          "expr": "happy",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.6429,
+          "y": 0.41,
+          "size": 210,
+          "expr": "heart",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.7857,
+          "y": 0.41,
+          "size": 210,
+          "expr": "hollow",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.9286,
+          "y": 0.41,
+          "size": 210,
+          "expr": "jaw-drop",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.0714,
+          "y": 0.605,
+          "size": 210,
+          "expr": "mad",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.2143,
+          "y": 0.605,
+          "size": 210,
+          "expr": "menace",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.3571,
+          "y": 0.605,
+          "size": 210,
+          "expr": "neutral",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.5,
+          "y": 0.605,
+          "size": 210,
+          "expr": "rage",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.6429,
+          "y": 0.605,
+          "size": 210,
+          "expr": "roar",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.7857,
+          "y": 0.605,
+          "size": 210,
+          "expr": "sad",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.9286,
+          "y": 0.605,
+          "size": 210,
+          "expr": "scream",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.0714,
+          "y": 0.8,
+          "size": 210,
+          "expr": "shock",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.2143,
+          "y": 0.8,
+          "size": 210,
+          "expr": "sick",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.3571,
+          "y": 0.8,
+          "size": 210,
+          "expr": "side-eye",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.5,
+          "y": 0.8,
+          "size": 210,
+          "expr": "sleep-drool",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.6429,
+          "y": 0.8,
+          "size": 210,
           "expr": "sleepy",
-          "blink": false,
-          "legs": true
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.7857,
+          "y": 0.8,
+          "size": 210,
+          "expr": "smug",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.9286,
+          "y": 0.8,
+          "size": 210,
+          "expr": "smug-closed",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.0714,
+          "y": 0.995,
+          "size": 210,
+          "expr": "sparkle",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.2143,
+          "y": 0.995,
+          "size": 210,
+          "expr": "squeeze",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.3571,
+          "y": 0.995,
+          "size": 210,
+          "expr": "squint",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.5,
+          "y": 0.995,
+          "size": 210,
+          "expr": "star-eyes",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.6429,
+          "y": 0.995,
+          "size": 210,
+          "expr": "vision",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.7857,
+          "y": 0.995,
+          "size": 210,
+          "expr": "wail",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "citizen",
+          "x": 0.9286,
+          "y": 0.995,
+          "size": 210,
+          "expr": "worried",
+          "blink": false
         }
       ]
     },
@@ -269,172 +1031,1410 @@
         {
           "type": "bean",
           "who": "scholar",
-          "x": 0.06,
-          "y": 0.47,
-          "size": 280,
-          "pose": "idle",
+          "x": 0.0385,
+          "y": 0.2,
+          "size": 165,
+          "pose": "arm-around",
           "blink": false
         },
         {
           "type": "bean",
           "who": "scholar",
-          "x": 0.158,
-          "y": 0.47,
-          "size": 280,
-          "pose": "point",
-          "blink": false
-        },
-        {
-          "type": "bean",
-          "who": "scholar",
-          "x": 0.256,
-          "y": 0.47,
-          "size": 280,
-          "pose": "point-up",
-          "blink": false
-        },
-        {
-          "type": "bean",
-          "who": "scholar",
-          "x": 0.35400000000000004,
-          "y": 0.47,
-          "size": 280,
+          "x": 0.1154,
+          "y": 0.2,
+          "size": 165,
           "pose": "arms-up",
           "blink": false
         },
         {
           "type": "bean",
           "who": "scholar",
-          "x": 0.452,
-          "y": 0.47,
-          "size": 280,
-          "pose": "shrug",
+          "x": 0.1923,
+          "y": 0.2,
+          "size": 165,
+          "pose": "beg",
           "blink": false
         },
         {
           "type": "bean",
           "who": "scholar",
-          "x": 0.55,
-          "y": 0.47,
-          "size": 280,
-          "pose": "facepalm",
+          "x": 0.2692,
+          "y": 0.2,
+          "size": 165,
+          "pose": "binoculars",
           "blink": false
         },
         {
           "type": "bean",
           "who": "scholar",
-          "x": 0.6480000000000001,
-          "y": 0.47,
-          "size": 280,
-          "pose": "think",
+          "x": 0.3462,
+          "y": 0.2,
+          "size": 165,
+          "pose": "carry",
           "blink": false
         },
         {
           "type": "bean",
           "who": "scholar",
-          "x": 0.746,
-          "y": 0.47,
-          "size": 280,
-          "pose": "wave",
+          "x": 0.4231,
+          "y": 0.2,
+          "size": 165,
+          "pose": "cheeks",
           "blink": false
         },
         {
           "type": "bean",
           "who": "scholar",
-          "x": 0.8440000000000001,
-          "y": 0.47,
-          "size": 280,
-          "pose": "hold",
+          "x": 0.5,
+          "y": 0.2,
+          "size": 165,
+          "pose": "clutch-chest",
           "blink": false
         },
         {
           "type": "bean",
           "who": "scholar",
-          "x": 0.942,
-          "y": 0.47,
-          "size": 280,
-          "pose": "fist",
-          "blink": false
-        },
-        {
-          "type": "bean",
-          "who": "scholar",
-          "x": 0.06,
-          "y": 0.97,
-          "size": 280,
-          "pose": "hips",
-          "blink": false
-        },
-        {
-          "type": "bean",
-          "who": "scholar",
-          "x": 0.158,
-          "y": 0.97,
-          "size": 280,
-          "pose": "cross",
-          "blink": false
-        },
-        {
-          "type": "bean",
-          "who": "scholar",
-          "x": 0.256,
-          "y": 0.97,
-          "size": 280,
-          "pose": "present",
-          "blink": false
-        },
-        {
-          "type": "bean",
-          "who": "scholar",
-          "x": 0.35400000000000004,
-          "y": 0.97,
-          "size": 280,
-          "pose": "scared",
-          "blink": false
-        },
-        {
-          "type": "bean",
-          "who": "scholar",
-          "x": 0.452,
-          "y": 0.97,
-          "size": 280,
-          "pose": "hands-face",
-          "blink": false
-        },
-        {
-          "type": "bean",
-          "who": "scholar",
-          "x": 0.55,
-          "y": 0.97,
-          "size": 280,
-          "pose": "thumbs-up",
-          "blink": false
-        },
-        {
-          "type": "bean",
-          "who": "scholar",
-          "x": 0.6480000000000001,
-          "y": 0.97,
-          "size": 280,
+          "x": 0.5769,
+          "y": 0.2,
+          "size": 165,
           "pose": "clutch-head",
           "blink": false
         },
         {
           "type": "bean",
           "who": "scholar",
-          "x": 0.746,
-          "y": 0.97,
-          "size": 280,
+          "x": 0.6538,
+          "y": 0.2,
+          "size": 165,
+          "pose": "cover-ears",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.7308,
+          "y": 0.2,
+          "size": 165,
+          "pose": "cover-mouth",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8077,
+          "y": 0.2,
+          "size": 165,
+          "pose": "cradle",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8846,
+          "y": 0.2,
+          "size": 165,
+          "pose": "crawl",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.9615,
+          "y": 0.2,
+          "size": 165,
+          "pose": "cross",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.0385,
+          "y": 0.395,
+          "size": 165,
+          "pose": "drink",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.1154,
+          "y": 0.395,
+          "size": 165,
+          "pose": "eat",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.1923,
+          "y": 0.395,
+          "size": 165,
+          "pose": "facepalm",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.2692,
+          "y": 0.395,
+          "size": 165,
+          "pose": "fist",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.3462,
+          "y": 0.395,
+          "size": 165,
+          "pose": "flail",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.4231,
+          "y": 0.395,
+          "size": 165,
+          "pose": "flail-b",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.5,
+          "y": 0.395,
+          "size": 165,
+          "pose": "flex",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.5769,
+          "y": 0.395,
+          "size": 165,
+          "pose": "flex-one",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.6538,
+          "y": 0.395,
+          "size": 165,
+          "pose": "fly",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.7308,
+          "y": 0.395,
+          "size": 165,
+          "pose": "grab",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8077,
+          "y": 0.395,
+          "size": 165,
+          "pose": "hammer",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8846,
+          "y": 0.395,
+          "size": 165,
+          "pose": "hands-face",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.9615,
+          "y": 0.395,
+          "size": 165,
+          "pose": "hands-up",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.0385,
+          "y": 0.59,
+          "size": 165,
+          "pose": "handshake",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.1154,
+          "y": 0.59,
+          "size": 165,
+          "pose": "hang",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.1923,
+          "y": 0.59,
+          "size": 165,
+          "pose": "hips",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.2692,
+          "y": 0.59,
+          "size": 165,
+          "pose": "hold",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.3462,
+          "y": 0.59,
+          "size": 165,
+          "pose": "hold-high",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.4231,
+          "y": 0.59,
+          "size": 165,
+          "pose": "hug",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.5,
+          "y": 0.59,
+          "size": 165,
+          "pose": "idle",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.5769,
+          "y": 0.59,
+          "size": 165,
+          "pose": "kneel",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.6538,
+          "y": 0.59,
+          "size": 165,
+          "pose": "kneel-beg",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.7308,
+          "y": 0.59,
+          "size": 165,
+          "pose": "kneel-offer",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8077,
+          "y": 0.59,
+          "size": 165,
+          "pose": "kneel-pray",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8846,
+          "y": 0.59,
+          "size": 165,
+          "pose": "lean-table",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.9615,
+          "y": 0.59,
+          "size": 165,
+          "pose": "lie",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.0385,
+          "y": 0.785,
+          "size": 165,
+          "pose": "offer",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.1154,
+          "y": 0.785,
+          "size": 165,
+          "pose": "phone-ear",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.1923,
+          "y": 0.785,
+          "size": 165,
+          "pose": "pinch-nose",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.2692,
+          "y": 0.785,
+          "size": 165,
+          "pose": "point",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.3462,
+          "y": 0.785,
+          "size": 165,
+          "pose": "point-up",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.4231,
+          "y": 0.785,
+          "size": 165,
+          "pose": "pray",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.5,
+          "y": 0.785,
+          "size": 165,
+          "pose": "present",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.5769,
+          "y": 0.785,
+          "size": 165,
+          "pose": "prostrate",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.6538,
+          "y": 0.785,
+          "size": 165,
+          "pose": "reach",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.7308,
+          "y": 0.785,
+          "size": 165,
+          "pose": "rub-hands",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8077,
+          "y": 0.785,
+          "size": 165,
+          "pose": "scared",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8846,
+          "y": 0.785,
+          "size": 165,
+          "pose": "shade-eyes",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.9615,
+          "y": 0.785,
+          "size": 165,
+          "pose": "shove",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.0385,
+          "y": 0.98,
+          "size": 165,
+          "pose": "shrug",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.1154,
+          "y": 0.98,
+          "size": 165,
+          "pose": "sit",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.1923,
+          "y": 0.98,
+          "size": 165,
+          "pose": "sit-floor",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.2692,
+          "y": 0.98,
+          "size": 165,
+          "pose": "sit-slump",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.3462,
+          "y": 0.98,
+          "size": 165,
+          "pose": "spread",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.4231,
+          "y": 0.98,
+          "size": 165,
+          "pose": "steeple",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.5,
+          "y": 0.98,
+          "size": 165,
           "pose": "sword-up",
           "blink": false
         },
         {
           "type": "bean",
           "who": "scholar",
-          "x": 0.8440000000000001,
-          "y": 0.97,
-          "size": 280,
-          "pose": "reach",
+          "x": 0.5769,
+          "y": 0.98,
+          "size": 165,
+          "pose": "t-pose",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.6538,
+          "y": 0.98,
+          "size": 165,
+          "pose": "think",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.7308,
+          "y": 0.98,
+          "size": 165,
+          "pose": "throw",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8077,
+          "y": 0.98,
+          "size": 165,
+          "pose": "throw-windup",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.8846,
+          "y": 0.98,
+          "size": 165,
+          "pose": "thumbs-up",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "scholar",
+          "x": 0.9615,
+          "y": 0.98,
+          "size": 165,
+          "pose": "wave",
+          "blink": false
+        }
+      ]
+    },
+    {
+      "id": "headwear",
+      "dur": 1,
+      "bg": {
+        "kind": "flat",
+        "color": "#e8e4dc"
+      },
+      "camera": {
+        "zoom": [
+          1,
+          1
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "h_adrian",
+          "x": 0.05,
+          "y": 0.19,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_barrister-wig",
+          "x": 0.15,
+          "y": 0.19,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_beret",
+          "x": 0.25,
+          "y": 0.19,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_bowler",
+          "x": 0.35,
+          "y": 0.19,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_brodie",
+          "x": 0.45,
+          "y": 0.19,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_bucket-hat",
+          "x": 0.55,
+          "y": 0.19,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_bucket-helmet",
+          "x": 0.65,
+          "y": 0.19,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_chef-hat",
+          "x": 0.75,
+          "y": 0.19,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_clown-wig",
+          "x": 0.85,
+          "y": 0.19,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_court-hat",
+          "x": 0.95,
+          "y": 0.19,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_crested-bronze",
+          "x": 0.05,
+          "y": 0.352,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_crown",
+          "x": 0.15,
+          "y": 0.352,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_deerstalker",
+          "x": 0.25,
+          "y": 0.352,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_dome",
+          "x": 0.35,
+          "y": 0.352,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_dotted-cap",
+          "x": 0.45,
+          "y": 0.352,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_fedora",
+          "x": 0.55,
+          "y": 0.352,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_fez",
+          "x": 0.65,
+          "y": 0.352,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_fur-cap",
+          "x": 0.75,
+          "y": 0.352,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_graduation",
+          "x": 0.85,
+          "y": 0.352,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_great-helm",
+          "x": 0.95,
+          "y": 0.352,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_halo",
+          "x": 0.05,
+          "y": 0.514,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_hard-hat",
+          "x": 0.15,
+          "y": 0.514,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_hat",
+          "x": 0.25,
+          "y": 0.514,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_headband",
+          "x": 0.35,
+          "y": 0.514,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_helmet",
+          "x": 0.45,
+          "y": 0.514,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_hijab",
+          "x": 0.55,
+          "y": 0.514,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_hood",
+          "x": 0.65,
+          "y": 0.514,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_hood-dark",
+          "x": 0.75,
+          "y": 0.514,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_imperial-helmet",
+          "x": 0.85,
+          "y": 0.514,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_jester",
+          "x": 0.95,
+          "y": 0.514,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_kepi",
+          "x": 0.05,
+          "y": 0.676,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_kettle-hat",
+          "x": 0.15,
+          "y": 0.676,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_laurel",
+          "x": 0.25,
+          "y": 0.676,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_mail-coif",
+          "x": 0.35,
+          "y": 0.676,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_mianguan",
+          "x": 0.45,
+          "y": 0.676,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_nasal-helm",
+          "x": 0.55,
+          "y": 0.676,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_newsboy-cap",
+          "x": 0.65,
+          "y": 0.676,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_nightcap",
+          "x": 0.75,
+          "y": 0.676,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_officer-cap",
+          "x": 0.85,
+          "y": 0.676,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_official-cap",
+          "x": 0.95,
+          "y": 0.676,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_party-hat",
+          "x": 0.05,
+          "y": 0.838,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_phoenix-crown",
+          "x": 0.15,
+          "y": 0.838,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_phrygian",
+          "x": 0.25,
+          "y": 0.838,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_pickelhaube",
+          "x": 0.35,
+          "y": 0.838,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_pontifex",
+          "x": 0.45,
+          "y": 0.838,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_qing-hat",
+          "x": 0.55,
+          "y": 0.838,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_safari",
+          "x": 0.65,
+          "y": 0.838,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_shako",
+          "x": 0.75,
+          "y": 0.838,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_star-tophat",
+          "x": 0.85,
+          "y": 0.838,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_straw-boater",
+          "x": 0.95,
+          "y": 0.838,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_straw-cone",
+          "x": 0.15,
+          "y": 1.0,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_tophat",
+          "x": 0.25,
+          "y": 1.0,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_turban",
+          "x": 0.35,
+          "y": 1.0,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_ushanka",
+          "x": 0.45,
+          "y": 1.0,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_veil-wrap",
+          "x": 0.55,
+          "y": 1.0,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_visor-helmet",
+          "x": 0.65,
+          "y": 1.0,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_wide-brim",
+          "x": 0.75,
+          "y": 1.0,
+          "size": 150,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "h_winged-helm",
+          "x": 0.85,
+          "y": 1.0,
+          "size": 150,
+          "blink": false
+        }
+      ]
+    },
+    {
+      "id": "outfits",
+      "dur": 1,
+      "bg": {
+        "kind": "flat",
+        "color": "#e8e4dc"
+      },
+      "camera": {
+        "zoom": [
+          1,
+          1
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "o_boxers",
+          "x": 0.05,
+          "y": 0.3,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_chiton",
+          "x": 0.15,
+          "y": 0.3,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_cloak",
+          "x": 0.25,
+          "y": 0.3,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_cow-suit",
+          "x": 0.35,
+          "y": 0.3,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_cuirass",
+          "x": 0.45,
+          "y": 0.3,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_dress",
+          "x": 0.55,
+          "y": 0.3,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_frockcoat",
+          "x": 0.65,
+          "y": 0.3,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_fur-vest",
+          "x": 0.75,
+          "y": 0.3,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_gown",
+          "x": 0.85,
+          "y": 0.3,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_greatcoat",
+          "x": 0.95,
+          "y": 0.3,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_habit",
+          "x": 0.05,
+          "y": 0.63,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_hanfu",
+          "x": 0.15,
+          "y": 0.63,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_hivis",
+          "x": 0.25,
+          "y": 0.63,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_jersey",
+          "x": 0.35,
+          "y": 0.63,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_judge-robe",
+          "x": 0.45,
+          "y": 0.63,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_kimono",
+          "x": 0.55,
+          "y": 0.63,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_labcoat",
+          "x": 0.65,
+          "y": 0.63,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_lamellar",
+          "x": 0.75,
+          "y": 0.63,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_overalls",
+          "x": 0.85,
+          "y": 0.63,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_party-tunic",
+          "x": 0.95,
+          "y": 0.63,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_rags",
+          "x": 0.1,
+          "y": 0.96,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_robe-royal",
+          "x": 0.2,
+          "y": 0.96,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_skeleton",
+          "x": 0.3,
+          "y": 0.96,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_stripes",
+          "x": 0.4,
+          "y": 0.96,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_suit",
+          "x": 0.5,
+          "y": 0.96,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_surcoat",
+          "x": 0.6,
+          "y": 0.96,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_toga",
+          "x": 0.7,
+          "y": 0.96,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_tracht",
+          "x": 0.8,
+          "y": 0.96,
+          "size": 230,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "o_tunic",
+          "x": 0.9,
+          "y": 0.96,
+          "size": 230,
+          "blink": false
+        }
+      ]
+    },
+    {
+      "id": "ages_builds",
+      "dur": 1,
+      "bg": {
+        "kind": "flat",
+        "color": "#e8e4dc"
+      },
+      "camera": {
+        "zoom": [
+          1,
+          1
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "a_baby",
+          "x": 0.1,
+          "y": 0.47,
+          "size": 300,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "a_toddler",
+          "x": 0.3,
+          "y": 0.47,
+          "size": 300,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "a_child",
+          "x": 0.5,
+          "y": 0.47,
+          "size": 300,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "a_adult",
+          "x": 0.7,
+          "y": 0.47,
+          "size": 300,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "a_elder",
+          "x": 0.9,
+          "y": 0.47,
+          "size": 300,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "b_thin",
+          "x": 0.1,
+          "y": 0.96,
+          "size": 300,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "b_adult",
+          "x": 0.3,
+          "y": 0.96,
+          "size": 300,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "b_fat",
+          "x": 0.5,
+          "y": 0.96,
+          "size": 300,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "b_muscle",
+          "x": 0.7,
+          "y": 0.96,
+          "size": 300,
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "b_brute",
+          "x": 0.9,
+          "y": 0.96,
+          "size": 300,
           "blink": false
         }
       ]

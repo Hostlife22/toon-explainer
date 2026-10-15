@@ -1,0 +1,1251 @@
+{
+ "title": "How a Vaccine Trains Your Body",
+ "seed": 57,
+ "fps": 30,
+ "cast": {
+  "guard": {
+   "robe": "#f4f2ec",
+   "sleeve": "#f4f2ec",
+   "legColor": "#e4e0d8",
+   "shoes": "#5a6a8a",
+   "head": "brodie",
+   "headColor": "#dfe3e8",
+   "hair": "short",
+   "hairColor": "#4a2e1f"
+  },
+  "guard2": {
+   "robe": "#f4f2ec",
+   "sleeve": "#f4f2ec",
+   "legColor": "#e4e0d8",
+   "shoes": "#5a6a8a",
+   "head": "brodie",
+   "headColor": "#dfe3e8",
+   "hair": "curly",
+   "hairColor": "#2a1c15",
+   "skin": "#d9a87a"
+  },
+  "guard3": {
+   "robe": "#f4f2ec",
+   "sleeve": "#f4f2ec",
+   "legColor": "#e4e0d8",
+   "shoes": "#5a6a8a",
+   "head": "brodie",
+   "headColor": "#dfe3e8",
+   "hair": "long",
+   "hairColor": "#a0522d",
+   "skin": "#f0c8a0"
+  },
+  "sarge": {
+   "robe": "#f4f2ec",
+   "sleeve": "#f4f2ec",
+   "legColor": "#e4e0d8",
+   "shoes": "#5a6a8a",
+   "head": "officer-cap",
+   "headColor": "#f4f2ec",
+   "hair": "short",
+   "hairColor": "#4a2e1f",
+   "build": "muscle",
+   "headColor2": "#c8323a",
+   "mustache": true,
+   "mustacheColor": "#4a2e1f"
+  },
+  "memo": {
+   "outfit": "labcoat",
+   "age": "elder",
+   "glasses": "round",
+   "tie": "#c8323a",
+   "badge": {
+    "text": "MEMORY",
+    "style": "tag"
+   }
+  },
+  "virus": {
+   "skin": "#8fd14f",
+   "robe": "#3f8a2a",
+   "hair": "spikes",
+   "hairColor": "#2f6a1a",
+   "legColor": "#3f8a2a",
+   "shoes": "#2a3a1a"
+  },
+  "doc": {
+   "outfit": "labcoat",
+   "hair": "long",
+   "hairColor": "#3a2418",
+   "glasses": "round"
+  },
+  "host": {
+   "hair": "curly",
+   "hairColor": "#5a3a22",
+   "robe": "#6a7ad0",
+   "head": "nightcap",
+   "headColor": "#6a7ad0",
+   "headColor2": "#f4f2ec"
+  }
+ },
+ "overlays": [
+  {
+   "from": 2.0,
+   "to": 21.800000000000004,
+   "hideIn": [
+    "v07_challenger"
+   ],
+   "layer": {
+    "type": "hud",
+    "kind": "chip",
+    "corner": "tr",
+    "size": 36,
+    "text": "READY FOR THE REAL ONE?",
+    "key": "REAL",
+    "answerAt": 16.55
+   }
+  }
+ ],
+ "shots": [
+  {
+   "id": "v01_army",
+   "dur": 2.0,
+   "vo": "Your body has an army. It has never seen the enemy it must fight.",
+   "screen": "inside the body: red cells drift past three helmeted white-cell guards; question marks pop over them",
+   "bg": {
+    "kind": "void",
+    "variant": "flesh"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "focus": [
+     0.5,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "obj",
+     "id": "rc1",
+     "shape": "disc",
+     "color": "#d8403a",
+     "size": 150,
+     "x": 0.08,
+     "y": 0.3,
+     "face": {
+      "mood": "happy",
+      "pos": [
+       0,
+       -0.5
+      ],
+      "scale": 0.7
+     },
+     "enter": "none",
+     "bob": 6,
+     "move": [
+      {
+       "at": 0.0,
+       "dur": 2.2,
+       "to": [
+        0.3,
+        0.26
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "obj",
+     "id": "rc2",
+     "shape": "disc",
+     "color": "#d8403a",
+     "size": 120,
+     "x": 0.9,
+     "y": 0.22,
+     "face": {
+      "mood": "content",
+      "pos": [
+       0,
+       -0.5
+      ],
+      "scale": 0.7
+     },
+     "enter": "none",
+     "bob": 6,
+     "move": [
+      {
+       "at": 0.0,
+       "dur": 2.2,
+       "to": [
+        0.7,
+        0.2
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "g1",
+     "who": "guard2",
+     "x": 0.28,
+     "y": 0.95,
+     "size": 470,
+     "expr": "worried",
+     "pose": "shrug"
+    },
+    {
+     "type": "bean",
+     "id": "g2",
+     "who": "guard",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 520,
+     "expr": "hollow",
+     "pose": "think"
+    },
+    {
+     "type": "bean",
+     "id": "g3",
+     "who": "guard3",
+     "x": 0.72,
+     "y": 0.95,
+     "size": 470,
+     "expr": "side-eye",
+     "pose": "hips",
+     "flip": true
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "q1",
+     "target": "g1",
+     "mark": "question",
+     "at": 0.4
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "q2",
+     "target": "g2",
+     "mark": "question",
+     "at": 0.6
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "q3",
+     "target": "g3",
+     "mark": "question",
+     "at": 0.8
+    },
+    {
+     "type": "label",
+     "text": "YOUR IMMUNE SYSTEM",
+     "tag": "INSIDE YOU",
+     "x": 0.5,
+     "y": 0.16,
+     "size": 84,
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "id": "v02_blueprint",
+   "dur": 2.6,
+   "transition": {
+    "kind": "iris",
+    "dur": 0.4
+   },
+   "vo": "So scientists draw them a picture: the virus, made harmless.",
+   "screen": "blueprint: a virus is sketched and labelled LIVE VIRUS; the label is wiped; HARMLESS COPY; then the board clears to a wanted poster sketch",
+   "bg": {
+    "kind": "blueprint",
+    "stamp": "VACCINE LAB",
+    "clear": [
+     2.0
+    ],
+    "sketch": [
+     {
+      "circle": [
+       0.36,
+       0.46,
+       0.08
+      ],
+      "at": 0.1,
+      "dur": 0.35
+     },
+     {
+      "line": [
+       [
+        0.45,
+        0.46
+       ],
+       [
+        0.5,
+        0.46
+       ]
+      ],
+      "at": 0.45,
+      "dur": 0.15
+     },
+     {
+      "line": [
+       [
+        0.424,
+        0.573
+       ],
+       [
+        0.459,
+        0.637
+       ]
+      ],
+      "at": 0.49,
+      "dur": 0.15
+     },
+     {
+      "line": [
+       [
+        0.36,
+        0.62
+       ],
+       [
+        0.36,
+        0.71
+       ]
+      ],
+      "at": 0.53,
+      "dur": 0.15
+     },
+     {
+      "line": [
+       [
+        0.296,
+        0.573
+       ],
+       [
+        0.261,
+        0.637
+       ]
+      ],
+      "at": 0.57,
+      "dur": 0.15
+     },
+     {
+      "line": [
+       [
+        0.27,
+        0.46
+       ],
+       [
+        0.22,
+        0.46
+       ]
+      ],
+      "at": 0.61,
+      "dur": 0.15
+     },
+     {
+      "line": [
+       [
+        0.296,
+        0.347
+       ],
+       [
+        0.261,
+        0.283
+       ]
+      ],
+      "at": 0.65,
+      "dur": 0.15
+     },
+     {
+      "line": [
+       [
+        0.36,
+        0.3
+       ],
+       [
+        0.36,
+        0.21
+       ]
+      ],
+      "at": 0.69,
+      "dur": 0.15
+     },
+     {
+      "line": [
+       [
+        0.424,
+        0.347
+       ],
+       [
+        0.459,
+        0.283
+       ]
+      ],
+      "at": 0.73,
+      "dur": 0.15
+     },
+     {
+      "text": "LIVE VIRUS",
+      "x": 0.36,
+      "y": 0.86,
+      "size": 70,
+      "at": 0.7,
+      "dur": 0.3,
+      "out": 1.2
+     },
+     {
+      "line": [
+       [
+        0.18,
+        0.78
+       ],
+       [
+        0.54,
+        0.14
+       ]
+      ],
+      "at": 1.2,
+      "dur": 0.2
+     },
+     {
+      "text": "HARMLESS COPY",
+      "x": 0.36,
+      "y": 0.86,
+      "size": 70,
+      "at": 1.35,
+      "dur": 0.3
+     },
+     {
+      "line": [
+       [
+        0.24,
+        0.18
+       ],
+       [
+        0.48,
+        0.18
+       ],
+       [
+        0.48,
+        0.84
+       ],
+       [
+        0.24,
+        0.84
+       ],
+       [
+        0.24,
+        0.18
+       ]
+      ],
+      "at": 2.05,
+      "dur": 0.4
+     },
+     {
+      "text": "WANTED",
+      "x": 0.36,
+      "y": 0.32,
+      "size": 64,
+      "at": 2.2,
+      "dur": 0.25
+     },
+     {
+      "circle": [
+       0.36,
+       0.55,
+       0.045
+      ],
+      "at": 2.3,
+      "dur": 0.25
+     }
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ],
+    "focus": [
+     0.4,
+     0.5
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "sci",
+     "who": "doc",
+     "x": 0.8,
+     "y": 1.06,
+     "size": 640,
+     "flip": true,
+     "pose": [
+      {
+       "at": 0,
+       "v": "point"
+      },
+      {
+       "at": 1.2,
+       "v": "thumbs-up"
+      },
+      {
+       "at": 2.0,
+       "v": "present"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "squint"
+      },
+      {
+       "at": 1.2,
+       "v": "smug-closed"
+      },
+      {
+       "at": 2.0,
+       "v": "happy"
+      }
+     ],
+     "talk": [
+      [
+       0.2,
+       1.0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v03_poster",
+   "dur": 2.0,
+   "transition": {
+    "kind": "inkblot",
+    "dur": 0.6,
+    "at": [
+     0.5,
+     0.45
+    ]
+   },
+   "vo": "The vaccine is that picture: a wanted poster, delivered to the troops.",
+   "screen": "barracks corkboard; a WANTED poster of the virus pops up; stamp SAFE COPY; guards from behind",
+   "bg": {
+    "kind": "corkboard",
+    "sign": "BARRACKS",
+    "notes": 9
+   },
+   "camera": {
+    "zoom": [
+     1.02,
+     1.08
+    ],
+    "focus": [
+     0.5,
+     0.42
+    ]
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "poster",
+     "who": "virus",
+     "title": "WANTED",
+     "name": "SPIKY",
+     "sub": "HARMLESS COPY",
+     "x": 0.5,
+     "y": 0.42,
+     "scale": 0.95,
+     "at": 0.5,
+     "tilt": -2
+    },
+    {
+     "type": "doc",
+     "kind": "stamp",
+     "text": "SAFE COPY",
+     "x": 0.62,
+     "y": 0.5,
+     "size": 96,
+     "color": "#2a8a3a",
+     "at": 1.25
+    },
+    {
+     "type": "crowd",
+     "id": "v03crowd",
+     "who": [
+      "guard",
+      "guard2",
+      "guard3"
+     ],
+     "x": 0.5,
+     "y": 1.25,
+     "count": 5,
+     "spread": 1700,
+     "size": 480,
+     "view": "back"
+    }
+   ]
+  },
+  {
+   "id": "v04_lesson",
+   "dur": 2.2,
+   "vo": "They study its face, build a weapon that fits it, and practise.",
+   "screen": "chalkboard lines type in; the sergeant shows a picture bubble: the face, then a shield, then a sword",
+   "bg": {
+    "kind": "chalkboard",
+    "lines": [
+     {
+      "text": "1. STUDY THE FACE",
+      "at": 0.1
+     },
+     {
+      "text": "2. BUILD THE WEAPON",
+      "at": 0.8
+     },
+     {
+      "text": "3. PRACTISE",
+      "at": 1.5
+     }
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "sg",
+     "who": "sarge",
+     "x": 0.2,
+     "y": 1.02,
+     "size": 600,
+     "pose": [
+      {
+       "at": 0,
+       "v": "point-up"
+      },
+      {
+       "at": 0.9,
+       "v": "present"
+      }
+     ],
+     "expr": "angry",
+     "talk": [
+      [
+       0.1,
+       1.9
+      ]
+     ]
+    },
+    {
+     "type": "doc",
+     "kind": "pictobubble",
+     "style": "speech",
+     "x": 0.62,
+     "y": 0.66,
+     "w": 900,
+     "h": 300,
+     "tail": [
+      -420,
+      120
+     ],
+     "every": 0.45,
+     "at": 0.2,
+     "icons": [
+      {
+       "who": "virus",
+       "expr": "menace",
+       "at": 0.25
+      },
+      {
+       "arrow": true,
+       "at": 0.6
+      },
+      {
+       "prop": "shield",
+       "at": 0.8
+      },
+      {
+       "arrow": true,
+       "at": 1.1
+      },
+      {
+       "prop": "sword",
+       "at": 1.3
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v05_practice",
+   "dur": 2.0,
+   "transition": {
+    "kind": "pixelate",
+    "dur": 0.3
+   },
+   "vo": "Practice, on a cardboard copy.",
+   "screen": "white grid void; a cardboard cut-out of the virus; a spring glove pummels it; it falls over; +100 XP",
+   "bg": {
+    "kind": "grid",
+    "accent": "#3aa33a",
+    "speed": 0.6
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "shake": [
+     {
+      "at": 0.6,
+      "dur": 0.2,
+      "amp": 8
+     },
+     {
+      "at": 0.97,
+      "dur": 0.2,
+      "amp": 8
+     },
+     {
+      "at": 1.34,
+      "dur": 0.2,
+      "amp": 10
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "cut",
+     "who": "virus",
+     "x": 0.62,
+     "y": 0.92,
+     "size": 520,
+     "expr": "menace",
+     "pose": "hips",
+     "rock": 0,
+     "blink": false,
+     "sticker": {
+      "width": 10
+     },
+     "out": 1.5,
+     "exit": "pivot-fall",
+     "exitDur": 0.5,
+     "shake": [
+      {
+       "at": 0.6,
+       "dur": 0.2,
+       "amp": 14
+      },
+      {
+       "at": 0.97,
+       "dur": 0.2,
+       "amp": 14
+      },
+      {
+       "at": 1.34,
+       "dur": 0.2,
+       "amp": 18
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "trainee",
+     "who": "guard3",
+     "x": 0.22,
+     "y": 0.95,
+     "size": 480,
+     "expr": "angry",
+     "pose": "fist"
+    },
+    {
+     "type": "arm",
+     "kind": "glove-spring",
+     "from": "left",
+     "count": 3,
+     "every": 0.37,
+     "reach": {
+      "at": 0.45,
+      "to": [
+       0.57,
+       0.58
+      ],
+      "dur": 0.15,
+      "hold": 0.1,
+      "back": 0.1
+     },
+     "y": 0.58
+    },
+    {
+     "type": "hud",
+     "kind": "score",
+     "text": "+100 XP",
+     "style": "pixel",
+     "x": 0.72,
+     "y": 0.3,
+     "at": 1.55,
+     "hud": false,
+     "life": 0.9
+    }
+   ]
+  },
+  {
+   "id": "v06_memory",
+   "dur": 2.0,
+   "transition": {
+    "kind": "whip",
+    "dur": 0.3,
+    "dir": "left"
+   },
+   "vo": "Then memory cells file the face away. For years.",
+   "screen": "an old memory cell beside a checklist file; ticks land on each line; stamp SAVED",
+   "bg": {
+    "kind": "office",
+    "lamp": true,
+    "desk": false,
+    "window": "grid"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "mem",
+     "who": "memo",
+     "x": 0.2,
+     "y": 0.98,
+     "size": 560,
+     "pose": [
+      {
+       "at": 0,
+       "v": "steeple"
+      },
+      {
+       "at": 1.5,
+       "v": "thumbs-up"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "squint"
+      },
+      {
+       "at": 1.5,
+       "v": "content"
+      }
+     ]
+    },
+    {
+     "type": "doc",
+     "kind": "checklist",
+     "title": "FILE: SPIKY",
+     "x": 0.62,
+     "y": 0.5,
+     "scale": 0.95,
+     "every": 0.15,
+     "lines": [
+      "Face: known",
+      "Weapon: ready",
+      "Keep forever"
+     ],
+     "checks": [
+      {
+       "row": 0,
+       "at": 0.5
+      },
+      {
+       "row": 1,
+       "at": 0.8
+      },
+      {
+       "row": 2,
+       "at": 1.1
+      }
+     ],
+     "stamp": {
+      "text": "SAVED",
+      "at": 1.45,
+      "color": "#2a8a3a"
+     }
+    }
+   ]
+  },
+  {
+   "id": "v07_challenger",
+   "dur": 2.4,
+   "transition": {
+    "kind": "black-beat",
+    "dur": 0.8,
+    "title": "SIX MONTHS LATER",
+    "size": 90
+   },
+   "vo": "Six months later, the real virus shows up.",
+   "screen": "black beat SIX MONTHS LATER; a challenger card: the real virus, smug",
+   "bg": {
+    "kind": "flat",
+    "color": "#000000"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "challenger",
+     "who": "virus",
+     "expr": "menace",
+     "pose": "hips",
+     "at": 0.8,
+     "dur": 1.6,
+     "title": "CHALLENGER\nAPPROACHING",
+     "sub": "the real one"
+    }
+   ]
+  },
+  {
+   "id": "v08_recognise",
+   "dur": 2.2,
+   "vo": "But the guards have seen that face before.",
+   "screen": "the virus sneaks in, sharp; focus racks to a guard in the foreground; the poster flashes as a memory; letterbox, jump, stare beam",
+   "bg": {
+    "kind": "void",
+    "variant": "flesh"
+   },
+   "grade": {
+    "preset": "serious",
+    "strength": 0.5
+   },
+   "focus": [
+    {
+     "at": 0,
+     "on": "vv",
+     "px": 9
+    },
+    {
+     "at": 0.7,
+     "on": "gg",
+     "dur": 0.3
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.0,
+     1.03
+    ],
+    "letterbox": {
+     "h": 0.11,
+     "at": 1.1,
+     "dur": 0.2
+    },
+    "jump": [
+     {
+      "at": 1.25,
+      "zoom": 1.22,
+      "focus": [
+       0.42,
+       0.45
+      ]
+     }
+    ],
+    "rot": [
+     {
+      "at": 0,
+      "v": 0
+     },
+     {
+      "at": 1.25,
+      "v": -5
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "vv",
+     "who": "virus",
+     "x": 0.72,
+     "y": 0.86,
+     "size": 440,
+     "expr": [
+      {
+       "at": 0,
+       "v": "smug"
+      },
+      {
+       "at": 1.3,
+       "v": "shock"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "rub-hands"
+      },
+      {
+       "at": 1.3,
+       "v": "scared"
+      }
+     ],
+     "walk": [
+      [
+       0,
+       0.8
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 0.8,
+       "to": [
+        0.66,
+        0.86
+       ],
+       "ease": "out"
+      }
+     ],
+     "flip": true
+    },
+    {
+     "type": "bean",
+     "id": "gg",
+     "who": "guard",
+     "x": 0.26,
+     "y": 1.42,
+     "size": 1150,
+     "expr": [
+      {
+       "at": 0,
+       "v": "sleepy"
+      },
+      {
+       "at": 0.75,
+       "v": "squint"
+      },
+      {
+       "at": 1.25,
+       "v": "rage"
+      }
+     ],
+     "snapTilt": 8,
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 1.25,
+       "v": "fist"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "memory",
+     "id": "v08mem",
+     "shot": "v03_poster",
+     "t": 1.9,
+     "rect": [
+      0.56,
+      0.14,
+      0.36,
+      0.4
+     ],
+     "alpha": 0.95,
+     "tint": "#f2e6c8",
+     "at": 0.8,
+     "out": 1.25,
+     "exit": "none",
+     "exitDur": 0
+    },
+    {
+     "type": "fx",
+     "kind": "crackle",
+     "id": "v08stare",
+     "from": "gg",
+     "to": "vv",
+     "width": 14,
+     "glow": 26,
+     "at": 1.3,
+     "hud": true
+    },
+    {
+     "type": "label",
+     "text": "I KNOW YOU",
+     "x": 0.64,
+     "y": 0.36,
+     "size": 80,
+     "color": "#ffe066",
+     "at": 1.4
+    }
+   ]
+  },
+  {
+   "id": "v09_fight",
+   "dur": 1.8,
+   "transition": {
+    "kind": "zoom-punch",
+    "dur": 0.25
+   },
+   "vo": "This time it is over in a second.",
+   "screen": "a brawl cloud of white helmets and green spikes; it pops; K.O.",
+   "bg": {
+    "kind": "mood",
+    "variant": "action"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "shake": [
+     {
+      "at": 0.2,
+      "dur": 0.9,
+      "amp": 10
+     }
+    ],
+    "punch": [
+     {
+      "at": 1.15,
+      "amount": 0.14
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "brawl",
+     "id": "v09br",
+     "x": 0.5,
+     "y": 0.55,
+     "size": 620,
+     "dur": 1.0,
+     "end": "puffs",
+     "skins": [
+      "guard",
+      "virus"
+     ],
+     "limbs": [
+      "fist",
+      "boot",
+      "shield",
+      "sword"
+     ],
+     "at": 0.1
+    },
+    {
+     "type": "fx",
+     "kind": "splat",
+     "id": "v09ko",
+     "text": "K.O.",
+     "x": 0.5,
+     "y": 0.5,
+     "size": 520,
+     "textSize": 200,
+     "color": "#2f6a1a",
+     "at": 1.15
+    }
+   ]
+  },
+  {
+   "id": "v10_asleep",
+   "dur": 2.6,
+   "transition": {
+    "kind": "fade-white",
+    "dur": 0.4
+   },
+   "vo": "And you? You slept through the whole war.",
+   "screen": "bedroom at night; the host snores; a system log reports the battle; the poster on the wall gets CAUGHT",
+   "bg": {
+    "kind": "room",
+    "variant": "bedroom",
+    "window": "night"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "focus": [
+     0.45,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "poster",
+     "who": "virus",
+     "title": "WANTED",
+     "name": "SPIKY",
+     "x": 0.72,
+     "y": 0.27,
+     "scale": 0.36,
+     "tilt": 4,
+     "at": 0.0
+    },
+    {
+     "type": "doc",
+     "kind": "stamp",
+     "text": "CAUGHT",
+     "x": 0.72,
+     "y": 0.29,
+     "size": 64,
+     "at": 1.9
+    },
+    {
+     "type": "prop",
+     "kind": "bed",
+     "id": "bed",
+     "x": 0.42,
+     "y": 1.0,
+     "size": 980,
+     "enter": "none",
+     "occupant": {
+      "who": "host",
+      "expr": "sleep-drool"
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "zz",
+     "mark": "zzz",
+     "x": 0.27,
+     "y": 0.5,
+     "size": 2.2
+    },
+    {
+     "type": "hud",
+     "kind": "notice",
+     "size": 44,
+     "life": 3,
+     "x": 0.6,
+     "y": 0.66,
+     "lines": [
+      {
+       "at": 0.3,
+       "text": "VIRUS DETECTED",
+       "color": "#ff8a8a"
+      },
+      {
+       "at": 0.8,
+       "text": "VIRUS REMOVED",
+       "color": "#8cf05a"
+      },
+      {
+       "at": 1.4,
+       "text": "HOST: STILL ASLEEP"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -59,7 +59,7 @@ Inspect the film as well as the tests. Check identity, movement, text readabilit
 
 ## Submit a pull request
 
-Describe the concrete problem, the resulting behavior and how you verified it. Include a before/after frame or short clip for visual changes. Update affected guides, examples and showcase assets, and add a changelog entry for a user-visible change.
+Describe the concrete problem, the resulting behavior and how you verified it. Include a before/after frame or short clip for visual changes. Update affected guides, examples and showcase assets, and add a changelog entry for a user-visible change. Every picture in `assets/` is listed in `assets/media.json`; after an engine change that alters how an example looks, rebuild the affected pictures with `uv run --with playwright --with pillow python scripts/make_media.py <name>` (a word from the output path), and add a manifest entry for any new README picture.
 
 Contribute only material you can submit under the project's [MIT license](LICENSE), with any separately licensed assets clearly identified. Review feedback should be specific, respectful and focused on the work.
 
