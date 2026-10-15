@@ -118,10 +118,10 @@
     for (let i = 0; i < 16; i++) { const a = r() * Math.PI * 2, d = s * 0.4 + p * (300 + r() * 300); ctx.fillRect(Math.cos(a) * d, Math.sin(a) * d + p * p * 200, 12, 12); }
   };
 
-  // blood: irregular dark-red pool (flat, under bodies) or splat. { w, kind:'pool'|'splat' }
+  // blood: irregular dark-red pool (flat, under bodies) or splat. { w, shape:'pool'|'splat' } (kind is always 'blood')
   FX.blood = (ctx, L, lt) => {
-    const p = T.ease.outCubic(T.clamp(lt / (L.dur ?? 0.8))), w = (L.w ?? 220) * (L.kind === 'splat' ? 1 : p);
-    const pts = T.blobPts(0, 0, w, w * (L.kind === 'splat' ? 0.7 : 0.28), (L.id ?? 'blood'), 18, 0.3);
+    const p = T.ease.outCubic(T.clamp(lt / (L.dur ?? 0.8))), w = (L.w ?? 220) * (L.shape === 'splat' ? 1 : p);
+    const pts = T.blobPts(0, 0, w, w * (L.shape === 'splat' ? 0.7 : 0.28), (L.id ?? 'blood'), 18, 0.3);
     T.outlined(ctx, (k) => T.smoothPath(k, pts), '#8a0f12', { line: 0 });
     ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.beginPath(); ctx.ellipse(-w * 0.3, -w * 0.06, w * 0.18, w * 0.04, 0, 0, Math.PI * 2); ctx.fill();
   };
@@ -154,7 +154,11 @@
     }
   };
 
-  // ---------- per-shot colour grade: shot.grade = { preset, at, dur, strength } ----------
+  // ---------- per-shot colour grade ----------
+  // shot.grade = "preset" | { preset, at, dur, strength, out, outDur, target } | [ entry, entry, ... ] (applied in order).
+  // target "bg" entries are applied by T.gradeBg right after the backgrounds; all others by T.grade inside T.post.
+  // Presets are op lists [op, color, alpha, arg]: op = a canvas composite mode | 'vignette' | 'bloom' | 'pixel'
+  // ('pixel' runs T.GRADE_PIXEL[color](data, k, arg, w, h) over the physical pixels).
   const GRADES = {
     serious: [['saturation', '#808080', 0.3], ['multiply', '#9fb2aa'], ['soft-light', '#1d4a4a', 0.6]], // Teutoburg: desaturated teal-green
     storm: [['saturation', '#808080', 0.35], ['multiply', '#a3b0b5']],
@@ -169,20 +173,50 @@
     divine: [['bloom', '#fffbe6', 0.55], ['soft-light', '#fff2c0', 0.4]],
     'mono-red': [['pixel', 'mono-red']], // grayscale world, only blood / roses keep their red
   };
-  // Keep strong reds, desaturate everything else by k (one pass over the physical pixels, ~20 ms at 1080p).
-  function monoRed(ctx, k) {
-    const kk = Math.round(k * 256);
-    T.pixels(ctx, (d) => {
+  T.GRADE_PRESETS = GRADES; // mutable: later modules add presets here
+  Object.defineProperty(T, 'GRADES', { get: () => Object.keys(T.GRADE_PRESETS), enumerable: true, configurable: true });
+
+  const hexRgb = (hex) => {
+    const h = String(hex).replace('#', ''), f = h.length === 3 ? h.split('').map((ch) => ch + ch).join('') : h;
+    const n = parseInt(f.slice(0, 6), 16);
+    if (!Number.isFinite(n)) throw new Error('GRADE_PIXEL: bad colour ' + hex);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  };
+  // Pixel grades: fn(data, k, arg, w, h) edits RGBA bytes in place; k = 0..1 strength. Integer maths only (deterministic).
+  T.GRADE_PIXEL = {
+    // Keep strong reds, desaturate everything else by k (one pass over the physical pixels, ~20 ms at 1080p).
+    'mono-red': (d, k) => {
+      const kk = Math.round(k * 256);
       for (let i = 0, n = d.length; i < n; i += 4) {
         const r = d[i], g = d[i + 1], b = d[i + 2];
         if (r > 90 && r * 10 > g * 17 && r * 10 > b * 17) continue;
         const y = (r * 77 + g * 150 + b * 29) >> 8;
         d[i] = r + (((y - r) * kk) >> 8); d[i + 1] = g + (((y - g) * kk) >> 8); d[i + 2] = b + (((y - b) * kk) >> 8);
       }
-    });
-  }
-  function gradeOp(ctx, op, color, a, k) {
-    if (op === 'pixel') { if (color === 'mono-red') monoRed(ctx, k); return; }
+    },
+    // Luminance -> 3-stop ramp [shadow, mid, highlight] (hex), blended over the image by k.
+    ramp3: (d, k, stops) => {
+      if (!Array.isArray(stops) || stops.length !== 3) throw new Error('GRADE_PIXEL.ramp3 needs [shadow, mid, highlight]');
+      const [s0, s1, s2] = stops.map(hexRgb), kk = Math.round(k * 256), lut = new Uint8Array(768);
+      for (let y = 0; y < 256; y++) {
+        const [a, b, t] = y < 128 ? [s0, s1, y * 2] : [s1, s2, (y - 128) * 2];
+        for (let c = 0; c < 3; c++) lut[y * 3 + c] = a[c] + (((b[c] - a[c]) * t) >> 8);
+      }
+      for (let i = 0, n = d.length; i < n; i += 4) {
+        const y = (d[i] * 77 + d[i + 1] * 150 + d[i + 2] * 29) >> 8;
+        for (let c = 0; c < 3; c++) d[i + c] += ((lut[y * 3 + c] - d[i + c]) * kk) >> 8;
+      }
+    },
+  };
+
+  function gradeOp(ctx, op, color, a, k, arg) {
+    if (op === 'pixel') {
+      const fn = T.GRADE_PIXEL[color];
+      if (!fn) throw new Error('Unknown pixel grade: ' + color);
+      const kk = k * a;
+      T.pixels(ctx, (d, w, h) => fn(d, kk, arg, w, h));
+      return;
+    }
     if (op === 'vignette') {
       const g = ctx.createRadialGradient(W / 2, H / 2, H * 0.3, W / 2, H / 2, H * 0.95);
       g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, color);
@@ -195,17 +229,32 @@
     }
     ctx.globalCompositeOperation = op; ctx.globalAlpha = a * k; ctx.fillStyle = color; ctx.fillRect(0, 0, W, H);
   }
-  T.GRADES = Object.keys(GRADES);
-  T.grade = (ctx, lt, env) => {
-    const g = env.shot && env.shot.grade;
-    if (!g) return;
-    const ops = GRADES[g.preset || g];
-    if (!ops) throw new Error('Unknown grade preset: ' + (g.preset || g));
+
+  const GRADE_TARGETS = ['frame', 'bg'];
+  const strengthAt = (v, lt) => (Array.isArray(v) ? (T.num ? T.num(v, lt) : Number(v[0]?.v ?? 1)) : v ?? 1);
+  function applyGrade(ctx, g, lt) {
+    const name = typeof g === 'string' ? g : g.preset;
+    const ops = T.GRADE_PRESETS[name];
+    if (!ops) throw new Error('Unknown grade preset: ' + name);
     const p = typeof g === 'string' ? 1 : T.ease.inOut(T.prog(lt, g.at ?? 0, g.dur ?? 0.001));
-    const k = p * (g.strength ?? 1);
+    const q = typeof g === 'string' || g.out == null ? 1 : 1 - T.ease.inOut(T.prog(lt, g.out, g.outDur ?? g.dur ?? 0.001));
+    const k = p * q * (typeof g === 'string' ? 1 : strengthAt(g.strength, lt));
     if (k <= 0) return;
     ctx.save();
-    for (const [op, color, a = 1] of ops) gradeOp(ctx, op, color, a, k);
+    for (const [op, color, a = 1, arg] of ops) gradeOp(ctx, op, color, a, k, arg);
     ctx.restore();
+  }
+  const targetOf = (g) => {
+    const t = (typeof g === 'object' && g && g.target) || 'frame';
+    if (!GRADE_TARGETS.includes(t)) throw new Error(`Unknown grade target "${t}" (use "frame" or "bg")`);
+    return t;
   };
+  function gradePass(ctx, grade, lt, target) {
+    if (!grade) return;
+    for (const g of Array.isArray(grade) ? grade : [grade]) if (g && targetOf(g) === target) applyGrade(ctx, g, lt);
+  }
+  // Whole-frame grade, called from T.post (paint.js).
+  T.grade = (ctx, lt, env) => gradePass(ctx, env.shot && env.shot.grade, lt, 'frame');
+  // Background-only grade: call right after the shot backgrounds are drawn, before the layers.
+  T.gradeBg = (ctx, shot, lt, env) => gradePass(ctx, shot && shot.grade, lt, 'bg');
 })();

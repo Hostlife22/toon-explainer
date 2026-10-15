@@ -10,6 +10,20 @@ One block per shot, with these labels:
 - `- Voiceover:` or `- VO:` (the line, quotes optional);
 - `- On screen:` or `- Screen:` (what the viewer sees).
 
+Each label sits on its own line; a one-line `Shot N — Voiceover — On screen` row is not parsed. The bold, the leading `-` and the quotes are optional, lines before the first shot (title, notes) are ignored, and every shot needs a voiceover line. A complete two-shot `script.md` (see also [examples/v4_story/script.md](../examples/v4_story/script.md)):
+
+```markdown
+# How Coffee Conquered the World
+
+**Shot 1** 🎬
+- Voiceover: "Two billion cups of coffee. Every single day."
+- On screen: a groggy office bean gulps a mug; the cup counter slams in.
+
+**Shot 2**
+- Voiceover: "And we owe it all to a goat."
+- On screen: hard cut, a goat pops up on a gold burst; punch on "goat".
+```
+
 For a storyboard written in another language, add its label words with a JSON file and pass `--labels`:
 
 ```json
@@ -36,7 +50,9 @@ script.md ──script2spec──► spec.json (skeleton, timings, .srt)
 ```sh
 python3 scripts/script2spec.py film/script.md --out film/spec.json --wpm 160
 ```
-Each `**Shot N**` becomes a shot `kNN` whose duration is based on its word count. The `vo`, `screen` and `anim` (🎬) fields are preserved. Each shot gets a placeholder `caption` marked `todo`.
+Each `**Shot N**` becomes a shot `kNN` whose duration is based on its word count: `words × 60 / wpm + 0.25` s, at least `--min` (1.6 s).
+
+Picking `--wpm` for a target length: `wpm ≈ 60 × total words / (target seconds − 0.25 × shots)`. Example: 200 words in 24 shots for a 70 s film gives 60 × 200 / (70 − 6) ≈ 188, while the default 160 gives about 81 s. Many very short shots hit the 1.6 s floor and run longer than the formula says, so check the total the script prints and re-run. Typical narration: 150–170 wpm calm, 180–200 brisk. The `vo`, `screen` and `anim` (🎬) fields are preserved. Each shot gets a placeholder `caption` marked `todo`.
 
 ### 2. Filling in (Claude's job)
 For each shot:
@@ -54,6 +70,8 @@ Fill in long films in batches of 15–20 shots (as in step 6 of the master promp
 python3 scripts/spec.py film/spec.json
 uv run --with playwright python scripts/render.py film/spec.json --sheet film/sheet.jpg
 ```
+`render.py` exits non-zero on any page error, including a failed script or image request (`[requestfailed]` in the log). An error such as `Unknown layer type "hud"` together with a failed request means an engine module did not load: re-run, and fix the path if the same file fails again.
+
 Review `sheet.jpg` (a frame at 75% of each shot):
 - text stays inside the frame;
 - labels do not cover faces;
@@ -66,7 +84,9 @@ Make an SRT of the voiceover (Whisper: `whisper vo.mp3 --language ru --output_fo
 ```sh
 python3 scripts/script2spec.py film/script.md --srt vo.srt --merge film/spec.json
 ```
-`--merge` changes only the `dur` of `kNN` shots, leaves layers untouched and rebuilds `spec.srt`. Each shot starts on the first word of its line. Layer times (`at`) are local, so labels move together with their shot. Only re-check shots that became much shorter.
+`--merge` changes only the `dur` of `kNN` shots, leaves layers untouched and rebuilds `spec.srt`. Each shot starts on the first word of its line; the last shot ends 0.6 s after the last cue. Layer times (`at`) are local, so labels move together with their shot. Only re-check shots that became much shorter.
+
+`--merge` overwrites **every** matching `dur`, including holds you lengthened by hand (a tail hold so a payoff can finish, a silent beat). There is no field that pins a duration. After each merge, re-apply those holds by hand (keep a list of them), or give the extra beat its own shot id that is not in the storyboard (for example `k24b`): shots missing from the storyboard are kept as they are. Without `--srt`, `--merge` re-times from the `--wpm` estimate instead.
 
 ### 5. Preview and final
 ```sh

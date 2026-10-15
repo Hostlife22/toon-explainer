@@ -1,0 +1,5 @@
+{
+  "_doc": "v4 backgrounds from places4.js and places5.js. Variants are a `variant` field checked by the engine (see references/08-places.md). The fg kind bg-front redraws a background's foreground plane (benches, desks, bars, balustrades) over the characters.",
+  "bgs": ["mood", "palace", "burning", "floor", "studio", "room", "cell", "harbor", "alley", "antique", "parchment-panel", "corkboard", "vehicle-interior"],
+  "fg": ["bg-front"]
+}

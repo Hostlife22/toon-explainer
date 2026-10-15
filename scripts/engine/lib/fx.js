@@ -102,9 +102,9 @@
     },
   };
   T.FX = FX;
-  T.layers.fx = (ctx, L, lt) => {
+  T.layers.fx = (ctx, L, lt, env) => {
     const fn = FX[L.kind];
     if (!fn) throw new Error('Unknown fx kind: ' + L.kind);
-    fn(ctx, L, lt);
+    fn(ctx, L, lt, env); // env: shot env (layers, cast, camera) for fx that track other layers
   };
 })();

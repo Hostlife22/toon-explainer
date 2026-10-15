@@ -90,6 +90,31 @@ The style grammar was learned from eight studied explainer videos: Rome, China, 
 </tr>
 </table>
 
+## v4: acting, staging and story
+
+A second, frame-dense pass over the same eight videos (1 frame per second, motion strips, transcripts) added nine modules and a [story-craft guide](references/09-story-craft.md) that maps narration to shot recipes. The film below was made by an agent that had only the skill's docs and a one-paragraph brief: [`examples/v4_story`](examples/v4_story/spec.json), "How Coffee Conquered the World", 24 shots, 73 s.
+
+<table>
+<tr>
+<td colspan="3"><img src="assets/showcase/v4/coffee-film.gif" alt="A pope tastes coffee in a blurred gothic hall, the screen bursts gold, an APPROVED stamp lands and the coffee mug with a face gets a halo while a cup counter keeps running in the corner" width="100%" /><br/><strong>A whole film from a brief</strong> · rack focus, swap, stamps, a running counter and quest chip across cuts</td>
+</tr>
+<tr>
+<td width="33%"><img src="assets/showcase/v4/poof-swap.gif" alt="A cartoon smoke cloud with POOF lettering covers a character, who reappears in a new costume" width="100%" /><br/><strong>Acting and gags</strong> · poof swaps, giant arms, hat gags, 46 poses</td>
+<td width="33%"><img src="assets/showcase/v4/map-split.gif" alt="A territory cracks into two halves with angry faces that punch each other" width="100%" /><br/><strong>Living maps v4</strong> · split, shatter, tilt and globe views, war arrows</td>
+<td width="33%"><img src="assets/showcase/v4/palace.gif" alt="A red lacquer throne hall with glowing lattice windows and lanterns, an emperor on the throne" width="100%" /><br/><strong>Places</strong> · palaces, studios, rooms, harbor, mood backdrops</td>
+</tr>
+<tr>
+<td width="33%"><img src="assets/showcase/v4/versus.gif" alt="Split screen with a jagged lightning seam and a VS badge between two rivals" width="100%" /><br/><strong>Lens</strong> · split screens, comic grids, 13 transitions, POV masks</td>
+<td width="33%"><img src="assets/showcase/v4/brawl.gif" alt="A boiling cartoon fight cloud with fists, boots and stars" width="100%" /><br/><strong>FX</strong> · brawl cloud, materials, stand-ins, booms, 12 grades</td>
+<td width="33%"><img src="assets/showcase/v4/challenger.gif" alt="A fighting-game style CHALLENGER APPROACHING card with a portrait in a red disc" width="100%" /><br/><strong>Game parodies</strong> · HUD, cursor, VS cards, menus, quest chips</td>
+</tr>
+<tr>
+<td width="33%"><img src="assets/showcase/v4/picto-bubble.gif" alt="A speech bubble fills with icons joined by arrows, one icon struck out with a red no sign" width="100%" /><br/><strong>Paper and lettering</strong> · picture bubbles, nameplates, stat cards, graffiti</td>
+<td width="33%"><img src="assets/showcase/v4/wings.gif" alt="Characters with feathered wings, a halo and devil horns and tail flapping on a sky background" width="100%" /><br/><strong>Characters v4</strong> · 18 expressions, 29 headwear, 20 outfits, wings, kids and elders</td>
+<td width="33%" valign="top"><br/><strong>Every feature has a demo film</strong>: <code>examples/v4_*</code>, one shot per feature. Render any of them with <code>--sheet</code> to browse the toolkit.</td>
+</tr>
+</table>
+
 <details>
 <summary>Contact sheets of the v3 examples</summary>
 

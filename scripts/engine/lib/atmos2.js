@@ -12,6 +12,8 @@
     if (!c) { c = pool[name] = document.createElement('canvas'); }
     if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
     const k = c.getContext('2d', { willReadFrequently: name.startsWith('px') });
+    if (k.__saved) k.restore(); // drop any clip or state a previous user left behind
+    k.save(); k.__saved = true;
     k.setTransform(1, 0, 0, 1, 0, 0);
     k.globalAlpha = 1;
     k.globalCompositeOperation = 'source-over';
@@ -41,27 +43,28 @@
   // L.glow: true | {color, blur, pulse}   — soft outer glow (gods, relics, ghosts)
   // L.silhouette: "#hex"                  — flat single-color shape (shadow figures, audience, threat in the dark)
   // L.lineart: true | {color, width}      — outline only on black (inverted line-art memory world)
-  T.modLayer = (ctx, L, lt, env, paint) => {
-    const w = ctx.canvas.width, h = ctx.canvas.height, k = env.dpr || 1;
-    const [c, o] = T.scratch('mod', w, h);
-    o.clearRect(0, 0, w, h);
-    o.setTransform(k, 0, 0, k, 0, 0);
-    paint(o);
-    o.setTransform(1, 0, 0, 1, 0, 0);
-    if (L.silhouette) {
+  // Registered in core.js T.LAYER_MODS (order: silhouette 10, lineart 20, glow 90; blur from core.js is 95).
+  T.LAYER_MODS.silhouette = {
+    order: 10,
+    apply: (c, L) => {
+      const o = c.getContext('2d');
       o.globalCompositeOperation = 'source-in';
       o.fillStyle = L.silhouette;
-      o.fillRect(0, 0, w, h);
+      o.fillRect(0, 0, c.width, c.height);
       o.globalCompositeOperation = 'source-over';
-    }
-    let src = c;
-    if (L.lineart) {
-      // Outline = dilated alpha minus alpha, computed at half resolution above 1000 px wide (8 full-size blits are slow).
+      return c;
+    },
+  };
+  T.LAYER_MODS.lineart = {
+    order: 20,
+    // Outline = dilated alpha minus alpha, computed at half resolution above 1000 px wide (8 full-size blits are slow).
+    apply: (c, L, lt, env, depth) => {
+      const w = c.width, h = c.height, k = env.dpr || 1;
       const hs = w > 1000 ? 0.5 : 1, ew = Math.round(w * hs), eh = Math.round(h * hs);
       const lw = Math.max(1, (L.lineart.width ?? 4) * k * hs);
-      const [sm, so] = T.scratch('mod-small', ew, eh);
+      const [sm, so] = T.scratch('mod-small' + depth, ew, eh);
       so.clearRect(0, 0, ew, eh); so.drawImage(c, 0, 0, ew, eh);
-      const [e, eo] = T.scratch('mod-edge', ew, eh);
+      const [e, eo] = T.scratch('mod-edge' + depth, ew, eh);
       eo.clearRect(0, 0, ew, eh);
       for (let i = 0; i < 8; i++) {
         const a = (i / 8) * Math.PI * 2;
@@ -72,19 +75,18 @@
       eo.globalCompositeOperation = 'source-in';
       eo.fillStyle = L.lineart.color ?? '#ffffff';
       eo.fillRect(0, 0, ew, eh);
-      src = e;
-    }
-    ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    if (L.glow) {
-      const g = L.glow === true ? {} : L.glow;
+      return e;
+    },
+  };
+  T.LAYER_MODS.glow = {
+    order: 90,
+    under: (ctx, src, L, lt, env) => {
+      const g = L.glow === true ? {} : L.glow, k = env.dpr || 1, w = ctx.canvas.width, h = ctx.canvas.height;
       const pulse = 1 + Math.sin(lt * Math.PI * 2 * 0.5) * (g.pulse ?? 0.1);
       ctx.filter = `drop-shadow(0 0 ${Math.round((g.blur ?? 34) * k * pulse)}px ${g.color ?? '#fffbe6'})`;
       ctx.drawImage(src, 0, 0, w, h);
       ctx.filter = 'none';
-    }
-    ctx.drawImage(src, 0, 0, w, h);
-    ctx.restore();
+    },
   };
 
   // ---------- transitions (ctx = physical output, a/b = prev/next shot canvases, p = 0..1, tr = spec params) ----------

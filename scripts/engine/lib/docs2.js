@@ -16,8 +16,8 @@
       T.outlined(ctx, (k) => k.ellipse(0, 0, w * 0.47, h * 0.44, 0, 0, Math.PI * 2), '#fff', { line: 0 });
       [0.55, 0.78, 0.95].forEach((f, i) => T.outlined(ctx, (k) => k.arc(tx * f, ty * f, 22 - i * 6, 0, Math.PI * 2), '#fff', { line: 6 }));
     } else if (style === 'shout') {
-      const n = 18, r = T.rng(T.hash(L.id ?? 'shout'));
-      const star = (k) => { for (let i = 0; i <= n * 2; i++) { const a = (i / (n * 2)) * Math.PI * 2, rr = i % 2 ? 0.78 : 1 + r() * 0.12; k.lineTo(Math.cos(a) * w / 2 * rr, Math.sin(a) * h / 2 * rr); } k.closePath(); };
+      const n = 18, r = T.rng(T.hash(L.id ?? 'shout')), jag = Array.from({ length: n * 2 + 1 }, () => r()); // path runs twice
+      const star = (k) => { for (let i = 0; i <= n * 2; i++) { const a = (i / (n * 2)) * Math.PI * 2, rr = i % 2 ? 0.78 : 1 + jag[i] * 0.12; k.lineTo(Math.cos(a) * w / 2 * rr, Math.sin(a) * h / 2 * rr); } k.closePath(); };
       T.outlined(ctx, star, L.color ?? '#ff5aa8', { line: 8 });
       T.outlined(ctx, (k) => k.ellipse(0, 0, w * 0.36, h * 0.3, 0, 0, Math.PI * 2), '#1d1410', { line: 0 });
     } else {

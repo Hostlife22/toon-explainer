@@ -40,10 +40,25 @@
     evil: { eyes: 'slit', brows: 'angry', mouth: 'smirk', talk: ['smirk', 'wide'] }, // glowing red slits
     sick: { eyes: 'ringed', brows: 'worried', mouth: 'frown', talk: ['frown', 'mid'], blood: true },
   };
-  T.BEAN_EXPR = Object.keys(EXPR);
+  // Registries (v4). All are read at draw time, so modules loaded after face.js can add entries.
+  // T.EXPR[name] = { eyes, brows, mouth, talk: [...], vein, tears, blood, sweat } (built-ins above stay).
+  T.EXPR = EXPR;
+  Object.defineProperty(T, 'BEAN_EXPR', { get: () => Object.keys(T.EXPR), enumerable: true, configurable: true });
+  T.EYE_KINDS = T.EYE_KINDS || {}; // kind -> fn(ctx, x, y, side, lt, c), drawn once per eye (side -1 | +1)
+  T.MOUTH_KINDS = T.MOUTH_KINDS || {}; // kind -> fn(ctx, x, y, lt, c, view), x already includes the view offset
+  T.BROW_KINDS = T.BROW_KINDS || {}; // kind -> fn(ctx, x, y, side, lt, c), drawn once per eye at brow height
+  T.NO_BLINK_EYES = T.NO_BLINK_EYES || ['wide', 'squint', 'x', 'arc', 'arcDown', 'spiral', 'slit'];
+  T.FACE_EXTRAS = T.FACE_EXTRAS || []; // fn(ctx, c, s, a); fn.before = true runs before the eyes
+  T.HAIR_KINDS = T.HAIR_KINDS || {}; // kind -> { back(ctx, c, seed, sh), front(ctx, c, seed, sh, view) }
+  T.BEARD_KINDS = T.BEARD_KINDS || {}; // kind -> fn(ctx, c, fx, view)
+  T.HEAD_EXTRAS = T.HEAD_EXTRAS || []; // fn(ctx, c, s, {view, sh, fx, HW, CY}) after the headwear, every view (horns, labels)
+  const exprOf = (name) => T.EXPR[name] || T.EXPR.neutral || EXPR.neutral;
+  const isolated = (ctx, fn) => { ctx.save(); try { fn(); } finally { ctx.restore(); } };
 
-  function eye(ctx, kind, x, y, s, lt) {
+  function eye(ctx, kind, x, y, s, lt, c) {
     ctx.fillStyle = P.ink; ctx.strokeStyle = P.ink; ctx.lineWidth = 10; ctx.lineCap = 'round';
+    const custom = T.EYE_KINDS[kind];
+    if (custom) return isolated(ctx, () => custom(ctx, x, y, s, lt, c || {}));
     switch (kind) {
       case 'blink': ctx.beginPath(); ctx.moveTo(x - 16, y + 4); ctx.quadraticCurveTo(x, y + 12, x + 16, y + 4); ctx.stroke(); return;
       case 'arc': ctx.beginPath(); ctx.moveTo(x - 18, y + 8); ctx.quadraticCurveTo(x, y - 20, x + 18, y + 8); ctx.stroke(); return;
@@ -74,8 +89,10 @@
     }
   }
 
-  function brows(ctx, kind, xs, y) {
+  function brows(ctx, kind, xs, y, lt, c) {
     if (!kind) return;
+    const custom = T.BROW_KINDS[kind];
+    if (custom) { xs.forEach(([x, s]) => isolated(ctx, () => custom(ctx, x, y, s, lt, c || {}))); return; }
     const S = { angry: [16, -12], sad: [-14, 8], worried: [-16, 6], high: [-10, -14], smug: [-2, -12] }[kind];
     if (!S) return;
     const yy = kind === 'high' ? y - 26 : y;
@@ -93,8 +110,10 @@
       },
     });
   }
-  function mouth(ctx, kind, mx, my) {
+  function mouth(ctx, kind, mx, my, lt, c, view) {
     ctx.strokeStyle = P.ink; ctx.lineWidth = 9; ctx.lineCap = 'round';
+    const custom = T.MOUTH_KINDS[kind];
+    if (custom) return isolated(ctx, () => custom(ctx, mx, my, lt ?? 0, c || {}, view));
     const line = (fn) => { ctx.beginPath(); fn(); ctx.stroke(); };
     switch (kind) {
       case 'mid': return dMouth(ctx, mx, my, 26, 26, false);
@@ -163,6 +182,8 @@
   }
 
   function hairBack(ctx, c, seed, sh) {
+    const hk = c.hair && T.HAIR_KINDS[c.hair];
+    if (hk) { if (hk.back) isolated(ctx, () => hk.back(ctx, c, seed, sh)); return; }
     const col = c.hairColor ?? P.hair, back = -sh * HW * 0.5;
     if (c.hair === 'long') T.outlined(ctx, (k) => { k.moveTo(-160 + back, -520); k.quadraticCurveTo(-225 + back, -380, -185 + back, -270); k.lineTo(sh > 0 ? -20 : 185, -270); k.quadraticCurveTo(sh > 0 ? 0 : 225, -380, 160, -520); k.closePath(); }, col);
     if (c.hair === 'curly') curls(ctx, col, seed, 150, 390, 13, 42, 6, back);
@@ -172,9 +193,17 @@
     }
   }
 
+  // Generic hair seen from behind: the whole head in hair colour with a soft highlight.
+  const hairBackView = (ctx, c) => {
+    const col = c.hairColor ?? P.hair;
+    T.outlined(ctx, headPath, col, { shade: (k) => { k.fillStyle = T.shade(col, 0.14); k.beginPath(); k.ellipse(-40, -560, 70, 30, -0.3, 0, Math.PI * 2); k.fill(); } });
+  };
+
   function hairFront(ctx, c, seed, sh, view) {
+    const hk = c.hair && T.HAIR_KINDS[c.hair];
+    if (hk && hk.front) { isolated(ctx, () => hk.front(ctx, c, seed, sh, view)); return; }
     const col = c.hairColor ?? P.hair, back = -sh * HW * 0.55;
-    if (view === 'back' && c.hair && c.hair !== 'bald') { T.outlined(ctx, headPath, col, { shade: (k) => { k.fillStyle = T.shade(col, 0.14); k.beginPath(); k.ellipse(-40, -560, 70, 30, -0.3, 0, Math.PI * 2); k.fill(); } }); return; }
+    if (view === 'back' && c.hair && c.hair !== 'bald') { hairBackView(ctx, c); return; }
     if (c.hair === 'curly') return curls(ctx, col, seed, 188 - sh * 40, 345 - sh * 70, 9, 46, -10, back * 0.6);
     if (c.hair === 'short' || c.hair === 'long' || c.hair === 'bun') {
       // Hair = top of the head + the BACK side down to ear level; zig-zag fringe stops at the face side (reference 3/4 heads).
@@ -202,9 +231,12 @@
   }
 
   function beard(ctx, c, fx, view) {
+    const bk = c.beard && T.BEARD_KINDS[c.beard];
+    if (bk) isolated(ctx, () => bk(ctx, c, fx, view));
     if (view === 'back') return;
     const col = c.beardColor ?? c.hairColor ?? P.hair, o = fx * 0.55;
-    if (c.beard === 'full') {
+    if (bk) { /* registry beard drawn above; only the mustache below still applies */ }
+    else if (c.beard === 'full') {
       // starts below the eye line (-458) so the eyes stay readable; mouth is drawn on top of it
       T.outlined(ctx, (k) => { k.moveTo(-148 + o * 0.2, -420); k.quadraticCurveTo(-150 + o, -310, -60 + o, -272); k.quadraticCurveTo(o, -236, 60 + o, -272); k.quadraticCurveTo(150 + o, -310, 148, -420); k.quadraticCurveTo(110 + o, -395, 60 + o, -404); k.quadraticCurveTo(o, -420, -60 + o, -404); k.quadraticCurveTo(-110 + o, -395, -148 + o * 0.2, -420); }, col,
         { shade: (k) => { k.fillStyle = T.shade(col, -0.2); k.beginPath(); k.ellipse(-120, -330, 80, 120, 0, 0, Math.PI * 2); k.fill(); } });
@@ -213,12 +245,12 @@
       const r = T.rng(77); ctx.fillStyle = T.shade(c.skin ?? P.skin, -0.38);
       for (let i = 0; i < 40; i++) { const a = Math.PI * (0.15 + r() * 0.7); ctx.fillRect(fx + Math.cos(a) * 110 * r(), -450 + Math.sin(a) * 130, 4, 4); }
     }
-    if (c.beard === 'long') {
+    if (!bk && c.beard === 'long') {
       const g = c.beardColor ?? '#d9d3c7';
       T.outlined(ctx, (k) => { k.moveTo(-140 + o * 0.2, -420); k.quadraticCurveTo(-150 + o, -260, o * 1.2, -150); k.quadraticCurveTo(150 + o, -260, 140, -420); k.quadraticCurveTo(o, -390, -140 + o * 0.2, -420); k.closePath(); }, g,
         { shade: (k) => { k.strokeStyle = T.shade(g, -0.2); k.lineWidth = 5; for (let i = -2; i <= 2; i++) { k.beginPath(); k.moveTo(o + i * 30, -380); k.quadraticCurveTo(o + i * 26, -280, o + i * 14, -190); k.stroke(); } } });
     }
-    if (c.beard === 'walrus') T.outlined(ctx, (k) => { k.moveTo(fx - 120, -350); k.quadraticCurveTo(fx - 90, -440, fx, -410); k.quadraticCurveTo(fx + 90, -440, fx + 120, -350); k.quadraticCurveTo(fx + 60, -390, fx, -380); k.quadraticCurveTo(fx - 60, -390, fx - 120, -350); k.closePath(); }, c.mustacheColor ?? col);
+    if (!bk && c.beard === 'walrus') T.outlined(ctx, (k) => { k.moveTo(fx - 120, -350); k.quadraticCurveTo(fx - 90, -440, fx, -410); k.quadraticCurveTo(fx + 90, -440, fx + 120, -350); k.quadraticCurveTo(fx + 60, -390, fx, -380); k.quadraticCurveTo(fx - 60, -390, fx - 120, -350); k.closePath(); }, c.mustacheColor ?? col);
     if (c.mustache) T.outlined(ctx, (k) => { k.moveTo(fx - 70, -398); k.quadraticCurveTo(fx - 10, -448, fx, -414); k.quadraticCurveTo(fx + 10, -448, fx + 70, -398); k.quadraticCurveTo(fx, -400, fx - 70, -398); }, c.mustacheColor ?? col);
   }
 
@@ -231,13 +263,13 @@
   // s: { view, expr, mouthKind (talk override), blink, gazeX, lt, seed }
   function draw(ctx, c, s) {
     const view = s.view, sh = VIEW_SHIFT[view] ?? 0.24, fx = sh * HW + (view === 'front' ? s.gazeX : s.gazeX * 0.4);
-    const e = EXPR[s.expr] || EXPR.neutral;
+    const e = exprOf(s.expr);
     if (c.headShape && T.drawAltHead && T.drawAltHead(ctx, c, s)) { headwear(ctx, c, s.lt, sh, view); return; }
     hairBack(ctx, c, s.seed, sh);
     if (c.flag && T.drawFlagHead) T.drawFlagHead(ctx, c, headPath, sh);
     else T.outlined(ctx, headPath, c.skin, {
       shade: (k) => {
-        k.fillStyle = c.skinShade ?? SHADOW;
+        k.fillStyle = c.skinShade ?? (c.skin && c.skin !== P.skin ? T.shade(c.skin, -0.22) : SHADOW); // darker skins get a matching shadow
         if (view === 'front') { k.beginPath(); k.ellipse(HW * 1.15, CY, HW * 0.55, 190, 0, 0, Math.PI * 2); k.fill(); }
         else { k.beginPath(); k.ellipse(-HW * (1.05 - sh * 0.4), CY + 10, HW * (0.7 + sh * 0.3), 200, 0, 0, Math.PI * 2); k.fill(); }
       },
@@ -249,22 +281,33 @@
       ctx.save(); ctx.translate(fx, 0);
       const sp = view === 'side' ? 0 : view === '3q' ? 40 : 52;
       const eyes = view === 'side' ? [[18, 1]] : [[-sp, -1], [sp, 1]];
-      const baseEyes = c.flag && c.flagEyes !== false && e.eyes === 'dot' ? 'flag' : e.eyes;
-      const ek = s.blink && !['wide', 'squint', 'x', 'arc', 'arcDown', 'spiral', 'slit'].includes(baseEyes) ? 'blink' : baseEyes;
-      eyes.forEach(([x, sg]) => eye(ctx, ek, x, -458, sg, s.lt));
-      brows(ctx, e.brows, eyes.map(([x, sg]) => [x, sg]), -508);
-      if (!(c.flag && c.flagMouth === false)) mouth(ctx, s.mouthKind || e.mouth, view === 'side' ? 26 : view === '3q' ? 10 : 0, -382);
+      const baseEyes = c.eyesOverride ? c.eyesOverride : c.flag && c.flagEyes !== false && e.eyes === 'dot' ? 'flag' : e.eyes;
+      const ek = s.blink && !T.NO_BLINK_EYES.includes(baseEyes) ? 'blink' : baseEyes;
+      const mx = view === 'side' ? 26 : view === '3q' ? 10 : 0;
+      const mk = s.mouthKind || c.mouthOverride || e.mouth;
+      const a = T.FACE_EXTRAS.length ? {
+        eyes: eyes.map(([x]) => [x, -458]), sides: eyes.map(([, sg]) => sg), mouth: [mx, -382], nose: [mx + (view === 'side' ? 30 : 0), -420],
+        view, HW, CY, fx, e, eyeKind: ek, mouthKind: mk,
+      } : null;
+      const extrasPass = (before) => { for (const fn of T.FACE_EXTRAS) if (!!fn.before === before) isolated(ctx, () => fn(ctx, c, s, a)); };
+      if (a) extrasPass(true);
+      const es = c.eyeScale && c.eyeScale !== 1 ? c.eyeScale : 0; // child builds: bigger eyes, same spacing
+      eyes.forEach(([x, sg]) => { if (!es) return eye(ctx, ek, x, -458, sg, s.lt, c); isolated(ctx, () => { ctx.translate(x, -458); ctx.scale(es, es); eye(ctx, ek, 0, 0, sg, s.lt, c); }); });
+      brows(ctx, e.brows, eyes.map(([x, sg]) => [x, sg]), -508, s.lt, c);
+      if (!(c.flag && c.flagMouth === false)) mouth(ctx, mk, mx, -382, s.lt, c, view);
       if (c.blush) { ctx.fillStyle = 'rgba(230,120,120,0.35)'; eyes.forEach(([x]) => { ctx.beginPath(); ctx.ellipse(x * 1.8, -410, 26, 14, 0, 0, Math.PI * 2); ctx.fill(); }); }
+      if (a) extrasPass(false);
       ctx.restore();
       extras(ctx, e, fx, s.lt);
     }
     hairFront(ctx, c, s.seed, sh, view);
     headwear(ctx, c, s.lt, sh, view);
+    for (const fn of T.HEAD_EXTRAS) isolated(ctx, () => fn(ctx, c, s, { view, sh, fx, HW, CY }));
   }
 
   // Talking mouth: changes every ~3 frames (10 Hz), never the same shape twice in a row (reference: 2–3 shapes on 2s/3s).
   function talkMouth(expr, lt, seed) {
-    const set = (EXPR[expr] || EXPR.neutral).talk;
+    const set = exprOf(expr).talk || EXPR.neutral.talk;
     const step = Math.floor(lt * 10);
     const r = T.rng(T.hash(seed + 'tm' + step))();
     const prev = Math.floor(T.rng(T.hash(seed + 'tm' + (step - 1)))() * set.length);
@@ -273,5 +316,6 @@
     return set[i];
   }
 
-  T.BEAN_HEAD = { draw, talkMouth, headPath, HW, CY };
+  // eye / mouth expose every kind (built-in + registry) so other modules (mini faces, props) can reuse them.
+  T.BEAN_HEAD = { draw, talkMouth, headPath, headPathS, HW, CY, eye, mouth, hairBackView, hairBack, hairFront };
 })();

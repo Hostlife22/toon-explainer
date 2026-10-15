@@ -23,6 +23,25 @@
   const bbox = (pts) => { const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]); return { w: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) }; };
   T.mapGeom = { centroid, bbox };
 
+  // ---------- v4 hooks (read at draw time, so later modules can register) ----------
+  // Overlay draw order; packages push new names (each needs T.MAP_OVERLAYS[name](ctx, data, g, lt) and L[name] set).
+  T.MAP_OVERLAY_ORDER = T.MAP_OVERLAY_ORDER || ['rivers', 'wall', 'fronts', 'routes', 'cities', 'crosses', 'armies', 'tokens', 'punch', 'pencil', 'pins', 'yearLabel'];
+  // fn(ctx, R, g, lt, drawDefault) -> truthy when it fully handled the region (the default draw is then skipped).
+  T.MAP_REGION_HOOKS = T.MAP_REGION_HOOKS || [];
+  // L.view -> { begin(ctx, L, g, lt) -> drawCtx?, end(ctx, L, g, lt, drawCtx), project(px, py, g, lt, x, y) -> [px, py, s] }
+  T.MAP_VIEWS = T.MAP_VIEWS || {};
+
+  // Region colour after recolor (and blended toward the conquering colour as the conquest progresses).
+  function regionColor(R, g, lt) {
+    let col = R.color ?? P.red;
+    if (R.recolor) { const q = T.prog(lt, R.recolor.at ?? 1, R.recolor.dur ?? 0.8); if (q > 0) col = T.mix(col, R.recolor.color, q); }
+    if (R.conquer) {
+      const c = R.conquer, q = T.ease.inOut(T.prog(lt, c.at ?? 1, c.dur ?? 0.8));
+      if (q > 0) { const att = g.byId[c.by]; col = T.mix(col, att ? att.color ?? P.red : c.by ?? c.color ?? P.red, q); }
+    }
+    return col;
+  }
+
   // ---------- region face: { mood, at, accessory:'sunglasses'|'crown'|'tear'|'bandage' } ----------
   function regionFace(ctx, cx, cy, s, F, lt) {
     const q = T.ease.outBack(T.prog(lt, F.at ?? 0, 0.25));
@@ -30,7 +49,7 @@
     const mood = T.timed(F.mood ?? 'neutral', lt).cur;
     ctx.save(); ctx.translate(cx, cy); ctx.scale(q * s / 100, q * s / 100);
     ctx.strokeStyle = P.ink; ctx.fillStyle = P.ink; ctx.lineWidth = 12; ctx.lineCap = 'round';
-    const blink = (lt + cx * 0.01) % 3.3 < 0.1;
+    const blink = (((lt + cx * 0.01) % 3.3) + 3.3) % 3.3 < 0.1; // regions left of the origin have negative cx
     for (const d of [-1, 1]) {
       const ex = d * 42;
       if (blink || mood === 'sleepy') { ctx.beginPath(); ctx.moveTo(ex - 16, 0); ctx.lineTo(ex + 16, 0); ctx.stroke(); }
@@ -38,8 +57,8 @@
       else if (mood === 'strain') { ctx.beginPath(); ctx.moveTo(ex - d * 16, -14); ctx.lineTo(ex + d * 12, 0); ctx.lineTo(ex - d * 16, 14); ctx.stroke(); }
       else if (mood === 'shock') { T.outlined(ctx, (k) => k.arc(ex, 0, 20, 0, Math.PI * 2), '#fff', { line: 7 }); ctx.fillStyle = P.ink; ctx.beginPath(); ctx.arc(ex, 0, 6, 0, Math.PI * 2); ctx.fill(); }
       else { ctx.beginPath(); ctx.ellipse(ex, 0, 9, 15, 0, 0, Math.PI * 2); ctx.fill(); }
-      if (mood === 'angry') { ctx.beginPath(); ctx.moveTo(ex - d * 22, -38); ctx.lineTo(ex + d * 22, -24); ctx.stroke(); }
-      if (mood === 'sad' || mood === 'cry' || mood === 'worried') { ctx.beginPath(); ctx.moveTo(ex - d * 22, -24); ctx.lineTo(ex + d * 22, -38); ctx.stroke(); }
+      if (mood === 'angry') { ctx.beginPath(); ctx.moveTo(ex - d * 22, -24); ctx.lineTo(ex + d * 22, -38); ctx.stroke(); } // inner end low
+      if (mood === 'sad' || mood === 'cry' || mood === 'worried') { ctx.beginPath(); ctx.moveTo(ex - d * 22, -38); ctx.lineTo(ex + d * 22, -24); ctx.stroke(); } // inner end high
     }
     ctx.beginPath();
     if (mood === 'happy') { ctx.moveTo(-26, 34); ctx.quadraticCurveTo(0, 62, 26, 34); }
@@ -93,7 +112,15 @@
     }
   }
 
-  function drawRegion(ctx, R, g, lt) {
+  function drawRegion(ctx, R, g, lt, ov) {
+    if (ov && (ov.offset || ov.alpha != null)) {
+      ctx.save();
+      if (ov.offset) ctx.translate(ov.offset[0], ov.offset[1]);
+      if (ov.alpha != null) ctx.globalAlpha *= ov.alpha;
+      drawRegion(ctx, R, g, lt, ov.fill != null ? { fill: ov.fill } : null);
+      ctx.restore();
+      return;
+    }
     const { X, Y, st, byId } = g;
     const grow = T.ease.outCubic(T.prog(lt, R.at ?? 0, R.dur ?? 1.2));
     const fade = R.out != null ? 1 - T.prog(lt, R.out, R.outDur ?? 0.5) : 1;
@@ -103,8 +130,9 @@
     const rad = Math.max(...pts.map(([x, y]) => Math.hypot(x - cx, y - cy))) * 1.05;
     let col = R.color ?? P.red;
     if (R.recolor) { const q = T.prog(lt, R.recolor.at ?? 1, R.recolor.dur ?? 0.8); if (q > 0) col = T.mix(col, R.recolor.color, q); }
-    const neutral = R.halftone;
-    const slab = (fill, line = st.border) => {
+    if (ov && ov.fill != null) col = ov.fill;
+    const neutral = R.halftone && !(ov && ov.fill != null) && !(R.recolor && lt >= (R.recolor.at ?? 1));
+    const slab = (fill, line = st.border, neutral = false) => {
       ctx.save(); ctx.translate(0, st.extrude + 2); T.outlined(ctx, (k) => T.smoothPath(k, pts), T.shade(neutral ? st.land : fill, -0.42), { line: 0 }); ctx.restore();
       T.outlined(ctx, (k) => T.smoothPath(k, pts), neutral ? st.land : fill, {
         line, ink: R.border ?? R.ink ?? (g.style === 'atlas' ? '#2a1c15' : T.shade(fill, -0.55)),
@@ -117,7 +145,7 @@
     ctx.save(); ctx.globalAlpha *= fade;
     ctx.save(); ctx.beginPath(); const from = R.from ? [X(R.from[0]), Y(R.from[1])] : [cx, cy];
     ctx.arc(from[0], from[1], (R.from ? rad * 2.2 : rad) * grow, 0, Math.PI * 2); ctx.clip();
-    slab(col, R.borderWidth ?? st.border);
+    slab(col, R.borderWidth ?? st.border, neutral);
     // conquest: attacker colour floods in from the attacker's centroid (or `from`)
     if (R.conquer) {
       const c = R.conquer, q = T.ease.inOut(T.prog(lt, c.at ?? 1, c.dur ?? 0.8));
@@ -151,6 +179,8 @@
   // ---------- the layer ----------
   // { style:'parchment'|'atlas', image?, w, h, sea, coast, landColor, land:[[cx,cy,rx,ry]], regions:[...], desaturate:{at,dur}, ... overlays }
   T.layers.map = (ctx, L, lt, env) => {
+    // regions[].blob: [cx, cy, rx, ry] (map fractions) is shorthand for a seeded lumpy polygon when pts is omitted
+    if ((L.regions || []).some((R) => R.blob && !R.pts)) L = { ...L, regions: L.regions.map((R, i) => (R.blob && !R.pts ? { ...R, pts: T.blobPts(R.blob[0], R.blob[1], R.blob[2], R.blob[3], (L.id ?? 'map') + ':' + (R.id ?? i), R.blobPoints ?? 16, R.jag ?? 0.16) } : R)) };
     const style = L.style === 'atlas' ? 'atlas' : 'parchment', st = { ...STYLE[style] };
     if (L.extrude != null) st.extrude = L.extrude;
     const mw = (L.w ?? 1.1) * W, mh = (L.h ?? 1.1) * H;
@@ -158,6 +188,33 @@
     const byId = {};
     for (const R of L.regions || []) if (R.id) byId[R.id] = R;
     const g = { X, Y, mw, mh, st, style, byId, env, L };
+    const view = L.view ? T.MAP_VIEWS[L.view] : null;
+    if (L.view && !view) throw new Error(`Unknown map view "${L.view}"`);
+    let dc = ctx;
+    // geometry helpers for hooks, views and overlays (pixel space of the flat map, centred on the layer origin)
+    g.view = view; g.outer = ctx;
+    g.pts = (R) => R.pts.map(([x, y]) => [X(x), Y(y)]);
+    g.centroid = (R) => centroid(g.pts(R));
+    g.bbox = (R) => { const p = g.pts(R), xs = p.map((q) => q[0]), ys = p.map((q) => q[1]), x0 = Math.min(...xs), y0 = Math.min(...ys); return { x: x0, y: y0, w: Math.max(...xs) - x0, h: Math.max(...ys) - y0 }; };
+    g.color = (R, t = lt) => regionColor(R, g, t);
+    g.drawRegion = (R, overrides, c2) => {
+      const { offset, alpha, fill, ...rest } = overrides || {};
+      const R2 = Object.keys(rest).length ? { ...R, ...rest } : R;
+      drawRegion(c2 || dc, R2, g, lt, offset || alpha != null || fill != null ? { offset, alpha, fill } : null);
+    };
+    g.project = (x, y) => (view && view.project ? view.project(X(x), Y(y), g, lt, x, y) : [X(x), Y(y), 1]);
+    if (view && view.begin) dc = view.begin(ctx, L, g, lt) || ctx;
+    g.ctx = dc;
+    mapBody(dc, L, lt, env, g, view);
+    if (view && view.end) view.end(ctx, L, g, lt, dc);
+    if (view) {
+      const ovs = T.MAP_OVERLAYS || {};
+      for (const name of T.MAP_OVERLAY_ORDER) if (L[name] != null && ovs[name] && ovs[name].upright) ovs[name](ctx, L[name], g, lt);
+    }
+  };
+  // Sea, land, regions, overlays and desaturate in the flat map space (wrapped by a view's begin/end when L.view is set).
+  function mapBody(ctx, L, lt, env, g, view) {
+    const { X, Y, mw, mh, st, style } = g;
     if (L.image) ctx.drawImage(T.img(L.image), -mw / 2, -mh / 2, mw, mh);
     else {
       ctx.fillStyle = L.sea ?? st.sea; ctx.fillRect(-mw / 2, -mh / 2, mw, mh);
@@ -175,13 +232,20 @@
       });
     }
     const ov = T.MAP_OVERLAYS || {};
-    for (const R of L.regions || []) drawRegion(ctx, R, g, lt);
-    for (const name of ['rivers', 'wall', 'fronts', 'routes', 'cities', 'crosses', 'armies', 'tokens', 'punch', 'pencil', 'pins', 'yearLabel']) {
-      if (L[name] != null && ov[name]) ov[name](ctx, L[name], g, lt);
+    const hooks = T.MAP_REGION_HOOKS;
+    for (const R of L.regions || []) {
+      const drawDefault = (overrides) => g.drawRegion(R, overrides, ctx);
+      let handled = false;
+      for (const hook of hooks) { if (hook(ctx, R, g, lt, drawDefault)) { handled = true; break; } }
+      if (!handled) drawRegion(ctx, R, g, lt);
+    }
+    for (const name of T.MAP_OVERLAY_ORDER) {
+      // with a view, upright overlays are drawn after view.end on the outer canvas (they place things with g.project)
+      if (L[name] != null && ov[name] && !(view && ov[name].upright)) ov[name](ctx, L[name], g, lt);
     }
     if (L.desaturate) {
       const q = T.prog(lt, L.desaturate.at ?? 0, L.desaturate.dur ?? 0.5);
       if (q > 0) { ctx.save(); ctx.globalCompositeOperation = 'saturation'; ctx.globalAlpha *= q * (L.desaturate.strength ?? 1); ctx.fillStyle = '#808080'; ctx.fillRect(-mw / 2, -mh / 2, mw, mh); ctx.restore(); }
     }
-  };
+  }
 })();

@@ -1,0 +1,9 @@
+{
+  "_doc": "acting.js (v4 ACT): off-screen arm layer (kind = arm style, registry TOON.ARMS), gag fx, the prohibit prop and measured entrances / exits registered in TOON.ENTERS.",
+  "layers": ["arm"],
+  "fx": ["poof", "hat", "marks", "sweat-spray", "tear-stream", "prohibit"],
+  "props": ["prohibit"],
+  "enter": ["tumble", "zip", "ground", "peek", "stretch", "spit", "silhouette-in", "pivot-fall"],
+  "kinds": {"arm": ["rubber", "hand", "glove-spring", "glove-piston", "foot", "hook"]},
+  "registry": {"arm": "TOON.ARMS"}
+}
