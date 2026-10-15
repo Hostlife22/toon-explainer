@@ -1,0 +1,808 @@
+{
+ "title": "Why Printing Money Raises Prices",
+ "seed": 23,
+ "fps": 30,
+ "cast": {
+  "baker": {
+   "outfit": "overalls",
+   "head": "chef-hat",
+   "build": "fat",
+   "beard": "walrus",
+   "hairColor": "#5a3a22"
+  },
+  "king": {
+   "outfit": "robe-royal",
+   "head": "crown",
+   "beard": "full",
+   "beardColor": "#d8d0c0"
+  },
+  "citizen": {
+   "outfit": "tunic",
+   "hair": "short"
+  }
+ },
+ "overlays": [
+  {
+   "from": 0.6,
+   "to": 30.0,
+   "layer": {
+    "type": "hud",
+    "kind": "counter",
+    "icon": "bread",
+    "prefix": "= ",
+    "suffix": "",
+    "size": 110,
+    "value": [
+     {
+      "at": 0,
+      "v": 1
+     },
+     {
+      "at": 16.6,
+      "v": 2
+     },
+     {
+      "at": 20.2,
+      "v": 4
+     },
+     {
+      "at": 23.4,
+      "v": 8
+     },
+     {
+      "at": 27.6,
+      "v": 100
+     }
+    ],
+    "x": 0.82,
+    "y": 0.1
+   }
+  }
+ ],
+ "shots": [
+  {
+   "id": "m01",
+   "dur": 2.8,
+   "vo": "In a small town, a loaf of bread costs one coin.",
+   "screen": "the baker holds a loaf by his signpost; the price counter appears top left",
+   "bg": {
+    "kind": "city",
+    "style": "wood",
+    "preset": "day"
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "signpost",
+     "text": "BREAD: 1 COIN",
+     "x": 0.7,
+     "y": 0.9,
+     "size": 420,
+     "arrow": false
+    },
+    {
+     "type": "bean",
+     "id": "baker",
+     "who": "baker",
+     "x": 0.42,
+     "y": 0.97,
+     "size": 560,
+     "hold": "bread",
+     "pose": "hold-high",
+     "expr": "happy"
+    },
+    {
+     "type": "label",
+     "tag": "TOWN",
+     "text": "THE BAKER",
+     "x": 0.2,
+     "y": 0.4,
+     "size": 72,
+     "at": 0.8,
+     "arrow": "down-right"
+    },
+    {
+     "type": "fg",
+     "kind": "grass"
+    }
+   ]
+  },
+  {
+   "id": "m02",
+   "dur": 3.0,
+   "vo": "The king needs money for a war.",
+   "screen": "the king clutches his head in the palace; label WAR COSTS",
+   "bg": {
+    "kind": "palace",
+    "variant": "ochre"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "king",
+     "who": "king",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 600,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 1.0,
+       "v": "worried"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 1.0,
+       "v": "clutch-head"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "sweat-spray",
+     "target": "king",
+     "at": 1.1
+    },
+    {
+     "type": "label",
+     "text": "WAR COSTS",
+     "x": 0.78,
+     "y": 0.3,
+     "size": 80,
+     "color": "#ff6b6b",
+     "at": 1.0
+    }
+   ]
+  },
+  {
+   "id": "m03",
+   "dur": 3.2,
+   "vo": "So he simply prints more coins.",
+   "screen": "same palace; a coin heap drops in after its shadow grows; paper money swirls; the king cheers",
+   "bg": {
+    "kind": "palace",
+    "variant": "ochre"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 1.15,
+      "amount": 0.12
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "paperstorm",
+     "at": 1.2
+    },
+    {
+     "type": "prop",
+     "kind": "coin-heap",
+     "x": 0.72,
+     "y": 0.92,
+     "size": 360,
+     "enter": "drop-squash",
+     "at": 1.0,
+     "dropShadow": 0.33
+    },
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.42,
+     "y": 0.97,
+     "size": 600,
+     "expr": [
+      {
+       "at": 0,
+       "v": "smug"
+      },
+      {
+       "at": 1.15,
+       "v": "happy"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "rub-hands"
+      },
+      {
+       "at": 1.15,
+       "v": "arms-up"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "m04",
+   "dur": 3.4,
+   "vo": "Now everyone has twice as many coins.",
+   "screen": "a cheering crowd waving coins; label 2x COINS",
+   "bg": {
+    "kind": "city",
+    "style": "wood",
+    "preset": "day"
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "who": "citizen",
+     "count": 7,
+     "rows": 2,
+     "x": 0.5,
+     "y": 0.98,
+     "size": 360,
+     "armsUp": true,
+     "expr": "happy",
+     "flipAlt": true,
+     "hold": "coin"
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "spin": true,
+     "x": 0.3,
+     "y": 0.42,
+     "size": 90,
+     "enter": "pop",
+     "at": 0.5
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "spin": true,
+     "x": 0.5,
+     "y": 0.42,
+     "size": 90,
+     "enter": "pop",
+     "at": 0.65
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "spin": true,
+     "x": 0.7,
+     "y": 0.42,
+     "size": 90,
+     "enter": "pop",
+     "at": 0.8
+    },
+    {
+     "type": "fx",
+     "kind": "confetti",
+     "at": 0.6
+    },
+    {
+     "type": "label",
+     "text": "2× COINS",
+     "x": 0.5,
+     "y": 0.22,
+     "size": 110,
+     "color": "#ffe066",
+     "at": 0.9
+    }
+   ]
+  },
+  {
+   "id": "m05",
+   "dur": 3.6,
+   "vo": "But the town still bakes the same number of loaves.",
+   "screen": "the bakery again, the same framing as m01 (callback composition); label SAME BREAD",
+   "bg": {
+    "kind": "city",
+    "style": "wood",
+    "preset": "day"
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "signpost",
+     "text": "BREAD: 1 COIN",
+     "x": 0.7,
+     "y": 0.9,
+     "size": 420,
+     "arrow": false
+    },
+    {
+     "type": "bean",
+     "who": "baker",
+     "x": 0.42,
+     "y": 0.97,
+     "size": 560,
+     "hold": "bread",
+     "pose": "hold-high",
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 1.6,
+       "v": "side-eye"
+      }
+     ]
+    },
+    {
+     "type": "label",
+     "text": "SAME BREAD",
+     "x": 0.2,
+     "y": 0.4,
+     "size": 80,
+     "at": 1.4
+    },
+    {
+     "type": "fg",
+     "kind": "grass"
+    }
+   ]
+  },
+  {
+   "id": "m06",
+   "dur": 3.0,
+   "vo": "So the baker does the obvious thing.",
+   "screen": "the baker smirks; the signpost turns to 2 COINS and the counter jumps on the same frame",
+   "bg": {
+    "kind": "city",
+    "style": "wood",
+    "preset": "day"
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.1
+    ],
+    "punch": [
+     {
+      "at": 1.2,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "signpost",
+     "text": "BREAD: 1 COIN",
+     "x": 0.7,
+     "y": 0.9,
+     "size": 420,
+     "arrow": false,
+     "turn": {
+      "at": 0.43,
+      "text": "BREAD: 2 COINS"
+     }
+    },
+    {
+     "type": "bean",
+     "id": "baker6",
+     "who": "baker",
+     "x": 0.42,
+     "y": 0.97,
+     "size": 560,
+     "hold": "bread",
+     "expr": "smug-closed",
+     "pose": [
+      {
+       "at": 0,
+       "v": "hold"
+      },
+      {
+       "at": 1.2,
+       "v": "point"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "target": "baker6",
+     "mark": "ticks",
+     "at": 0.6
+    },
+    {
+     "type": "fg",
+     "kind": "grass"
+    }
+   ]
+  },
+  {
+   "id": "m07",
+   "dur": 3.6,
+   "vo": "The king prints more. The price doubles again.",
+   "screen": "the palace again, a bigger heap; the counter jumps to 4 with a punch",
+   "bg": {
+    "kind": "palace",
+    "variant": "ochre"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 1.8,
+      "amount": 0.14
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "paperstorm",
+     "at": 0.6
+    },
+    {
+     "type": "prop",
+     "kind": "coin-heap",
+     "x": 0.72,
+     "y": 0.92,
+     "size": 360,
+     "scale": 1.6,
+     "enter": "drop-squash",
+     "at": 0.5,
+     "dropShadow": 0.25
+    },
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.4,
+     "y": 0.97,
+     "size": 600,
+     "expr": "happy",
+     "pose": "arms-up"
+    }
+   ]
+  },
+  {
+   "id": "m08",
+   "dur": 3.4,
+   "vo": "And again.",
+   "screen": "the heap is huge and buries the king to his chin; the counter jumps to 8",
+   "bg": {
+    "kind": "palace",
+    "variant": "ochre"
+   },
+   "camera": {
+    "zoom": [
+     1.06,
+     1.12
+    ],
+    "punch": [
+     {
+      "at": 1.4,
+      "amount": 0.16
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "paperstorm",
+     "at": 0.6
+    },
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 600,
+     "expr": [
+      {
+       "at": 0,
+       "v": "happy"
+      },
+      {
+       "at": 1.2,
+       "v": "shock"
+      }
+     ],
+     "pose": "hands-up"
+    },
+    {
+     "type": "prop",
+     "kind": "coin-heap",
+     "x": 0.5,
+     "y": 1.02,
+     "size": 900,
+     "count": 60,
+     "enter": "rise",
+     "at": 0.6,
+     "enterDur": 0.6
+    }
+   ]
+  },
+  {
+   "id": "m09",
+   "dur": 4.0,
+   "vo": "Soon it takes a cart full of coins to buy one loaf.",
+   "screen": "a citizen pushes a cart heaped with coins to the baker and walks away with one tiny loaf; the counter jumps to 100",
+   "bg": {
+    "kind": "city",
+    "style": "wood",
+    "preset": "sunset"
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "signpost",
+     "text": "BREAD: 100 COINS",
+     "x": 0.82,
+     "y": 0.9,
+     "size": 380,
+     "arrow": false
+    },
+    {
+     "type": "bean",
+     "who": "baker",
+     "x": 0.66,
+     "y": 0.97,
+     "size": 520,
+     "flip": true,
+     "expr": "smug-closed",
+     "pose": [
+      {
+       "at": 0,
+       "v": "cross"
+      },
+      {
+       "at": 2.2,
+       "v": "offer"
+      }
+     ],
+     "hold": "bread",
+     "holdSize": 0.12,
+     "swap": [
+      {
+       "at": 2.7,
+       "hold": null
+      }
+     ]
+    },
+    {
+     "type": "vehicle",
+     "kind": "cart",
+     "x": 0.12,
+     "y": 0.95,
+     "size": 380,
+     "move": [
+      {
+       "at": 0,
+       "dur": 1.6,
+       "to": [
+        0.36,
+        0.95
+       ],
+       "ease": "out"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "coin-heap",
+     "x": 0.12,
+     "y": 0.8,
+     "size": 230,
+     "count": 40,
+     "move": [
+      {
+       "at": 0,
+       "dur": 1.6,
+       "to": [
+        0.36,
+        0.8
+       ],
+       "ease": "out"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "citizen",
+     "x": 0.0,
+     "y": 0.97,
+     "size": 460,
+     "pose": "shove",
+     "expr": "squeeze",
+     "move": [
+      {
+       "at": 0,
+       "dur": 1.6,
+       "to": [
+        0.22,
+        0.97
+       ],
+       "ease": "out"
+      }
+     ],
+     "swap": [
+      {
+       "at": 2.7,
+       "expr": "sad",
+       "pose": "hold",
+       "hold": "bread",
+       "holdSize": 0.12
+      }
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "grass"
+    }
+   ]
+  },
+  {
+   "id": "m10",
+   "dur": 4.2,
+   "vo": "The coins multiplied. The bread did not.",
+   "screen": "a bar chart of coins per loaf: 1, 2, 4, 8, then 100; under it five identical loaves pop in",
+   "transition": "whip",
+   "bg": {
+    "kind": "parchment"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "chart",
+     "chart": "bar",
+     "values": [
+      1,
+      2,
+      4,
+      8,
+      100
+     ],
+     "labels": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+     ],
+     "yLabel": "COINS PER LOAF",
+     "x": 0.5,
+     "y": 0.42,
+     "w": 1100,
+     "h": 600,
+     "dur": 2.4,
+     "callouts": [
+      {
+       "i": 4,
+       "text": "100 COINS"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "bread",
+     "x": 0.3,
+     "y": 0.9,
+     "size": 110,
+     "enter": "pop",
+     "at": 0.4
+    },
+    {
+     "type": "prop",
+     "kind": "bread",
+     "x": 0.4,
+     "y": 0.9,
+     "size": 110,
+     "enter": "pop",
+     "at": 0.75
+    },
+    {
+     "type": "prop",
+     "kind": "bread",
+     "x": 0.5,
+     "y": 0.9,
+     "size": 110,
+     "enter": "pop",
+     "at": 1.1
+    },
+    {
+     "type": "prop",
+     "kind": "bread",
+     "x": 0.6,
+     "y": 0.9,
+     "size": 110,
+     "enter": "pop",
+     "at": 1.4499999999999997
+    },
+    {
+     "type": "prop",
+     "kind": "bread",
+     "x": 0.7,
+     "y": 0.9,
+     "size": 110,
+     "enter": "pop",
+     "at": 1.7999999999999998
+    },
+    {
+     "type": "label",
+     "text": "SAME LOAF EVERY TIME",
+     "x": 0.5,
+     "y": 0.8,
+     "size": 56,
+     "at": 2.4
+    }
+   ]
+  },
+  {
+   "id": "m11",
+   "dur": 4.0,
+   "vo": "Money isn't wealth. It's a ticket for a share of the bread.",
+   "screen": "a gold burst; the crowned loaf flexes; a title",
+   "transition": {
+    "kind": "zoom-punch"
+   },
+   "bg": {
+    "kind": "mood",
+    "variant": "rays",
+    "preset": "gold"
+   },
+   "layers": [
+    {
+     "type": "obj",
+     "size": 420,
+     "x": 0.5,
+     "y": 0.78,
+     "face": {
+      "mood": "smug",
+      "scale": 1.5
+     },
+     "arms": {
+      "pose": [
+       {
+        "at": 0,
+        "v": "idle"
+       },
+       {
+        "at": 1.0,
+        "v": "flex"
+       }
+      ],
+      "sprout": true
+     },
+     "head": "crown",
+     "shape": "blob",
+     "color": "#c8873a"
+    },
+    {
+     "type": "fx",
+     "kind": "sparkle",
+     "at": 1.0
+    },
+    {
+     "type": "title",
+     "text": "MONEY = TICKETS",
+     "sub": "FOR A SHARE OF THE BREAD",
+     "x": 0.5,
+     "y": 0.18,
+     "size": 110,
+     "at": 1.6
+    }
+   ]
+  }
+ ]
+}

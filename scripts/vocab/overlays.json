@@ -1,0 +1,11 @@
+{
+  "_doc": "overlays-fx.js: cracked glass (crack), petrify, the hatch net; places-grid.js: the grid void background. Guide: references/toolkits/08_fx_and_tone.md, 04_places.md.",
+  "fx": [
+    "crack",
+    "hatch",
+    "petrify"
+  ],
+  "bgs": [
+    "grid"
+  ]
+}

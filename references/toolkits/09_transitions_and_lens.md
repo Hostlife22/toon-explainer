@@ -33,6 +33,13 @@ Related cards: [08_fx_and_tone.md](08_fx_and_tone.md) (grades, horror beats), [0
 | "On TV he said..." | `screen-dive` from a `panel` TV |
 | "He was coming", "meanwhile", moving between places | `fg-pass` |
 | "A new era / dynasty began", chapter starts | `spin-zoom` |
+| Vertical short: the default jump between two steps, locked on one subject | `swirl` (`at` the shared subject) |
+| An explosion or a "glitch" cut, a game-like reset, a censored moment | `pixelate` |
+| "It burned down", a letter or banner burns away to reveal the next scene | `burn` (`from` bottom / top / left / right) |
+| Bats, birds or a swarm sweep the scene away; "night fell", "the plague spread" | `swarm` (`creature` bat / bird) |
+| A hard reset of the picture, "everything collapsed into one line", then a fast arrival on a map | `squeeze` |
+| An inset (a locator badge, a photo, a screen) grows to become the next scene, or the scene shrinks into one | `carry` (`from` and `to` rects) |
+| Going up to the surface or a rooftop / down a well, "meanwhile, below" | `whip` with `dir: "down"` (picture moves down = camera rises) / `"up"` |
 | "Into the darkness", "walking into the dark" | `glow-open` (`push`) |
 | "Alone", "it all went dark", dread | `vignette-close` |
 | Back from a memory to the present | `sepia-to-color` after a `sepia` grade |
@@ -42,6 +49,8 @@ Related cards: [08_fx_and_tone.md](08_fx_and_tone.md) (grades, horror beats), [0
 | "It was a mess" (recap) | `panel` `grid` with frozen frames |
 | "The news reached..." | `panel` `pip` over the reporter |
 | "Later it became famous" / "everyone watched it on TV / phone" | `panel` `frame` gilt / tv / phone |
+| A photo held up to compare two people; "that's all history now" (the ending of a short) | `panel` `frame` `photo` with a frozen `t`, plus `grade: "mono"` |
+| A cropped map needs a whole-country locator | `panel` `frame` `circle` in a corner |
 | "They were watching", "spies reported" | `fg` `binoculars`, `spyglass` |
 | "He saw it coming" (reverse view) | `binoculars` with `reflect` |
 | "Waking up in...", fainting | `fg` `eye-pov` (`wake`, `blink`, `bloom`) |
@@ -85,7 +94,13 @@ below. A transition on the first shot is ignored. Lens kinds that draw seeded sh
 | `fade-white` | 0.4 | Through a warm white (#fffaf0) peak at the midpoint, switching shots there |
 | `fade-black` | 0.5 | Through black, switching at the midpoint |
 | `zoom-punch` | 0.3 | A zooms to 1.9× under a rising white wash, B lands from 1.25× to 1 as the wash clears |
-| `whip` | 0.3 | Horizontal whip pan: five 30 % ghost copies of A slide out while B slides in |
+| `whip` | 0.3 | `dir` `left` (default: the picture travels left), `right`, `up`, `down`. Five 30 % ghost copies of A slide out while B slides in. In vertical films a horizontal whip travels the strip width |
+| `pixelate` | 0.4 | `block` 48 (peak block size, logical px), `flash` 0.25 | A breaks into growing square blocks (nearest-neighbour), with a white lift at the peak; B resolves out of the same blocks. Seen as the mosaic explosion cut of two shorts (Zeppelin, beer flood) and a pixel censor in the dynasty survey |
+| `burn` | 0.9 | `from` `bottom` (`top`, `left`, `right`), `char` #2a1408, `flames` true, `seed` | A ragged edge re-seeded on twos crosses the frame; A survives on the unburnt side, a charred band with an orange glow and flame tongues (every second edge point) runs along the edge, B is uncovered behind it. Reference: fire rises from the bottom and burns a banner away (French short 1:02), a fire-smoke wipe (dynasty survey 21:56) |
+| `swarm` | 1.2 | `creature` `bat` (`bird`), `count` 120, `color` #120c09, `dir` 1 (−1 right to left), `seed` | Seeded flyers (wings on twos, 140–340 px) cross on their own lanes; the dense middle closes the frame completely around 40 % (the cut happens under it) and the stragglers thin out over B. Reference: bats fill the frame over ~12 f, black ~3 f, thin out over ~20 f (horror biography 2:06); a raven wipe (~25 f) |
+| `squeeze` | 0.5 | `axis` `horizontal` (`vertical`), `color` #fffaf0 | A collapses into a bright line over the first 45 % (with a slight stretch), then B pulls back from 2× and a 14-px blur to sharp. Reference: a horizontal squeeze to a line, then a blurred pull-back onto the map (zombie-child short) |
+| `carry` | 0.5 | `from` [x, y, w, h] (rect of A, fractions of the visible frame, i.e. of the strip in a vertical film; default the centre third), `to` [x, y, w, h] (rect of B; default `from`), `round` false, `rim` #f7f3ea | First half: the `from` window of A grows (zooming its content) to fill the frame while the rest dims; second half: B starts zoomed so its `to` window fills the frame and shrinks back into place. A white rim with an ink edge marks the window until it fills the frame. Reference: a round locator badge zooms up to fill the frame and lands as the badge of the next scene (US-borders short 0:02, ~14 f) |
+| `swirl` | 0.4 | `at` [0.5, 0.5] (the shared pivot), `turns` 0.75, `dir` 1 (−1 reverses). A spins clockwise and zooms into `at` with trailing motion copies and a blurred zoomed copy behind; past the middle (a brief white lift) B unspins out of the same point. Measured in the shorts: 9–12 frames (3 twirl, 5 vortex, 2 untwirl) |
 | `iris` | 0.5 | A circle opens on B from the frame centre (no params) |
 
 ### Comic and horror transitions (`tone.js`)
@@ -114,7 +129,7 @@ below. A transition on the first shot is ignored. Lens kinds that draw seeded sh
 | `bubble-wipe` | 0.5 | `count` 90 (10-300), `color` #dff4fb | Outlined bubbles rise fast over a pale wash; switch at peak coverage (50 %) |
 | `portal` | 1.4 | `frame` [x, y, w, h] (fractions of A, default [0.35, 0.2, 0.3, 0.45]), `peek` (cast name), `peekExpr` shock, `flash` 1 (0-2 frames), `hole` 1.35 | Zoom-punch into `frame` until its picture fills the screen (8 frames, zoom blur on the last), `flash` white frames, then B opens under a fading white wash with a big gilt-rimmed hole (`hole` × 600 px) at the top that holds about 10 frames, so a `peek` character reads looking down through it, then shrinks up and out |
 | `screen-dive` | 0.7 | `frame` [x, y, w, h] (default [0.4, 0.3, 0.2, 0.25]), `shape` oval/rect, `flash` 0 (0-2 frames) | The camera pushes into the screen in A (a TV, a mirror, a painting) over about 80 % of `dur` while B already plays inside it (cover-fit, scanlines and glare fading as we pass the glass); optional white frames at the hand-off. Match `frame` to the TV panel `rect` |
-| `fg-pass` | 0.8 | `who` (cast name), `dir` 1/-1, `view` side, `size` 1.7 × H, `silhouette` #hex, `tilt` 0.08, `expr` neutral | A giant walking figure (slightly blurred) crosses the lens; B is revealed behind them and settles from a `tilt` × H offset. Without `who` a generic grey-robed figure walks |
+| `fg-pass` | 0.8 | `axis` (`vertical`: the figure rises from the bottom edge, or drops from the top with `dir` -1, in `view` front, and B is uncovered behind it; reference: a mitre rises from the bottom until the robe fills the frame, Church short 0:40), `who` (cast name), `dir` 1/-1, `view` side, `size` 1.7 × H, `silhouette` #hex, `tilt` 0.08, `expr` neutral | A giant walking figure (slightly blurred) crosses the lens; B is revealed behind them and settles from a `tilt` × H offset. Without `who` a generic grey-robed figure walks |
 | `spin-zoom` | 1.2 | `emblem` {`text`, `color` #4a3aa8, `shape` [[x, y]...] in -1..1, `prop`, `fill` #ffffff}, `text` (used without `emblem`, default "NEW ERA"), `bg` [#f6b46a, #fde3a0] | On a turning soft sunburst, the emblem spins in (-300° → 0, 0.05 → 0.9×, overshoot) over the first 20 %, holds readable at 0.9 → 1.15× with a slight wobble until 72 %, then spins out and grows to about 14× to swallow the frame; hard cut |
 | `glow-open` | 0.9 | `mode` glow/push, `at` [0.5, 0.5], `color` #ffd04a | `glow`: black, a torch orb grows from 60 px into a light pool on B (from frame 4 over up to 20 frames). `push` (use `dur` 1.4-2): A pushes 1.0 → 1.6 over 60 % of `dur` while fading to black, then B fades up over 18 frames |
 | `vignette-close` | 1.0 | `at` [0.5, 0.45], `r` 0.22 (0.02-1.5), `tint` #2a1040 | Darkness creeps in to a soft oval of radius `r` × H around `at` over min(1 s, `dur`), then cut |
@@ -142,7 +157,7 @@ Each cell shows another shot of the film, rendered live through `T.subShot` (or 
 | `every` | 0.1 (split: 0) | Stagger between cell entrances (s) |
 | `slideIn` | true | Cells slide from the nearest edge over 8 frames (outCubic); split halves come from opposite sides |
 | `border` | 5 grid/custom; gilt 4, tv 6, phone 3, none 6 | Ink line around cells |
-| `frame` | `gilt` | `frame` layout: `gilt` (gold frame), `tv` (CRT bezel, knobs, scanlines, bulge vignette), `phone` (body, notch, video-app chrome), `none` |
+| `frame` | `gilt` | `frame` layout: `gilt` (gold frame), `tv` (CRT bezel, knobs, scanlines, bulge vignette), `phone` (body, notch, video-app chrome), `photo` (white print border with a deeper bottom margin and a drop shadow; `caption` writes on the margin, `paper` sets its colour), `circle` (a round cell with a white ring: a locator badge), `none` |
 | `plaque` | none | Gilt frame: text on a brass plaque under the painting |
 
 | Cell field | Default | Meaning |
@@ -154,7 +169,7 @@ Each cell shows another shot of the film, rendered live through `T.subShot` (or 
 | `fit` | `cover` (`width` for `phone`) | `cover` crops to fill; `width` shows the whole frame width on a dark backing, shifted by `offset` (fraction of the cell height) |
 | `push`, `labels`, `border` | layer value | Per-cell overrides |
 | `label` / `labelAt` | none / 0.3 (split 0.4) | Toon caption popping at the bottom of the cell |
-| `rect` | per layout | `[x, y, w, h, rotDeg]` in frame fractions; `rot` also sets the angle. Defaults: pip [0.6, 0.07, 0.34, 0.34, -3]; gilt [0.24, 0.12, 0.52, 0.6]; tv [0.26, 0.14, 0.48, 0.52]; phone [0.38, 0.08, 0.24, 0.8]; none [0.2, 0.15, 0.6, 0.6] |
+| `rect` | per layout | `[x, y, w, h, rotDeg]` in frame fractions; `rot` also sets the angle. Defaults: pip [0.6, 0.07, 0.34, 0.34, -3]; gilt [0.24, 0.12, 0.52, 0.6]; tv [0.26, 0.14, 0.48, 0.52]; phone [0.38, 0.08, 0.24, 0.8]; photo [0.3, 0.14, 0.4, 0.56, -3]; circle [0.41, 0.06, 0.18, 0.32] (square on screen: w × 1920 = h × 1080); none [0.2, 0.15, 0.6, 0.6] |
 | `color` | #3a2e28 (empty), #121014 (fit width) | Backing colour |
 | `grade` | source grade | `false` renders the source without its grade, vignette and grain |
 
@@ -214,6 +229,12 @@ At 30 fps; "switch" is the frame where B replaces A.
 | `screen-dive` | 21: dive about 17, then B | `dur` 0.7 |
 | `fg-pass` | 24; B settles from 35 % | `dur` 0.8 |
 | `spin-zoom` | 36: spin in 7, hold to 26, swallow 10 | `dur` 1.2 |
+| `swirl` | 12: twirl out 6, untwirl 6 (reference 9-12) | `dur` 0.4 (0.3 for 9 f) |
+| `pixelate` | 12: blocks grow 6, resolve 6 | `dur` 0.4 |
+| `burn` | 27: edge crosses with ease-in-out | `dur` 0.9 |
+| `swarm` | 36: build ~12, closed ~3, thin ~20 | `dur` 1.2 |
+| `squeeze` | 15: line 7, pull-back 8 | `dur` 0.5 |
+| `carry` | 15: grow 7, shrink 8 | `dur` 0.5 (0.47 for 14 f) |
 | `glow-open` glow / push | 27, orb from frame 4 over 20 / 48: push 29, fade in 18 | `dur` 0.9 / 1.6 |
 | `vignette-close` | 30 | `dur` 1.0 |
 | Panel seam / VS / cell slide / label pop | 8 / pops on 8 over 6 / 8 each, 3 apart / 6 from 0.3 s | `every`, `labelAt` |

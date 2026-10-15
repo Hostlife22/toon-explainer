@@ -1,7 +1,7 @@
 // map-views.js — map views and living regions. Views (T.MAP_VIEWS): tilt (perspective slab), globe (planet curve / full globe), tabletop (paper
 // on a war table). Living regions through T.MAP_REGION_HOOKS: split, shatter, slash, engulf, peel, drift, wipe, blotch
 // conquest, annex flash, damage, surrender, border fire and four new face moods. Overlays (T.MAP_OVERLAYS + order):
-// figures (cast beans as stickers), arrows, brawls, fires, trails, tracks, forts, camps, squads, flags, coins, xmarks,
+// figures (cast beans as stickers; `drops` route marks via T.mapRouteMarks), arrows, brawls, fires, trails, tracks, forts, camps, squads, flags, coins, xmarks,
 // barriers, words, drops, tacks, hand. New T.MAP_ICONS. Timings are measured on the reference map shots at 30 fps.
 (function () {
   'use strict';
@@ -544,7 +544,8 @@
     ctx.save(); ctx.translate(0, g.st.extrude + 2); path(ctx); ctx.fillStyle = T.shade(col, -0.42); ctx.fill(); ctx.restore();
     path(ctx); ctx.lineWidth = 10; ctx.strokeStyle = P.ink; ctx.stroke(); path(ctx); ctx.fillStyle = col; ctx.fill(); ctx.restore();
   }
-  OV.figures = (ctx, figs, g, lt) => { for (const Fg of list(figs)) paintTrail(ctx, Fg, g, lt); if (!g.view) drawFigures(ctx, figs, g, lt); };
+  const figMarks = (ctx, Fg, i, g, lt) => { if (!Fg.drops || !Fg.path) return; const w = walkWin(Fg); T.mapRouteMarks(ctx, Fg.drops, (t) => { const p = figPos(Fg, t); return [g.X(p.x), g.Y(p.y)]; }, w[0], w[1], lt, 'fig' + (Fg.id ?? Fg.who ?? i)); };
+  OV.figures = (ctx, figs, g, lt) => { list(figs).forEach((Fg, i) => { paintTrail(ctx, Fg, g, lt); figMarks(ctx, Fg, i, g, lt); }); if (!g.view) drawFigures(ctx, figs, g, lt); };
 
   // ---------- arrows ----------
   // Big outlined word riding on the shaft (reference: white letters with a dark rim, about as tall as the arrow is thick).
@@ -614,7 +615,7 @@
         if (!Fg || !Fg.path) throw new Error(`map trail: no walking figure with id "${Tr.head}"`); pts = Fg.path.map((q) => px(g, q)); p = figPos(Fg, lt).p;
       } else { pts = (Tr.pts || []).map((q) => px(g, q)); p = T.prog(lt, Tr.at ?? 0, Tr.dur ?? 1.5); }
       if (pts.length < 2 || p <= 0) continue; ctx.save(); ctx.setLineDash(Tr.dash ?? [18, 12]); ctx.strokeStyle = Tr.color ?? '#d02020'; ctx.lineWidth = Tr.width ?? 6; ctx.lineJoin = 'round';
-      polyline(ctx, partial(pts, p)); ctx.stroke(); ctx.restore(); }
+      polyline(ctx, partial(pts, p)); ctx.stroke(); ctx.restore(); if (Tr.drops && Tr.head == null) T.mapRouteMarks(ctx, Tr.drops, T.mapPathMover(pts, Tr.at ?? 0, Tr.dur ?? 1.5), Tr.at ?? 0, (Tr.at ?? 0) + (Tr.dur ?? 1.5), lt, 'trail' + JSON.stringify(Tr.pts[0])); }
   };
   OV.tracks = (ctx, arr, g, lt) => {
     for (const Tk of list(arr)) { const p = T.prog(lt, Tk.at ?? 0, Tk.dur ?? 0.2), col = Tk.color ?? '#3a1d14'; if (p <= 0) continue;
@@ -636,7 +637,8 @@
   const hop = (lt, i = 0) => ((Math.floor(lt * 15) + i) % 2 ? -3 : 3); // alternate +-3 px, 4-frame period (on twos)
   OV.camps = upright((ctx, arr, g, lt) => {
     for (const C of list(arr)) { const q = T.ease.outBack(T.prog(lt, C.at ?? 0, 0.25)), M = C.move; if (q <= 0) continue; let p = [C.x ?? 0.5, C.y ?? 0.5], moving = false;
-      if (M) { const e = T.ease.inOut(T.prog(lt, M.at ?? 0, M.dur ?? 3)); moving = e > 0 && e < 1; p = [T.lerp(p[0], M.to[0], e), T.lerp(p[1], M.to[1], e)]; }
+      if (M) { const at = (t) => { const e = T.ease.inOut(T.prog(t, M.at ?? 0, M.dur ?? 3)); return [T.lerp(p[0], M.to[0], e), T.lerp(p[1], M.to[1], e)]; }, e = T.ease.inOut(T.prog(lt, M.at ?? 0, M.dur ?? 3));
+        if (C.drops) T.mapRouteMarks(ctx, C.drops, (t) => px(g, at(t)), M.at ?? 0, (M.at ?? 0) + (M.dur ?? 3), lt, 'camp' + (C.id ?? C.x ?? ''), (x, y) => up(g, x, y)); moving = e > 0 && e < 1; p = at(lt); }
       const [x, y, s] = g.project(p[0], p[1]); if (!(s > 0.01)) continue; ctx.save(); ctx.translate(x, y + (moving && C.hop !== false ? hop(lt) : 0)); ctx.scale(q * s, q * s);
       campStyle(C.style ?? 'camp', ctx, C.size ?? 230, lt, C); ctx.restore(); }
   });
@@ -647,6 +649,7 @@
   }
   OV.squads = upright((ctx, arr, g, lt) => {
     for (const Q of list(arr)) { if (lt < (Q.at ?? 0)) continue;
+      if (Q.drops) T.mapRouteMarks(ctx, Q.drops, (t) => { const l = squadLead(Q, g, t); return [l.x, l.y]; }, Q.at ?? 0, (Q.at ?? 0) + (Q.dur ?? 3), lt, 'squad' + (Q.id ?? ''), (x, y) => up(g, x, y));
       const ld = squadLead(Q, g, lt), n = Q.count ?? 4, sz = Q.size ?? 130, sp = sz * 0.95, form = Q.formation ?? 'diamond', r = T.rng(T.hash('squad' + (Q.id ?? '')));
       if (!['diamond', 'line', 'blob'].includes(form)) throw new Error(`map squads: unknown formation "${form}"`);
       const ca = Math.cos(ld.a), sa = Math.sin(ld.a), moving = ld.p > 0 && ld.p < 1, empty = Q.state && lt >= (Q.state.at ?? 0) && Q.state.v === 'empty'; const mem = []; for (let i = 0; i < n; i++) {
@@ -793,5 +796,5 @@
       T.drawGlove(ctx, wx, wy, dir, Hd.state ?? 'pinch', { size }); }
   });
 
-  T.MAP_OVERLAY_ORDER.push('tracks', 'trails', 'words', 'xmarks', 'arrows', 'camps', 'forts', 'squads', 'coins', 'barriers', 'flags', 'fires', 'figures', 'brawls', 'tacks', 'drops', 'hand');
+  T.MAP_OVERLAY_ORDER.push('tracks', 'trails', 'words', 'xmarks', 'arrows', 'camps', 'forts', 'squads', 'coins', 'barriers', 'flags', 'fires', 'figures', 'brawls', 'fights', 'tacks', 'drops', 'hand');
 })();

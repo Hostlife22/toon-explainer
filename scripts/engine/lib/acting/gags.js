@@ -745,6 +745,41 @@
       for (let i = 0; i < 3; i++) { const a = f - 5, x = st.x + dir * (b.w * 1.4 + a * 10 * (i + 1)), y = cy - 40 + i * 30 + a * a * 0.4; ctx.save(); ctx.globalAlpha *= T.clamp(1 - a / 18); puff(ctx, x, y, 7, '#e8dcb8', '#c8b890', 4); ctx.restore(); }
     });
   }
+  // dropShadow: N seconds before a drop / drop-squash lands, a ground shadow grows on the empty spot (reference: ~10 f
+  // of growing shadow on an empty frame, the body falls in within 3 f); it shrinks under the body as it lands.
+  function dropShadowBefore(ctx, L, lt, cam) {
+    const at = L.at ?? 0, lead = L.dropShadow === true ? 0.33 : L.dropShadow;
+    if (!(lead > 0) || lt < at - lead || lt > at + 0.2) return;
+    const st = restPose(L, at);
+    if (!st) return;
+    const b = bbScale(L, st), y = b.feet ? st.y : st.y + b.h / 2;
+    const k = lt < at ? T.ease.out(T.clamp((lt - at + lead) / lead)) : 1 - T.clamp((lt - at) / 0.2);
+    inWorld(ctx, L, cam, () => {
+      ctx.globalAlpha *= 0.35 * k;
+      ctx.fillStyle = L.shadowColor ?? '#2a1c15';
+      ctx.beginPath(); ctx.ellipse(st.x, y, b.w * 0.55 * (0.4 + 0.6 * k), b.w * 0.12 * (0.4 + 0.6 * k), 0, 0, Math.PI * 2); ctx.fill();
+    });
+  }
+  // zip.rev: the last N seconds before a zip exit, the legs spin as blurred wheels (reference: 15 f crouch, ~10 f rev).
+  function zipRev(ctx, L, lt, cam) {
+    const o = L.zip || {}, rev = o.rev === true ? 0.35 : o.rev, out = L.out;
+    if (!(rev > 0) || lt < out - rev || lt > out) return;
+    const st = T.layerState(L, lt);
+    if (!st) return;
+    const b = bbScale(L, st), dir = o.dir ?? 1, y = b.feet ? st.y - b.h * 0.07 : st.y + b.h * 0.43, r = b.w * 0.26;
+    const spin = (lt - out + rev) * 40 * dir;
+    inWorld(ctx, L, cam, () => {
+      for (const sx of [-0.18, 0.18]) {
+        const x = st.x + sx * b.w;
+        ctx.save(); ctx.globalAlpha *= 0.9; ctx.fillStyle = '#f4efe4';
+        ctx.beginPath(); ctx.ellipse(x, y, r, r * 0.85, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#2a1c15'; ctx.lineWidth = Math.max(3, r * 0.08); ctx.stroke();
+        for (let i = 0; i < 3; i++) { const a0 = spin + i * 2.1; ctx.beginPath(); ctx.arc(x, y, r * 0.62, a0, a0 + 1.1); ctx.stroke(); }
+        ctx.restore();
+      }
+      dustCluster(ctx, st.x - dir * b.w * 0.45, y + r * 0.4, r * (0.6 + 0.2 * Math.sin(spin * 2)), (L.id ?? 'rev') + ':d');
+    });
+  }
   function fallAfter(ctx, L, lt, cam) {
     const t = lt - (L.out ?? Infinity), f = t * FPS, o = L.fall || {};
     if (f < 0 || f > 40) return;
@@ -783,6 +818,7 @@
       if (env.shot && L.id && takenAt(env.shot, L.id) <= lt) return;
       const enter = L.enter, exit = L.exit, at = L.at ?? 0;
       if (enter === 'ground') groundBefore(ctx, L, lt, cam);
+      if ((enter === 'drop' || enter === 'drop-squash') && L.dropShadow) dropShadowBefore(ctx, L, lt, cam);
       if (enter === 'silhouette-in' && !L._silo && lt >= at && lt < at + durOf('silhouette-in', false, L)) {
         baseDrawLayer(ctx, { ...L, _silo: true, silhouette: L.silColor ?? (L.from === 'bottom' ? '#140f0c' : '#1d1414') }, lt, env, cam);
       }
@@ -793,7 +829,7 @@
       }
       baseDrawLayer(ctx, LL, lt, env, cam);
       if (enter === 'ground') groundAfter(ctx, L, lt, cam);
-      if (exit === 'zip' && L.out != null) zipAfter(ctx, L, lt, cam);
+      if (exit === 'zip' && L.out != null) { zipRev(ctx, L, lt, cam); zipAfter(ctx, L, lt, cam); }
       if (exit === 'pivot-fall' && L.out != null) fallAfter(ctx, L, lt, cam);
     } finally { CUR = prev; }
   };

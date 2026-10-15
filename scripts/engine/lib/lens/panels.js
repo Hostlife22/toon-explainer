@@ -23,7 +23,8 @@
   function textlessSpec(spec) {
     if (!spec || spec[TEXTLESS]) return spec;
     if (!textless.has(spec)) {
-      const shots = spec.shots.map((sh) => ({ ...sh, layers: (sh.layers || []).filter((L) => !TEXT_TYPES.has(L.type)) }));
+      const strip = (list) => (list || []).filter((L) => !TEXT_TYPES.has(L.type));
+      const shots = spec.shots.map((sh) => ({ ...sh, layers: strip(sh.layers), ...(sh.pinned ? { pinned: strip(sh.pinned) } : {}) }));
       textless.set(spec, { ...spec, shots, [TEXTLESS]: true });
     }
     return textless.get(spec);
@@ -42,6 +43,14 @@
   // ---------- cell content: fit a sub-shot into a cw x ch box centred at the origin ----------
   // fit "cover" (default) crops around `focus`; fit "width" shows the whole width (a landscape clip in a portrait phone)
   // on a dark backing.
+  // Default crop centre: the frame centre, or in a vertical film the source shot's own frame x (what its viewer saw).
+  function defaultFocus(cell, lt, env) {
+    if (T.FORMAT !== 'vertical') return [0.5, 0.5];
+    const src = (env.spec.shots || []).find((s) => s.id === cell.shot);
+    if (!src) return [0.5, 0.5];
+    const t = T.clamp(cell.t ?? (cell.from ?? 0) + lt, 0, src.dur), half = T.STRIP_W / 2; // same clamps as subShot / frameShot
+    return [T.clamp(T.num(src.frame, t, 0.5) * T.W, half, T.W - half) / T.W, 0.5];
+  }
   function drawContent(ctx, cell, cw, ch, lt, env, push) {
     if (!cell.shot) { ctx.fillStyle = cell.color ?? '#3a2e28'; ctx.fillRect(-cw / 2 - 2, -ch / 2 - 2, cw + 4, ch + 4); return; }
     if (!T.subShot) throw new Error('panel: T.subShot is missing (helpers.js must load first)');
@@ -58,7 +67,7 @@
       return;
     }
     const s = Math.max(cw / W, ch / H) * z;
-    const cropW = cw / s, cropH = ch / s, [fx, fy] = cell.focus === 'auto' ? autoFocus(env.spec, cell.shot) : nums(cell.focus, 2) ? cell.focus : [0.5, 0.5];
+    const cropW = cw / s, cropH = ch / s, [fx, fy] = cell.focus === 'auto' ? autoFocus(env.spec, cell.shot) : nums(cell.focus, 2) ? cell.focus : defaultFocus(cell, lt, env);
     const cx = T.clamp(fx * W, cropW / 2, W - cropW / 2), cy = T.clamp(fy * H, cropH / 2, H - cropH / 2);
     ctx.drawImage(src, (cx - cropW / 2) * k, (cy - cropH / 2) * k, cropW * k, cropH * k, -cw / 2, -ch / 2, cw, ch);
   }
@@ -84,19 +93,22 @@
   // ---------- generic boxed cell (grid, custom, pip, frame) ----------
   function boxCell(ctx, L, cell, i, lt, env, deco = {}) {
     const [x, y, w, h] = cell.rect, rot = cell.rect[4] ?? cell.rot ?? 0;
-    const cw = w * W, ch = h * H, cx = x * W + cw / 2, cy = y * H + ch / 2;
+    let cw = w * W, ch = h * H;
+    const cx = x * W + cw / 2, cy = y * H + ch / 2;
+    if (deco.square) cw = ch = Math.min(cw, ch); // circle badge: a square cell centred in its rect
     const off = slideOffset(L, i, cx, cy, cw, ch, lt);
     if (!off) return;
     ctx.save();
     ctx.translate(cx + off[0], cy + off[1]); ctx.rotate(rot * T.DEG);
     if (deco.under) deco.under(ctx, cw, ch);
     ctx.save();
-    ctx.beginPath(); T.rrect(ctx, -cw / 2, -ch / 2, cw, ch, deco.radius ?? 0); ctx.clip();
+    const rad = typeof deco.radius === 'function' ? deco.radius(cw, ch) : deco.radius ?? 0;
+    ctx.beginPath(); T.rrect(ctx, -cw / 2, -ch / 2, cw, ch, rad); ctx.clip();
     drawContent(ctx, cell, cw, ch, lt, env, L.push ?? 1);
     if (deco.screen) deco.screen(ctx, cw, ch, lt, cell);
     ctx.restore();
     const border = cell.border ?? L.border ?? deco.border ?? 0;
-    if (border > 0) { ctx.strokeStyle = P.ink; ctx.lineWidth = border; ctx.beginPath(); T.rrect(ctx, -cw / 2, -ch / 2, cw, ch, deco.radius ?? 0); ctx.stroke(); }
+    if (border > 0) { ctx.strokeStyle = P.ink; ctx.lineWidth = border; ctx.beginPath(); T.rrect(ctx, -cw / 2, -ch / 2, cw, ch, rad); ctx.stroke(); }
     if (deco.over) deco.over(ctx, cw, ch);
     label(ctx, cell.label, 0, ch / 2 - 40, lt, cell.labelAt ?? 0.3);
     ctx.restore();
@@ -173,7 +185,10 @@
       return { ...c, rect: [x / W, y / H, w / W, h / H, rot] };
     });
   }
-  const FRAME_RECT = { gilt: [0.24, 0.12, 0.52, 0.6], tv: [0.26, 0.14, 0.48, 0.52], phone: [0.38, 0.08, 0.24, 0.8], none: [0.2, 0.15, 0.6, 0.6] };
+  // photo: a print with a white border and a deeper bottom margin (a polaroid held up, the past turned into a photograph);
+  // circle: a round locator badge (shorts put a whole-country inset in the top corner of a cropped map).
+  const FRAME_RECT = { gilt: [0.24, 0.12, 0.52, 0.6], tv: [0.26, 0.14, 0.48, 0.52], phone: [0.38, 0.08, 0.24, 0.8], none: [0.2, 0.15, 0.6, 0.6],
+    photo: [0.3, 0.14, 0.4, 0.56, -3], circle: [0.41, 0.06, 0.18, 0.32] };
   const FRAMES = {
     gilt: (L) => ({
       under: (ctx, cw, ch) => {
@@ -221,6 +236,30 @@
       border: 3,
     }),
     none: () => ({ border: 6 }),
+    photo: (L) => ({
+      under: (ctx, cw, ch) => {
+        const m = Math.max(14, cw * 0.05), mb = m * 3.2;
+        ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.fillRect(-cw / 2 - m + 12, -ch / 2 - m + 14, cw + 2 * m, ch + m + mb);
+        T.outlined(ctx, (k) => k.rect(-cw / 2 - m, -ch / 2 - m, cw + 2 * m, ch + m + mb), L.paper ?? '#f7f3ea', { line: 5 });
+      },
+      over: (ctx, cw, ch) => {
+        if (!L.caption) return;
+        const m = Math.max(14, cw * 0.05), size = T.fitSize(ctx, String(L.caption), Math.min(46, m * 1.6), cw - 20, 800);
+        ctx.font = T.font(size, 800); ctx.textAlign = 'center'; ctx.fillStyle = '#3a2a20';
+        ctx.fillText(String(L.caption), 0, ch / 2 + m * 1.9);
+      },
+      border: 4,
+    }),
+    circle: () => ({
+      square: true,
+      radius: (cw, ch) => Math.min(cw, ch) / 2,
+      under: (ctx, cw, ch) => {
+        const r = Math.min(cw, ch) / 2;
+        ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.arc(8, 10, r + 12, 0, Math.PI * 2); ctx.fill();
+        T.outlined(ctx, (k) => k.arc(0, 0, r + 12, 0, Math.PI * 2), '#f7f3ea', { line: 5 });
+      },
+      border: 5,
+    }),
   };
   function pipDeco() {
     return {
@@ -250,7 +289,7 @@
       const c = cells[0];
       boxCell(ctx, L, { ...c, rect: nums(c.rect, 4) ? c.rect : [0.6, 0.07, 0.34, 0.34, -3] }, 0, lt, env, pipDeco());
     } else {
-      const kind = oneOf(L.frame, ['gilt', 'tv', 'phone', 'none'], 'gilt', 'panel.frame'), c = { fit: kind === 'phone' ? 'width' : undefined, ...cells[0] };
+      const kind = oneOf(L.frame, ['gilt', 'tv', 'phone', 'photo', 'circle', 'none'], 'gilt', 'panel.frame'), c = { fit: kind === 'phone' ? 'width' : undefined, ...cells[0] };
       boxCell(ctx, L, { ...c, rect: nums(c.rect, 4) ? c.rect : FRAME_RECT[kind] }, 0, lt, env, FRAMES[kind](L));
     }
     ctx.restore();

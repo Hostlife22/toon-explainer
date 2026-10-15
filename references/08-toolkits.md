@@ -18,7 +18,7 @@ Every card uses the same sections: ① when to use it, ② look and staging rule
 | [08 FX and tone](toolkits/08_fx_and_tone.md) | Emphasis effects, weather and fire, horror and war FX, brawls, violence stand-ins, booms, light, materials (ghost, statue, gold, engraving, ice), grades | `fx` kinds, `fg: mob`, layer modifiers, `grade`, `style` | `fx/` | `tone_and_horror`, `action_fx` |
 | [09 Transitions and lens](toolkits/09_transitions_and_lens.md) | Every transition, split screens and comic grids, frame-in-frame, binocular / spyglass / eye POV, rack focus, letterbox, cut-in jumps | `transition`, `panel`, `fg: binoculars spyglass eye-pov`, camera fields, `focus`, `blur` | `lens/`, `fx/tone.js`, `core.js` | `transitions_lens`, `tone_and_horror` |
 
-The film [`examples/coffee_film`](../examples/coffee_film/spec.json) combines all nine cards in a 73-second story and is the best single reference for how they work together.
+The film [`examples/coffee_film`](../examples/coffee_film/spec.json) combines all nine cards in a 73-second story and is the best single reference for how they work together. Two films built with the directing method of [09-directing.md](09-directing.md) show the cards on non-historical topics: [`examples/vertical_short`](../examples/vertical_short/spec.json) (science, 9:16) and [`examples/money_film`](../examples/money_film/spec.json) (economics, 16:9).
 
 ## 2. Choose by beat
 

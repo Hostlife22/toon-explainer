@@ -657,6 +657,8 @@
     'crt-cyan': [['saturation', SAT, 1], ['multiply', '#8ec4cc'], ['screen', '#0a3038', 0.35], ['pixel', 'scanlines', 1, 0.3], ['vignette', '#02080a', 0.65]],
     'dusk-blue': [['saturation', SAT, 0.6], ['multiply', '#6a7aa0'], ['soft-light', '#101828', 0.6]],
     'red-flash': [['multiply', '#c4141a', 0.85]],
+    mono: [['saturation', SAT, 1]], // plain greyscale: the past turned into a photograph
+    negative: [['difference', '#ffffff']], // colour negative for a frozen title or a shock beat (reference: 2 s freeze)
     'sunset-epic': [['soft-light', '#ff9a60', 0.6], ['multiply', '#ffd0a0', 0.25], ['screen', '#3a0a2a', 0.2]],
   });
 })();

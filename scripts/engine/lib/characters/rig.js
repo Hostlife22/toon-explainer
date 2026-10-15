@@ -482,7 +482,7 @@
     H().draw(ctx, c, {
       view, expr, lt, seed,
       blink: Ly.blink !== false && blinkPhase < 0.09,
-      gazeX: Ly.gaze ?? 0,
+      gazeX: Ly.gaze ?? 0, smear: Ly.smear,
       mouthKind: talking ? H().talkMouth(expr, lt, seed) : null,
     });
     ctx.restore();

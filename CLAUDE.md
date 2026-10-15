@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-toon-explainer is an agent skill (`SKILL.md`) plus a deterministic HTML Canvas engine that turns a narrated storyboard into a cutout-cartoon explainer video: **script → JSON spec → Canvas render in headless Chromium → MP4**. There is no package.json or build step. The engine is plain browser JS, and the tooling is standard-library Python run through `uv`. `SKILL.md` contains the agent-facing production rules and task routing. Read it before you author or change a film spec.
+toon-explainer is an agent skill (`SKILL.md`) plus a deterministic HTML Canvas engine that turns a narrated storyboard into a cutout-cartoon explainer video: **script → JSON spec → Canvas render in headless Chromium → MP4**. There is no package.json or build step. The engine is plain browser JS, and the tooling is standard-library Python run through `uv`. `SKILL.md` contains the agent-facing production rules and task routing. Read it before you author or change a film spec; `references/09-directing.md` is the planning method and `references/10-technique-library.md` the technique catalog from the reference study.
 
 ## Commands
 
@@ -46,7 +46,7 @@ python scripts/build_release.py --ref HEAD --out dist
 - `lib/` is split by domain: `base/` (paint, helpers, text, widgets), `characters/`, `acting/`, `creatures/`, `props/`, `places/`, `maps/`, `paper/`, `game/`, `fx/`, `lens/`. Several files can fill the same registry (for example every `places/*.js` adds to `T.bgs`).
 - Core registries that modules plug into: `T.LAYER_MODS` (per-layer modifiers such as `blur`, `material`), `T.ENTERS`/`T.ENTER_DUR`, `T.POSES`, `T.BUILDS`, `T.EXPR` and the face/hair/beard kind registries, `T.GRADE_PRESETS`/`T.GRADE_PIXEL`, `T.MAP_VIEWS`/`T.MAP_REGION_HOOKS`/`T.MAP_OVERLAY_ORDER`, `T.HUD_DEFAULT`. Core also provides `swap`, `jitter`, `swing`, shot `focus`, film `overlays`, `T.subShot` and `T.film`.
 
-All drawing happens in a fixed 1920×1080 logical space. `--scale` only changes the physical canvas.
+All drawing happens in a fixed 1920×1080 logical space (the world). `--scale` only changes the physical canvas. `"format": "vertical"` renders 1080×1920 by drawing each shot in the world, shifting it so the shot's `frame` x is centred, and cropping a 607.5-wide strip (`T.init` in `core.js`); code that anchors to frame edges must use `T.visibleSpan(env)` instead of `0..T.W`, and shot `pinned` layers are drawn without the camera by `T.drawPinned`.
 
 **Python pipeline (`scripts/`).**
 - `spec.py` loads and validates specs. It mirrors the engine vocabulary in `KNOWN_*` sets, and every `scripts/vocab/*.json` file is merged into those sets at import. Vocab files may also declare `kinds` (allowed `kind` values per layer type) and `registry` (`{"vehicle": "TOON.VEHICLES"}`). A test opens the engine in Chromium and asserts that each declared registry's keys exactly match the vocab `kinds`.

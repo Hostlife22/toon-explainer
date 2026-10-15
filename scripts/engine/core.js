@@ -342,7 +342,7 @@
     const focus = focusBlur(shot, lt);
     const bgBlur = focus ? focus('@bg') : 0;
     if (bgBlur >= 0.3) T.filtered(ctx, `blur(${(bgBlur * env.dpr).toFixed(2)}px) brightness(0.96)`, drawBgs); // blurred copy over the sharp one: no dark edges
-    if (T.gradeBg) T.gradeBg(ctx, shot, lt, shotEnv);
+    if (T.gradeBg && !env.noPost) T.gradeBg(ctx, shot, lt, shotEnv); // panel cells with grade:false stay ungraded
     for (const L0 of shot.layers || []) {
       let L = T.effLayer(L0, lt);
       if (focus && L.id && !L.sharp && (L.focusable || !FOCUS_EXEMPT.has(L.type))) {
@@ -388,6 +388,13 @@
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.restore();
   }
+  // A copy of a world buffer with everything outside the centred visible strip cleared.
+  function stripOnly(src, key) {
+    const [c, k] = T.scratch('strip:' + key, src.width, src.height), sw = Math.round(src.width * T.STRIP_W / T.W), sx = Math.round((src.width - sw) / 2);
+    k.setTransform(1, 0, 0, 1, 0, 0); k.clearRect(0, 0, c.width, c.height);
+    k.drawImage(src, sx, 0, sw, src.height, sx, 0, sw, src.height);
+    return c;
+  }
   T.transitions = {
     dissolve: (ctx, a, b, p) => { blit(ctx, a); blit(ctx, b, T.ease.inOut(p)); },
     'fade-white': (ctx, a, b, p) => { blit(ctx, p < 0.5 ? a : b); overlay(ctx, '#fffaf0', 1 - Math.abs(p * 2 - 1)); },
@@ -396,12 +403,17 @@
       if (p < 0.5) { const q = p * 2; blit(ctx, a, 1, 1 + T.ease.in(q) * 0.9); overlay(ctx, '#fff', q * 0.85); }
       else { const q = (p - 0.5) * 2; blit(ctx, b, 1, 1.25 - T.ease.outCubic(q) * 0.25); overlay(ctx, '#fff', (1 - q) * 0.85); }
     },
-    whip: (ctx, a, b, p) => {
-      const w = ctx.canvas.width, e = T.ease.inOut(p);
+    // tr.dir: "left" (default: the picture travels left), "right", "up", "down"; vertical films travel the strip width.
+    whip: (ctx, a, b, p, tr = {}) => {
+      const dir = tr.dir ?? 'left';
+      if (!['left', 'right', 'up', 'down'].includes(dir)) throw new Error(`whip dir must be left, right, up or down (got ${JSON.stringify(dir)})`);
+      const horiz = dir === 'left' || dir === 'right', sign = dir === 'left' || dir === 'up' ? 1 : -1;
+      const span = horiz ? ctx.canvas.width * (T.STRIP_W ?? T.W) / T.W : ctx.canvas.height, e = T.ease.inOut(p);
+      if (horiz && span < ctx.canvas.width) { a = stripOnly(a, 'a'); b = stripOnly(b, 'b'); } // vertical films: slide only what was visible
       for (let k = 0; k < 5; k++) {
-        const o = (k - 2) * w * 0.025;
-        blit(ctx, a, 0.3, 1, -e * w + o);
-        blit(ctx, b, 0.3, 1, (1 - e) * w + o);
+        const o = (k - 2) * span * 0.025, da = sign * (-e * span + o), db = sign * ((1 - e) * span + o);
+        blit(ctx, a, 0.3, 1, horiz ? da : 0, horiz ? 0 : da);
+        blit(ctx, b, 0.3, 1, horiz ? db : 0, horiz ? 0 : db);
       }
     },
     iris: (ctx, a, b, p) => {
@@ -418,47 +430,124 @@
   };
 
   // ---------- frame entry point ----------
+  // shot.pinned: layers drawn after the shot without camera; in vertical films they stay centred while frame pans.
+  // An fx in pinned whose target is a world layer (an id in shot.layers) is drawn in the world pass right after the
+  // layers, so it follows the target's camera and frame; everything else in pinned is drawn in frame space.
+  const pinSplit = new WeakMap();
+  T.resolvePinned = (shot) => {
+    if (!shot.pinned || !shot.pinned.length) return shot;
+    if (pinSplit.has(shot)) return pinSplit.get(shot);
+    const ids = new Set((shot.layers || []).map((L) => L && L.id).filter(Boolean)), moved = new Set();
+    const refs = (L) => [L.target, L.follow, ...(L.swap || []).flatMap((s) => [s.target, s.follow])].filter((v) => typeof v === 'string');
+    // propagate until stable: an fx that targets an fx already moved to the world pass moves too
+    for (let changed = true; changed;) {
+      changed = false;
+      shot.pinned.forEach((L, i) => {
+        if (moved.has(i) || !L || L.type !== 'fx' || !refs(L).some((r) => ids.has(r))) return;
+        moved.add(i); changed = true; if (L.id) ids.add(L.id);
+      });
+    }
+    const out = { ...shot, layers: [...(shot.layers || []), ...shot.pinned.filter((_, i) => moved.has(i))], pinned: shot.pinned.filter((_, i) => !moved.has(i)) };
+    pinSplit.set(shot, out);
+    return out;
+  };
+  T.drawPinned = (c, shot, lt, env) => {
+    if (!shot.pinned || !shot.pinned.length) return;
+    c.save();
+    c.setTransform(env.dpr, 0, 0, env.dpr, 0, 0);
+    const own = { ...shot, layers: shot.pinned };
+    const sEnv = { ...env, cam: null, shot: own, seed: (env.seed ?? 1) + ':' + shot.id + ':pinned' };
+    for (const L0 of shot.pinned) T.drawLayer(c, T.effLayer(L0, lt), lt, sEnv, null);
+    c.restore();
+  };
+  // Output formats. "vertical" (9:16) keeps the 1920x1080 world and shows a strip of it STRIP_W wide and the full
+  // height, centred on shot.frame (x fraction, number or [{at, v, ease}] keys, default 0.5), scaled to 1080x1920.
+  T.FORMATS = { landscape: { w: 1920, h: 1080 }, vertical: { w: 1080, h: 1920 } };
+  const even = (v) => Math.round(v / 2) * 2; // even sizes: libx264 yuv420p rejects odd dimensions
+  // [left, width] of the world span the viewer sees in this draw: the whole width, or the vertical strip at env.frameX.
+  T.STRIP_W = T.W;
+  T.visibleSpan = (env) => (env && env.frameX != null ? [env.frameX - T.STRIP_W / 2, T.STRIP_W] : [0, T.W]);
   T.init = (spec, canvas, opts = {}) => {
     const scale = opts.scale ?? 1;
-    T.DPR = scale; // shadowBlur and other device-pixel values must be multiplied by this
-    canvas.width = Math.round((T.W * scale) / 2) * 2; // even sizes: libx264 yuv420p rejects odd dimensions
-    canvas.height = Math.round((T.H * scale) / 2) * 2;
-    const mk = () => { const c = document.createElement('canvas'); c.width = canvas.width; c.height = canvas.height; return c; };
+    const format = T.FORMATS[spec.format || 'landscape'];
+    if (!format) throw new Error(`Unknown format "${spec.format}" (landscape, vertical)`);
+    const vertical = spec.format === 'vertical';
+    T.FORMAT = vertical ? 'vertical' : 'landscape';
+    const STRIP_W = (T.H * format.w) / format.h; // visible world width: 1920 landscape, 607.5 vertical
+    T.STRIP_W = STRIP_W;
+    const wscale = (scale * format.h) / T.H; // world pixels per logical unit
+    T.DPR = wscale; // shadowBlur and other device-pixel values must be multiplied by this
+    canvas.width = even(format.w * scale);
+    canvas.height = even(format.h * scale);
+    const mk = () => { const c = document.createElement('canvas'); c.width = even(T.W * wscale); c.height = even(T.H * wscale); return c; };
     const bufA = mk(), bufB = mk();
     const tl = T.buildTimeline(spec);
     T.film = { spec, timeline: tl }; // the film being rendered (transitions and modules read cast/shots from here)
-    const env = { dpr: scale, seed: spec.seed ?? 1, spec, cast: spec.cast || {}, style: spec.style || {} };
+    const env = { dpr: wscale, seed: spec.seed ?? 1, spec, cast: spec.cast || {}, style: spec.style || {} };
     const ctx = canvas.getContext('2d');
+    const drawPinned = (c, shot, lt) => T.drawPinned(c, shot, lt, vertical ? { ...env, frameX: T.W / 2 } : env);
     // spec.overlays: [{from, to, layer}] — screen-space layers that persist across cuts (quest chips, speedrun timers)
     const overlays = (spec.overlays || []).map((o, k) => ({ ...o, layer: { id: 'overlay' + k, ...o.layer, hud: true } }));
     const drawOverlays = (c, t, shot) => {
       if (!overlays.length) return;
       c.save();
-      c.setTransform(scale, 0, 0, scale, 0, 0);
+      c.setTransform(wscale, 0, 0, wscale, 0, 0);
       for (const o of overlays) {
         const from = o.from ?? 0;
         if (t < from || (o.to != null && t > o.to)) continue;
         if (o.hideIn && shot && o.hideIn.includes(shot.id)) continue; // e.g. a split screen that needs the corner
         const olt = t - from;
-        T.drawLayer(c, T.effLayer(o.layer, olt), olt, { ...env, cam: null, shot, seed: env.seed + ':overlay' }, null);
+        T.drawLayer(c, T.effLayer(o.layer, olt), olt, { ...env, cam: null, shot, seed: env.seed + ':overlay', frameX: vertical ? T.W / 2 : undefined }, null);
       }
       c.restore();
     };
+    // Draw one shot (and its pinned layers) into a world-sized canvas. Vertical films draw the shot centred on its
+    // frame x, then shift it so that point lands on the world centre: transitions and overlays always see the
+    // visible strip in the middle of the canvas.
+    const tmp = vertical ? mk() : null;
+    const frameShot = (c, shot0, lt) => {
+      const shot = T.resolvePinned(shot0);
+      if (!vertical) { T.drawShot(c, shot, lt, env); drawPinned(c, shot, lt); return; }
+      const fx = T.clamp(T.num(shot.frame, lt, 0.5) * T.W, STRIP_W / 2, T.W - STRIP_W / 2);
+      const cam = shot.camera || {};
+      const framed = cam.focus ? shot : { ...shot, camera: { ...cam, focus: [fx / T.W, 0.5] } }; // zoom around the visible strip
+      // Draw and pixel-process only the visible strip (plus a 2-px margin): about a third of the world's pixels.
+      const sx = Math.max(0, Math.floor((fx - STRIP_W / 2) * wscale) - 2), sw = Math.min(tmp.width - sx, Math.ceil(STRIP_W * wscale) + 4);
+      const tctx = tmp.getContext('2d');
+      tctx.save(); tctx.setTransform(1, 0, 0, 1, 0, 0); tctx.fillStyle = '#000'; tctx.fillRect(0, 0, tmp.width, tmp.height); // no stale pixels outside the strip
+      tctx.beginPath(); tctx.rect(sx, 0, sw, tmp.height); tctx.clip();
+      T.PIXEL_RECT = { canvas: tmp, rect: [sx, 0, sw, tmp.height] };
+      try { T.drawShot(tctx, framed, lt, { ...env, frameX: fx }); } finally { T.PIXEL_RECT = null; tctx.restore(); }
+      c.save();
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.fillStyle = '#000'; c.fillRect(0, 0, c.canvas.width, c.canvas.height);
+      const dx = Math.round((T.W / 2 - fx) * wscale);
+      c.drawImage(tmp, sx, 0, sw, tmp.height, sx + dx, 0, sw, tmp.height);
+      c.restore();
+      drawPinned(c, shot, lt);
+    };
+    const world = vertical ? mk() : canvas; // the frame is composed here, then cropped into the output canvas
+    const wctx = world.getContext('2d');
     const render = (t) => {
       t = T.clamp(t, 0, Math.max(0, tl.total - 1e-6));
       const i = T.shotAt(tl, t), shot = tl.shots[i], lt = Math.max(0, t - shot.start);
       const tr = shot.transition;
       if (i > 0 && tr.dur > 0 && lt < tr.dur && T.transitions[tr.kind]) {
         const prev = tl.shots[i - 1];
-        T.drawShot(bufA.getContext('2d'), prev, prev.dur + lt, env);
-        T.drawShot(bufB.getContext('2d'), shot, lt, env);
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height); // start from a clean frame: semi-transparent transitions (whip) must not show the previous render
-        T.transitions[tr.kind](ctx, bufA, bufB, lt / tr.dur, tr, { ...env, prev, shot });
+        frameShot(bufA.getContext('2d'), prev, prev.dur + lt);
+        frameShot(bufB.getContext('2d'), shot, lt);
+        wctx.setTransform(1, 0, 0, 1, 0, 0);
+        wctx.fillStyle = '#000'; wctx.fillRect(0, 0, world.width, world.height); // start from a clean frame: semi-transparent transitions (whip) must not show the previous render
+        T.transitions[tr.kind](wctx, bufA, bufB, lt / tr.dur, tr, { ...env, prev, shot });
       } else {
-        T.drawShot(ctx, shot, lt, env);
+        frameShot(wctx, shot, lt);
       }
-      drawOverlays(ctx, t, shot);
+      drawOverlays(wctx, t, shot);
+      if (vertical) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        const sx = (T.W - STRIP_W) / 2 * wscale;
+        ctx.drawImage(world, sx, 0, STRIP_W * wscale, world.height, 0, 0, canvas.width, canvas.height);
+      }
       return { shot: shot.id, index: i, lt };
     };
     return { render, timeline: tl };

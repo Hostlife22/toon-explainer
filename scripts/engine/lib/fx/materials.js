@@ -521,4 +521,46 @@
     ctx.drawImage(c, 0, 0);
     ctx.restore();
   }
+  // ---------- xray: see-through blue silhouette with ink edges and an optional prop inside ----------
+  // "xray": true | {at 0, dur 0.2, inner (prop kind), innerSize (0.5 of the shorter side), color '#7fd0ff'} — from `at`
+  // (shot time, like freeze) the layer crossfades over `dur` into a translucent tinted body with a light inner rim,
+  // scan stripes and an ink outline; `inner` is drawn at the body's centre. Fx layers keep `xray` for their own use.
+  MODS.xray = {
+    order: 34,
+    when: (L) => L.type !== 'fx',
+    apply(src, L, lt, env, depth) {
+      const x = optsOf(L.xray, 'inner'), at = x.at ?? 0, d = env.dpr || 1;
+      if (lt < at) return src;
+      const box = alphaBox(src, 'xry' + depth), col = x.color ?? '#7fd0ff';
+      const [c, k] = blank(src, 'afxxray' + depth);
+      dilate(k, src, 5 * d, 12, INK); // ink edge: the dilated outline, the body is painted over it
+      const [b, bk] = blank(src, 'afxxraybody' + depth);
+      bk.fillStyle = T.mix(col, '#0b4a8a', 0.3); bk.fillRect(0, 0, b.width, b.height);
+      bk.globalAlpha = 0.16; filteredCopy(bk, src, 'grayscale(1) contrast(1.6)'); bk.globalAlpha = 1; // faint inner structure
+      bk.globalCompositeOperation = 'destination-in'; bk.drawImage(src, 0, 0); bk.globalCompositeOperation = 'source-over';
+      k.globalCompositeOperation = 'destination-out'; k.drawImage(src, 0, 0); k.globalCompositeOperation = 'source-over';
+      k.globalAlpha = x.alpha ?? 0.8; k.drawImage(b, 0, 0); k.globalAlpha = 1;
+      const [r, rk] = blank(src, 'afxxrayrim' + depth); // light inner rim: the body minus a shrunken copy of itself
+      rk.drawImage(src, 0, 0); rk.globalCompositeOperation = 'source-in'; rk.fillStyle = col; rk.fillRect(0, 0, r.width, r.height);
+      if (box) {
+        rk.globalCompositeOperation = 'destination-out'; const f = 0.86;
+        rk.drawImage(src, box.cx * (1 - f), box.cy * (1 - f), src.width * f, src.height * f);
+        rk.globalCompositeOperation = 'destination-in'; rk.drawImage(src, 0, 0);
+        rk.globalCompositeOperation = 'source-over';
+        rk.fillStyle = 'rgba(255,255,255,0.12)'; // scan stripes, clipped to the body by the final mask below
+        for (let y = box.y + ((Math.floor(lt * 15) * 3 * d) % (18 * d)); y < box.y + box.h; y += 18 * d) rk.fillRect(box.x, y, box.w, 6 * d);
+        rk.globalCompositeOperation = 'destination-in'; rk.drawImage(src, 0, 0); rk.globalCompositeOperation = 'source-over';
+      }
+      k.globalAlpha = 0.85; k.drawImage(r, 0, 0); k.globalAlpha = 1;
+      if (x.inner && box) {
+        if (!T.PROPS[x.inner]) throw new Error(`xray: unknown inner prop "${x.inner}"`);
+        const size = x.innerSize ?? (Math.min(box.w, box.h) / d) * 0.5;
+        k.save(); k.setTransform(d, 0, 0, d, box.cx, box.cy);
+        if (T.PROP_GROUND.has(x.inner)) k.translate(0, size / 2);
+        T.drawProp(k, x.inner, size, lt - (L.at ?? 0), { id: layerId(L) + ':xray' });
+        k.restore();
+      }
+      return mixed(src, c, T.ease.outCubic(T.prog(lt, at, x.dur ?? 0.2)), 'afxxraymix' + depth);
+    },
+  };
 })();

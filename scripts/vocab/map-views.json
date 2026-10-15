@@ -6,7 +6,7 @@
   },
   "registry": { "map_icon": "TOON.MAP_ICONS", "map_view": "TOON.MAP_VIEWS" },
   "_fields": {
-    "map": ["view", "tilt", "globe", "table", "figures", "arrows", "brawls", "fires", "trails", "tracks", "forts", "camps", "squads", "flags", "coins", "xmarks", "barriers", "words", "drops", "tacks", "hand"],
+    "map": ["view", "tilt", "globe", "table", "figures", "arrows", "brawls", "fires", "trails", "tracks", "forts", "camps", "squads", "flags", "coins", "xmarks", "barriers", "words", "drops", "tacks", "hand", "fights"],
     "region": ["split", "shatter", "slash", "engulf", "peel", "drift", "wipe", "annex", "damage", "surrender", "fire", "conquer.pattern", "conquer.blobs", "conquer.chunk", "conquer.rays"],
     "region_moods": ["plead", "hearts", "pipe", "dollar"],
     "damage_kinds": ["black-eye", "x-eye", "bandage", "crack"],

@@ -160,6 +160,8 @@
 
   // ---------- blueprint: blue sheet on a wood table with progressive chalk sketch ----------
   // bg.sketch: [{ line:[[x,y],...], at, dur } | { circle:[x,y,r], at } | { text, x, y, size, at }] (normalized to the sheet)
+  // Erasing (the board replaces whole drawings per beat): an item's `out` wipes it over `eraseDur` (0.15 s);
+  // bg.clear: [t, ...] wipes every item drawn before t.
   T.bgs.blueprint = (ctx, bg, lt, env) => {
     cam(ctx, env, 1, () => {
       planks(ctx, -OV, -OV, W + OV, H + OV, '#7a5232', false, 120);
@@ -172,9 +174,14 @@
       for (let y = sy; y < sy + sh; y += 48) { ctx.beginPath(); ctx.moveTo(sx, y); ctx.lineTo(sx + sw, y); ctx.stroke(); }
       const X = (v) => sx + v * sw, Y = (v) => sy + v * sh;
       ctx.strokeStyle = '#f4f8ff'; ctx.fillStyle = '#f4f8ff'; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      const clears = (bg.clear || []).filter((t) => typeof t === 'number');
       for (const it of bg.sketch || []) {
         const p = T.prog(lt, it.at ?? 0, it.dur ?? 0.8);
         if (p <= 0) continue;
+        const gone = [it.out, ...clears.filter((t) => t > (it.at ?? 0))].filter((t) => typeof t === 'number' && lt >= t);
+        const fade = gone.length ? 1 - T.prog(lt, Math.min(...gone), it.eraseDur ?? 0.15) : 1;
+        if (fade <= 0) continue;
+        ctx.save(); ctx.globalAlpha *= fade;
         if (it.line) {
           const pts = it.line.map(([x, y]) => [X(x), Y(y)]), segs = pts.slice(1).map((q, i) => Math.hypot(q[0] - pts[i][0], q[1] - pts[i][1]));
           let left = segs.reduce((a, b) => a + b, 0) * p; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
@@ -182,6 +189,7 @@
           ctx.stroke();
         } else if (it.circle) { ctx.beginPath(); ctx.arc(X(it.circle[0]), Y(it.circle[1]), it.circle[2] * sw, 0, Math.PI * 2 * p); ctx.stroke(); }
         else if (it.text) { ctx.save(); ctx.globalAlpha *= p; ctx.font = T.font(it.size ?? 54, 800); ctx.textAlign = 'center'; ctx.fillText(it.text, X(it.x), Y(it.y)); ctx.restore(); }
+        ctx.restore();
       }
       if (bg.stamp) { ctx.save(); ctx.translate(sx + sw - 220, sy + 70); ctx.rotate(-0.06); ctx.strokeStyle = '#f4f8ff'; ctx.lineWidth = 5; ctx.strokeRect(-180, -40, 360, 80); ctx.font = T.font(34, 800); ctx.textAlign = 'center'; ctx.fillText(bg.stamp, 0, 12); ctx.restore(); }
       ctx.restore();

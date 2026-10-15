@@ -386,7 +386,29 @@
   }
 
   // ---------- fg-pass: a giant cast member walks across the lens, B is revealed behind them ----------
+  // axis 'vertical': the figure rises from the bottom edge (dir 1) or drops from the top (dir -1) across the frame,
+  // B is uncovered behind it (reference: a mitre rises until the robe fills the frame, Church short 0:40).
+  function fgPassVertical(ctx, a, b, p, tr) {
+    const t = secs(tr, p), up = (tr.dir ?? 1) >= 0, s = sc(ctx), size = tr.size ?? 1.7 * H;
+    // travel far enough that the head (with tall headwear) and the feet are both off frame at p 0 and p 1
+    const yc = up ? T.lerp(H + 0.95 * size, -0.95 * size, p) : T.lerp(-0.95 * size, H + 0.95 * size, p);
+    blit(ctx, a);
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.beginPath();
+    if (up) ctx.rect(0, Math.max(0, yc * s), ctx.canvas.width, ctx.canvas.height); else ctx.rect(0, 0, ctx.canvas.width, Math.max(0, yc * s));
+    ctx.clip(); blit(ctx, b); ctx.restore();
+    const [c, k] = T.scratch('lens:fgpass', ctx.canvas.width, ctx.canvas.height);
+    k.clearRect(0, 0, c.width, c.height); k.setTransform(s, 0, 0, s, 0, 0);
+    k.translate(W / 2, yc + 0.5 * size);
+    const cast = (film.spec && film.spec.cast) || {}, who = tr.who && cast[tr.who] ? tr.who : null;
+    if (T.layers.bean) {
+      const look = who ? undefined : { robe: '#3a3a48', hair: 'short' };
+      T.layers.bean(k, { type: 'bean', who, look, id: 'fgpass', size, view: tr.view ?? 'front', expr: tr.expr ?? 'neutral' }, t, { cast, seed: 'fgpass', dpr: s, lt: t });
+    }
+    if (tr.silhouette) { k.setTransform(1, 0, 0, 1, 0, 0); k.globalCompositeOperation = 'source-in'; k.fillStyle = col(tr.silhouette, '#1b1512'); k.fillRect(0, 0, c.width, c.height); }
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = `blur(${(2.5 * s).toFixed(2)}px)`; ctx.drawImage(c, 0, 0); ctx.restore();
+  }
   function fgPass(ctx, a, b, p, tr) {
+    if (oneOf(tr.axis, ['horizontal', 'vertical'], 'horizontal', 'fg-pass.axis') === 'vertical') { fgPassVertical(ctx, a, b, p, tr); return; }
     const t = secs(tr, p), dir = (tr.dir ?? 1) < 0 ? -1 : 1, s = sc(ctx), size = tr.size ?? 1.7 * H;
     const xc = T.lerp(-0.8 * W, 1.6 * W, p), x = dir > 0 ? xc : W - xc, tilt = tr.tilt ?? 0.08;
     blit(ctx, a);
@@ -486,13 +508,43 @@
     ctx.restore();
   }
 
+  // ---------- swirl: the old shot spins and zooms into a point, the new one unspins out of the same point ----------
+  // Shorts reference (used in four of them): ~12 frames, ~270 degrees each way, motion-blurred by trailing copies.
+  // tr.at [x, y] (fractions, default the frame centre) keeps both shots locked on one subject; tr.turns, tr.dir (1 | -1).
+  function swirl(ctx, a, b, p, tr) {
+    const [ax, ay] = pt(tr.at, [0.5, 0.5]), turns = tr.turns ?? 0.75, dir = tr.dir ?? 1;
+    const out = p < 0.5, src = out ? a : b, e = out ? T.ease.in(p * 2) : 1 - T.ease.out((p - 0.5) * 2);
+    const s = sc(ctx), cx = ax * W * s, cy = ay * H * s;
+    blit(ctx, src, { zoom: 1 + e * 2.5, fx: ax * W, fy: ay * H, filter: `blur(${(e * 14 * s).toFixed(2)}px)` }); // fills the corners
+    for (let k = 3; k >= 0; k--) { // trailing copies read as rotational blur
+      const ang = (out ? 1 : -1) * dir * (e - k * 0.035) * turns * Math.PI * 2, z = 1 + Math.max(0, e - k * 0.035) * 1.6;
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = k ? 0.22 : 1 - e * 0.25;
+      ctx.translate(cx, cy); ctx.rotate(ang); ctx.scale(z, z); ctx.translate(-cx, -cy); ctx.drawImage(src, 0, 0); ctx.restore();
+    }
+    wash(ctx, '#ffffff', Math.max(0, 1 - Math.abs(p - 0.5) * 6) * 0.35);
+  }
+
+  // ---------- pixelate: the old shot breaks into growing blocks, the new one resolves out of them ----------
+  // Shorts reference: a mosaic burst as an explosion or "glitch" cut (pixel blocks up to ~1/20 of the width at the
+  // peak, about 10-12 frames). tr.block = peak block size in logical px (48), tr.flash = white lift at the peak (0.25).
+  function pixelate(ctx, a, b, p, tr) {
+    const src = p < 0.5 ? a : b, q = p < 0.5 ? p * 2 : (1 - p) * 2, s = sc(ctx);
+    const w = ctx.canvas.width, h = ctx.canvas.height, block = Math.max(1, T.lerp(1, (tr.block ?? 48) * s, T.ease.in(q)));
+    const sw = Math.max(1, Math.round(w / block)), sh = Math.max(1, Math.round(h / block));
+    const [c, k] = T.scratch('lens:pix', sw, sh);
+    k.imageSmoothingEnabled = true; k.clearRect(0, 0, sw, sh); k.drawImage(src, 0, 0, sw, sh);
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(c, 0, 0, sw, sh, 0, 0, w, h); ctx.restore();
+    wash(ctx, '#ffffff', (tr.flash ?? 0.25) * Math.max(0, q * 2 - 1));
+  }
+
   Object.assign(T.TRANSITION_DUR, {
     'cloud-wipe': 0.9, drip: 1.2, 'black-beat': 0.4, curtain: 1.6, 'explosion-wipe': 0.7, wave: 0.7, 'bubble-wipe': 0.5,
-    portal: 1.4, 'screen-dive': 0.7, 'fg-pass': 0.8, 'spin-zoom': 1.2, 'glow-open': 0.9, 'vignette-close': 1.0,
+    portal: 1.4, 'screen-dive': 0.7, 'fg-pass': 0.8, 'spin-zoom': 1.2, 'glow-open': 0.9, 'vignette-close': 1.0, swirl: 0.4, pixelate: 0.4,
   });
   Object.assign(T.transitions, {
     'cloud-wipe': cloudWipe, drip, 'black-beat': blackBeat, curtain, 'explosion-wipe': explosionWipe, wave,
     'bubble-wipe': bubbleWipe, portal, 'screen-dive': screenDive, 'fg-pass': fgPass, 'spin-zoom': spinZoom,
-    'glow-open': glowOpen, 'vignette-close': vignetteClose,
+    'glow-open': glowOpen, 'vignette-close': vignetteClose, swirl, pixelate,
   });
 })();

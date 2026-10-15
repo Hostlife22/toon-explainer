@@ -1,5 +1,75 @@
 # Changelog
 
+## 3.5.0 · 2026-10-15
+
+The last open caveats of the technique library.
+
+- `blueprint` sketches can be erased mid-shot: an item's `out` fades it over `eraseDur` (0.15 s), and `bg.clear: [t, ...]` wipes everything drawn before each time.
+- `hud` `carousel` `snap: true`: the instant mode, where the position jumps in one frame, the arrows flash and the picked card gets a red frame.
+- Background `grid` (a perspective floor grid, "the simulation" look) and `fx` `hatch` (a cross-hatch net closes over the frame, with an optional colour `wash`, for a render "collapse").
+- Props `cobweb` (corner web, optional spider), `banana-peel` (ground prop) and `region` (one map region as a standalone prop with a seeded coastline, a raised edge shadow, an optional `face` and `label`).
+- Map `fights`: a brawl cloud that travels along a `path`, with heads, dust, route `trail` and `drops`.
+- Sky `timelapse` takes `dayDur` keys (`[{at, v}]`), `accel {from, to, over, at, ease}` and a start `phase`; the phase is integrated on a fixed grid so frames stay order-independent.
+- The validator checks the new fields (`fights` path, dur, ease and counts; `hatch` spacing; `dayDur` keys; `accel` ease; `blueprint` `clear`; `cobweb` corner; `region` points).
+
+## 3.4.0 · 2026-10-15
+
+The remaining asset and detail gaps from the technique library.
+
+- Props `claw-crane` (lowers a `load`, releases it, rises), `rosette` (award badge; the text wraps to fit), `meat-bone`, `bucket` (held, or worn `upside`), `meat-grinder` (crank windows, `feed`, an extruding sausage).
+- Bean `smear`: a hair and headwear smear on a sharp turn (about 10 frames, settled by frame 14).
+- Map movers (`tokens`, `figures`, `squads`, `camps`, `routes`, `trails`) take `drops`: marks dropped along the path every N seconds that can turn into smoke; new map icons `blast` and `dot`.
+- `fx` `cctv` `variant: "camcorder"` (REC, running timecode, battery, crosshair); `hud` `meter` `orient: "vertical"`; `fg-pass` `axis: "vertical"` (a figure rises or drops across the frame).
+- The validator checks the new names and shapes (crane `load`, grinder `feed`, `drops` icons, `smear`, `fg-pass` `axis`).
+
+## 3.3.0 · 2026-10-15
+
+Every technique the reference study had marked "needs code" or "needs asset" is now in the engine. The technique library has no open NEEDS entries left; a few minor drawings are still noted inside individual entries.
+
+### New engine features
+
+- Transitions: `burn` (a charred, flaming edge), `swarm` (bats or birds close the frame), `squeeze` (collapse to a line, blurred pull-back) and `carry` (an inset or badge grows into the next scene). `glitch` gains `style: "corrupt"` (row tears, bottom black-out) and `style: "stepped"` (black, grey, white), plus the looks `tear`, `blackout`, `black`, `gray` and `white`.
+- Full-frame overlays: `fx` `crack` (cracked glass) and `petrify` (the frame turns to stone in two stages).
+- Fills: `fx` `pile` (objects pour in and bury the frame) and `flood` (liquid rises from the bottom).
+- Maps: overlays `throws` (icons thrown along an arc with wind-up and impact) and `morphs` (a line morphs between two shapes).
+- Screens: `doc` `chat` (messenger thread with typing bubbles), `doc` `tierlist`, `hud` `ecg` (heart monitor that can flatline), and `grow` for one bar of a bar chart.
+- Characters, props and lens: `redeyes` `close`, the `xray` layer modifier, `fg` `aperture` (a dark frame with a window), `title` `arc` (lettering on a curve), and the props `coin-gavel` and `iso-tile`.
+
+### Vertical format
+
+- Only the visible strip is drawn and pixel-graded: a vertical frame now costs about 15 % more than a landscape one, instead of about 50 %.
+- Text wider than the visible frame shrinks to fit (`fit: false` keeps the size), and the vignette is centred on the strip.
+- An `fx` in `pinned` may target a world layer and follows its camera and frame.
+- A `panel` showing a vertical shot shows it as framed by that shot's `frame`.
+
+## 3.2.0 · 2026-10-15
+
+A third study covered twenty reference videos: the eight long films again plus twelve vertical shorts. Every frame was decoded (403,452 frames) for cut and stillness measurements. All 262 contact sheets (every 2 s for long films, every 0.5 s for shorts), 77 shot sheets and 274 native-fps frame strips were viewed, and sponsor reads and third-party footage were logged and excluded. The results became a directing method, a technique library indexed by purpose, a vertical format and corrected measurements.
+
+### Directing and library
+
+- `references/09-directing.md`: topic → central question → arc → meaning events → visible actions → characters and locations → timing → check → render. It adds a shot card (learns / happens / changes / because), scene patterns that combine techniques, a pre-render checklist and five worked transfers to non-historical topics.
+- `references/10-technique-library.md`: 160 techniques with video and timecode, observed action, composition and order, measured timing, two non-history transfers and an engine status (supported, composable, needs asset, needs code). It also has a "not to copy" list and the measurements behind the doc corrections.
+- `references/11-vertical-shorts.md`: the 9:16 grammar measured on twelve shorts (three bands, fitting wide subjects, hook in the first sentence, density instead of faster cutting, hard-stop endings) and how to build it.
+- `references/06-reference-library.md` now records coverage per video, the shorts, source limits and deliberate differences from the reference.
+
+### Engine
+
+- `"format": "vertical"` renders 1080×1920. A strip of the 1920×1080 world is shown; shot `frame` pans it and shot `pinned` layers stay fixed in the frame. Labels, titles and counters keep inside the strip, and corner HUD widgets and `cctv` anchor to it (`T.visibleSpan`, `T.drawPinned`).
+- Transitions `swirl` (the shorts' spin cut) and `pixelate`; `whip` takes `dir` (`left`, `right`, `up`, `down`).
+- Grades `mono` and `negative`; `panel` frames `photo` (print with a caption margin) and `circle` (locator badge).
+- `dropShadow` grows a ground shadow before a `drop`/`drop-squash` lands; `zip.rev` spins leg-wheels before a zip exit; `fire` takes `step` (frames per flame drawing).
+
+### Examples
+
+- `examples/vertical_short` ("Why Ice Floats", 9:16, 51 s) and `examples/money_film` ("Why Printing Money Raises Prices", 16:9, 38 s), each with a storyboard that states its central question and arc.
+
+### Corrections
+
+- Rome cut counts and the "climax median 0.87 s" claim do not reproduce. Shot medians are 3.0–7.1 s across the long films; pace rules now count visual events, not cuts.
+- Other measured corrections: still-frame shares, jump-scare stillness, fire redraw rate, smash timing, black-beat lengths, time-lapse acceleration, `joins`/`carousel`/`blueprint` behaviour and the shorts' hooks without title cards.
+- The deflation rule in SKILL.md no longer contradicts the atrocity rule in 07-story-craft; the 07 header number is fixed, and the stale doc paths in `scripts/vocab/*.json` point at the toolkit cards.
+
 ## 3.1.0 · 2026-10-15
 
 The skill no longer carries version labels in its names. Files, folders, examples and guides are named by what they contain, and the guides follow one numbered sequence plus a folder of toolkit cards.

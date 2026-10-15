@@ -134,11 +134,15 @@
   };
 
   // meter: { label, value (0..1 or keys), w 520, h 44, style 'hazard'|'solid', color, labelColor, warnAt 0.9 } (x 0.04, y 0.08 = bar top-left)
-  HUD.meter = (ctx, L, lt) => {
-    place(ctx, L, 0.04, 0.1); const w = L.w ?? 520, h = L.h ?? 44, warnAt = L.warnAt ?? 0.9, v = T.clamp(snapNum(L.value ?? 0, lt), 0, 1);
+  // orient 'vertical': the bar stands on the side edge and fills bottom-up (w = thickness, h = length; defaults 44 x 520).
+  HUD.meter = (ctx, L, lt, env) => {
+    const vert = L.orient === 'vertical', [lo, vw] = T.visibleSpan(env); // default anchor inside the visible frame
+    place(ctx, L, (lo + (vert ? 0.06 : 0.04) * vw) / W, vert ? 0.3 : 0.1);
+    const w = vert ? L.h ?? 520 : L.w ?? 520, h = vert ? L.w ?? 44 : L.h ?? 44, warnAt = L.warnAt ?? 0.9, v = T.clamp(snapNum(L.value ?? 0, lt), 0, 1);
     if (v >= 0.999) { const r = T.rng(T.hash((L.id || 'meter') + frames(lt / 2))); ctx.translate((r() - 0.5) * 6, (r() - 0.5) * 6); } // overload shake on twos
-    const s = pop(lt); ctx.translate(w / 2, h / 2); ctx.scale(s, s); ctx.translate(-w / 2, -h / 2);
+    const s = pop(lt), px = vert ? h / 2 : w / 2, py = vert ? w / 2 : h / 2; ctx.translate(px, py); ctx.scale(s, s); ctx.translate(-px, -py);
     if (L.label) uiText(ctx, String(L.label).toUpperCase(), 0, -32, L.labelSize ?? 40, { align: 'left', fill: L.labelColor ?? '#e0313a', stroke: 10 });
+    ctx.save(); if (vert) { ctx.translate(0, w); ctx.rotate(-Math.PI / 2); } // the bar's length axis points up
     ctx.beginPath(); T.rrect(ctx, 0, 0, w, h, 10); ctx.fillStyle = '#3a3a3a'; ctx.fill(); ctx.save(); ctx.clip();
     ctx.beginPath(); ctx.rect(0, 0, w * v, h); ctx.clip();
     if ((L.style ?? 'hazard') === 'hazard') {
@@ -146,7 +150,8 @@
       for (let x = -h - 22 + off; x < w + h; x += 22) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + 11, 0); ctx.lineTo(x + 11 - h, h); ctx.lineTo(x - h, h); ctx.closePath(); ctx.fill(); }
     } else { ctx.fillStyle = L.color ?? '#5ad84a'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(0, 4, w, h * 0.22); }
     ctx.restore(); ctx.beginPath(); T.rrect(ctx, 0, 0, w, h, 10); ctx.lineWidth = 4; ctx.strokeStyle = UI; ctx.stroke();
-    if (v >= warnAt && frames(lt) % 12 < 6) warnTri(ctx, w + 38, h / 2, 46, '#d8262a', '#fff');
+    ctx.restore();
+    if (v >= warnAt && frames(lt) % 12 < 6) warnTri(ctx, vert ? h + 38 : w + 38, vert ? 23 : h / 2, 46, '#d8262a', '#fff');
   };
 
   const fmtNum = (v, L, n = Math.round(v)) => { if (L.compact) { for (const [d, u] of [[1e9, 'B'], [1e6, 'M'], [1e3, 'K']]) if (Math.abs(n) >= d) return (n / d).toFixed(n / d < 10 ? 1 : 0).replace(/\.0$/, '') + u; return String(n); } return L.sep ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, L.sep) : String(n); };
@@ -251,7 +256,7 @@
   HUD.chip = (ctx, L, lt, env) => {
     const size = L.size ?? 30, h = size * 2, corner = L.corner ?? 'tr', slot = L.slot ?? 0, text = String(L.text ?? '').toUpperCase();
     const cond = 0.86, tw = textW(ctx, text, size * 1.05, 800) * cond, w = L.w ?? h + 14 + tw + 18;
-    const m = 40, left = corner.includes('l'), x = left ? m : W - m - w, y = corner[0] === 't' ? m + slot * (h + 8) : H - m - h - slot * (h + 8); // 3.5 % safe margin
+    const [lo, vw] = T.visibleSpan(env), m = 40, left = corner.includes('l'), x = left ? lo + m : lo + vw - m - w, y = corner[0] === 't' ? m + slot * (h + 8) : H - m - h - slot * (h + 8); // 3.5 % safe margin
     abs(ctx, env); const e = T.ease.outCubic(T.prog(lt, 0, 6 * F)), s = pop(lt);
     ctx.translate(x + w / 2 + (left ? -40 : 40) * (1 - e), y + h / 2); ctx.scale(s, s); ctx.translate(-w / 2, -h / 2);
     ctx.beginPath(); T.rrect(ctx, 0, 0, w, h, 8); ctx.fillStyle = '#1c1c22'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#3a2a1a'; ctx.stroke();
@@ -293,7 +298,7 @@
   };
   HUD['timer-lcd'] = (ctx, L, lt, env) => {
     const w = L.w ?? 300, h = L.h ?? 92, stop = L.stop ?? Infinity;
-    if (L.x == null && L.y == null) { abs(ctx, env); const c = L.corner ?? 'tr'; ctx.translate(c.includes('l') ? 40 + w / 2 : W - 40 - w / 2, c[0] === 't' ? 40 + h / 2 : H - 40 - h / 2); }
+    if (L.x == null && L.y == null) { abs(ctx, env); const c = L.corner ?? 'tr', [lo, vw] = T.visibleSpan(env); ctx.translate(c.includes('l') ? lo + 40 + w / 2 : lo + vw - 40 - w / 2, c[0] === 't' ? 40 + h / 2 : H - 40 - h / 2); }
     const blinkOff = lt > stop && lt < stop + 36 * F && frames(lt - stop) % 12 >= 6; const t = Math.max(0, Math.min(lt, stop) - (L.start ?? 0));
     ctx.beginPath(); T.rrect(ctx, -w / 2, -h / 2, w, h, 12); ctx.fillStyle = '#3a3f44'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = UI; ctx.stroke();
     ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fillRect(-w / 2 + 10, -h / 2 + 2, w - 20, 2);
@@ -572,23 +577,28 @@
     if (label) uiText(ctx, label, 0, 0, T.fitSize(ctx, label, 34, r0 * 1.6), { stroke: 8 });
   };
   // carousel: { items [{prop,label}], select [{at,i}], start 0 } — item cards slide 8 frames per selection
+  // snap: true — the reference menu (WW1 4:09): a card lands in 1 frame, the arrows flash for 3 frames and the selected
+  // card's border flashes red for 2 frames, instead of the 8-frame slide with a bounce.
   D.carousel = (ctx, L, lt, env) => {
     if (L.dim !== 0) backdrop(ctx, env, `rgba(20,20,26,${L.dim ?? 0.85})`); screen(ctx, L, env); const items = arr(L.items), sel = arr(L.select);
-    let pos = L.start ?? 0, bounce = 1;
+    let pos = L.start ?? 0, bounce = 1, since = Infinity;
     for (const c of sel) {
-      if (lt < c.at) break; const e = T.ease.outCubic(T.prog(lt, c.at, 8 * F)); pos = T.lerp(pos, c.i ?? 0, e);
+      if (lt < c.at) break; since = lt - c.at;
+      if (L.snap) { pos = c.i ?? 0; continue; }
+      const e = T.ease.outCubic(T.prog(lt, c.at, 8 * F)); pos = T.lerp(pos, c.i ?? 0, e);
       bounce = 1 + 0.05 * Math.sin(Math.PI * T.prog(lt, c.at + 8 * F, 6 * F));
     }
+    const f = frames(since), chevronFlash = L.snap && f < 3, redFlash = L.snap && f >= 1 && f < 3;
     const order = items.map((_, i) => i).sort((a, b) => Math.abs(b - pos) - Math.abs(a - pos));
     for (const i of order) {
       const d = i - pos, ad = Math.abs(d); if (ad > 1.6) continue;
       const sz = T.lerp(360, 250, Math.min(1, ad)) * (ad < 0.5 ? bounce : 1), x = d * 470; ctx.save(); ctx.translate(x, -30);
-      ctx.beginPath(); T.rrect(ctx, -sz / 2, -sz / 2, sz, sz, 14); ctx.fillStyle = '#34343e'; ctx.fill(); ctx.lineWidth = 8; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+      ctx.beginPath(); T.rrect(ctx, -sz / 2, -sz / 2, sz, sz, 14); ctx.fillStyle = '#34343e'; ctx.fill(); ctx.lineWidth = 8; ctx.strokeStyle = redFlash && ad < 0.5 ? '#e0302a' : '#ffffff'; ctx.stroke();
       if (items[i].prop) prop(ctx, items[i].prop, sz * 0.55, lt);
       if (ad > 0.05) { ctx.fillStyle = `rgba(0,0,0,${0.4 * Math.min(1, ad)})`; ctx.beginPath(); T.rrect(ctx, -sz / 2 - 4, -sz / 2 - 4, sz + 8, sz + 8, 14); ctx.fill(); }
       uiText(ctx, String(items[i].label ?? '').toUpperCase(), 0, sz / 2 + 54, 48, { stroke: 8, fill: ad < 0.5 ? '#fff' : '#9a9aa4' }); ctx.restore();
     }
-    for (const sx of [-1, 1]) uiText(ctx, sx < 0 ? '<' : '>', sx * 800, -30, 90, { stroke: 12 });
+    for (const sx of [-1, 1]) uiText(ctx, sx < 0 ? '<' : '>', sx * 800, -30, chevronFlash ? 110 : 90, { stroke: 12, fill: chevronFlash ? '#ffe066' : '#fff' });
   };
 
   // ---------- doc kinds: boxes and panels ----------
@@ -648,7 +658,7 @@
   // killfeed: { entries [{a, icon, v, at}], size 40, life } (top-right unless x/y given)
   D.killfeed = (ctx, L, lt, env) => {
     screen(ctx, L, env);
-    if (L.x == null && L.y == null) { abs(ctx, env); ctx.translate(W - 40, 40); }
+    if (L.x == null && L.y == null) { abs(ctx, env); const [lo, vw] = T.visibleSpan(env); ctx.translate(lo + vw - 40, 40); }
     const es = arr(L.entries), size = L.size ?? 40, h = 34 * (size / 24);
     es.forEach((e, i) => {
       const at = e.at ?? 0; if (lt < at || (L.life != null && lt > at + L.life + 0.3)) return; let down = 0;

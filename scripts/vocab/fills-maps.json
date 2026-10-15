@@ -1,0 +1,12 @@
+{
+  "_about": "fill-fx.js (pile, flood), foreground.js (aperture), props-gags.js (coin-gavel, iso-tile), materials.js (xray modifier) and map-overlays.js (throws, morphs). Map overlay fields are not validated by spec.py; they are listed in _fields for documentation and checked in JS.",
+  "fx": ["pile", "flood"],
+  "fg": ["aperture"],
+  "props": ["coin-gavel", "iso-tile"],
+  "kinds": {"layer_mod": ["xray"]},
+  "registry": {"layer_mod": "TOON.LAYER_MODS"},
+  "_fields": {
+    "map": ["throws", "morphs"],
+    "iso_tile_building": ["none", "house", "tower"]
+  }
+}

@@ -1,0 +1,1384 @@
+{
+ "title": "Why Ice Floats",
+ "format": "vertical",
+ "seed": 17,
+ "fps": 30,
+ "style": {
+  "vignette": 0.25
+ },
+ "cast": {
+  "prof": {
+   "outfit": "labcoat",
+   "hair": "wild",
+   "hairColor": "#e8e4dc",
+   "glasses": "round"
+  },
+  "swimmer": {
+   "outfit": "overalls",
+   "hair": "ponytail",
+   "hairColor": "#6b3a20"
+  }
+ },
+ "shots": [
+  {
+   "id": "k01",
+   "dur": 2.4,
+   "vo": "Almost everything shrinks when it freezes.",
+   "screen": "a candle shrinks on the classroom desk while the professor squints; visible change inside the first second",
+   "bg": {
+    "kind": "studio",
+    "variant": "classroom",
+    "lines": []
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": -0.08,
+      "amount": 0.08
+     },
+     {
+      "at": 0.9,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "id": "candle",
+     "kind": "candle",
+     "x": 0.5,
+     "y": 0.5,
+     "size": 820,
+     "move": [
+      {
+       "at": 0.7,
+       "dur": 0.5,
+       "scale": 0.55,
+       "ease": "inOut"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "mark": "ticks",
+     "at": 1.0,
+     "target": "prof"
+    },
+    {
+     "type": "bean",
+     "who": "prof",
+     "x": 0.57,
+     "y": 1.02,
+     "size": 470,
+     "flip": true,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 1.0,
+       "v": "squint"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 1.0,
+       "v": "think"
+      }
+     ],
+     "id": "prof"
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "text": "SMALLER",
+     "x": 0.5,
+     "y": 0.16,
+     "size": 62,
+     "color": "#ffe066",
+     "at": 0.95
+    }
+   ]
+  },
+  {
+   "id": "k02",
+   "dur": 1.8,
+   "vo": "Water does the opposite.",
+   "screen": "same desk; an ice cube's shadow grows, the cube drops onto the mug and the professor gasps",
+   "bg": {
+    "kind": "studio",
+    "variant": "classroom",
+    "lines": []
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ],
+    "punch": [
+     {
+      "at": 0.5,
+      "amount": 0.12
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "mug",
+     "x": 0.5,
+     "y": 0.47,
+     "size": 420
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.49,
+     "y": 0.33,
+     "size": 190,
+     "enter": "drop-squash",
+     "at": 0.4,
+     "dropShadow": 0.3
+    },
+    {
+     "type": "bean",
+     "who": "prof",
+     "x": 0.57,
+     "y": 1.02,
+     "size": 470,
+     "flip": true,
+     "expr": [
+      {
+       "at": 0,
+       "v": "squint"
+      },
+      {
+       "at": 0.55,
+       "v": "shock"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "think"
+      },
+      {
+       "at": 0.55,
+       "v": "scared"
+      }
+     ]
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "text": "BIGGER",
+     "x": 0.5,
+     "y": 0.16,
+     "size": 62,
+     "color": "#9be07f",
+     "at": 0.6
+    }
+   ]
+  },
+  {
+   "id": "k03",
+   "dur": 4.4,
+   "transition": {
+    "kind": "whip",
+    "dir": "up"
+   },
+   "vo": "That's why ice floats, and why lakes don't freeze solid.",
+   "screen": "under a frozen lake: a lid of ice blocks on top, a swimmer waves below",
+   "bg": {
+    "kind": "underwater"
+   },
+   "camera": {
+    "zoom": [
+     1.12,
+     1.0
+    ],
+    "ease": "outCubic"
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.36,
+     "y": 0.2,
+     "size": 150
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.44,
+     "y": 0.2,
+     "size": 150
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.52,
+     "y": 0.2,
+     "size": 150
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.6,
+     "y": 0.2,
+     "size": 150
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.68,
+     "y": 0.2,
+     "size": 150
+    },
+    {
+     "type": "bean",
+     "who": "swimmer",
+     "x": 0.5,
+     "y": 0.8,
+     "size": 400,
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 2.2,
+       "v": "wave"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 2.2,
+       "v": "happy"
+      }
+     ],
+     "bob": 10
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "tag": "ON TOP",
+     "text": "ICE",
+     "x": 0.5,
+     "y": 0.32,
+     "size": 76,
+     "at": 0.6
+    },
+    {
+     "type": "label",
+     "text": "NOT SOLID",
+     "x": 0.5,
+     "y": 0.92,
+     "size": 60,
+     "color": "#9be07f",
+     "at": 2.6
+    }
+   ]
+  },
+  {
+   "id": "k04",
+   "dur": 5.0,
+   "transition": {
+    "kind": "swirl",
+    "at": [
+     0.5,
+     0.5
+    ]
+   },
+   "vo": "Here's the trick. Liquid water is a crowd: packed tight, pushing, always moving.",
+   "screen": "a crowd of blue molecule blobs jostling; pinned header LIQUID",
+   "bg": {
+    "kind": "mood",
+    "variant": "rays",
+    "preset": "blue"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ]
+   },
+   "layers": [
+    {
+     "type": "obj",
+     "id": "m1",
+     "shape": "disc",
+     "color": "#6cc4f0",
+     "size": 150,
+     "x": 0.44,
+     "y": 0.45,
+     "wobble": 14,
+     "face": {
+      "mood": "squeeze"
+     },
+     "jitter": {
+      "amp": 4,
+      "on": 2,
+      "from": 0.3,
+      "to": 0.8
+     }
+    },
+    {
+     "type": "obj",
+     "id": "m2",
+     "shape": "disc",
+     "color": "#5ab8ea",
+     "size": 150,
+     "x": 0.5,
+     "y": 0.42,
+     "wobble": 14,
+     "face": {
+      "mood": "angry"
+     },
+     "jitter": {
+      "amp": 4,
+      "on": 2,
+      "from": 0.7,
+      "to": 1.2000000000000002
+     }
+    },
+    {
+     "type": "obj",
+     "id": "m3",
+     "shape": "disc",
+     "color": "#6cc4f0",
+     "size": 150,
+     "x": 0.56,
+     "y": 0.46,
+     "wobble": 14,
+     "face": {
+      "mood": "side-eye"
+     },
+     "jitter": {
+      "amp": 4,
+      "on": 2,
+      "from": 1.1,
+      "to": 1.6
+     }
+    },
+    {
+     "type": "obj",
+     "id": "m4",
+     "shape": "disc",
+     "color": "#5ab8ea",
+     "size": 150,
+     "x": 0.45,
+     "y": 0.57,
+     "wobble": 14,
+     "face": {
+      "mood": "grimace"
+     },
+     "jitter": {
+      "amp": 4,
+      "on": 2,
+      "from": 1.5000000000000002,
+      "to": 2.0
+     }
+    },
+    {
+     "type": "obj",
+     "id": "m5",
+     "shape": "disc",
+     "color": "#6cc4f0",
+     "size": 150,
+     "x": 0.51,
+     "y": 0.59,
+     "wobble": 14,
+     "face": {
+      "mood": "squeeze"
+     },
+     "jitter": {
+      "amp": 6,
+      "on": 2,
+      "from": 2.6,
+      "to": 3.4
+     }
+    },
+    {
+     "type": "obj",
+     "id": "m6",
+     "shape": "disc",
+     "color": "#5ab8ea",
+     "size": 150,
+     "x": 0.57,
+     "y": 0.56,
+     "wobble": 14,
+     "face": {
+      "mood": "shock"
+     },
+     "jitter": {
+      "amp": 4,
+      "on": 2,
+      "from": 2.3,
+      "to": 2.8
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "speedlines",
+     "x": 0.5,
+     "y": 0.6,
+     "at": 3.6,
+     "out": 4.8
+    }
+   ],
+   "pinned": [
+    {
+     "type": "title",
+     "text": "LIQUID",
+     "x": 0.5,
+     "y": 0.12,
+     "size": 84,
+     "color": "#ffffff",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "id": "k05",
+   "dur": 4.0,
+   "vo": "Cool it down, and the molecules slow enough to hold hands.",
+   "screen": "same crowd (callback composition); the grade turns cold, the wobble stops, arms sprout",
+   "bg": {
+    "kind": "mood",
+    "variant": "rays",
+    "preset": "blue"
+   },
+   "grade": {
+    "preset": "cold",
+    "at": 0.5,
+    "dur": 0.6,
+    "strength": 0.5
+   },
+   "camera": {
+    "zoom": [
+     1.06,
+     1.08
+    ]
+   },
+   "layers": [
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#6cc4f0",
+     "size": 150,
+     "x": 0.44,
+     "y": 0.45,
+     "enter": "none",
+     "wobble": 14,
+     "swap": [
+      {
+       "at": 1.1,
+       "wobble": 0
+      }
+     ],
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "squeeze"
+       },
+       {
+        "at": 1.1,
+        "v": "sleepy"
+       }
+      ]
+     },
+     "arms": {
+      "sprout": true,
+      "at": 2.2,
+      "pose": "idle",
+      "span": 0.6
+     }
+    },
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#5ab8ea",
+     "size": 150,
+     "x": 0.5,
+     "y": 0.42,
+     "enter": "none",
+     "wobble": 14,
+     "swap": [
+      {
+       "at": 1.1,
+       "wobble": 0
+      }
+     ],
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "angry"
+       },
+       {
+        "at": 1.1,
+        "v": "content"
+       }
+      ]
+     },
+     "arms": {
+      "sprout": true,
+      "at": 2.3000000000000003,
+      "pose": "idle",
+      "span": 0.6
+     }
+    },
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#6cc4f0",
+     "size": 150,
+     "x": 0.56,
+     "y": 0.46,
+     "enter": "none",
+     "wobble": 14,
+     "swap": [
+      {
+       "at": 1.1,
+       "wobble": 0
+      }
+     ],
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "side-eye"
+       },
+       {
+        "at": 1.1,
+        "v": "content"
+       }
+      ]
+     },
+     "arms": {
+      "sprout": true,
+      "at": 2.4000000000000004,
+      "pose": "idle",
+      "span": 0.6
+     }
+    },
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#5ab8ea",
+     "size": 150,
+     "x": 0.45,
+     "y": 0.57,
+     "enter": "none",
+     "wobble": 14,
+     "swap": [
+      {
+       "at": 1.1,
+       "wobble": 0
+      }
+     ],
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "grimace"
+       },
+       {
+        "at": 1.1,
+        "v": "sleepy"
+       }
+      ]
+     },
+     "arms": {
+      "sprout": true,
+      "at": 2.5,
+      "pose": "idle",
+      "span": 0.6
+     }
+    },
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#6cc4f0",
+     "size": 150,
+     "x": 0.51,
+     "y": 0.59,
+     "enter": "none",
+     "wobble": 14,
+     "swap": [
+      {
+       "at": 1.1,
+       "wobble": 0
+      }
+     ],
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "squeeze"
+       },
+       {
+        "at": 1.1,
+        "v": "happy"
+       }
+      ]
+     },
+     "arms": {
+      "sprout": true,
+      "at": 2.6,
+      "pose": "idle",
+      "span": 0.6
+     }
+    },
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#5ab8ea",
+     "size": 150,
+     "x": 0.57,
+     "y": 0.56,
+     "enter": "none",
+     "wobble": 14,
+     "swap": [
+      {
+       "at": 1.1,
+       "wobble": 0
+      }
+     ],
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "shock"
+       },
+       {
+        "at": 1.1,
+        "v": "content"
+       }
+      ]
+     },
+     "arms": {
+      "sprout": true,
+      "at": 2.7,
+      "pose": "idle",
+      "span": 0.6
+     }
+    }
+   ],
+   "pinned": [
+    {
+     "type": "title",
+     "text": "COLD",
+     "x": 0.5,
+     "y": 0.12,
+     "size": 84,
+     "color": "#bfe8ff",
+     "at": 0.6
+    }
+   ]
+  },
+  {
+   "id": "k06",
+   "dur": 5.6,
+   "transition": "cut",
+   "vo": "But they only hold hands at fixed angles, so they build rings with an empty middle.",
+   "screen": "the same six molecules snap into a ring one by one; EMPTY SPACE sits in the hole",
+   "bg": {
+    "kind": "mood",
+    "variant": "rays",
+    "preset": "blue"
+   },
+   "grade": {
+    "preset": "cold",
+    "strength": 0.5
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 3.9,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#6cc4f0",
+     "size": 130,
+     "x": 0.5,
+     "y": 0.4,
+     "face": {
+      "mood": "content"
+     },
+     "arms": {
+      "pose": "idle",
+      "span": 0.62
+     },
+     "enter": "pop",
+     "at": 0.05
+    },
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#5ab8ea",
+     "size": 130,
+     "x": 0.565,
+     "y": 0.46,
+     "face": {
+      "mood": "happy"
+     },
+     "arms": {
+      "pose": "idle",
+      "span": 0.62
+     },
+     "enter": "pop",
+     "at": 0.2
+    },
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#6cc4f0",
+     "size": 130,
+     "x": 0.565,
+     "y": 0.58,
+     "face": {
+      "mood": "content"
+     },
+     "arms": {
+      "pose": "idle",
+      "span": 0.62
+     },
+     "enter": "pop",
+     "at": 0.35
+    },
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#5ab8ea",
+     "size": 130,
+     "x": 0.5,
+     "y": 0.64,
+     "face": {
+      "mood": "happy"
+     },
+     "arms": {
+      "pose": "idle",
+      "span": 0.62
+     },
+     "enter": "pop",
+     "at": 0.49999999999999994
+    },
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#6cc4f0",
+     "size": 130,
+     "x": 0.435,
+     "y": 0.58,
+     "face": {
+      "mood": "content"
+     },
+     "arms": {
+      "pose": "idle",
+      "span": 0.62
+     },
+     "enter": "pop",
+     "at": 0.65
+    },
+    {
+     "type": "obj",
+     "shape": "disc",
+     "color": "#5ab8ea",
+     "size": 130,
+     "x": 0.435,
+     "y": 0.46,
+     "face": {
+      "mood": "happy"
+     },
+     "arms": {
+      "pose": "idle",
+      "span": 0.62
+     },
+     "enter": "pop",
+     "at": 0.8
+    }
+   ],
+   "pinned": [
+    {
+     "type": "title",
+     "text": "RINGS",
+     "x": 0.5,
+     "y": 0.12,
+     "size": 84,
+     "color": "#ffffff",
+     "at": 1.2
+    },
+    {
+     "type": "label",
+     "tag": "EMPTY",
+     "text": "SPACE",
+     "x": 0.5,
+     "y": 0.53,
+     "size": 56,
+     "color": "#ffe066",
+     "at": 3.8
+    }
+   ]
+  },
+  {
+   "id": "k07",
+   "dur": 4.0,
+   "vo": "Same molecules, more room. Ice takes about nine percent more space.",
+   "screen": "stacked comparison: water crowd on top, the larger ice ring below, +9% between them",
+   "bg": {
+    "kind": "flat",
+    "color": "#1d4a6a"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ],
+    "punch": [
+     {
+      "at": 3.0,
+      "amount": 0.12
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "panel",
+     "layout": "custom",
+     "cells": [
+      {
+       "shot": "k04",
+       "t": 2.0,
+       "rect": [
+        0.37,
+        0.03,
+        0.26,
+        0.33
+       ],
+       "zoom": 1.7
+      },
+      {
+       "shot": "k06",
+       "t": 4.5,
+       "rect": [
+        0.35,
+        0.61,
+        0.3,
+        0.37
+       ],
+       "zoom": 1.7
+      }
+     ]
+    },
+    {
+     "type": "counter",
+     "from": 0,
+     "to": 9,
+     "prefix": "+",
+     "suffix": "%",
+     "dur": 1.2,
+     "delay": 0,
+     "x": 0.5,
+     "y": 0.49,
+     "size": 100,
+     "color": "#ffe066",
+     "at": 1.8
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "text": "WATER",
+     "x": 0.5,
+     "y": 0.4,
+     "size": 50,
+     "at": 0.3
+    },
+    {
+     "type": "label",
+     "text": "ICE",
+     "x": 0.5,
+     "y": 0.57,
+     "size": 50,
+     "at": 1.2
+    }
+   ]
+  },
+  {
+   "id": "k08",
+   "dur": 5.0,
+   "vo": "Bigger but not heavier, so it's lighter for its size, and it rises.",
+   "screen": "a block of ice rises through dark water past the label LESS DENSE",
+   "bg": {
+    "kind": "underwater",
+    "top": "#3c9ad0",
+    "bottom": "#0d2a4e"
+   },
+   "frame": [
+    {
+     "at": 0,
+     "v": 0.5
+    },
+    {
+     "at": 4.0,
+     "v": 0.56,
+     "ease": "inOut"
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.0,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.5,
+     "y": 1.0,
+     "size": 230,
+     "move": [
+      {
+       "at": 0.6,
+       "dur": 2.6,
+       "to": [
+        0.53,
+        0.52
+       ],
+       "ease": "inOut"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "speedlines",
+     "x": 0.52,
+     "y": 0.6,
+     "at": 0.8,
+     "out": 3.2
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "text": "SAME MASS",
+     "x": 0.5,
+     "y": 0.14,
+     "size": 56,
+     "at": 0.3
+    },
+    {
+     "type": "label",
+     "text": "LESS DENSE",
+     "x": 0.5,
+     "y": 0.26,
+     "size": 64,
+     "color": "#9be07f",
+     "at": 2.6
+    }
+   ]
+  },
+  {
+   "id": "k09",
+   "dur": 3.7,
+   "transition": {
+    "kind": "whip",
+    "dir": "down"
+   },
+   "vo": "In winter that ice becomes a lid on the lake.",
+   "screen": "a grey winter lake; ice blocks pop in edge to edge across the surface",
+   "bg": {
+    "kind": "sea",
+    "preset": "fog",
+    "horizon": 0.45
+   },
+   "grade": "cold",
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.37,
+     "y": 0.72,
+     "size": 170,
+     "enter": "drop-squash",
+     "at": 0.9
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.46,
+     "y": 0.72,
+     "size": 170,
+     "enter": "drop-squash",
+     "at": 1.1
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.55,
+     "y": 0.72,
+     "size": 170,
+     "enter": "drop-squash",
+     "at": 1.3
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.64,
+     "y": 0.72,
+     "size": 170,
+     "enter": "drop-squash",
+     "at": 1.5
+    }
+   ],
+   "pinned": [
+    {
+     "type": "title",
+     "text": "A LID",
+     "x": 0.5,
+     "y": 0.16,
+     "size": 90,
+     "color": "#ffffff",
+     "at": 1.9
+    }
+   ]
+  },
+  {
+   "id": "k10",
+   "dur": 5.4,
+   "transition": {
+    "kind": "whip",
+    "dir": "up"
+   },
+   "vo": "Under the lid, the water stays around four degrees, and life gets through the winter.",
+   "screen": "under the ice again; the swimmer and a blob fish wave; a 4 degrees C counter",
+   "bg": {
+    "kind": "underwater"
+   },
+   "camera": {
+    "zoom": [
+     1.1,
+     1.15
+    ],
+    "focus": [
+     0.5,
+     0.7
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.36,
+     "y": 0.2,
+     "size": 150
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.44,
+     "y": 0.2,
+     "size": 150
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.52,
+     "y": 0.2,
+     "size": 150
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.6,
+     "y": 0.2,
+     "size": 150
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.68,
+     "y": 0.2,
+     "size": 150
+    },
+    {
+     "type": "obj",
+     "id": "fish",
+     "shape": "blob",
+     "color": "#f0a040",
+     "size": 150,
+     "x": 0.57,
+     "y": 0.62,
+     "face": {
+      "mood": "happy"
+     },
+     "arms": {
+      "pose": [
+       {
+        "at": 0,
+        "v": "idle"
+       },
+       {
+        "at": 1.2,
+        "v": "wave"
+       }
+      ]
+     },
+     "bob": 8
+    },
+    {
+     "type": "bean",
+     "who": "swimmer",
+     "x": 0.45,
+     "y": 0.98,
+     "size": 480,
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 3.3,
+       "v": "thumbs-up"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "content"
+      },
+      {
+       "at": 3.3,
+       "v": "happy"
+      }
+     ]
+    }
+   ],
+   "pinned": [
+    {
+     "type": "counter",
+     "from": 0,
+     "to": 4,
+     "suffix": " °C",
+     "dur": 1.0,
+     "x": 0.5,
+     "y": 0.4,
+     "size": 110,
+     "color": "#ffe066",
+     "at": 1.6
+    }
+   ]
+  },
+  {
+   "id": "k11",
+   "dur": 4.0,
+   "transition": "flash-cut",
+   "vo": "If ice sank, lakes would freeze from the bottom up. Solid.",
+   "screen": "negative flash on 'If'; the same underwater view, the swimmer frozen in a block; silent hold on 'Solid'",
+   "bg": {
+    "kind": "underwater",
+    "top": "#9fc8d8",
+    "bottom": "#5a7a90"
+   },
+   "grade": [
+    {
+     "preset": "negative",
+     "at": 0,
+     "out": 0.25,
+     "outDur": 0.05
+    },
+    {
+     "preset": "cold",
+     "at": 1.2,
+     "dur": 0.8
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.0,
+     1.02
+    ],
+    "punch": [
+     {
+      "at": 3.1,
+      "amount": 0.14
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.4,
+     "y": 0.98,
+     "size": 260,
+     "enter": "pop",
+     "at": 1.0
+    },
+    {
+     "type": "prop",
+     "kind": "ice-block",
+     "x": 0.6,
+     "y": 0.98,
+     "size": 260,
+     "enter": "pop",
+     "at": 1.3
+    },
+    {
+     "type": "bean",
+     "who": "swimmer",
+     "x": 0.5,
+     "y": 0.9,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "content"
+      },
+      {
+       "at": 1.8,
+       "v": "shock"
+      }
+     ],
+     "jitter": {
+      "amp": 2,
+      "on": 2,
+      "to": 3.1
+     },
+     "freeze": {
+      "at": 3.1,
+      "dur": 0.2
+     },
+     "blink": false
+    },
+    {
+     "type": "obj",
+     "shape": "blob",
+     "color": "#f0a040",
+     "size": 140,
+     "x": 0.62,
+     "y": 0.5,
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "happy"
+       },
+       {
+        "at": 1.8,
+        "v": "shock"
+       }
+      ]
+     },
+     "freeze": {
+      "at": 2.6,
+      "dur": 0.2
+     }
+    }
+   ],
+   "pinned": [
+    {
+     "type": "title",
+     "text": "SOLID",
+     "x": 0.5,
+     "y": 0.16,
+     "size": 96,
+     "color": "#bfe8ff",
+     "at": 3.1
+    }
+   ]
+  },
+  {
+   "id": "k12",
+   "dur": 5.4,
+   "transition": {
+    "kind": "swirl",
+    "at": [
+     0.5,
+     0.4
+    ],
+    "dir": -1
+   },
+   "vo": "So the next time your drink clinks, that's a tiny lid, saving a lake.",
+   "screen": "back to the mug from k02 (callback) as a print on the desk; on the last words the frame drains to grey; hard stop",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.12
+    ]
+   },
+   "layers": [
+    {
+     "type": "panel",
+     "layout": "frame",
+     "frame": "photo",
+     "caption": "A TINY LID",
+     "cells": [
+      {
+       "shot": "k02",
+       "t": 1.6,
+       "rect": [
+        0.37,
+        0.1,
+        0.26,
+        0.62,
+        -4
+       ]
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "flash",
+     "at": 2.1
+    }
+   ],
+   "grade": {
+    "preset": "mono",
+    "at": 2.2,
+    "dur": 0.5
+   }
+  }
+ ]
+}

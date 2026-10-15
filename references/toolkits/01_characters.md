@@ -1,7 +1,7 @@
 # 01 · Characters
 In a word: one bean rig casts anyone from any era (a legionary, a WWI private, a countryball, an angel, a toddler, a villain seen from above) and makes them act through hold-and-snap poses and one-frame expression snaps.
 
-Engine: `scripts/engine/lib/characters/rig.js` (body, poses, builds), `face.js` (head, expressions), `expressions.js` (expression pack, face extras, accessories, wings, `topbean`), `headwear.js` + `wardrobe.js` (headwear, outfits, hair, beards), `outfits.js` (outfits, head modes), `crowd.js` · Vocabulary: `scripts/vocab/characters.json`, `scripts/vocab/characters-costume.json`, `scripts/vocab/characters-poses.json` plus the base sets `KNOWN_POSES`, `KNOWN_EXPR`, `KNOWN_HAIR`, `KNOWN_BEARD`, `KNOWN_HEAD`, `KNOWN_VIEWS` in `scripts/spec.py` · Example films: [`examples/character_sheet/spec.json`](../../examples/character_sheet/spec.json) (views, expressions, poses, costumes), [`examples/eras_wardrobe/spec.json`](../../examples/eras_wardrobe/spec.json) (headwear by era, outfits, countryballs, masks, lineup, cavalry), [`examples/expressions_wardrobe/spec.json`](../../examples/expressions_wardrobe/spec.json) (ages, builds, expression pack, face extras, accessories, wings, the rest of the wardrobe, overhead view); render with `--sheet` to browse · Related cards: [02_acting.md](02_acting.md) (arm, poof, hats, entrances that act on beans), [03_props_creatures_vehicles.md](03_props_creatures_vehicles.md) (held props, creatures and riders, reaper, `obj` faces), [08_fx_and_tone.md](08_fx_and_tone.md) (materials such as `ghost`, `silhouette` / `glow` modifiers), [09_transitions_and_lens.md](09_transitions_and_lens.md). Spec basics: [../03-spec-reference.md](../03-spec-reference.md); motion timing by scene: [../07-story-craft.md](../07-story-craft.md).
+Engine: `scripts/engine/lib/characters/rig.js` (body, poses, builds), `face.js` (head, expressions), `expressions.js` (expression pack, face extras, accessories, wings, `topbean`), `headwear.js` + `wardrobe.js` (headwear, outfits, hair, beards), `outfits.js` (outfits, head modes), `crowd.js` · Vocabulary: `scripts/vocab/characters.json`, `scripts/vocab/characters-costume.json`, `scripts/vocab/maps-hair.json` (`smear` field list), `scripts/vocab/characters-poses.json` plus the base sets `KNOWN_POSES`, `KNOWN_EXPR`, `KNOWN_HAIR`, `KNOWN_BEARD`, `KNOWN_HEAD`, `KNOWN_VIEWS` in `scripts/spec.py` · Example films: [`examples/character_sheet/spec.json`](../../examples/character_sheet/spec.json) (views, expressions, poses, costumes), [`examples/eras_wardrobe/spec.json`](../../examples/eras_wardrobe/spec.json) (headwear by era, outfits, countryballs, masks, lineup, cavalry), [`examples/expressions_wardrobe/spec.json`](../../examples/expressions_wardrobe/spec.json) (ages, builds, expression pack, face extras, accessories, wings, the rest of the wardrobe, overhead view); render with `--sheet` to browse · Related cards: [02_acting.md](02_acting.md) (arm, poof, hats, entrances that act on beans), [03_props_creatures_vehicles.md](03_props_creatures_vehicles.md) (held props, creatures and riders, reaper, `obj` faces), [08_fx_and_tone.md](08_fx_and_tone.md) (materials such as `ghost`, `silhouette` / `glow` modifiers), [09_transitions_and_lens.md](09_transitions_and_lens.md). Spec basics: [../03-spec-reference.md](../03-spec-reference.md); motion timing by scene: [../07-story-craft.md](../07-story-craft.md).
 
 Everything about a character's design lives in `cast` (or in a layer's `look`, which merges over the cast entry), so a character keeps the same design in every shot. `swap: [{at, look: {...}}]` changes any look field in one frame (`null` inside `look` removes a cast item).
 
@@ -63,6 +63,7 @@ Coordinates: (`x`, `y`) is the point between the feet. All times inside the laye
 | `hold`, `holdL` | look `hold` / `holdL` | Prop kind in the right / left hand. `sword` follows the forearm; `spear` and `torch` stay near-vertical (±20°) and the torch burns; `shield` is drawn at 260, `spear` at 420, others at 170 units. |
 | `gaze` | 0 | Face shift in units toward the gaze side (front view: full; 3q: ×0.4). |
 | `headTilt` | 0 | Extra head tilt in degrees. |
+| `smear` | – | Hair smear on a sharp head turn: `[{at, dur 0.33, dir 1, strength 1}]` (one object also works; `at` is layer time). From `at` the hair and headwear leave 4 fading copies plus 3 ink speed lines behind the skull, offset up to 46 × 4 × `strength` units and decaying per frame to nothing at `at + dur`. `dir` 1 trails toward the back of the head (the usual lag after snapping toward the face side), −1 toward the face side; mirrored beans mirror it. No-op for `bald`, no hair and alt heads (`headShape`). |
 | `lean` | 0 | Extra body lean in degrees (shout thrust). |
 | `rock` | 1.6 | Idle sway amplitude in degrees around the feet (period 1.7 s); 0 for statues and corpses. |
 | `blink` | true | `false` disables blinking (statues, the dead). |
@@ -346,6 +347,7 @@ Frames at 30 fps; seconds are layer time.
 | Anticipation | ~3 f dip before, 2 f stretch after | `antic: true` (dip 12 units, squash 0.94, arms −15°; stretch 1.04) |
 | Breakdown frame | 1 drawing, body tilted 8–10° | `snapTilt: 8` (1 f) |
 | Expression snap | exactly 1 f, both characters on the same frame | `expr` keys with the same `at` |
+| Hair smear on a sharp turn | 1 f snap, the hair streaks ~10 f, settled by f14 (despair → resolve turn) | `smear: [{at: t}]` (`dur` 0.33 = 10 f, decay (1 − f/10)^1.6) |
 | Cringe after the snap | ±1.5 px for 4 f | `jitter: {amp: 1.5, from: t, to: t + 0.13}` |
 | Talk | a new mouth every 2–4 f, head bob 1–3° | every 3 f (10 Hz, never the same twice), bob ±1.6° |
 | Idle sway | ±1.5–3° around the feet, 1.5–2 s | `rock` 1.6°, period 1.7 s; breathing 1.2 % at 0.55 Hz |
@@ -445,6 +447,7 @@ Frames at 30 fps; seconds are layer time.
 ```
 15. **Catalogue shot.** At most 8 beans in two rows: `size` about 340, feet at `y` 0.48 and 0.905, `caption` size 40 just under each pair of feet, all inside the 3.5 % margin; split longer lists into several shots.
 16. **Shock hair.** `swap: [{at: t, look: {hair: "spikes"}}, {at: t + 0.5, look: {hair: null}}]` with `expr: "hollow"` at `t`.
+17. **Snap turn with a hair smear.** Despair to resolve in one frame: `pose` and `expr` keys at `t`, `smear: [{at: t}]`, and a `snapTilt: 8` breakdown frame. `"pose": [{"at": 0, "v": "clutch-head"}, {"at": 1.2, "v": "fist"}], "expr": [{"at": 0, "v": "sad"}, {"at": 1.2, "v": "mad"}], "snapTilt": 8, "smear": [{"at": 1.2, "dir": 1}]`.
 
 ## ⑥ Limits and pitfalls
 

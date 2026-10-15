@@ -65,7 +65,7 @@ Engine: `scripts/engine/lib/base/text.js` (`label`, `title`, `date`, `era`, `cou
 | Layer | Fields and defaults | Behaviour |
 |---|---|---|
 | `label` | `text` (required), `size` 96, `color` `#fff`, `tilt` −4, `tag`, `tagColor` `#f2c230`, `arrow` (`right`, `down-right`, `down`, `down-left`, `left`, `up-left`, `up`, `up-right` or degrees), `arrowAt` 0.2, `arrowLen` 1.5 × `size`, `keepInFrame` | Name plate: tag (half size) pops above the name at 0.08 s, a white block arrow pops at `arrowAt` and nudges. Default `enter` `pop` |
-| `title` | `text` (required), `size` 120 (fitted to 90 % of the frame), `color` `#c8323a`, `stagger` 0.035, `jiggle` 2, `sub`, `subColor` `#fff`, `keepInFrame` | Letters pop one by one (`stagger` s apart) and jiggle `jiggle` px; `sub` (0.42 size) pops after the last letter. Default `enter` `none` |
+| `title` | `text` (required), `size` 120 (fitted to 90 % of the frame), `color` `#c8323a`, `stagger` 0.035, `jiggle` 2, `sub`, `subColor` `#fff`, `arc` (degrees of bend: positive arches like a badge top, negative curves like a smile; number or `[{at, v}]`), `keepInFrame` | Letters pop one by one (`stagger` s apart) and jiggle `jiggle` px; `sub` (0.42 size) pops after the last letter. Default `enter` `none` |
 | `date` | `text` (required), `suffix`, `size` 110, `color` `#fff` | Big numerals with a small trailing era mark ("46" + "BC"). Default `enter` `pop` |
 | `era` | `parts: [[text, color], …]` (or `text`, drawn red), `small`, `size` 64 | Left-aligned period badge; `small` line (0.38 size) above. Screen-locked; default `enter` `slide-left`. Place at x 0.025, y 0.95 |
 | `counter` | `from` 0, `to` 100, `dur` 1.5, `delay` 0, `ease` `outCubic` (any engine ease; unknown names fall back to in-out), `decimals` 0, `sep` `" "` (`false` = none), `prefix`, `suffix`, `size` 150, `color` `#fff`, `keepInFrame` | Counts up with a tiny tremble while counting. Default `enter` `pop` |
@@ -86,7 +86,7 @@ Shared entrance: **docPop** = scale 0 → ~1.15 → 1 with a small settle rotati
 | `document` | `title`, `titleColor`, `lines: [...]`, `lineSize` 44, `rowH` 74, `every` 0 (line reveal step), `paper` (`"scroll"` adds rolled ends), `w` 860 (1100 with `minimap`), `h` (auto), `boxes`, `checks: [{row, at, mark: "check" \| "x", color}]`, `strikes: [{row, at, color}]`, `stamp: {text, at, color, size 70, tilt}`, `minimap: {color}`, `id` | docPop; lines fade in 0.2 s from 0.15 s, `every` apart. `checks` (or `boxes: true`) draws boxes; a tick (green) or cross (red) draws in 0.2 s; strikes are hand-drawn red lines over 0.25 s; `minimap` adds a small blob map with a red area |
 | `checklist` | as `document`, boxes always on | Treaty terms, demands, to-do lists |
 | `stamp` | `text` "APPROVED", `color` `#c8141c`, `size` 110, `tilt` −12 | Slams 1.6 → 1 in 3 f with a 0.25 s shake; double border |
-| `chart` | `chart: "line" \| "bar"`, `values` [1, 2, 3], `labels`, `yLabel`, `color` `#c8141c` (an array cycles per bar), `dur` 1.5, `w` 1100, `h` 680, `paper: "grid"`, `arrowEnd` true, `icons: [{i, prop "coin", at, dy 80, size 90}]`, `callouts: [{i, text, at, dy 130, w 300}]` | docPop; hand-drawn axes with arrowheads; the line draws from 0.25 s over `dur` with white dots and an end arrow; bars pop one by one across `dur`; icons and callout bubbles pop above value `i` |
+| `chart` | `chart: "line" \| "bar"`, `values` [1, 2, 3], `labels`, `yLabel`, `color` `#c8141c` (an array cycles per bar), `dur` 1.5, `w` 1100, `h` 680, `paper: "grid"`, `arrowEnd` true, `icons: [{i, prop "coin", at, dy 80, size 90}]`, `callouts: [{i, text, at, dy 130, w 300}]`, optional `grow: {i, from, to, at 0, dur 1.5}` (`i` zero-based; omitted endpoints use `values[i]`) | docPop; hand-drawn axes with arrowheads; the line draws from 0.25 s over `dur` with white dots and an end arrow; bars pop one by one across `dur`; icons and callout bubbles pop above value `i`. For bar charts, `grow` replaces only bar `i`'s pop with a linear value change, holding `from` before `at` and `to` after `at + dur`; the fixed axis range includes both endpoints. Other bars retain their entrance; absent `grow` preserves the original behaviour |
 | `idcard` | `name` "NAME", `nameColor` `#f2c230`, `sub`, `line`, `who`, `header` "IDENTITY CARD", `band` `#3a6fb0`, `color` `#f3e6c4`, `w` 760, `h` 440, `tilt` −8 | Slides in from 500 px left over 0.28 s; colour bust of a cast member |
 | `poster` | `title` "WANTED", `titleColor` `#c8141c`, `name`, `sub`, `who`, `duotone: [dark, light]` (`#2a3a6a`, `#9ab0d8`), `color` `#efdcae`, `w` 600, `h` 820, `tilt` 2 | docPop; duotone portrait, pinned corners. Also propaganda |
 | `quote` | `who`, `text`, `author`, `size` 50, `dur` 0.8, `color` `#2b2d33`, `w` 1300, `h` 460 | docPop; grey portrait; the italic quote reveals line by line from 0.2 s over `dur`; `author` appears after the last line |
@@ -94,8 +94,12 @@ Shared entrance: **docPop** = scale 0 → ~1.15 → 1 with a small settle rotati
 
 ### ③.4 Signs, bubbles and screens
 
+The `chat` and `tierlist` kinds live in `scripts/engine/lib/paper/screens.js`, declared by `scripts/vocab/screens.json`. Times are layer-local seconds; neither adds a card entrance.
+
 | Kind | Fields and defaults | Behaviour |
 |---|---|---|
+| `chat` | `title` "GROUP CHAT", `w` 620, `h` 900, `typing` true, `messages: [{from, text, at 0, side "left", who?, color?}]` (default empty); `side` is `left` or `right`; `who` references a cast bean; `color` overrides that message's bubble and avatar colour | Vertical messenger thread, fixed header, wrapped 32 px body text (explicit `\n` supported). Messages arrive at `at`, sorted by time, and pop over 6 f at 30 fps. A three-dot bubble appears from `at - 0.6` to `at` unless `typing: false`; arrivals at 0 have no visible pre-roll. Newest at the bottom; overflow scrolls older entries upward inside the clipped body. Cast busts or deterministic coloured initial discs identify senders. In vertical films use `scale: 0.85` to keep the default card inside the visible strip |
+| `tierlist` | `w` 1100, `h` 700, `rows: [{label, color?}]` (defaults S/A/B/C/D with `#f18b88` / `#efb27c` / `#efda85` / `#a8d49a` / `#90b9d5`); `items: [{row, text?, prop?, at 0}]` (default empty); optional `mark: {row, at 0}` | Row references are labels or zero-based indices. Each item pops over 6 f into its row, left to right in arrival order; input order breaks ties. Text and any `T.PROPS` icon may share a tile. Tile sizes fit the full row's item count. A persistent gold border highlights `mark.row` from `mark.at` |
 | `bubble` | `style: "speech" \| "thought" \| "shout"`, `text` (`\n` breaks), `size` 46, `w` 560, `h` 240, `tail: [dx, dy]` (−0.25 w, 0.75 h), `who` + `expr` "happy" + `pose` "idle" (a mini bean inside), `color` (shout `#ff5aa8`), `id` | Pops 0 → 1.15 → 1 in 0.14 s. Thought bubbles get scalloped edges and three trail circles; shout is a jagged star with white text |
 | `tv` | `style: "oval" \| "modern"`, `w` 900, `who`, `talk` (default talks throughout), `expr` "neutral", `pose` "idle", `view` "3q", `text`, `grayscale` true, `screen` `#6c7472`, `color` (shell) | docPop. Oval: extruded retro shell, antennas, legs, LEDs; modern: dark monitor on a stand. Scanlines and vignette over the screen |
 | `yearsign` | `text` "YEAR", `num` "711", `strike: {at 1, num}`, `splash` true, `tilt` −14, `w` 520 | A plank on a post drops in with a bounce (0.3 s) into a water splash; `strike` crosses out the number (0.2 s) and pops the new one in gold |
@@ -236,6 +240,12 @@ Frame counts at 30 fps.
 ## ⑤ Recipes
 
 Snippets are complete `layers[]` entries; `who` values must exist in `cast`, and `arrowTo` / nameplate `who` name a bean **layer `id`** in the same shot.
+
+**Group-chat twist in a vertical short.** One message per spoken line; typing precedes the reveal: `{"type":"doc","kind":"chat","title":"THE PLAN","scale":0.85,"messages":[{"from":"Alex","text":"Everyone ready?","at":0.8,"side":"left"},{"from":"Sam","text":"I invited the boss.","at":2.4,"side":"right"}]}`.
+
+**Rank the alternatives.** `{"type":"doc","kind":"tierlist","items":[{"row":"S","prop":"coin","text":"SAVE","at":0.5},{"row":"D","text":"SPEND","at":1.3}],"mark":{"row":"S","at":2}}`.
+
+**Keep one bar growing through a spoken sentence.** `{"type":"doc","kind":"chart","chart":"bar","values":[4,10,6],"grow":{"i":1,"from":2,"to":10,"at":1,"dur":3}}`.
 
 **Character intro.** Name, tag and arrow on the empty side.
 ```json

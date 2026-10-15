@@ -1,0 +1,8 @@
+{
+  "_about": "screens.js: messenger threads, tier boards and the heart-monitor HUD",
+  "kinds": {
+    "doc": ["chat", "tierlist"],
+    "hud": ["ecg"]
+  },
+  "registry": {"doc": "TOON.DOCS", "hud": "TOON.HUD_KINDS"}
+}

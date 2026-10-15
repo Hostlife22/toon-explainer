@@ -212,9 +212,43 @@
   T.OVERSCAN = OVER;
 
   // Time-lapse sky: a smiling sun crosses on an arc, then a crescent moon; the gradient blends day <-> night.
-  // bg.timelapse = { cycles, dayDur (s per full day), shades (moon sunglasses) }
+  // bg.timelapse = { dayDur (s per full day: number or [{at, v}] keys), accel {from, to, over, at 0, ease 'inOut'},
+  // phase 0 (0 sunrise, 0.25 noon, 0.5 sunset, 0.75 midnight), shades (moon sunglasses) }.
+  // Days that speed up (reference: first day ~4.5 s, first night ~0.8 s, then ~1.1 s per day) integrate
+  // phase = phase0 + integral of dt / dayDur(t) from 0 to lt on a fixed 1/120 s midpoint grid, so the sun and moon
+  // stay continuous and a frame never depends on which frames were drawn before it.
+  const TL_STEP = 1 / 120, TL_MIN_DAY = 0.05;
+  function dayDurKeys(tl) {
+    if (tl.accel != null) {
+      const A = tl.accel, at = A.at ?? 0;
+      if (!(A.from > 0) || !(A.to > 0) || !(A.over > 0)) throw new Error('sky timelapse: accel needs from > 0, to > 0 and over > 0 (seconds)');
+      if (A.ease != null && !T.ease[A.ease]) throw new Error(`sky timelapse: unknown accel ease "${A.ease}"`);
+      return [{ at, v: A.from }, { at: at + A.over, v: A.to, ease: A.ease ?? 'inOut' }];
+    }
+    const d = tl.dayDur ?? 1.6;
+    if (typeof d === 'number') { if (!(d >= TL_MIN_DAY)) throw new Error(`sky timelapse: dayDur must be >= ${TL_MIN_DAY} s`); return d; }
+    if (!Array.isArray(d) || !d.length || !d.every((k) => k && k.v >= TL_MIN_DAY && Number.isFinite(k.at ?? 0)))
+      throw new Error(`sky timelapse: dayDur must be a number or [{at, v}] keys with v >= ${TL_MIN_DAY} s`);
+    return d;
+  }
+  T.skyPhase = (tl, lt) => {
+    const o = tl === true || tl == null ? {} : tl, d = dayDurKeys(o), ph0 = o.phase ?? 0;
+    if (typeof d === 'number') return ph0 + lt / d;
+    // Seconds per day are constant before the first key and after the last one: those spans are added analytically,
+    // only the changing span between the keys is summed on the fixed grid (cost bounded by the key span, not lt).
+    // Each sample is clamped to the minimum so an overshooting ease (outBack) can never reach zero or go negative.
+    const t = Math.max(0, lt), dd = (x) => Math.max(TL_MIN_DAY, T.num(d, x, 1.6));
+    const k0 = Math.max(0, Math.min(...d.map((k) => k.at ?? 0))), k1 = Math.max(k0, ...d.map((k) => k.at ?? 0));
+    let sum = Math.min(t, k0) / dd(0);
+    const a = Math.min(t, k0), b = Math.min(t, k1), n = Math.floor((b - a) / TL_STEP + 1e-9);
+    for (let i = 0; i < n; i++) sum += TL_STEP / dd(a + (i + 0.5) * TL_STEP);
+    const rest = b - a - n * TL_STEP;
+    if (rest > 0) sum += rest / dd(a + n * TL_STEP + rest / 2);
+    if (t > k1) sum += (t - k1) / dd(k1 + 1);
+    return ph0 + sum;
+  };
   function timelapse(ctx, tl, lt, horizon) {
-    const dayDur = tl.dayDur ?? 1.6, ph = ((lt / dayDur) % 1 + 1) % 1, isDay = ph < 0.5, q = isDay ? ph * 2 : (ph - 0.5) * 2;
+    const ph = ((T.skyPhase(tl, lt) % 1) + 1) % 1, isDay = ph < 0.5, q = isDay ? ph * 2 : (ph - 0.5) * 2;
     const edge = Math.min(1, Math.sin(q * Math.PI) * 3); // 0 at sunrise/sunset, 1 mid-day / mid-night
     const night = isDay ? 1 - edge : edge;
     const day = ['#4fb0e8', '#8ee3f0', '#f7d08a', '#f7a23a'], nite = ['#0b1430', '#1b2547', '#3a3a6a', '#e8c9a0'];
