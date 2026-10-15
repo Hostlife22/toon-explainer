@@ -103,9 +103,24 @@
         sy += T.noise(lt * 30, 'sy' + s.at) * amp;
       }
     }
-    const rot = c.rot ? T.lerp(c.rot[0], c.rot[1], e) * T.DEG : 0;
-    const focus = c.focus || [0.5, 0.5];
+    let rot = 0;
+    if (Array.isArray(c.rot) && c.rot.length && typeof c.rot[0] === 'object') rot = T.snapTimeline(c.rot, lt, 0.067) * T.DEG; // dutch-angle keys
+    else if (c.rot) rot = T.lerp(c.rot[0], c.rot[1], e) * T.DEG;
+    let focus = c.focus || [0.5, 0.5];
+    for (const j of c.jump || []) { // cut-in without a cut: 1-frame zoom jump on a pose snap (stacks)
+      if (lt < j.at) continue;
+      z *= j.zoom ?? 1.3;
+      if (j.focus) focus = j.focus;
+    }
     return { z, px, py, sx, sy, rot, fx: focus[0] * T.W, fy: focus[1] * T.H };
+  };
+  // [{at, v}] number keys: holds each value, blending into the next over `blend` seconds (hold-and-snap).
+  T.snapTimeline = (keys, lt, blend = 0.067) => {
+    let i = -1;
+    for (let k = 0; k < keys.length; k++) if (lt >= (keys[k].at ?? 0)) i = k;
+    if (i < 0) return keys[0].v;
+    if (i === 0) return keys[0].v;
+    return T.lerp(keys[i - 1].v, keys[i].v, T.ease.outCubic(T.prog(lt, keys[i].at ?? 0, blend)));
   };
   // Apply camera with a parallax factor f (0 = locked to screen, 1 = full camera).
   T.applyCam = (ctx, cam, f = 1) => {
@@ -123,8 +138,11 @@
   const ENTER_DUR_BY_KIND = { 'drop-squash': 0.5, 'pop-tilt': 0.22, slam: 0.12 };
   // Default entrance per layer type (measured: characters/backgrounds are already there at the cut; lettering pops).
   T.DEFAULT_ENTER = { bean: 'none', image: 'none', map: 'none', fx: 'none', sign: 'none', timer: 'none', title: 'none', era: 'slide-left', caption: 'fade' };
-  function enterExit(kind, p, st, isExit) {
+  T.ENTERS = T.ENTERS || {}; // kind → fn(p, st, isExit, L): extra entrance/exit kinds registered by modules
+  T.ENTER_DUR = T.ENTER_DUR || {}; // kind → default duration (s) for registered kinds
+  function enterExit(kind, p, st, isExit, L) {
     const q = isExit ? 1 - p : p;
+    if (T.ENTERS[kind]) { T.ENTERS[kind](p, st, isExit, L); return; }
     switch (kind) {
       case 'drop-squash': { // 2-frame fall, impact squash 150/55, rebound 85/115, settle
         if (isExit) { st.a *= q; return; }
@@ -157,7 +175,8 @@
   T.layerState = (L, lt) => {
     const at = L.at ?? 0, out = L.out ?? Infinity;
     const enterKind = L.enter || T.DEFAULT_ENTER[L.type] || 'pop';
-    const ed = L.enterDur ?? ENTER_DUR_BY_KIND[enterKind] ?? ENTER_DUR, xd = L.exitDur ?? 0.25;
+    const ed = L.enterDur ?? ENTER_DUR_BY_KIND[enterKind] ?? T.ENTER_DUR[enterKind] ?? ENTER_DUR;
+    const xd = L.exitDur ?? T.ENTER_DUR[L.exit] ?? 0.25;
     if (lt < at || lt > out + xd) return null;
     const st = { x: (L.x ?? 0.5) * T.W, y: (L.y ?? 0.5) * T.H, s: L.scale ?? 1, r: (L.rot ?? 0) * T.DEG, a: L.alpha ?? 1, flip: L.flip ? -1 : 1, sx: 1, sy: 1 };
     for (const m of L.move || []) {
@@ -181,15 +200,126 @@
       const p = T.prog(lt, j.at, j.dur ?? 0.45);
       if (p > 0 && p < 1) st.y -= Math.sin(p * Math.PI) * (j.h ?? 120);
     }
+    if (L.jitter) { // struggle / panic tremble, a new seeded offset every `on` frames
+      const j = L.jitter === true ? {} : typeof L.jitter === 'number' ? { amp: L.jitter } : L.jitter, llt = lt - at;
+      if (llt >= (j.from ?? 0) && llt <= (j.to ?? Infinity)) {
+        const r = T.rng(T.hash(seed + ':jit:' + Math.floor((llt * 30) / (j.on ?? 2))));
+        st.x += (r() - 0.5) * 2 * (j.amp ?? 3); st.y += (r() - 0.5) * 2 * (j.amp ?? 3);
+      }
+    }
+    if (L.swing) { // damped pendulum around the layer origin (hanging signs, dropped mics, keys)
+      const w = L.swing === true ? {} : L.swing, t = lt - (w.at ?? at);
+      if (t >= 0) st.r += (w.amp ?? 8) * Math.exp(-(w.decay ?? 2.2) * t) * Math.sin((2 * Math.PI * t) / (w.period ?? 1.2)) * T.DEG;
+    }
     st.bx = st.x; st.by = st.y; // anchor before entrance/exit offsets (used by the safe-frame clamp)
-    enterExit(enterKind, T.prog(lt, at, ed), st, false);
+    enterExit(enterKind, T.prog(lt, at, ed), st, false, L);
     if (enterKind === 'slam') { const d = lt - at - ed; if (d >= 0 && d < 0.2) { st.x += Math.sin(d * 90) * 14 * (1 - d / 0.2); st.y += Math.cos(d * 70) * 8 * (1 - d / 0.2); } }
-    if (lt > out) enterExit(L.exit || 'fade', T.prog(lt, out, xd), st, true);
+    if (lt > out) enterExit(L.exit || 'fade', T.prog(lt, out, xd), st, true, L);
     return st.a <= 0 || st.s <= 0 ? null : st;
   };
 
+  // ---------- swap: instant mid-shot field changes ----------
+  // swap: [{at, ...fields}] (shot time). Entries with at <= lt merge in order; `look` merges into L.look (null values
+  // stay and override the cast entry); a top-level null deletes the field. Hard swap = 1 frame, as in the reference.
+  T.effLayer = (L, lt) => {
+    if (!L.swap || !L.swap.length) return L;
+    let E = null;
+    for (const s of L.swap) {
+      if (lt < (s.at ?? 0)) continue;
+      if (!E) E = { ...L };
+      for (const [k, v] of Object.entries(s)) {
+        if (k === 'at') continue;
+        if (k === 'look' && v && typeof v === 'object') E.look = { ...(E.look || {}), ...v };
+        else if (v === null) delete E[k];
+        else E[k] = v;
+      }
+    }
+    return E || L;
+  };
+
+  // ---------- layer modifiers ----------
+  // T.LAYER_MODS[name] = { order, apply?(src, L, lt, env) -> canvas, under?(ctx, src, L, lt, env), filter?(L, lt, env) -> css }
+  // A modifier is active when layer[name] is truthy. The layer is painted to a scratch canvas, `apply` steps run in
+  // `order`, `under` steps draw beneath the final composite (glows), `filter` strings join on the final drawImage.
+  T.LAYER_MODS = T.LAYER_MODS || {};
+  T.LAYER_MODS.blur = {
+    order: 95,
+    filter: (L) => {
+      const px = T.num(L.blur, 0) * (T.DPR || 1);
+      if (!(px >= 0.3)) return null;
+      return `blur(${px.toFixed(2)}px) brightness(${1 - (L.blurDim ?? 0.08)})`;
+    },
+  };
+  const activeMods = (L) => Object.keys(T.LAYER_MODS).filter((k) => L[k]).sort((a, b) => (T.LAYER_MODS[a].order ?? 50) - (T.LAYER_MODS[b].order ?? 50));
+  let modDepth = 0;
+  T.modLayer = (ctx, L, lt, env, paint) => {
+    const mods = activeMods(L);
+    if (!mods.length) { paint(ctx); return; }
+    const w = ctx.canvas.width, h = ctx.canvas.height, k = env.dpr || 1;
+    const [c, o] = T.scratch('mod' + modDepth, w, h);
+    o.clearRect(0, 0, w, h);
+    o.setTransform(k, 0, 0, k, 0, 0);
+    modDepth++;
+    try { paint(o); } finally { modDepth--; }
+    o.setTransform(1, 0, 0, 1, 0, 0);
+    let src = c;
+    for (const m of mods) if (T.LAYER_MODS[m].apply) src = T.LAYER_MODS[m].apply(src, L, lt, env, modDepth) || src;
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // layer alpha (ctx.globalAlpha) applies to the composite, as in v3
+    for (const m of mods) if (T.LAYER_MODS[m].under) T.LAYER_MODS[m].under(ctx, src, L, lt, env);
+    const filters = mods.map((m) => T.LAYER_MODS[m].filter && T.LAYER_MODS[m].filter(L, lt, env)).filter(Boolean);
+    if (filters.length) ctx.filter = filters.join(' ');
+    ctx.drawImage(src, 0, 0, w, h);
+    ctx.restore();
+  };
+
+  // Rack focus: shot.focus = [{at, on: <layer id> | "bg", dur: 0.4, px: 10, bg}] — layers with an id other than `on`
+  // ramp to px blur, `on` ramps sharp; the background gets `bg` px (default px unless on === "bg").
+  // Lettering and screen furniture stay sharp during rack focus unless they opt in with focusable: true.
+  const FOCUS_EXEMPT = new Set(['label', 'title', 'caption', 'date', 'era', 'counter', 'timer', 'doc', 'hud', 'cursor', 'fx']);
+  function focusBlur(shot, lt) {
+    const keys = shot.focus;
+    if (!keys || !keys.length) return null;
+    const under = (e, id) => {
+      if (!e) return 0;
+      if (id === '@bg') return e.on === 'bg' ? 0 : e.bg ?? e.px ?? 10;
+      return id === e.on ? 0 : e.px ?? 10;
+    };
+    let i = -1;
+    for (let k = 0; k < keys.length; k++) if (lt >= (keys[k].at ?? 0)) i = k;
+    if (i < 0) return null;
+    const e = keys[i], prev = keys[i - 1], p = T.ease.inOut(T.prog(lt, e.at ?? 0, e.dur ?? 0.4));
+    return (id) => T.lerp(under(prev, id), under(e, id), p);
+  }
+
+  // Paint one layer (already swapped) with its motion state; shared by shots and persistent overlays.
+  T.drawLayer = (ctx, L, lt, shotEnv, cam) => {
+    if (Array.isArray(L.blur)) L = { ...L, blur: T.num(L.blur, lt) };
+    const draw = T.layers[L.type];
+    if (!draw) throw new Error(`Unknown layer type "${L.type}"` + (shotEnv.shot ? ` in shot ${shotEnv.shot.id}` : ''));
+    const st = T.layerState(L, lt);
+    if (!st) return;
+    const hud = L.hud ?? HUD_DEFAULT[L.type] ?? false;
+    const paint = (c) => {
+      c.save();
+      if (!hud && cam) T.applyCam(c, cam, L.z ?? 1);
+      c.translate(st.x, st.y);
+      c.rotate(st.r);
+      c.scale(st.s * st.flip * st.sx, st.s * st.sy);
+      draw(c, L, lt - (L.at ?? 0), { ...shotEnv, st, lt });
+      c.restore();
+    };
+    ctx.save();
+    ctx.globalAlpha *= st.a;
+    if (activeMods(L).length) T.modLayer(ctx, L, lt, shotEnv, paint);
+    else paint(ctx);
+    ctx.restore();
+  };
+
   // ---------- drawing a shot ----------
-  const HUD_DEFAULT = { era: true, timer: true, date: false, title: false };
+  // Layer types drawn in screen space by default (modules may add their own, e.g. T.HUD_DEFAULT.hud = true).
+  T.HUD_DEFAULT = { era: true, timer: true, date: false, title: false };
+  const HUD_DEFAULT = T.HUD_DEFAULT;
   T.drawShot = (ctx, shot, lt, env) => {
     ctx.save();
     ctx.setTransform(env.dpr, 0, 0, env.dpr, 0, 0);
@@ -198,37 +328,45 @@
     const cam = T.cameraAt(shot.camera, lt, shot.dur);
     const shotEnv = { ...env, cam, shot, seed: (env.seed || 1) + ':' + shot.id };
     const bgs = Array.isArray(shot.bg) ? shot.bg : [shot.bg || { kind: 'sky' }];
-    for (const bg of bgs) {
-      const draw = T.bgs[bg.kind || (bg.image ? 'image' : 'sky')];
-      if (!draw) throw new Error(`Unknown bg kind "${bg.kind}" in shot ${shot.id}`);
-      ctx.save();
-      draw(ctx, bg, lt, shotEnv);
-      ctx.restore();
-    }
-    for (const L of shot.layers || []) {
-      const draw = T.layers[L.type];
-      if (!draw) throw new Error(`Unknown layer type "${L.type}" in shot ${shot.id}`);
-      const st = T.layerState(L, lt);
-      if (!st) continue;
-      const hud = L.hud ?? HUD_DEFAULT[L.type] ?? false;
-      const paint = (c) => {
+    const drawBgs = (c) => {
+      for (const bg of bgs) {
+        const draw = T.bgs[bg.kind || (bg.image ? 'image' : 'sky')];
+        if (!draw) throw new Error(`Unknown bg kind "${bg.kind}" in shot ${shot.id}`);
         c.save();
-        if (!hud) T.applyCam(c, cam, L.z ?? 1);
-        c.translate(st.x, st.y);
-        c.rotate(st.r);
-        c.scale(st.s * st.flip * st.sx, st.s * st.sy);
-        draw(c, L, lt - (L.at ?? 0), { ...shotEnv, st, lt });
+        draw(c, bg, lt, shotEnv);
         c.restore();
-      };
-      ctx.save();
-      ctx.globalAlpha *= st.a;
-      if ((L.glow || L.silhouette || L.lineart) && T.modLayer) T.modLayer(ctx, L, lt, env, paint);
-      else paint(ctx);
-      ctx.restore();
+      }
+    };
+    drawBgs(ctx);
+    const focus = focusBlur(shot, lt);
+    const bgBlur = focus ? focus('@bg') : 0;
+    if (bgBlur >= 0.3) T.filtered(ctx, `blur(${(bgBlur * env.dpr).toFixed(2)}px) brightness(0.96)`, drawBgs); // blurred copy over the sharp one: no dark edges
+    if (T.gradeBg) T.gradeBg(ctx, shot, lt, shotEnv);
+    for (const L0 of shot.layers || []) {
+      let L = T.effLayer(L0, lt);
+      if (focus && L.id && !L.sharp && (L.focusable || !FOCUS_EXEMPT.has(L.type))) {
+        const fb = focus(L.id), own = T.num ? T.num(L.blur, lt) || 0 : 0;
+        if (fb >= 0.3 || own) L = { ...L, blur: Math.max(fb, own) };
+      }
+      T.drawLayer(ctx, L, lt, shotEnv, cam);
     }
-    if (T.post) T.post(ctx, lt, shotEnv);
+    if (T.post && !env.noPost) T.post(ctx, lt, shotEnv);
+    const lb = shot.camera && shot.camera.letterbox;
+    if (lb) drawLetterbox(ctx, lb === true ? {} : lb, lt);
     ctx.restore();
   };
+
+  // Cinematic bars for extreme close-ups: {h: 0.12, at: 0, dur: 0.2, out, color}
+  function drawLetterbox(ctx, lb, lt) {
+    const dur = lb.dur ?? 0.2;
+    let p = T.ease.outCubic(T.prog(lt, lb.at ?? 0, dur));
+    if (lb.out != null && lt > lb.out) p *= 1 - T.ease.inOut(T.prog(lt, lb.out, dur));
+    if (p <= 0) return;
+    const bh = (lb.h ?? 0.12) * T.H * p;
+    ctx.fillStyle = lb.color ?? '#000';
+    ctx.fillRect(-10, -10, T.W + 20, bh + 10);
+    ctx.fillRect(-10, T.H - bh, T.W + 20, bh + 10);
+  }
 
   // ---------- transitions ----------
   function blit(ctx, src, alpha = 1, sx = 1, ox = 0, oy = 0) {
@@ -287,8 +425,24 @@
     const mk = () => { const c = document.createElement('canvas'); c.width = canvas.width; c.height = canvas.height; return c; };
     const bufA = mk(), bufB = mk();
     const tl = T.buildTimeline(spec);
+    T.film = { spec, timeline: tl }; // the film being rendered (transitions and modules read cast/shots from here)
     const env = { dpr: scale, seed: spec.seed ?? 1, spec, cast: spec.cast || {}, style: spec.style || {} };
     const ctx = canvas.getContext('2d');
+    // spec.overlays: [{from, to, layer}] — screen-space layers that persist across cuts (quest chips, speedrun timers)
+    const overlays = (spec.overlays || []).map((o, k) => ({ ...o, layer: { id: 'overlay' + k, ...o.layer, hud: true } }));
+    const drawOverlays = (c, t, shot) => {
+      if (!overlays.length) return;
+      c.save();
+      c.setTransform(scale, 0, 0, scale, 0, 0);
+      for (const o of overlays) {
+        const from = o.from ?? 0;
+        if (t < from || (o.to != null && t > o.to)) continue;
+        if (o.hideIn && shot && o.hideIn.includes(shot.id)) continue; // e.g. a split screen that needs the corner
+        const olt = t - from;
+        T.drawLayer(c, T.effLayer(o.layer, olt), olt, { ...env, cam: null, shot, seed: env.seed + ':overlay' }, null);
+      }
+      c.restore();
+    };
     const render = (t) => {
       t = T.clamp(t, 0, Math.max(0, tl.total - 1e-6));
       const i = T.shotAt(tl, t), shot = tl.shots[i], lt = Math.max(0, t - shot.start);
@@ -299,10 +453,11 @@
         T.drawShot(bufB.getContext('2d'), shot, lt, env);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height); // start from a clean frame: semi-transparent transitions (whip) must not show the previous render
-        T.transitions[tr.kind](ctx, bufA, bufB, lt / tr.dur, tr);
+        T.transitions[tr.kind](ctx, bufA, bufB, lt / tr.dur, tr, { ...env, prev, shot });
       } else {
         T.drawShot(ctx, shot, lt, env);
       }
+      drawOverlays(ctx, t, shot);
       return { shot: shot.id, index: i, lt };
     };
     return { render, timeline: tl };

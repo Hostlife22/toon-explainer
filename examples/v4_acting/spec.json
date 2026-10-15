@@ -1,0 +1,1250 @@
+{
+  "title": "v4 acting and gags",
+  "fps": 30,
+  "seed": 404,
+  "style": {
+    "grain": true,
+    "vignette": 0.25
+  },
+  "cast": {
+    "king": {
+      "robe": "#b8302a",
+      "head": "crown",
+      "hair": "short",
+      "hairColor": "#6b4a30",
+      "beard": "full",
+      "beardColor": "#6b4a30"
+    },
+    "heir": {
+      "robe": "#3a6ea5",
+      "hair": "short",
+      "hairColor": "#3a2a20"
+    },
+    "clerk": {
+      "robe": "#5a6a7a",
+      "outfit": "suit",
+      "hair": "short",
+      "hairColor": "#2a1d18"
+    },
+    "kid": {
+      "robe": "#6a9a3a",
+      "hair": "curly",
+      "hairColor": "#8a5a30"
+    },
+    "soldier": {
+      "robe": "#6b6a3e",
+      "head": "helmet",
+      "headColor": "#6b6a3e",
+      "hair": "bald"
+    },
+    "villain": {
+      "robe": "#3b2a4a",
+      "hair": "bald",
+      "mustache": true,
+      "mustacheColor": "#1a1210"
+    },
+    "peasant": {
+      "robe": "#8a6a4a",
+      "hair": "short",
+      "hairColor": "#4a3022"
+    },
+    "officer": {
+      "robe": "#4a5a3a",
+      "head": "kepi",
+      "headColor": "#4a5a3a",
+      "hair": "short",
+      "hairColor": "#2a1d18"
+    }
+  },
+  "shots": [
+    {
+      "id": "arm_take",
+      "dur": 3.0,
+      "bg": {
+        "kind": "interior",
+        "wall": "#c9b48a",
+        "floor": "#7a5a3c"
+      },
+      "vo": "Then the tax collector arrived.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "clerk",
+          "x": 0.36,
+          "y": 0.92,
+          "size": 420,
+          "expr": [
+            {
+              "at": 0,
+              "v": "happy"
+            },
+            {
+              "at": 0.75,
+              "v": "shock"
+            }
+          ],
+          "pose": [
+            {
+              "at": 0,
+              "v": "present"
+            },
+            {
+              "at": 0.75,
+              "v": "scared"
+            }
+          ]
+        },
+        {
+          "type": "prop",
+          "id": "bag",
+          "kind": "moneybag",
+          "x": 0.6,
+          "y": 0.8,
+          "size": 170
+        },
+        {
+          "type": "arm",
+          "id": "taxarm",
+          "kind": "rubber",
+          "from": "right",
+          "y": 0.62,
+          "label": "tax",
+          "reach": [
+            {
+              "at": 0.5,
+              "to": [
+                0.6,
+                0.66
+              ],
+              "hold": 0.45,
+              "back": 0.33
+            }
+          ],
+          "state": [
+            {
+              "at": 0,
+              "v": "open"
+            },
+            {
+              "at": 0.62,
+              "v": "grab"
+            }
+          ],
+          "take": [
+            "bag"
+          ]
+        },
+        {
+          "type": "label",
+          "text": "TAXED",
+          "x": 0.2,
+          "y": 0.2,
+          "size": 72,
+          "tag": "year one",
+          "at": 0.9,
+          "enter": "pop-tilt"
+        }
+      ]
+    },
+    {
+      "id": "arm_giant",
+      "dur": 3.0,
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 4
+      },
+      "vo": "The state simply handed him the land.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "heir",
+          "x": 0.36,
+          "y": 0.92,
+          "size": 420,
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 0.6,
+              "v": "reach"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 0.6,
+              "v": "happy"
+            }
+          ]
+        },
+        {
+          "type": "arm",
+          "id": "state",
+          "kind": "hand",
+          "from": "tr",
+          "label": "state",
+          "bracelet": "#e8b52c",
+          "hold": "scroll",
+          "reach": [
+            {
+              "at": 0.3,
+              "to": [
+                0.6,
+                0.42
+              ],
+              "hold": 2.0
+            }
+          ],
+          "state": "grab",
+          "bend": 0.1
+        }
+      ]
+    },
+    {
+      "id": "arm_spring",
+      "dur": 2.6,
+      "bg": {
+        "kind": "interior",
+        "wall": "#c9b48a",
+        "floor": "#7a5a3c"
+      },
+      "vo": "And they kept hitting him.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "villain",
+          "x": 0.66,
+          "y": 0.92,
+          "size": 420,
+          "expr": [
+            {
+              "at": 0,
+              "v": "smug"
+            },
+            {
+              "at": 0.4,
+              "v": "shock"
+            }
+          ],
+          "shake": [
+            {
+              "at": 0.37,
+              "dur": 0.2
+            },
+            {
+              "at": 0.74,
+              "dur": 0.2
+            },
+            {
+              "at": 1.11,
+              "dur": 0.2
+            }
+          ]
+        },
+        {
+          "type": "arm",
+          "id": "spring",
+          "kind": "glove-spring",
+          "from": "left",
+          "y": 0.55,
+          "reach": [
+            {
+              "at": 0.3,
+              "to": [
+                0.56,
+                0.55
+              ]
+            }
+          ],
+          "count": 3,
+          "every": 0.37,
+          "lastHold": 1.1
+        }
+      ]
+    },
+    {
+      "id": "arm_piston",
+      "dur": 2.0,
+      "bg": {
+        "kind": "interior",
+        "wall": "#c9b48a",
+        "floor": "#7a5a3c"
+      },
+      "vo": "One machine punch.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "clerk",
+          "x": 0.7,
+          "y": 0.92,
+          "size": 420,
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 0.5,
+              "v": "dead"
+            }
+          ],
+          "shake": [
+            {
+              "at": 0.47,
+              "dur": 0.25,
+              "amp": 16
+            }
+          ]
+        },
+        {
+          "type": "arm",
+          "id": "piston",
+          "kind": "glove-piston",
+          "from": "left",
+          "y": 0.52,
+          "reach": [
+            {
+              "at": 0.4,
+              "to": [
+                0.6,
+                0.52
+              ],
+              "hold": 0.8,
+              "back": 0.1
+            }
+          ],
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "arm_foot",
+      "dur": 3.0,
+      "bg": {
+        "kind": "desert"
+      },
+      "camera": {
+        "zoom": [
+          1,
+          1
+        ],
+        "shake": [
+          {
+            "at": 1.2,
+            "dur": 0.15,
+            "amp": 6
+          }
+        ]
+      },
+      "vo": "The kingdom was simply crushed.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "king",
+          "x": 0.5,
+          "y": 0.92,
+          "size": 300,
+          "expr": [
+            {
+              "at": 0,
+              "v": "smug"
+            },
+            {
+              "at": 0.8,
+              "v": "shock"
+            }
+          ],
+          "swap": [
+            {
+              "at": 1.2,
+              "alpha": 0
+            }
+          ],
+          "id": "squashed"
+        },
+        {
+          "type": "fx",
+          "kind": "hat",
+          "at": 1.2,
+          "mode": "flat",
+          "target": "squashed",
+          "head": "crown"
+        },
+        {
+          "type": "arm",
+          "id": "foot",
+          "kind": "foot",
+          "from": "top",
+          "stomp": [
+            1.2
+          ],
+          "reach": [
+            {
+              "to": [
+                0.5,
+                0.9
+              ]
+            }
+          ],
+          "boot": "#3a2a20",
+          "leg": "#4a5a6a",
+          "width": 120
+        },
+        {
+          "type": "label",
+          "text": "ABOLISHED",
+          "x": 0.5,
+          "y": 0.18,
+          "size": 72,
+          "at": 1.4,
+          "enter": "slam"
+        }
+      ]
+    },
+    {
+      "id": "arm_hook",
+      "dur": 3.0,
+      "bg": {
+        "kind": "interior",
+        "wall": "#c9b48a",
+        "floor": "#7a5a3c"
+      },
+      "vo": "Someone quietly fished his money away.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "peasant",
+          "x": 0.36,
+          "y": 0.92,
+          "size": 420,
+          "expr": "sleepy",
+          "blink": false
+        },
+        {
+          "type": "prop",
+          "id": "bag2",
+          "kind": "moneybag",
+          "x": 0.62,
+          "y": 0.83,
+          "size": 150
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "mark": "zzz",
+          "target": "peasant"
+        },
+        {
+          "type": "arm",
+          "id": "hook",
+          "kind": "hook",
+          "x": 0.64,
+          "reach": [
+            {
+              "at": 0.2,
+              "to": [
+                0.64,
+                0.68
+              ],
+              "dur": 0.9,
+              "hold": 0.2,
+              "back": 0.4
+            }
+          ],
+          "take": [
+            "bag2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "poof",
+      "dur": 3.0,
+      "bg": {
+        "kind": "city",
+        "preset": "day"
+      },
+      "vo": "Two farmers became two bankers, and one ran.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "peasant",
+          "x": 0.24,
+          "y": 0.92,
+          "size": 420,
+          "id": "p1",
+          "swap": [
+            {
+              "at": 1.07,
+              "look": {
+                "outfit": "suit",
+                "robe": "#2f3a4a"
+              },
+              "expr": "smug"
+            }
+          ]
+        },
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.48,
+          "y": 0.92,
+          "size": 420,
+          "id": "p2",
+          "swap": [
+            {
+              "at": 1.07,
+              "look": {
+                "outfit": "suit",
+                "robe": "#4a2f2f"
+              },
+              "expr": "happy"
+            }
+          ]
+        },
+        {
+          "type": "bean",
+          "who": "heir",
+          "x": 0.76,
+          "y": 0.92,
+          "size": 420,
+          "id": "p3",
+          "out": 1.66,
+          "exit": "none",
+          "expr": "worried"
+        },
+        {
+          "type": "fx",
+          "kind": "poof",
+          "at": 1.0,
+          "x": 0.24,
+          "y": 0.66,
+          "w": 380,
+          "h": 300
+        },
+        {
+          "type": "fx",
+          "kind": "poof",
+          "at": 1.0,
+          "x": 0.48,
+          "y": 0.66,
+          "w": 380,
+          "h": 300,
+          "word": null
+        },
+        {
+          "type": "fx",
+          "kind": "poof",
+          "at": 1.6,
+          "x": 0.76,
+          "y": 0.92,
+          "mode": "column",
+          "w": 380,
+          "h": 300,
+          "word": null
+        }
+      ]
+    },
+    {
+      "id": "hat_give",
+      "dur": 3.0,
+      "bg": {
+        "kind": "stage"
+      },
+      "vo": "Power passed to his son.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "king",
+          "x": 0.3,
+          "y": 0.92,
+          "size": 420,
+          "id": "oldking",
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 0.8,
+              "v": "hold-high"
+            }
+          ],
+          "swap": [
+            {
+              "at": 1.0,
+              "look": {
+                "head": null
+              }
+            }
+          ],
+          "expr": "content"
+        },
+        {
+          "type": "bean",
+          "who": "heir",
+          "x": 0.7,
+          "y": 0.92,
+          "size": 420,
+          "id": "son",
+          "headTilt": 6,
+          "swap": [
+            {
+              "at": 1.4,
+              "look": {
+                "head": "crown"
+              },
+              "expr": "happy"
+            }
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "hat",
+          "at": 1.0,
+          "mode": "give",
+          "target": "son",
+          "from": "oldking",
+          "head": "crown"
+        }
+      ]
+    },
+    {
+      "id": "hat_drop_fly",
+      "dur": 3.0,
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 3
+      },
+      "vo": "He was crowned, and the guard jumped.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "heir",
+          "x": 0.3,
+          "y": 0.92,
+          "size": 420,
+          "id": "newking",
+          "swap": [
+            {
+              "at": 0.73,
+              "look": {
+                "head": "crown"
+              },
+              "expr": "happy"
+            }
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "hat",
+          "at": 0.6,
+          "mode": "drop",
+          "target": "newking",
+          "head": "crown",
+          "bonk": true
+        },
+        {
+          "type": "bean",
+          "who": "soldier",
+          "x": 0.7,
+          "y": 0.92,
+          "size": 420,
+          "id": "guard",
+          "swap": [
+            {
+              "at": 1.4,
+              "look": {
+                "head": null
+              },
+              "expr": "shock",
+              "pose": "scared"
+            }
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "hat",
+          "at": 1.4,
+          "mode": "fly",
+          "target": "guard",
+          "head": "helmet",
+          "color": "#6b6a3e",
+          "dir": 1
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "at": 1.4,
+          "mark": "notice",
+          "target": "guard"
+        }
+      ]
+    },
+    {
+      "id": "hat_stack",
+      "dur": 3.2,
+      "bg": {
+        "kind": "office"
+      },
+      "vo": "He held every office at once.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "officer",
+          "x": 0.5,
+          "y": 0.92,
+          "size": 420,
+          "id": "boss",
+          "expr": "smug"
+        },
+        {
+          "type": "fx",
+          "kind": "hat",
+          "at": 0.4,
+          "mode": "stack",
+          "stack": 1,
+          "target": "boss",
+          "head": "tophat",
+          "color": "#2a2a30"
+        },
+        {
+          "type": "fx",
+          "kind": "hat",
+          "at": 1.2,
+          "mode": "stack",
+          "stack": 2,
+          "target": "boss",
+          "head": "fez",
+          "color": "#b8302a"
+        },
+        {
+          "type": "fx",
+          "kind": "hat",
+          "at": 2.0,
+          "mode": "stack",
+          "stack": 3,
+          "target": "boss",
+          "head": "crown"
+        }
+      ]
+    },
+    {
+      "id": "marks",
+      "dur": 3.5,
+      "bg": {
+        "kind": "office"
+      },
+      "vo": "Shouting, sleeping, despair and a sudden idea.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "villain",
+          "x": 0.16,
+          "y": 0.92,
+          "size": 360,
+          "id": "m1",
+          "expr": "rage",
+          "talk": [
+            [
+              0.2,
+              1.5
+            ]
+          ]
+        },
+        {
+          "type": "bean",
+          "who": "peasant",
+          "x": 0.39,
+          "y": 0.92,
+          "size": 360,
+          "id": "m2",
+          "expr": "sleepy",
+          "blink": false
+        },
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.62,
+          "y": 0.92,
+          "size": 360,
+          "id": "m3",
+          "expr": "sad"
+        },
+        {
+          "type": "bean",
+          "who": "clerk",
+          "x": 0.85,
+          "y": 0.92,
+          "size": 360,
+          "id": "m4",
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 1.0,
+              "v": "shock"
+            }
+          ],
+          "pose": [
+            {
+              "at": 0,
+              "v": "think"
+            },
+            {
+              "at": 1.0,
+              "v": "point-up"
+            }
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "mark": "shout-jag",
+          "target": "m1",
+          "at": 0.2,
+          "dur": 1.4
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "mark": "zzz",
+          "target": "m2"
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "mark": "gloom",
+          "target": "m3",
+          "at": 0.3
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "mark": "ticks",
+          "target": "m4",
+          "at": 1.0,
+          "dur": 0.3
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "mark": "question",
+          "target": "m4",
+          "at": 0.0,
+          "dur": 0.9
+        },
+        {
+          "type": "fx",
+          "kind": "marks",
+          "mark": "stink",
+          "target": "m2",
+          "at": 1.8
+        }
+      ]
+    },
+    {
+      "id": "sweat_tears",
+      "dur": 3.0,
+      "bg": {
+        "kind": "interior",
+        "wall": "#c9b48a",
+        "floor": "#7a5a3c"
+      },
+      "vo": "Under pressure, and then in tears.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "clerk",
+          "x": 0.3,
+          "y": 0.92,
+          "size": 420,
+          "id": "sw",
+          "expr": "worried",
+          "tremble": [
+            [
+              0,
+              3
+            ]
+          ]
+        },
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.7,
+          "y": 0.92,
+          "size": 420,
+          "id": "cr",
+          "expr": "cry",
+          "talk": [
+            [
+              0,
+              3
+            ]
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "sweat-spray",
+          "target": "sw",
+          "rate": 4
+        },
+        {
+          "type": "fx",
+          "kind": "tear-stream",
+          "target": "cr"
+        }
+      ]
+    },
+    {
+      "id": "prohibit",
+      "dur": 3.0,
+      "bg": {
+        "kind": "flat",
+        "color": "#e8dcc0"
+      },
+      "vo": "There were no swords and no books.",
+      "layers": [
+        {
+          "type": "prop",
+          "kind": "prohibit",
+          "icon": "sword",
+          "x": 0.3,
+          "y": 0.5,
+          "size": 380
+        },
+        {
+          "type": "prop",
+          "kind": "book",
+          "x": 0.7,
+          "y": 0.5,
+          "size": 220
+        },
+        {
+          "type": "fx",
+          "kind": "prohibit",
+          "at": 0.8,
+          "x": 0.7,
+          "y": 0.5,
+          "size": 380,
+          "jolt": true
+        },
+        {
+          "type": "label",
+          "text": "BANNED",
+          "x": 0.5,
+          "y": 0.15,
+          "size": 72,
+          "at": 1.3,
+          "enter": "slam"
+        }
+      ]
+    },
+    {
+      "id": "tumble",
+      "dur": 3.0,
+      "bg": {
+        "kind": "sky",
+        "preset": "sunset",
+        "clouds": 3
+      },
+      "vo": "The old king was thrown out.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "king",
+          "x": 0.55,
+          "y": 0.92,
+          "size": 420,
+          "id": "ousted",
+          "expr": [
+            {
+              "at": 0,
+              "v": "smug"
+            },
+            {
+              "at": 0.85,
+              "v": "scream"
+            }
+          ],
+          "out": 0.85,
+          "exit": "tumble",
+          "exitDur": 0.7,
+          "tumble": {
+            "dir": 1,
+            "detach": "head"
+          }
+        },
+        {
+          "type": "arm",
+          "id": "shove",
+          "kind": "rubber",
+          "from": "left",
+          "y": 0.6,
+          "reach": [
+            {
+              "at": 0.6,
+              "to": [
+                0.48,
+                0.62
+              ],
+              "hold": 0.3
+            }
+          ],
+          "state": "open"
+        }
+      ]
+    },
+    {
+      "id": "zip_ground",
+      "dur": 3.5,
+      "bg": {
+        "kind": "forest"
+      },
+      "vo": "Some fled, and new followers popped up.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "soldier",
+          "x": 0.2,
+          "y": 0.92,
+          "size": 360,
+          "id": "z1",
+          "expr": "worried",
+          "out": 0.6,
+          "exit": "zip",
+          "zip": {
+            "dir": -1
+          }
+        },
+        {
+          "type": "bean",
+          "who": "soldier",
+          "x": 0.36,
+          "y": 0.92,
+          "size": 360,
+          "id": "z2",
+          "expr": "worried",
+          "out": 0.9,
+          "exit": "zip",
+          "zip": {
+            "dir": -1
+          }
+        },
+        {
+          "type": "bean",
+          "who": "peasant",
+          "x": 0.58,
+          "y": 0.92,
+          "size": 360,
+          "id": "g1",
+          "at": 0.6,
+          "enter": "ground",
+          "expr": "happy"
+        },
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.74,
+          "y": 0.92,
+          "size": 360,
+          "id": "g2",
+          "at": 1.0,
+          "enter": "ground",
+          "expr": "happy"
+        },
+        {
+          "type": "bean",
+          "who": "heir",
+          "x": 0.9,
+          "y": 0.92,
+          "size": 360,
+          "id": "g3",
+          "at": 1.4,
+          "enter": "ground",
+          "expr": "content"
+        }
+      ]
+    },
+    {
+      "id": "peek_stretch",
+      "dur": 3.5,
+      "bg": {
+        "kind": "interior",
+        "wall": "#c9b48a",
+        "floor": "#7a5a3c"
+      },
+      "vo": "Meanwhile, someone was listening.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "clerk",
+          "x": 0.3,
+          "y": 0.92,
+          "size": 420,
+          "expr": "neutral",
+          "talk": [
+            [
+              0.2,
+              2.5
+            ]
+          ]
+        },
+        {
+          "type": "bean",
+          "who": "villain",
+          "x": 0.97,
+          "y": 0.98,
+          "size": 520,
+          "id": "lurker",
+          "at": 0.8,
+          "enter": "peek",
+          "peek": {
+            "side": "right",
+            "tilt": 18
+          },
+          "expr": "evil"
+        },
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.5,
+          "y": 0.92,
+          "size": 220,
+          "id": "s1",
+          "at": 1.6,
+          "enter": "stretch"
+        },
+        {
+          "type": "bean",
+          "who": "peasant",
+          "x": 0.6,
+          "y": 0.92,
+          "size": 220,
+          "id": "s2",
+          "at": 1.83,
+          "enter": "stretch"
+        },
+        {
+          "type": "bean",
+          "who": "heir",
+          "x": 0.7,
+          "y": 0.92,
+          "size": 220,
+          "id": "s3",
+          "at": 2.06,
+          "enter": "stretch"
+        }
+      ]
+    },
+    {
+      "id": "spit_silhouette",
+      "dur": 3.5,
+      "bg": {
+        "kind": "stage"
+      },
+      "vo": "He was sent back, and a new power arrived.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "heir",
+          "x": 0.24,
+          "y": 0.92,
+          "size": 420,
+          "id": "spat",
+          "at": 0.2,
+          "enter": "spit",
+          "spit": {
+            "from": [
+              0.5,
+              0.6
+            ],
+            "arc": 300
+          },
+          "expr": "shock"
+        },
+        {
+          "type": "bean",
+          "who": "soldier",
+          "x": 0.58,
+          "y": 0.92,
+          "size": 420,
+          "id": "a1",
+          "at": 1.2,
+          "enter": "silhouette-in",
+          "from": "right",
+          "enterDur": 0.7
+        },
+        {
+          "type": "bean",
+          "who": "soldier",
+          "x": 0.72,
+          "y": 0.92,
+          "size": 420,
+          "id": "a2",
+          "at": 1.3,
+          "enter": "silhouette-in",
+          "from": "right",
+          "enterDur": 0.7
+        },
+        {
+          "type": "bean",
+          "who": "officer",
+          "x": 0.86,
+          "y": 0.92,
+          "size": 420,
+          "id": "a3",
+          "at": 1.4,
+          "enter": "silhouette-in",
+          "from": "right",
+          "enterDur": 0.7
+        }
+      ]
+    },
+    {
+      "id": "pivot_fall",
+      "dur": 2.6,
+      "bg": {
+        "kind": "interior",
+        "wall": "#c9b48a",
+        "floor": "#7a5a3c"
+      },
+      "vo": "He dropped dead on the spot.",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "villain",
+          "x": 0.36,
+          "y": 0.86,
+          "size": 420,
+          "id": "faller",
+          "expr": [
+            {
+              "at": 0,
+              "v": "shock"
+            },
+            {
+              "at": 0.9,
+              "v": "dead"
+            }
+          ],
+          "out": 0.9,
+          "exit": "pivot-fall",
+          "exitDur": 2.0,
+          "fall": {
+            "dir": 1
+          }
+        }
+      ]
+    }
+  ]
+}
