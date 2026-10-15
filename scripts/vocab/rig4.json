@@ -1,0 +1,10 @@
+{
+  "_module": "rig.js v4 (pose registry, body poses, builds and ages)",
+  "poses": ["pray", "steeple", "cheeks", "cover-ears", "shade-eyes", "binoculars", "shove", "t-pose", "spread", "flex",
+            "flex-one", "hands-up", "beg", "rub-hands", "offer", "hold-high", "hammer", "throw-windup", "throw", "eat",
+            "drink", "phone-ear", "pinch-nose", "clutch-chest", "cover-mouth", "hug", "arm-around", "handshake", "grab",
+            "lean-table", "cradle", "kneel", "kneel-pray", "kneel-beg", "kneel-offer", "sit", "sit-floor", "sit-slump",
+            "lie", "prostrate", "crawl", "fly", "flail", "flail-b", "hang", "carry"],
+  "build": ["adult", "brute", "fat", "thin", "muscle"],
+  "age": ["adult", "child", "toddler", "baby", "elder"]
+}

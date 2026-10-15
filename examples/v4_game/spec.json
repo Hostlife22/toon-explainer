@@ -1,0 +1,1251 @@
+{
+ "title": "v4 game UI: HUD, cursor, splash cards, menus and slides",
+ "fps": 30,
+ "seed": 44,
+ "style": {
+  "grain": true,
+  "vignette": 0.2
+ },
+ "cast": {
+  "legion": {
+   "robe": "#b8312f",
+   "head": "helmet",
+   "hair": "short",
+   "hairColor": "#3b2a20",
+   "armor": "#c9ccd1"
+  },
+  "phalanx": {
+   "robe": "#2f6db8",
+   "head": "nasal-helm",
+   "hair": "short",
+   "hairColor": "#2a1c15",
+   "beard": "full",
+   "beardColor": "#2a1c15"
+  },
+  "rival": {
+   "robe": "#4b3a7a",
+   "head": "hood",
+   "hair": "short",
+   "hairColor": "#2a1c15"
+  },
+  "sam": {
+   "robe": "#2d4f8f",
+   "head": "tophat",
+   "hair": "short",
+   "hairColor": "#d8d4cc",
+   "beard": "goatee",
+   "beardColor": "#d8d4cc"
+  },
+  "king": {
+   "robe": "#c8323a",
+   "head": "crown",
+   "hair": "short",
+   "hairColor": "#4a2e1f",
+   "beard": "full",
+   "beardColor": "#4a2e1f"
+  },
+  "clerk": {
+   "robe": "#6a8fbf",
+   "hair": "curly",
+   "hairColor": "#5a3a26"
+  },
+  "farmer": {
+   "robe": "#8a6a3a",
+   "head": "straw-cone",
+   "hair": "short",
+   "hairColor": "#3b2a20"
+  }
+ },
+ "shots": [
+  {
+   "id": "g01_notice_marker",
+   "dur": 3.4,
+   "vo": "Two armies, one valley, and a running log of who gave up first.",
+   "bg": {
+    "kind": "battlefield"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "p1",
+     "who": "legion",
+     "x": 0.3,
+     "y": 0.86,
+     "size": 460,
+     "pose": "fist",
+     "expr": "angry"
+    },
+    {
+     "type": "bean",
+     "id": "p2",
+     "who": "phalanx",
+     "x": 0.72,
+     "y": 0.84,
+     "size": 440,
+     "flip": true,
+     "pose": "hips",
+     "expr": "smug"
+    },
+    {
+     "type": "hud",
+     "kind": "marker",
+     "follow": "p1",
+     "text": "P1",
+     "color": "#d83a2a"
+    },
+    {
+     "type": "hud",
+     "kind": "marker",
+     "follow": "p2",
+     "text": "P2",
+     "color": "#2f6db8"
+    },
+    {
+     "type": "hud",
+     "kind": "notice",
+     "y": 0.8,
+     "lines": [
+      {
+       "at": 0.5,
+       "text": "SOLDIER1 HAS LEFT"
+      },
+      {
+       "at": 1.3,
+       "text": "SOLDIER7 HAS LEFT"
+      },
+      {
+       "at": 2.1,
+       "text": "ALLY JOINED",
+       "color": "#8cf05a"
+      }
+     ],
+     "life": 1.6
+    }
+   ]
+  },
+  {
+   "id": "g02_meter_warning",
+   "dur": 3.6,
+   "vo": "Every new problem went onto the pile, until the whole system broke.",
+   "bg": {
+    "kind": "office"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "shake": [
+     {
+      "at": 2.4,
+      "dur": 0.5,
+      "amp": 14
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "cl",
+     "who": "clerk",
+     "x": 0.5,
+     "y": 0.92,
+     "size": 520,
+     "pose": [
+      {
+       "at": 0,
+       "v": "think"
+      },
+      {
+       "at": 2.4,
+       "v": "clutch-head"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "worried"
+      },
+      {
+       "at": 2.4,
+       "v": "scream"
+      }
+     ]
+    },
+    {
+     "type": "hud",
+     "kind": "meter",
+     "label": "MEMORY",
+     "value": [
+      {
+       "at": 0,
+       "v": 0.1
+      },
+      {
+       "at": 0.7,
+       "v": 0.35
+      },
+      {
+       "at": 1.4,
+       "v": 0.62
+      },
+      {
+       "at": 2.0,
+       "v": 0.93
+      },
+      {
+       "at": 2.4,
+       "v": 1.0
+      }
+     ]
+    },
+    {
+     "type": "hud",
+     "kind": "warning",
+     "at": 2.4,
+     "text": "MEMORY OVERLOAD",
+     "glitch": true,
+     "y": 0.42
+    }
+   ]
+  },
+  {
+   "id": "g03_counter_score",
+   "dur": 3.2,
+   "vo": "They collected the colonies one after another.",
+   "bg": {
+    "kind": "sea"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "ki",
+     "who": "king",
+     "x": 0.42,
+     "y": 0.9,
+     "size": 480,
+     "pose": "arms-up",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.68,
+     "y": 0.5,
+     "size": 110,
+     "out": 0.6,
+     "exit": "pop"
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.78,
+     "y": 0.42,
+     "size": 110,
+     "out": 1.4,
+     "exit": "pop"
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.86,
+     "y": 0.55,
+     "size": 110,
+     "out": 2.2,
+     "exit": "pop"
+    },
+    {
+     "type": "hud",
+     "kind": "counter",
+     "icon": "coin",
+     "value": [
+      {
+       "at": 0,
+       "v": 0
+      },
+      {
+       "at": 0.6,
+       "v": 1
+      },
+      {
+       "at": 1.4,
+       "v": 2
+      },
+      {
+       "at": 2.2,
+       "v": 3
+      }
+     ]
+    },
+    {
+     "type": "hud",
+     "kind": "score",
+     "at": 0.6,
+     "x": 0.68,
+     "y": 0.42,
+     "text": "+100",
+     "hud": false
+    },
+    {
+     "type": "hud",
+     "kind": "score",
+     "at": 1.4,
+     "x": 0.78,
+     "y": 0.34,
+     "text": "+100",
+     "hud": false
+    },
+    {
+     "type": "hud",
+     "kind": "score",
+     "at": 2.2,
+     "x": 0.82,
+     "y": 0.45,
+     "text": "+1914",
+     "sub": "PTS",
+     "color": "#8cf05a",
+     "style": "bold",
+     "hud": false
+    }
+   ]
+  },
+  {
+   "id": "g04_hearts",
+   "dur": 3.0,
+   "vo": "By winter they were running out of everything.",
+   "bg": {
+    "kind": "forest"
+   },
+   "grade": "cold",
+   "camera": {
+    "zoom": [
+     1.04,
+     1.0
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "fa",
+     "who": "farmer",
+     "x": 0.5,
+     "y": 0.8,
+     "size": 500,
+     "pose": "scared",
+     "expr": "worried",
+     "jitter": {
+      "amp": 2,
+      "on": 2
+     }
+    },
+    {
+     "type": "hud",
+     "kind": "hearts",
+     "value": [
+      {
+       "at": 0,
+       "v": 10
+      },
+      {
+       "at": 0.8,
+       "v": 7
+      },
+      {
+       "at": 1.5,
+       "v": 4
+      },
+      {
+       "at": 2.2,
+       "v": 1
+      }
+     ],
+     "hunger": [
+      {
+       "at": 0,
+       "v": 6
+      },
+      {
+       "at": 1.2,
+       "v": 2
+      }
+     ],
+     "hotbar": 9,
+     "selected": 2,
+     "items": [
+      "bread",
+      "torch",
+      "sword",
+      "coin"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "g05_cursor_delete",
+   "dur": 3.4,
+   "vo": "And then someone simply erased him.",
+   "bg": {
+    "kind": "battlefield"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "a1",
+     "who": "legion",
+     "x": 0.22,
+     "y": 0.84,
+     "size": 400,
+     "pose": "hips",
+     "expr": "smug",
+     "out": 2.1,
+     "exit": "none",
+     "exitDur": 0
+    },
+    {
+     "type": "bean",
+     "id": "thug3",
+     "who": "rival",
+     "x": 0.5,
+     "y": 0.86,
+     "size": 400,
+     "pose": "fist",
+     "expr": "evil",
+     "out": 1.5,
+     "exit": "pop",
+     "exitDur": 0.07
+    },
+    {
+     "type": "bean",
+     "id": "a3",
+     "who": "legion",
+     "x": 0.78,
+     "y": 0.84,
+     "size": 400,
+     "flip": true,
+     "pose": "idle",
+     "expr": "neutral"
+    },
+    {
+     "type": "cursor",
+     "path": [
+      [
+       0.9,
+       0.1,
+       0
+      ],
+      [
+       0.4,
+       0.38,
+       0.6
+      ]
+     ],
+     "drag": {
+      "from": [
+       0.4,
+       0.38
+      ],
+      "to": [
+       0.6,
+       0.92
+      ],
+      "at": 0.75,
+      "dur": 0.35
+     },
+     "then": "delete",
+     "target": "thug3",
+     "size": 48
+    },
+    {
+     "type": "bean",
+     "id": "a1b",
+     "who": "legion",
+     "x": 0.22,
+     "y": 0.84,
+     "size": 400,
+     "pose": "facepalm",
+     "expr": "shock",
+     "at": 2.1
+    }
+   ]
+  },
+  {
+   "id": "g06_cursor_rts",
+   "dur": 3.0,
+   "vo": "Generals moved whole armies like pieces in a strategy game.",
+   "bg": {
+    "kind": "desert"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "u1",
+     "who": "phalanx",
+     "x": 0.3,
+     "y": 0.8,
+     "size": 300,
+     "pose": "idle"
+    },
+    {
+     "type": "bean",
+     "id": "u2",
+     "who": "phalanx",
+     "x": 0.42,
+     "y": 0.84,
+     "size": 300,
+     "pose": "sword-up",
+     "hold": "spear"
+    },
+    {
+     "type": "bean",
+     "id": "u3",
+     "who": "phalanx",
+     "x": 0.36,
+     "y": 0.9,
+     "size": 300,
+     "pose": "idle",
+     "hold": "spear"
+    },
+    {
+     "type": "bean",
+     "id": "e1",
+     "who": "legion",
+     "x": 0.74,
+     "y": 0.82,
+     "size": 300,
+     "flip": true,
+     "pose": "fist"
+    },
+    {
+     "type": "cursor",
+     "style": "hand",
+     "path": [
+      [
+       0.9,
+       0.2,
+       0
+      ],
+      [
+       0.4,
+       0.62,
+       0.7
+      ],
+      [
+       0.4,
+       0.62,
+       1.5
+      ],
+      [
+       0.7,
+       0.62,
+       2.2
+      ]
+     ],
+     "clicks": [
+      0.8,
+      2.3
+     ],
+     "size": 40,
+     "select": [
+      {
+       "x": 0.3,
+       "y": 0.8,
+       "rx": 90,
+       "ry": 26,
+       "at": 0.85
+      },
+      {
+       "x": 0.42,
+       "y": 0.84,
+       "rx": 90,
+       "ry": 26,
+       "at": 0.85
+      },
+      {
+       "x": 0.36,
+       "y": 0.9,
+       "rx": 90,
+       "ry": 26,
+       "at": 0.85
+      },
+      {
+       "x": 0.74,
+       "y": 0.82,
+       "rx": 90,
+       "ry": 26,
+       "at": 2.3,
+       "color": "#e0302a"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "g07_versus",
+   "dur": 3.0,
+   "vo": "Rome versus Carthage. Round one.",
+   "bg": {
+    "kind": "flat",
+    "color": "#ffb800"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "versus",
+     "left": {
+      "who": "phalanx",
+      "name": "CARTHAGE",
+      "eyeGlow": "#ff2a2a"
+     },
+     "right": {
+      "who": "legion",
+      "name": "ROME"
+     }
+    }
+   ]
+  },
+  {
+   "id": "g08_versus_jagged",
+   "dur": 2.6,
+   "vo": "Two sides of the same argument.",
+   "bg": {
+    "kind": "flat",
+    "color": "#222"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "versus",
+     "seam": "jagged",
+     "left": {
+      "who": "king",
+      "name": "THE KING",
+      "bg": "#2f6db8"
+     },
+     "right": {
+      "who": "clerk",
+      "name": "THE CLERKS",
+      "bg": "#c8323a"
+     }
+    }
+   ]
+  },
+  {
+   "id": "g09_sequel",
+   "dur": 2.6,
+   "vo": "There were three rounds of this.",
+   "bg": {
+    "kind": "burst"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "sequel",
+     "titles": [
+      "PUNIC WAR I",
+      "PUNIC WAR II",
+      "PUNIC WAR III"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "g10_challenger",
+   "dur": 3.5,
+   "vo": "Then a new player arrived.",
+   "bg": {
+    "kind": "flat",
+    "color": "#000"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "challenger",
+     "who": "rival",
+     "dur": 3.5
+    }
+   ]
+  },
+  {
+   "id": "g11_joins",
+   "dur": 2.8,
+   "vo": "And in 1917 a big new investor stepped in.",
+   "bg": {
+    "kind": "sky"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "joins",
+     "name": "UNCLE STAN",
+     "who": "sam"
+    }
+   ]
+  },
+  {
+   "id": "g12_menu",
+   "dur": 3.0,
+   "vo": "Level one: start the game.",
+   "bg": {
+    "kind": "parchment"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "menu",
+     "title": "HISTORY",
+     "buttons": [
+      "START GAME",
+      "LOAD",
+      "QUIT"
+     ],
+     "click": [
+      {
+       "at": 1.2,
+       "i": 0
+      },
+      {
+       "at": 2.2,
+       "i": 2
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "g13_pause",
+   "dur": 3.0,
+   "vo": "Let's pause for a moment.",
+   "bg": {
+    "kind": "battlefield"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "pz",
+     "who": "legion",
+     "x": 0.24,
+     "y": 0.95,
+     "size": 560,
+     "pose": "shrug",
+     "expr": "squint"
+    },
+    {
+     "type": "doc",
+     "kind": "pause",
+     "at": 0.3,
+     "buttons": [
+      "SAVE",
+      "NEXT LEVEL",
+      "MAIN MENU"
+     ],
+     "click": [
+      {
+       "at": 1.8,
+       "i": 1
+      }
+     ],
+     "x": 0.68
+    }
+   ]
+  },
+  {
+   "id": "g14_loading",
+   "dur": 2.2,
+   "vo": "Loading the next century.",
+   "bg": {
+    "kind": "flat",
+    "color": "#111"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "loading",
+     "text": "Loading.."
+    },
+    {
+     "type": "bean",
+     "id": "wait",
+     "who": "king",
+     "x": 0.72,
+     "y": 0.98,
+     "size": 620,
+     "pose": "cross",
+     "expr": "squint"
+    }
+   ]
+  },
+  {
+   "id": "g15_insert",
+   "dur": 2.4,
+   "vo": "Please insert the next disk.",
+   "bg": {
+    "kind": "flat",
+    "color": "#151515"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "insert",
+     "text": "INSERT DISK #4"
+    }
+   ]
+  },
+  {
+   "id": "g16_wheel",
+   "dur": 3.0,
+   "vo": "Which weapon would they choose?",
+   "bg": {
+    "kind": "battlefield"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "wh",
+     "who": "legion",
+     "x": 0.18,
+     "y": 0.92,
+     "size": 460,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "doc",
+     "kind": "wheel",
+     "items": [
+      {
+       "prop": "spear",
+       "label": "SPEAR"
+      },
+      {
+       "prop": "sword",
+       "label": "SWORD"
+      },
+      {
+       "prop": "bomb",
+       "label": "BOMB"
+      },
+      {
+       "prop": "scroll",
+       "label": "A STRONGLY WORDED LETTER"
+      },
+      {
+       "prop": "shield",
+       "label": "SHIELD"
+      },
+      {
+       "prop": "torch",
+       "label": "TORCH"
+      },
+      {
+       "prop": "teacup",
+       "label": "TEA"
+      },
+      {
+       "prop": "croissant",
+       "label": "CROISSANT"
+      }
+     ],
+     "steps": [
+      0,
+      1,
+      2,
+      4,
+      6
+     ],
+     "every": 0.4
+    }
+   ]
+  },
+  {
+   "id": "g17_carousel",
+   "dur": 3.0,
+   "vo": "They had exactly three options.",
+   "bg": {
+    "kind": "flat",
+    "color": "#2d3340"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "carousel",
+     "items": [
+      {
+       "prop": "bread",
+       "label": "BREAD"
+      },
+      {
+       "prop": "question",
+       "label": "NOTHING"
+      },
+      {
+       "prop": "grenade",
+       "label": "GRENADE"
+      }
+     ],
+     "select": [
+      {
+       "at": 0.8,
+       "i": 1
+      },
+      {
+       "at": 1.8,
+       "i": 2
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "g18_dialog",
+   "dur": 3.4,
+   "vo": "What? The clerk is evolving!",
+   "bg": {
+    "kind": "forest"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "ev",
+     "who": "clerk",
+     "x": 0.5,
+     "y": 0.72,
+     "size": 420,
+     "pose": "arms-up",
+     "expr": "shock"
+    },
+    {
+     "type": "doc",
+     "kind": "dialog",
+     "text": "What? THE CLERK is evolving!",
+     "cps": 24,
+     "speaker": "NARRATOR"
+    }
+   ]
+  },
+  {
+   "id": "g19_error",
+   "dur": 2.6,
+   "vo": "And then they ran out of money.",
+   "bg": {
+    "kind": "office"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "er",
+     "who": "king",
+     "x": 0.26,
+     "y": 0.92,
+     "size": 460,
+     "pose": "clutch-head",
+     "expr": "shock"
+    },
+    {
+     "type": "doc",
+     "kind": "error",
+     "x": 0.62,
+     "y": 0.42,
+     "scale": 1.6,
+     "at": 0.3,
+     "title": "TREASURY.EXE",
+     "text": "INSUFFICIENT FUNDS"
+    }
+   ]
+  },
+  {
+   "id": "g20_upgrade",
+   "dur": 3.0,
+   "vo": "So they rebuilt the army from scratch.",
+   "bg": {
+    "kind": "city"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "up",
+     "who": "king",
+     "x": 0.24,
+     "y": 0.9,
+     "size": 460,
+     "pose": "point",
+     "expr": "happy"
+    },
+    {
+     "type": "doc",
+     "kind": "upgrade",
+     "x": 0.6,
+     "y": 0.4,
+     "pressAt": 1.6,
+     "costs": [
+      {
+       "x": 0.5,
+       "y": 0.7,
+       "text": "200G",
+       "at": 1.8
+      },
+      {
+       "x": 0.72,
+       "y": 0.62,
+       "text": "40 IRON",
+       "at": 2.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "g21_killfeed",
+   "dur": 3.0,
+   "vo": "One by one, the heirs removed each other.",
+   "bg": {
+    "kind": "corridor"
+   },
+   "grade": "night",
+   "layers": [
+    {
+     "type": "bean",
+     "id": "k1",
+     "who": "king",
+     "x": 0.4,
+     "y": 0.9,
+     "size": 440,
+     "pose": "scared",
+     "expr": "worried"
+    },
+    {
+     "type": "bean",
+     "id": "k2",
+     "who": "rival",
+     "x": 0.62,
+     "y": 0.9,
+     "size": 440,
+     "flip": true,
+     "pose": "hold",
+     "hold": "sword",
+     "expr": "evil"
+    },
+    {
+     "type": "doc",
+     "kind": "killfeed",
+     "entries": [
+      {
+       "a": "BROTHER",
+       "icon": "sword",
+       "v": "UNCLE",
+       "at": 0.3
+      },
+      {
+       "a": "COUSIN",
+       "icon": "bomb",
+       "v": "BROTHER",
+       "at": 1.1
+      },
+      {
+       "a": "MOTHER",
+       "icon": "teacup",
+       "v": "COUSIN",
+       "at": 1.9
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "g22_highscore",
+   "dur": 3.2,
+   "vo": "It was finally over.",
+   "bg": {
+    "kind": "battlefield"
+   },
+   "grade": "warm",
+   "layers": [
+    {
+     "type": "bean",
+     "id": "hs",
+     "who": "legion",
+     "x": 0.5,
+     "y": 0.9,
+     "size": 420,
+     "pose": "arms-up",
+     "expr": "happy"
+    },
+    {
+     "type": "doc",
+     "kind": "highscore",
+     "countdown": 9
+    }
+   ]
+  },
+  {
+   "id": "g23_meanwhile",
+   "dur": 2.6,
+   "vo": "Meanwhile, on the other side of the world...",
+   "bg": {
+    "kind": "flat",
+    "color": "#f6c6d6"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "meanwhile"
+    }
+   ]
+  },
+  {
+   "id": "g24_tbc",
+   "dur": 3.0,
+   "vo": "To be continued, maybe.",
+   "bg": {
+    "kind": "battlefield"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "tb",
+     "who": "rival",
+     "x": 0.32,
+     "y": 0.9,
+     "size": 460,
+     "pose": "point",
+     "expr": "shock"
+    },
+    {
+     "type": "doc",
+     "kind": "tbc",
+     "words": [
+      "IN PART II",
+      "COMING",
+      "soon",
+      "OR",
+      "NOT"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "g25_trade",
+   "dur": 3.0,
+   "vo": "Their offer was simple: your help for three states.",
+   "bg": {
+    "kind": "office"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "trade",
+     "get": [
+      {
+       "prop": "shield",
+       "label": "YOUR HELP",
+       "at": 0.5
+      }
+     ],
+     "give": [
+      {
+       "text": "3 STATES",
+       "at": 1.0
+      },
+      {
+       "prop": "moneybag",
+       "label": "AND A BONUS",
+       "at": 1.5
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "g26_slides",
+   "dur": 4.0,
+   "vo": "Nothing much changed for decades, so let's skip ahead.",
+   "bg": {
+    "kind": "flat",
+    "color": "#3a4a6a"
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "slides",
+     "every": 1.0,
+     "slides": [
+      {
+       "shot": "g01_notice_marker",
+       "t": 0.2,
+       "year": "820"
+      },
+      {
+       "shot": "g04_hearts",
+       "t": 0.2,
+       "year": "840"
+      },
+      {
+       "shot": "g06_cursor_rts",
+       "t": 0.2,
+       "year": "860"
+      },
+      {
+       "shot": "g03_counter_score",
+       "t": 0.2,
+       "year": "907"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "overlays": [
+  {
+   "from": 0.0,
+   "to": 19.6,
+   "layer": {
+    "type": "hud",
+    "kind": "chip",
+    "corner": "bl",
+    "slot": 1,
+    "text": "WHO WINS THE VALLEY?",
+    "key": "VALLEY",
+    "answerAt": 16.0
+   }
+  },
+  {
+   "from": 0.4,
+   "to": 19.6,
+   "layer": {
+    "type": "hud",
+    "kind": "chip",
+    "corner": "bl",
+    "slot": 0,
+    "text": "A KING? WHAT NOW?",
+    "key": "KING"
+   }
+  },
+  {
+   "from": 0.0,
+   "to": 19.6,
+   "layer": {
+    "type": "hud",
+    "kind": "timer-lcd",
+    "start": 0,
+    "stop": 17.5
+   }
+  }
+ ]
+}

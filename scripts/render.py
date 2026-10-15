@@ -121,6 +121,7 @@ def open_page(pw, spec: dict, port: int, scale: float):
     errors: list[str] = []
     page.on("console", lambda m: (print("[page]", m.text), errors.append(m.text)) if m.type == "error" else None)
     page.on("pageerror", lambda e: (print("[pageerror]", e), errors.append(str(e))))
+    page.on("requestfailed", lambda r: (print("[requestfailed]", r.url), errors.append("request failed: " + r.url)))
     page.add_init_script("window.FILM_SPEC = " + json.dumps(spec, ensure_ascii=False) + ";")
     page.goto(f"http://127.0.0.1:{port}/index.html?render=1&scale={scale}")
     page.wait_for_function("window.__ready === true || !!window.__bootFailed", timeout=120000)

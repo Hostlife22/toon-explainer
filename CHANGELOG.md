@@ -1,5 +1,119 @@
 # Changelog
 
+## 3.0.0 · 2026-10-15
+
+A second, much denser study of the same eight reference videos: about 12,500 frames at 1 fps, more than 300 high-fps motion strips and the full transcripts, compared feature by feature with v3. The 115 missing techniques found became nine new engine modules, a set of core hooks and a story-craft guide, so an agent can stage most beats of any topic with dedicated tools.
+
+### Core
+
+- Any layer can change fields mid-shot with `swap` (a 1-frame costume, prop or text change), blur with `blur` (number or timeline), tremble with `jitter` and hang with a damped `swing`. Shots get rack `focus` between layers and the background.
+- Camera `letterbox` bars, 1-frame cut-in `jump`s and dutch-angle `rot` keys. Film-level `overlays` keep chips, timers and stickers on screen across cuts.
+- Grades can be a list of timed entries (trauma cycles, red flashes) and can target only the background.
+- New registries for modules: `T.LAYER_MODS`, `T.ENTERS`, `T.POSES`, `T.BUILDS`, `T.EXPR`, eye, mouth, brow, hair and beard kinds, face extras, `T.GRADE_PRESETS`, map views, region hooks and overlay order. `T.subShot` renders one shot inside another; `lib/shared4.js` adds clouds, starbursts, thick arrows and cartoon gloves.
+- 46 new poses (kneel, sit, lie, crawl, fly, hug, handshake, beg, throw and more) with real leg modes, `antic` anticipation, and `build`/`age` proportions (child, toddler, baby, elder, brute, fat, thin, muscle).
+
+### Characters (`08-chars.md`)
+
+- Characters v4: 18 new expressions (`grimace`, `star-eyes`, `sparkle`, `hollow`, `side-eye`, `smug-closed`, `squeeze`, `menace`, `wail`, `bruised`, `jaw-drop`, `sleep-drool`, `dollar`, `heart`, `vision`, `roar`, `dying`, `cute`) with new eye, mouth and brow kinds usable through `eyesOverride` / `mouthOverride`.
+- Face gags as look fields: growing liar `nose`, tear `stream`/`drop`/`bead`/`joy`, `blush` squiggle/hatch, `dread`, `gloom` drips, `mouthTape`, `bruise`, `bandage`, burglar `mask: "eye"`, `glasses` (sun/shutter/round), `monocle`, forehead `label`, devil horns.
+- Body accessories: name `badge` (hello/tag/plank, with `badgeSwap`), rope `sign`, slap-on `stickers`, `stains`, generic `bowtie`; `wings` (bird/angel/insect, `flap` windows, wax `melt`), `devil` tail and the `halo` hat.
+- Ages and builds now look the part: swaddled babies, toddler diapers, elder wrinkles, brute pec/ab plates (`bare`, `plates`), fat belly, muscle V-torso; child builds get bigger eyes and `arms: false` hides arms.
+- Wardrobe v4: 29 headwear kinds (from `mianguan` and `imperial-helmet` to `hard-hat`, `clown-wig` and `bucket-helmet`), 20 outfits (`toga`, `cuirass`, `habit`, `frockcoat`, `labcoat`, `overalls`, `jersey`, `rags`, `stripes`, `cow-suit`, `gown`, ...), 7 hair kinds and `beard: "bushy"`.
+- New `topbean` layer: an overhead character that paces (`walk`, snapping `facing`), lies spread-eagle (`lie`) and wears its crown or helmet from above.
+- `TOON.drawMiniFace` gives objects, suns and regions the same faces as the beans (used by the `obj` layer). Guide: `references/08-chars.md`; showcase: `examples/v4_chars`.
+
+### Acting and gags (`08-acting.md`)
+
+- New `arm` layer: an off-screen arm reaches in from a frame edge to shove, grab, punch, stamp or hand something over. Kinds are `rubber`, `hand` (giant forearm with a labelled gold bracelet), `glove-spring`, `glove-piston`, `foot` and `hook`. `take` lifts other layers out of the shot, and `hold` puts a prop in the hand.
+- New `poof` fx: a boiling cloud covers a one-frame `swap` (X becomes Y) or a vanish. The `column` mode is for running away.
+- New `hat` fx: headwear drops onto a head, passes from one head to another, flies off on a startle, or stacks up for "he held every office".
+- New `marks` fx for micro-acting around a head: shout jags, realize ticks, notice fan, zzz, stress drips, gloom lines, stink, whoosh, ?/!, scribble. Also new `sweat-spray` and `tear-stream` emitters.
+- New "no X" sign as the `prohibit` fx (ring pop, then a bar wipe) and as a static `prohibit` prop with an icon underneath.
+- Eight measured entrances and exits: `tumble` (shove launch that can knock the hat off), `zip` (dust trail), `ground` (pop out of a hole), `peek`, `stretch`, `spit`, `silhouette-in` and `pivot-fall`.
+
+### Props, objects, creatures and vehicles (`08-props.md`)
+
+- New `obj` layer: give any prop, vehicle or built-in shape (`blob`, `disc`, `globe`, `heart`, `footstool`) a face, white tube arms with gloves (`flex`, `wave`, `point`, `hold`, `crossed`, `punch`, `sprout`), legs, a hat, a bandage or cracks.
+- Signpost family: `signpost` (arrow planks, stacked joke planks, a `turn` spin that lands on a new name), `fork-signs` and a chasing-bulb `marquee-arrow`.
+- Furniture and enclosures: `throne` (with chains and a note), `bed` with a cast occupant, `lectern`, `easel` with a crashing chart, `deckchair`, `coffin`, `crib`, `dinner-table`, `armchair`, and the `cage` drop, `door` slam / open-on-fire, `gate` slam and `portcullis`.
+- 30 handheld gag props: sack, bottle (pours), candle, key, broom, magnet (attracts), phones, megaphone, magnifier (reveals hidden layers), scissors, mallet, dagger, boxing glove, chain, coin heap, binoculars, white flag, cleaver, bandage, pitchfork, whistle, remote, big button, bowling ball and pins, chess pieces (topple), ice block.
+- Screens that show another shot: `crt` with a pull-back from full frame, `monitor`, `smartphone`. A door can also open onto another shot.
+- Time and chance props: `wall-calendar` (days crossed off), `window-cycle` (day / dusk / night), `clock`, `prize-wheel` (deterministic spin), `coin-flip` (flips, lands, splits). Emblem and stat props: extruded `emblem3d` that drops and topples, and a `stat-block` nametag cube with a companion.
+- New creatures: wolf, dog, elephant (war tower), pig, rabbit, turtle, goat, snail, kangaroo, with stand, sit and biped (`hold`) poses.
+- New vehicles: galley with rowing oars, bicycle with a pedalling rider, dump truck that tips its riders out, helicopter with a swinging cable load.
+
+### Places (`08-places.md`)
+
+- New `mood` background: emotion backdrops for reaction close-ups and intros. The `rays` burst v2 has ten presets (gold, green, blue, purple, yellow, crimson, cyan, lime, a two-sided `split` and `rainbow`), plus `swirl`, `vortex`, `smoke`, `bokeh` with petals, `splat`, `grunge`, `streaks`, `action`, `nebula`, `ornament` and `collage`.
+- New `palace` throne hall in four variants: Roman ochre, East Asian red lacquer with glowing lattice windows and lanterns (also at `night`), Minoan polychrome, and a gothic one-point hall with a red carpet. It has a tufted throne, polished floor reflections, light shafts with dust, and optional near columns.
+- New `burning` background: an inferno plain, a city burning on a hill, or a burning palace roofline, with a drifting smoke ceiling and flames that redraw on twos.
+- New `studio` sets (game show, quiz with a live screen, news desk with a skyline, courtroom, auction with pop-up paddles, podcast, classroom) and `room` interiors (gamer room with a CRT and neon sign, living room, bedroom whose lamps switch off, hospital, worn parlour). The `screen` field shows another shot live inside TVs and screens.
+- New top-down `floor` (planks, tiles, rug, grass, flowers, dirt, coffers, water, stone) with window light patches, top-down furniture and a rotation timeline for overhead shots.
+- New `cell` dungeon (barred light shaft, torch, foreground bars), `harbor` pier (sunset, day, night or fog, with a moored ship), night `alley` (fire barrel, lit windows, snow), and `antique` sets (colonnade, balcony balustrade, temple square, bath).
+- New `parchment-panel` for engraving backstories, `corkboard` for conspiracy plans (labelled notes, pins, red strings that draw themselves), and `vehicle-interior` (train, bus or plane) with scenery scrolling past the window and poles flashing by.
+- New fg kind `bg-front` redraws a background's foreground plane (benches, desks, podiums, bars, balustrades, sofa, blanket) over the characters, so figures can stand behind it. The guide is in `references/08-places.md` and the tour is in `examples/v4_places`.
+
+### Maps (`08-map.md`)
+
+- Map views: `view: "tilt"` (perspective board with depth, skew and a pan glide), `"globe"` (planet horizon under a starry sky, or a full spinning globe) and `"tabletop"` (paper map on a war table with folded corners and an optional burnt edge).
+- Living regions: `split` (crack, two faces, punching arms), `shatter` (Voronoi pieces fly apart), `slash` (stitches and a wound spilling money), `engulf`, `wipe`, `drift`, `peel`, blotch conquest (`conquer.pattern: "blotch"` with rays) and `annex` colour flashes.
+- Region states: persistent `damage` (black eye, x eye, bandage, crack), `surrender` white flag, border `fire`, and new face moods `plead`, `hearts`, `pipe`, `dollar`.
+- Cast `figures` stand on the map as stickers: pop/stretch/drop entrances, walking paths that paint territory, thrones and beds, puppet strings with a yank.
+- New overlays: relation `arrows` (flat, block, hook), fight-cloud `brawls`, scattered `fires`, dashed `trails`, railway `tracks`, `forts`, army `camps`, marching `squads` that repaint a region, `flags`, hopping `coins`, brush `xmarks`, `barriers`, `words` lying on the map (plus river labels), slamming `drops` (bandage, stamp, giant foot), `tacks` and a gloved `hand`.
+- New map icons: fort, camp, formation, factory, derrick, plane, church-hut, rubble. Showcase: `examples/v4_map/spec.json`; guide: `references/08-map.md`.
+
+### Lettering and paper (`08-docs.md`)
+
+- `doc: nameplate`: rank, big, hand-lettered and slanted name labels with curved hook arrows that point at a bean (`arrowTo: "<id>"`), strike-and-rename, pronunciation sub-line, typed bullets, bottom-left or above-the-head anchoring and fade-to-ghost.
+- `doc: timeskip`: "N YEARS LATER" cards (black card with a slow linear drift, red brush letters on a white cloud, or an inline caption).
+- `doc: pictobubble`: speech, thought and shout bubbles holding icon rows with arrows and prohibition strikes, a live mini scene from another shot, a list that grows per beat, or a nested thought bubble.
+- Number cards: `statstack` (counting statistic lines that stack up), `unitcards` ("x N" portrait counters), `bigyear` (3D gold year punch with a fading ghost) and `band` (translucent caption band with sequenced, retiring items).
+- `doc: graffiti`: brush, paint and blood lettering on brick, parchment or plaster, with a paint-roller cover, an eraser, a brush rewrite, gloves, a reddening wall and a thumbs-up.
+- Verdict papers: `scorecard` (true/false table with drawn marks and a stamp), `tally` (scribbled fake number on an easel), `list` (strike, retitle, ticks, inserted heading, pencil hand, spilling scroll) and `crayon` (child's plan with recolor and a scissors cut).
+
+### Game UI parodies (`08-game.md`)
+
+- New `hud` layer (game-UI kit, `gameui.js`): `notice` system log, `meter` hazard bar with warning blink and overload shake, `counter` pickup tally, glitching `warning` banner, pixel-style `score` popups, `hearts` survival row with hunger and hotbar, `marker` player tag that follows a layer, `chip` quest tracker whose X flips to a check at `answerAt`, and a seven-segment `timer-lcd` speedrun timer. Chips and timers persist across cuts through `spec.overlays`.
+- New `cursor` layer: an arrow, hand or grab cursor that follows an eased `path`, with click squash and rings, a drag-select marquee, `then: "delete"` with a pop burst, `carry` (a copy of a layer moves with the drag) and RTS `select` ellipses.
+- New splash-card `doc` kinds: `versus` (sunburst or jagged split, eye glow), `sequel` torn title strips, fighting-game `challenger` intro, and the `joins` "joins the battle" splash.
+- New game-screen `doc` kinds: `menu` with a hopping hand cursor, `pause` (plank signs, mirrored option), `loading` spinner, `insert` disk card with dripping numeral, `wheel` weapon wheel, `carousel` item cards, RPG `dialog` typewriter box, OS `error` popup, strategy `upgrade` button with cost tags, `killfeed`, `highscore`, `meanwhile` collage, `tbc` cliffhanger and the `trade` offer panel.
+- New `slides` doc: a presentation window that clicks through frozen frames of other shots (`T.subShot`, cached) to fast-forward through decades.
+
+### Effects, materials and grades (`08-fx.md`)
+
+- Layer modifiers `material` (ghost, stone, gold, engrave, ice), `freeze`, `sticker` and `split` work on any layer and can be swapped in within one frame (statue reveal, ghost return, ice block, die-cut map stickers, a heart that breaks with a "BETRAYED" ribbon). Ghost beans get a swaying wisp tail instead of legs.
+- New `brawl` fight-cloud fx with boiling limbs, weapons, helmets, stars and an optional travel path. `T.drawBrawl` is exported for map brawls.
+- Blood stand-ins `blood-wipe`, `blood-streaks`, `blood-splash` and `pool`, plus `spill` for wine or ink stains that can flood the frame.
+- Mob silhouettes (`fg: mob`) with pitchforks, torches, spears, scimitars and banners rising from below, and `shadow-hands` closing in.
+- `shock` (x-ray electrocution cycle), `disintegrate` (shards to an ash pile), comic `boom` (puff, mushroom and full-frame interruption card), `onomatopoeia` with a score popup, and `word-shatter`.
+- Rivalry and light kit: `crackle`, `beam-clash`, `duel`, `lightpool`, `shafts`, `godbeam` and `spotcone`. `memory` adds ghosted flashbacks and dark-thought faces.
+- Twelve new grade presets: rage, inferno, golden-hour, moonlit, night-violet, gaslight, pink, purple-neon, crt-cyan, dusk-blue, red-flash and sunset-epic. Guide: `references/08-fx.md`. Example: `examples/v4_fx`.
+
+### Transitions, panels and POV masks (`08-lens.md`)
+
+- 13 new transitions measured on the reference videos: `cloud-wipe` (with a `word: "POOF!"` cut), `drip` (blood / censor curtain), `black-beat`, `curtain`, `explosion-wipe`, `wave`, `bubble-wipe`, `portal`, `screen-dive`, `fg-pass`, `spin-zoom`, `glow-open` (with `mode: "push"`) and `vignette-close`.
+- New `panel` layer shows other shots of the film inside the frame: split screen with a straight, slanted or jagged lightning seam, a VS badge and name labels; comic grids with tilted cells; picture-in-picture; and a framed shot in a gilt painting, a CRT TV or a phone.
+- Panel cells play live or freeze on a punchline frame (`t`), crop with `focus`/`zoom`, slowly push in, and slide in from the nearest edge with a stagger.
+- New POV masks for `fg` layers: `binoculars` (plus a `reflect` mode where the scene shows in the lens fronts), `spyglass` and `eye-pov` with blinks, a wake-up and a white bloom. Masks drift handheld and lag behind camera pans.
+
+### Fixes
+
+- Map region faces on the left half of a map blinked constantly; angry and sad brows were swapped; halftone regions ignored conquest and recolor.
+- `fx: blood` could never draw its splat (the shape now comes from `shape`, since `kind` is always `blood`).
+- The shout speech bubble consumed random numbers inside its outline path, so fill and stroke disagreed. New tests catch this class of bug in every example, along with frames that depend on render order.
+- A custom `skin` now gets a matching 3/4 shadow instead of the default pale one.
+- `render.py` fails when an engine script or asset fails to load instead of rendering with missing modules.
+
+### Tooling
+
+- Map regions accept a `blob: [cx, cy, rx, ry]` shorthand; HUD counters format numbers with `sep` or `compact`; overlays can skip shots with `hideIn`; lettering stays sharp during rack focus.
+- The validator checks the v4 fields (`swap`, `blur`, `jitter`, `swing`, shot `focus`, `overlays`, grade lists, `build`, `age`) and catches tree heights given in pixels.
+
+### Docs and examples
+
+- New `references/09-story-craft.md`: measured pacing, hooks and frame stories, comedy devices, dark-beat rules, a motion timing table and a sentence-type to shot-recipe table written in engine vocabulary.
+- Nine new guides `references/08-*.md` and nine example films `examples/v4_*` with one shot per feature.
+
 ## 2.0.0 · 2026-10-15
 
 Seven more reference videos studied frame by frame (China, the Reconquista, World War I, the road to World War II, a speech fact-check show, a Greek myth and a horror biography), each turned into a toolkit so the engine can make films on many topics.

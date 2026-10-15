@@ -86,6 +86,8 @@ New settings measured on the reference studies (WWI, WWII, Reconquista, China, G
 
 Use `banner` for parties, regimes and factions. Never recreate real extremist symbols.
 
+All of these props are centred on (`x`, `y`), not standing on it: a `crate` or `barrel` is 0.9 × `size` tall, so set `y` 0.45 × `size` / 1080 above the floor line to stand it there. Ground-origin props are listed in [08-props](08-props.md).
+
 ## Recipes
 
 ### Waiting in the trench (stalemate, siege)

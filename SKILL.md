@@ -1,19 +1,20 @@
 ---
 name: toon-explainer
-description: "Turn a narrated script/storyboard into a cutout-cartoon explainer video in the style of history/science YouTube channels (Historically-style bean-head characters, painted skies, bold outlined lettering, maps, counters, punch-zooms). Script → JSON spec → deterministic Canvas render → MP4. Use when the user wants to animate a script, generate shots from a storyboard (the companion master prompt's step 5 format «Shot N — Voiceover — On screen», other languages via --labels), recreate this reference style, or render/preview/re-time such a film."
+description: "Turn a narrated script/storyboard into a cutout-cartoon explainer video in the style of history/science YouTube channels (Historically-style bean-head characters, painted skies, bold outlined lettering, maps, counters, punch-zooms). Script → JSON spec → deterministic Canvas render → MP4. Use when the user wants to animate a script, generate shots from a storyboard (the companion master prompt's step 5 format: a **Shot N** line followed by '- Voiceover:' and '- On screen:' lines, see references/05-workflow.md; other languages via --labels), recreate this reference style, or render/preview/re-time such a film."
 ---
 
 # Toon Explainer
 
 You are the director, animator and editor. The script becomes a **spec** (JSON with shots and layers), and the spec becomes a video. Code draws every frame in the browser (Canvas 2D, Playwright, ffmpeg); AI can optionally generate unique characters and backgrounds (see 04).
 
-The style grammar comes from frame-by-frame studies of **eight** videos by one history/myth explainer channel: Rome, China, the Reconquista, World War I, the road to World War II, a speech fact-check show, a Greek myth and a horror biography (about 3.5 hours). v1–v2 came from the Rome breakdown (`references/01-reference-breakdown.md`). v3 added the toolkits from the other seven: eras, creatures, vehicles, places, documents, living maps, horror and war effects. See `references/06-reference-library.md`.
+The style grammar comes from frame-by-frame studies of **eight** videos by one history/myth explainer channel: Rome, China, the Reconquista, World War I, the road to World War II, a speech fact-check show, a Greek myth and a horror biography (about 3.5 hours). v1–v2 came from the Rome breakdown (`references/01-reference-breakdown.md`). v3 added the toolkits from the other seven: eras, creatures, vehicles, places, documents, living maps, horror and war effects. v4 is a second, frame-dense pass over all eight (1 fps sheets + motion strips): acting and gags, 46 body poses and body types, map views and living regions, game-UI parodies, studio and palace sets, materials, blood stand-ins, transitions, split screens and a story-craft guide. See `references/06-reference-library.md` and `references/09-story-craft.md`.
 
 ## Route the task
 
 | Request | Workflow | Read |
 |---|---|---|
-| "Animate this script" / a storyboard exists | `script2spec.py` → fill in layers → sheet → render | 05 → 02 → 03 |
+| "Animate this script" / a storyboard exists | `script2spec.py` → beats → shot recipes → fill in layers → sheet → render | 05 → **09** → 02 → 03 |
+| Turn a line of narration into a shot | Find its intent in the sentence → recipe table | 09 §7, then the 08 guide it names |
 | Make a single shot or scene | Recipe from 02, check with `--stills` | 02, 03 |
 | Custom character / unique location | `bean` in `cast`, or an AI cutout + `key_green.py` + an `image` layer | 03 (bean), 04 |
 | Fit to an existing voiceover | SRT → `script2spec.py --srt … --merge spec.json` | 05 §4 |
@@ -24,6 +25,15 @@ The style grammar comes from frame-by-frame studies of **eight** videos by one h
 | Fact-check / myth vs truth | TV quote player, karaoke subtitles with flagged words, stamps, checklists, stat blocks | 07-graphics |
 | Mythology | Creatures, glow, flame shapes, sea/corridor/olympus, sepia backstory | 07-characters, 07-places, 07-fx-and-tone |
 | Horror / dark biography | Reaper lurker, voids, glitch, mono-red, jump-scare recipe, ink-blot/peephole transitions | 07-fx-and-tone, 07-characters |
+| Character acting: kneel, sit, lie, fly, hug, beg; kids, elders, brutes; costume changes | v4 poses + `build`/`age`, `swap` under a `poof`, `antic` | 03 (bean), 08-chars, 08-acting |
+| Gags: giant hand/arm, hat gags, no-X sign, liar nose, exits (tumble, zip, pivot-fall) | `arm` layer, `fx: poof/hat/marks/prohibit`, enter/exit kinds | 08-acting, 08-chars |
+| Objects with faces, signposts, furniture, screens, prize wheel, new animals/vehicles | `obj` layer, props v4, creatures/vehicles v4 | 08-props |
+| Throne halls, studios (game show, courtroom, news), rooms, dungeon, harbor, mood backdrops | `bg: palace/studio/room/cell/harbor/mood/...`, `fg: bg-front` | 08-places |
+| Map storytelling: tilt/globe/tabletop, split/shatter/annex, figures on the map, war arrows | `map` v4 fields and overlays | 08-map |
+| Names, time skips, picture bubbles, stat cards, graffiti, verdict sheets | `doc` v4 kinds | 08-docs |
+| Game parody framing (HUD, VS card, menus, cursor, quest chips) | `hud`, `cursor`, game `doc` kinds, `spec.overlays` | 08-game |
+| Materials (ghost, statue, gold, engraving), brawl cloud, blood stand-ins, mobs, shock, boom, grades | `fx` v4, layer modifiers, grade presets | 08-fx |
+| Transitions, split screen, comic grid, frame-in-frame, binocular/eye POV, depth of field | v4 transitions, `panel`, `fg` masks, `blur`/`focus`, `letterbox` | 08-lens, 03 |
 | New layer type / prop / effect | Register in the engine + `scripts/vocab/<module>.json` (no `spec.py` edit) | 03 "Extending" |
 
 ## Commands (run from the skill folder)
@@ -49,6 +59,7 @@ Examples:
 - `examples/v3_places/spec.json` — a 37-shot tour of every v3 background and vehicle;
 - `examples/v3_graphics/spec.json` — newspapers, checklists, stamps, charts, bubbles, TV quotes, signs, timeline, subtitles, living atlas maps;
 - `examples/v3_fx/spec.json` — horror and war sequences, transitions, grades, layer modifiers and entrances;
+- `examples/v4_*` (acting, chars, props, places, map, docs, game, fx, lens) — one shot per v4 feature; render one with `--sheet` before using a module for the first time;
 - example storyboards: `assets/demo_*.jpg`.
 
 ## Production rules
@@ -61,10 +72,11 @@ Examples:
 6. **Labels = key words**, not the whole sentence. Tag (`tag`) + name + an arrow pointing to the character.
 7. **Character sheet:** describe recurring characters once in `cast`, then reference them with `who` only.
 8. **Set the tone with palette, FX and `grade`**; the grammar stays the same. Cold tone: `dusk`/`night`/`storm`/`teal`, `spotlight`. Comedic: `sunset`/`day`, `splat`, `speedlines`. Horror: `horror`/`mono-red`/`cold`, lurker, glitch. See the tables in 02 and 07-fx-and-tone.
-9. **Deflate every peak:** after a scare or a grim beat, cut to comedy or warmth within 2–6 s (all eight references do this).
-10. **Imply violence, never show it:** blood pools, X-eyes, crosses filling a region, tombstones, stat blocks, a grade shift with a silent hold. Use generic flags and emblems, never extremist symbols or real likenesses (06 "Handling dark material").
-11. **Determinism:** use only `T.rng`/`T.noise`; never `Math.random` or the system clock. Two renders of the same moment must match byte for byte (tested).
-12. **Before the final render:**
+9. **Story first:** split the script into beats, pick a recipe per beat from `09-story-craft.md` (map spine + 1.5–4 s gag inserts, a recurring device, a frame story for long films), and make every gag land on its key word.
+10. **Deflate every peak:** after a scare or a grim beat, cut to comedy or warmth within 2–6 s (all eight references do this).
+11. **Imply violence, never show it:** blood pools, X-eyes, crosses filling a region, tombstones, stat blocks, a grade shift with a silent hold. Use generic flags and emblems, never extremist symbols or real likenesses (06 "Handling dark material").
+12. **Determinism:** use only `T.rng`/`T.noise`; never `Math.random` or the system clock. Two renders of the same moment must match byte for byte (tested).
+13. **Before the final render:**
    - the validator and tests are green;
    - the `--sheet` has been reviewed (text stays in frame, faces are not covered);
    - the preview has been handed for independent review to an agent that did not write the spec.
@@ -100,6 +112,18 @@ scripts/engine/      index.html + core.js (timeline, camera, transitions) + lib/
                      punch cracks, rivers, walls, pencil (the map moved here from widgets.js)
   lib/atmos2/3.js    glitch, rgbsplit, alarm, cctv, mist, whirlpool, red eyes, wall shadow, eyelids, ink burst, gas,
                      muzzle flashes, shell bursts, flame shapes; layer modifiers glow/silhouette/lineart; 7 transitions
+  v4 modules:
+  lib/shared4.js     T.num, clouds, starbursts, thick arrows, gloves, T.subShot (a shot inside another)
+  lib/chars4.js, wardrobe4.js   expressions, face gags, accessories, wings, build overlays, 29 headwear, 20 outfits, topbean
+  lib/acting.js      arm layer (rubber arm, giant hand, spring glove, foot, hook), poof, hat gags, marks, prohibit, 8 exits
+  lib/props3.js, creatures2.js, vehicles2.js   obj layer (faces on things), 54 props, 9 animals, 4 vehicles, screens
+  lib/places4/5.js   mood, palace, burning, floor, studio, room, cell, harbor, alley, antique, parchment-panel, corkboard,
+                     vehicle-interior; fg bg-front
+  lib/mapx3.js       map views tilt/globe/tabletop, living regions, figures, arrows, brawls, trails, words, drops
+  lib/docs3.js       nameplate, timeskip, pictobubble, statstack, unitcards, bigyear, band, graffiti, scorecard, tally, list, crayon
+  lib/gameui.js      hud layer, cursor layer, versus/challenger/menu/pause/dialog/... doc kinds, slides
+  lib/fx4.js, mods.js   brawl, blood stand-ins, shock, boom, word-shatter, light kit, memory; materials, sticker, split; 12 grades
+  lib/lens.js, layout.js   13 transitions, panel layer (split, grid, pip, frame), binoculars / spyglass / eye-pov masks
 scripts/vocab/*.json     validator vocabulary per module (merged by spec.py, compared with the engine by tests)
 scripts/render.py    MP4 / stills / sheet / serve, parallel workers, audio
 scripts/spec.py      loading + validation (KNOWN_* = the engine vocabulary)
