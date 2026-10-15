@@ -2,7 +2,7 @@
 
 Each script frame (`vo` + `screen`) becomes one shot in the spec. First pick the **beat type**, then take its recipe and substitute your own content. Recipes are tested `layers` fragments; the full field contract is in `03-spec-reference.md`.
 
-The recipes below (A–P) are the core grammar. Topic-specific recipes live with their toolkits: war, places and vehicles in [07-places.md](07-places.md); fact-check, maps, timelines and documents in [07-graphics.md](07-graphics.md); horror, myth and war effects in [07-fx-and-tone.md](07-fx-and-tone.md); characters and creatures in [07-characters.md](07-characters.md). To choose a toolkit for a new topic, start from the matrix in [06-reference-library.md](06-reference-library.md).
+The recipes below (A–P) are the core grammar. Topic-specific recipes live with their toolkits: war, places and vehicles in [toolkits/04_places.md](toolkits/04_places.md); fact-check, maps, timelines and documents in [toolkits/06_paper_and_lettering.md](toolkits/06_paper_and_lettering.md); horror, myth and war effects in [toolkits/08_fx_and_tone.md](toolkits/08_fx_and_tone.md); characters and creatures in [toolkits/01_characters.md](toolkits/01_characters.md). To choose a toolkit for a new topic, start from the matrix in [06-reference-library.md](06-reference-library.md).
 
 ## Pacing rules (from the reference measurements)
 
@@ -23,7 +23,7 @@ The recipes below (A–P) are the core grammar. Topic-specific recipes live with
    Use no more than one non-`cut` transition per 4–5 shots.
 6. A character talks (`talk`) only when **they** are speaking, not on every voice-over line.
 
-## Depth rule (v2): build every shot from 3 planes
+## Depth rule: build every shot from 3 planes
 
 1. **Foreground** (`fg`, `z` 1.3–1.6): bushes in the corners, overhanging canopies, a ledge, tall grass, a trunk at the edge, or an over-the-shoulder back of a head. Covers 10–25% of the frame and is darker than the midground.
 2. **Midground**: characters (3/4 view!), crowds, props.

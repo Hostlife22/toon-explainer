@@ -1,0 +1,10 @@
+{
+  "_about": "game-ui.js: game-UI kit - hud widgets (TOON.HUD_KINDS), cursor layer, game-screen doc kinds (merged into TOON.DOCS)",
+  "layers": ["hud", "cursor"],
+  "kinds": {
+    "hud": ["notice", "meter", "counter", "warning", "score", "hearts", "marker", "chip", "timer-lcd"],
+    "doc": ["versus", "challenger", "joins", "sequel", "menu", "pause", "loading", "insert", "wheel", "carousel",
+            "dialog", "error", "upgrade", "killfeed", "highscore", "meanwhile", "tbc", "trade", "slides"]
+  },
+  "registry": {"hud": "TOON.HUD_KINDS"}
+}

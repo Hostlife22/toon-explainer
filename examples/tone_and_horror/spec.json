@@ -1,0 +1,806 @@
+{
+  "title": "Tone and horror: FX, transitions, grades and layer modifiers",
+  "fps": 30,
+  "seed": 303,
+  "style": {
+    "grain": true,
+    "vignette": 0.3
+  },
+  "cast": {
+    "poet": {
+      "robe": "#2f2a33",
+      "sash": "#5a1e22",
+      "hair": "short",
+      "hairColor": "#2a1d18",
+      "mustache": true,
+      "mustacheColor": "#2a1d18"
+    },
+    "kid": {
+      "robe": "#4f7fb8",
+      "hair": "curly",
+      "hairColor": "#6b4a30"
+    },
+    "legion": {
+      "robe": "#7a6a48",
+      "armor": "#8a8e80",
+      "head": "helmet",
+      "headColor": "#6b6a3e",
+      "crest": "#6b6a3e",
+      "hair": "bald",
+      "hold": "spear"
+    },
+    "seer": {
+      "robe": "#f1eadb",
+      "sash": "#d9a84a",
+      "hair": "long",
+      "hairColor": "#e8e2d0",
+      "beard": "full",
+      "beardColor": "#e8e2d0",
+      "head": "laurel"
+    }
+  },
+  "shots": [
+    {
+      "id": "glitch",
+      "dur": 2.4,
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 4
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.5,
+          "y": 0.96,
+          "size": 560,
+          "expr": "happy",
+          "talk": [
+            [
+              0.1,
+              0.7
+            ]
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "glitch",
+          "at": 0.9,
+          "dur": 0.6,
+          "hud": true
+        }
+      ],
+      "vo": "Everything was fine, until it was not."
+    },
+    {
+      "id": "mono_red",
+      "dur": 2.6,
+      "bg": {
+        "kind": "forest",
+        "rays": false
+      },
+      "layers": [
+        {
+          "type": "fx",
+          "kind": "blood",
+          "x": 0.5,
+          "y": 0.9,
+          "w": 300
+        },
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.5,
+          "y": 0.96,
+          "size": 520,
+          "expr": "worried",
+          "view": "back"
+        },
+        {
+          "type": "fx",
+          "kind": "glitch",
+          "dur": 0.35,
+          "hud": true
+        }
+      ],
+      "grade": "mono-red",
+      "vo": "The memory turned gray. Only the red stayed."
+    },
+    {
+      "id": "lurker",
+      "dur": 4.0,
+      "bg": {
+        "kind": "interior",
+        "wall": "#6e5444",
+        "floor": "#3e2e22",
+        "trim": "#2a1c15",
+        "light": false,
+        "dado": "#2a1810"
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "poet",
+          "x": 0.66,
+          "y": 0.98,
+          "size": 620,
+          "expr": "sad",
+          "pose": "think"
+        },
+        {
+          "type": "bean",
+          "who": "poet",
+          "id": "lurk",
+          "x": 0.28,
+          "y": 0.9,
+          "size": 520,
+          "silhouette": "#0d0907",
+          "enter": "fade",
+          "enterDur": 2.4,
+          "rock": 0.6,
+          "blink": false
+        },
+        {
+          "type": "fx",
+          "kind": "redeyes",
+          "x": 0.297,
+          "y": 0.475,
+          "at": 2.6,
+          "gap": 56,
+          "size": 16,
+          "blink": [
+            3.4
+          ]
+        }
+      ],
+      "grade": "horror",
+      "vignette": {
+        "strength": 0.85,
+        "x": 0.6,
+        "y": 0.5,
+        "radius": 0.5
+      },
+      "vo": "He never noticed what waited behind him."
+    },
+    {
+      "id": "jump_scare",
+      "dur": 1.6,
+      "bg": {
+        "kind": "flat",
+        "color": "#050404"
+      },
+      "layers": [
+        {
+          "type": "fx",
+          "kind": "wallshadow",
+          "x": 0.5,
+          "y": 1.05,
+          "size": 980,
+          "grow": 0.15,
+          "hornsAt": 0,
+          "eyesAt": 0,
+          "alpha": 1,
+          "color": "#1b1210"
+        },
+        {
+          "type": "fx",
+          "kind": "redeyes",
+          "x": 0.5,
+          "y": 0.42,
+          "gap": 200,
+          "size": 38,
+          "bloom": 40
+        }
+      ],
+      "camera": {
+        "zoom": [
+          1.06,
+          1.1
+        ],
+        "shake": [
+          {
+            "at": 0,
+            "dur": 1.6,
+            "amp": 4
+          }
+        ]
+      },
+      "vo": "(hard cut — no transition)"
+    },
+    {
+      "id": "deflate",
+      "dur": 2.0,
+      "bg": {
+        "kind": "burst",
+        "color": "#f2b43a",
+        "center": "#fff1b0",
+        "edge": "#c86a1a"
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.5,
+          "y": 0.98,
+          "size": 620,
+          "expr": "squint",
+          "pose": "shrug",
+          "talk": [
+            [
+              0.3,
+              1.4
+            ]
+          ]
+        },
+        {
+          "type": "label",
+          "text": "JUST KIDDING",
+          "x": 0.5,
+          "y": 0.2,
+          "enter": "pop-tilt",
+          "at": 0.2
+        }
+      ],
+      "transition": "flash-cut",
+      "vo": "Comic deflation within two seconds of the scare."
+    },
+    {
+      "id": "wall_shadow",
+      "dur": 3.6,
+      "bg": {
+        "kind": "interior",
+        "wall": "#6e5444",
+        "floor": "#3e2e22",
+        "trim": "#2a1c15",
+        "light": false,
+        "dado": "#2a1810"
+      },
+      "layers": [
+        {
+          "type": "fx",
+          "kind": "wallshadow",
+          "x": 0.42,
+          "y": 0.85,
+          "size": 620,
+          "grow": 1.2,
+          "hornsAt": 0.9,
+          "eyesAt": 1.9
+        },
+        {
+          "type": "bean",
+          "who": "poet",
+          "x": 0.62,
+          "y": 0.98,
+          "size": 420,
+          "expr": "worried",
+          "tremble": [
+            [
+              2.0,
+              3.6
+            ]
+          ]
+        },
+        {
+          "type": "prop",
+          "kind": "torch",
+          "x": 0.8,
+          "y": 0.86,
+          "size": 220,
+          "enter": "none"
+        }
+      ],
+      "grade": "horror",
+      "vignette": {
+        "strength": 0.75,
+        "x": 0.7,
+        "y": 0.6,
+        "radius": 0.6
+      },
+      "transition": "cut",
+      "vo": "Something grew on the wall."
+    },
+    {
+      "id": "eyelids",
+      "dur": 2.6,
+      "bg": {
+        "kind": "interior",
+        "wall": "#c9b48a",
+        "floor": "#8a6a48"
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "poet",
+          "x": 0.5,
+          "y": 1.45,
+          "size": 1300,
+          "expr": "sleepy"
+        },
+        {
+          "type": "fx",
+          "kind": "eyelids",
+          "at": 1.2,
+          "dur": 0.8,
+          "mode": "close",
+          "hud": true
+        }
+      ],
+      "vo": "His eyes closed for the last time."
+    },
+    {
+      "id": "lineart",
+      "dur": 3.2,
+      "bg": {
+        "kind": "flat",
+        "color": "#050505"
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "poet",
+          "x": 0.5,
+          "y": 0.92,
+          "size": 560,
+          "lineart": true,
+          "pose": "think"
+        },
+        {
+          "type": "fx",
+          "kind": "paperstorm",
+          "x": 0.5,
+          "y": 0.5,
+          "count": 16,
+          "lineart": true
+        }
+      ],
+      "transition": {
+        "kind": "inkblot",
+        "at": [
+          0.5,
+          0.45
+        ]
+      },
+      "vo": "Inside his mind there was only paper."
+    },
+    {
+      "id": "divine",
+      "dur": 3.0,
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 6,
+        "hills": false,
+        "ground": false
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "seer",
+          "x": 0.5,
+          "y": 0.98,
+          "size": 680,
+          "expr": "content",
+          "pose": "arms-up",
+          "glow": {
+            "color": "#fff3c0",
+            "blur": 40,
+            "pulse": 0.15
+          }
+        }
+      ],
+      "grade": "divine",
+      "transition": "peephole",
+      "vo": "And the god appeared in a blaze of light."
+    },
+    {
+      "id": "flame_shape",
+      "dur": 3.4,
+      "bg": {
+        "kind": "interior",
+        "wall": "#5a3a28",
+        "floor": "#3a2618",
+        "light": false
+      },
+      "layers": [
+        {
+          "type": "fx",
+          "kind": "flameshape",
+          "x": 0.5,
+          "y": 0.86,
+          "emblem": "bull",
+          "size": 360,
+          "morphAt": 1.3
+        },
+        {
+          "type": "bean",
+          "who": "poet",
+          "x": 0.18,
+          "y": 0.98,
+          "size": 420,
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 1.4,
+              "v": "shock"
+            }
+          ]
+        }
+      ],
+      "vignette": {
+        "strength": 0.7
+      },
+      "vo": "The fire took the shape of a bull."
+    },
+    {
+      "id": "ink_and_dark",
+      "dur": 3.4,
+      "bg": {
+        "kind": "parchment"
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "kind": "book",
+          "x": 0.5,
+          "y": 0.7,
+          "size": 260,
+          "text": "POEMS",
+          "enter": "drop-squash"
+        },
+        {
+          "type": "fx",
+          "kind": "inkburst",
+          "x": 0.5,
+          "y": 0.66,
+          "bursts": [
+            0.6,
+            2.2
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "darkness",
+          "dur": 3.0,
+          "hud": true
+        }
+      ],
+      "transition": "torn-split",
+      "vo": "The ink would not stop."
+    },
+    {
+      "id": "mist_whirlpool",
+      "dur": 3.0,
+      "bg": {
+        "kind": "sky",
+        "preset": "storm",
+        "clouds": 5,
+        "hills": 2,
+        "ground": false,
+        "water": {
+          "y": 0.62,
+          "color": "#2c4a5c"
+        }
+      },
+      "layers": [
+        {
+          "type": "fx",
+          "kind": "whirlpool",
+          "x": 0.5,
+          "y": 0.82,
+          "size": 380
+        },
+        {
+          "type": "fx",
+          "kind": "mist",
+          "x": 0.5,
+          "y": 0.72,
+          "w": 1600,
+          "count": 10
+        }
+      ],
+      "transition": "sepia-to-color",
+      "vo": "Mist rose over the whirlpool."
+    },
+    {
+      "id": "sepia_memory",
+      "dur": 2.6,
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 4
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.4,
+          "y": 0.95,
+          "size": 480,
+          "expr": "happy"
+        },
+        {
+          "type": "bean",
+          "who": "poet",
+          "x": 0.62,
+          "y": 0.95,
+          "size": 520,
+          "expr": "content"
+        }
+      ],
+      "grade": "sepia",
+      "transition": "dissolve",
+      "vo": "Long ago, in a sepia memory."
+    },
+    {
+      "id": "color_now",
+      "dur": 2.4,
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 4
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.4,
+          "y": 0.95,
+          "size": 480,
+          "expr": "happy"
+        },
+        {
+          "type": "bean",
+          "who": "poet",
+          "x": 0.62,
+          "y": 0.95,
+          "size": 520,
+          "expr": "content",
+          "talk": [
+            [
+              0.3,
+              1.6
+            ]
+          ]
+        }
+      ],
+      "transition": "sepia-to-color",
+      "vo": "And back to the present."
+    },
+    {
+      "id": "cctv_alarm",
+      "dur": 2.8,
+      "bg": {
+        "kind": "interior",
+        "wall": "#7a6a58",
+        "floor": "#4a3a2c",
+        "columns": [
+          0.15,
+          0.85
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "poet",
+          "x": 0.5,
+          "y": 0.92,
+          "size": 360,
+          "expr": "shock",
+          "pose": "scared"
+        },
+        {
+          "type": "fx",
+          "kind": "cctv",
+          "hud": true,
+          "label": "CAM 3"
+        },
+        {
+          "type": "fx",
+          "kind": "alarm",
+          "at": 0.8,
+          "hud": true
+        }
+      ],
+      "camera": {
+        "zoom": [
+          1.0,
+          1.0
+        ],
+        "rot": [
+          -3,
+          -3
+        ]
+      },
+      "transition": "slash",
+      "vo": "Then the alarm went off."
+    },
+    {
+      "id": "gas",
+      "dur": 3.4,
+      "bg": {
+        "kind": "sky",
+        "preset": "storm",
+        "clouds": 4,
+        "ground": "dirt"
+      },
+      "layers": [
+        {
+          "type": "crowd",
+          "who": "legion",
+          "x": 0.5,
+          "y": 0.9,
+          "count": 6,
+          "spread": 1300,
+          "size": 280
+        },
+        {
+          "type": "fx",
+          "kind": "gas",
+          "x": 0.5,
+          "y": 0.78,
+          "from": "right",
+          "dur": 3.0,
+          "h": 260
+        }
+      ],
+      "grade": "solemn",
+      "transition": "barwipe",
+      "vo": "A green cloud rolled across the field."
+    },
+    {
+      "id": "night_fire",
+      "dur": 3.0,
+      "bg": {
+        "kind": "sky",
+        "preset": "night",
+        "clouds": 3,
+        "ground": "dirt"
+      },
+      "layers": [
+        {
+          "type": "fx",
+          "kind": "shellburst",
+          "x": 0.5,
+          "y": 0.66,
+          "every": 0.4,
+          "w": 1700
+        },
+        {
+          "type": "fx",
+          "kind": "muzzle",
+          "x": 0.5,
+          "y": 0.72,
+          "count": 7,
+          "spacing": 230,
+          "dir": -1
+        },
+        {
+          "type": "fg",
+          "kind": "rubble",
+          "z": 1.3,
+          "count": 12
+        }
+      ],
+      "camera": {
+        "zoom": [
+          1.0,
+          1.03
+        ],
+        "shake": [
+          {
+            "at": 0.0,
+            "dur": 0.3,
+            "amp": 8
+          },
+          {
+            "at": 0.4,
+            "dur": 0.3,
+            "amp": 8
+          },
+          {
+            "at": 0.8,
+            "dur": 0.3,
+            "amp": 8
+          },
+          {
+            "at": 1.2,
+            "dur": 0.3,
+            "amp": 8
+          },
+          {
+            "at": 1.6,
+            "dur": 0.3,
+            "amp": 8
+          },
+          {
+            "at": 2.0,
+            "dur": 0.3,
+            "amp": 8
+          },
+          {
+            "at": 2.4,
+            "dur": 0.3,
+            "amp": 8
+          }
+        ]
+      },
+      "vo": "All night the guns did not stop."
+    },
+    {
+      "id": "rgb_split",
+      "dur": 2.0,
+      "bg": {
+        "kind": "burst",
+        "color": "#2f8f8a"
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.5,
+          "y": 1.3,
+          "size": 1100,
+          "expr": "shock",
+          "tremble": [
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "type": "fx",
+          "kind": "rgbsplit",
+          "dur": 2.0,
+          "hud": true
+        }
+      ],
+      "vo": "Something was wrong with him."
+    },
+    {
+      "id": "entrances",
+      "dur": 3.2,
+      "bg": {
+        "kind": "burst",
+        "color": "#c8623a",
+        "center": "#ffd9a0",
+        "edge": "#4a1a0f"
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "kind": "moneybag",
+          "x": 0.25,
+          "y": 0.62,
+          "size": 260,
+          "enter": "drop-squash",
+          "at": 0.2
+        },
+        {
+          "type": "label",
+          "text": "POP TILT",
+          "x": 0.62,
+          "y": 0.4,
+          "enter": "pop-tilt",
+          "at": 0.8
+        },
+        {
+          "type": "title",
+          "text": "SLAM!",
+          "x": 0.62,
+          "y": 0.75,
+          "at": 1.4,
+          "enter": "slam",
+          "size": 150,
+          "color": "#ffe066"
+        }
+      ],
+      "transition": "flash-cut",
+      "vo": "Three new entrances."
+    }
+  ]
+}

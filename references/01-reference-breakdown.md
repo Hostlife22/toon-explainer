@@ -60,7 +60,7 @@ See the "Tone" section in `02-visual-grammar.md`.
 
 ## 6. Full breakdown of the entire video (0:00–38:29, 4 parallel analyses, 2026-10-14)
 
-Method: contact sheets of the whole video (one frame every 4 s, about 580 frames), 80+ motion strips at 10–15 and 30 fps, about 80 full-size background frames. Below are the findings implemented in engine v2.
+Method: contact sheets of the whole video (one frame every 4 s, about 580 frames), 80+ motion strips at 10–15 and 30 fps, about 80 full-size background frames. Below are the findings the engine implements.
 
 ### Character
 - The head takes up 45–50% of total height. Egg-shaped: wider at the cheekbones, tapering to the chin. The body is a tilted "bell" with stubby legs, about 2.2 heads tall overall.
@@ -77,7 +77,7 @@ Method: contact sheets of the whole video (one frame every 4 s, about 580 frames
   - helmet with a brush crest and cheek guards;
   - large red shield with yellow "wings", short sword.
 
-### Character animation (the biggest difference from v1)
+### Character animation
 - **Limited animation, hold-and-snap.** A pose holds for 0.4–4 s and changes **within 0–1 frames**, followed by a short settle (~4%, 3–4 frames). Smooth transitions between poses are rare (1:17, 12:41, 24:12, 31:36).
 - Speech: 2–3 mouth shapes, each held for 2–4 frames (≈8–12 changes per second). The head bobs 1–3°; the jaw doesn't move.
 - Idle: the body sways around the feet by ±1.5–3° with a 1.5–2 s period, the head tilts in counter-phase, breathing ~1–2%. Blinks are rare, 2–3 frames long.

@@ -1,0 +1,1094 @@
+{
+  "title": "Paper and maps: documents, signs, timeline, subtitles and atlas maps",
+  "fps": 30,
+  "seed": 31,
+  "style": {
+    "grain": true,
+    "vignette": 0.26
+  },
+  "cast": {
+    "host": {
+      "robe": "#2f3238",
+      "sash": "#c8323a",
+      "hair": "short",
+      "hairColor": "#3b2a20"
+    },
+    "leader": {
+      "robe": "#4a4f45",
+      "hair": "short",
+      "hairColor": "#1e1e1e",
+      "mustache": true,
+      "belt": "#2a1c15"
+    },
+    "clerk": {
+      "robe": "#6a8fbf",
+      "hair": "curly",
+      "hairColor": "#5a3a26"
+    }
+  },
+  "shots": [
+    {
+      "id": "g01_newspapers",
+      "dur": 3.5,
+      "vo": "Both sides printed their own version of the battle.",
+      "bg": {
+        "kind": "flat",
+        "color": "#6a1a1e"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "newspaper",
+          "x": 0.34,
+          "y": 0.52,
+          "rot": -7,
+          "scale": 0.82,
+          "masthead": "THE MORNING MAIL",
+          "date": "OCTOBER 732",
+          "headline": "WE TOTALLY WON",
+          "subhead": "Experts agree: it was a draw",
+          "photo": {
+            "who": "leader"
+          }
+        },
+        {
+          "type": "doc",
+          "kind": "newspaper",
+          "x": 0.68,
+          "y": 0.5,
+          "rot": 6,
+          "scale": 0.82,
+          "at": 0.5,
+          "grayscale": true,
+          "masthead": "THE DAILY HERALD",
+          "headline": "HERO SAVES KINGDOM",
+          "subhead": "Enemy runs home",
+          "photo": {
+            "who": "host"
+          }
+        }
+      ]
+    },
+    {
+      "id": "g02_checklist",
+      "dur": 4.5,
+      "vo": "The treaty had four rules. He broke every single one.",
+      "bg": {
+        "kind": "interior",
+        "wall": "#c9a35a",
+        "columns": [
+          0.06,
+          0.94
+        ]
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ]
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "checklist",
+          "x": 0.42,
+          "y": 0.5,
+          "title": "Treaty Terms",
+          "paper": "scroll",
+          "every": 0.15,
+          "lines": [
+            "No army bigger than 100,000",
+            "No tanks, no planes",
+            "Hands off the Rhineland",
+            "Pay for the damage"
+          ],
+          "strikes": [
+            {
+              "row": 0,
+              "at": 1.2
+            },
+            {
+              "row": 1,
+              "at": 1.8
+            },
+            {
+              "row": 2,
+              "at": 2.4
+            },
+            {
+              "row": 3,
+              "at": 3.0
+            }
+          ],
+          "checks": [
+            {
+              "row": 0,
+              "at": 1.2,
+              "mark": "x"
+            },
+            {
+              "row": 1,
+              "at": 1.8,
+              "mark": "x"
+            },
+            {
+              "row": 2,
+              "at": 2.4,
+              "mark": "x"
+            },
+            {
+              "row": 3,
+              "at": 3.0,
+              "mark": "x"
+            }
+          ],
+          "minimap": {
+            "color": "#c8323a"
+          }
+        },
+        {
+          "type": "bean",
+          "who": "leader",
+          "x": 0.86,
+          "y": 0.98,
+          "size": 520,
+          "flip": true,
+          "expr": "smug",
+          "pose": "cross"
+        }
+      ]
+    },
+    {
+      "id": "g03_stamps",
+      "dur": 3.0,
+      "vo": "Application: rejected.",
+      "transition": "cut",
+      "bg": {
+        "kind": "flat",
+        "color": "#3a3d42"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "document",
+          "x": 0.5,
+          "y": 0.5,
+          "title": "Application Form",
+          "lines": [
+            "Name: Little Corporal",
+            "Job: painter",
+            "Experience: none"
+          ],
+          "stamp": {
+            "text": "REJECTED",
+            "at": 1.2
+          }
+        },
+        {
+          "type": "doc",
+          "kind": "stamp",
+          "x": 0.76,
+          "y": 0.24,
+          "at": 2.0,
+          "text": "CANCELLED",
+          "color": "#2a5bd0",
+          "size": 80
+        }
+      ]
+    },
+    {
+      "id": "g04_chart_line",
+      "dur": 4.0,
+      "vo": "Then the money ran out, very fast.",
+      "bg": {
+        "kind": "flat",
+        "color": "#2f8f8a"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "chart",
+          "chart": "line",
+          "x": 0.5,
+          "y": 0.52,
+          "paper": "grid",
+          "yLabel": "MONEY",
+          "values": [
+            9,
+            8.5,
+            7,
+            7.5,
+            4,
+            1
+          ],
+          "labels": [
+            "1919",
+            "1920",
+            "1921",
+            "1922",
+            "1923",
+            "1924"
+          ],
+          "dur": 2.2,
+          "icons": [
+            {
+              "i": 0,
+              "prop": "moneybag",
+              "at": 0.4
+            },
+            {
+              "i": 3,
+              "prop": "coin",
+              "at": 1.4
+            }
+          ],
+          "callouts": [
+            {
+              "i": 5,
+              "text": "OH NO",
+              "at": 2.6,
+              "dy": 150
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g05_chart_bar",
+      "dur": 3.5,
+      "vo": "Four empires, four armies of very different sizes.",
+      "bg": {
+        "kind": "burst",
+        "color": "#c8623a",
+        "center": "#ffd9a0",
+        "edge": "#4a1a0f"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "chart",
+          "chart": "bar",
+          "x": 0.5,
+          "y": 0.52,
+          "values": [
+            3.5,
+            2.2,
+            4.8,
+            1.3
+          ],
+          "labels": [
+            "NORTH",
+            "WEST",
+            "EAST",
+            "SOUTH"
+          ],
+          "color": [
+            "#c8323a",
+            "#3a6fb0",
+            "#2e9e48",
+            "#f0c419"
+          ],
+          "yLabel": "SOLDIERS (M)",
+          "dur": 1.6
+        }
+      ]
+    },
+    {
+      "id": "g06_bubbles",
+      "dur": 4.5,
+      "vo": "He said one thing, thought another, and shouted a third.",
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 4
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "host",
+          "x": 0.5,
+          "y": 0.97,
+          "size": 520,
+          "expr": "smug",
+          "talk": [
+            [
+              0.2,
+              1.2
+            ]
+          ]
+        },
+        {
+          "type": "doc",
+          "kind": "bubble",
+          "x": 0.22,
+          "y": 0.3,
+          "text": "Peace in\nour time!",
+          "tail": [
+            200,
+            130
+          ],
+          "w": 440,
+          "h": 220
+        },
+        {
+          "type": "doc",
+          "kind": "bubble",
+          "style": "thought",
+          "x": 0.76,
+          "y": 0.24,
+          "at": 1.4,
+          "who": "leader",
+          "w": 420,
+          "h": 250,
+          "tail": [
+            -200,
+            170
+          ]
+        },
+        {
+          "type": "doc",
+          "kind": "bubble",
+          "style": "shout",
+          "x": 0.5,
+          "y": 0.2,
+          "at": 2.8,
+          "text": "THEY INVADED US!",
+          "w": 760,
+          "h": 260
+        }
+      ]
+    },
+    {
+      "id": "g07_tv_quote",
+      "dur": 5.0,
+      "vo": "We have never wanted war. We want peace.",
+      "transition": "cut",
+      "bg": {
+        "kind": "interior",
+        "wall": "#a8673a",
+        "dado": false,
+        "columns": []
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ]
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "tv",
+          "x": 0.5,
+          "y": 0.46,
+          "who": "leader",
+          "talk": [
+            [
+              0,
+              4
+            ]
+          ]
+        },
+        {
+          "type": "subtitle",
+          "x": 0.5,
+          "y": 0.9,
+          "text": "We have never wanted war. We want peace.",
+          "start": 0.3,
+          "dur": 2.6,
+          "flag": [
+            {
+              "word": "never wanted war",
+              "at": 3.2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g08_cards",
+      "dur": 4.0,
+      "vo": "Meet the new hero: a clerk with a very long name.",
+      "bg": {
+        "kind": "burst",
+        "color": "#2f8f8a"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "idcard",
+          "x": 0.3,
+          "y": 0.5,
+          "who": "clerk",
+          "name": "THESEUS",
+          "sub": "PRINCE OF ATHENS",
+          "line": "Born: a long time ago",
+          "scale": 0.9
+        },
+        {
+          "type": "doc",
+          "kind": "poster",
+          "x": 0.72,
+          "y": 0.5,
+          "at": 0.8,
+          "who": "leader",
+          "title": "WANTED",
+          "name": "THE MINOTAUR",
+          "sub": "Reward: one ball of string",
+          "scale": 0.85
+        },
+        {
+          "type": "doc",
+          "kind": "nametag",
+          "x": 0.52,
+          "y": 0.82,
+          "at": 1.8,
+          "name": "BOB",
+          "scale": 0.7
+        }
+      ]
+    },
+    {
+      "id": "g09_signs",
+      "dur": 4.5,
+      "vo": "The year was 711. No wait, go back to 401.",
+      "bg": {
+        "kind": "parchment"
+      },
+      "layers": [
+        {
+          "type": "map",
+          "style": "atlas",
+          "land": [
+            [
+              0.5,
+              0.55,
+              0.32,
+              0.26
+            ]
+          ],
+          "regions": [
+            {
+              "pts": [
+                [
+                  0.3,
+                  0.35
+                ],
+                [
+                  0.45,
+                  0.28
+                ],
+                [
+                  0.55,
+                  0.4
+                ],
+                [
+                  0.5,
+                  0.58
+                ],
+                [
+                  0.32,
+                  0.6
+                ]
+              ],
+              "color": "#b65cf0"
+            }
+          ]
+        },
+        {
+          "type": "doc",
+          "kind": "yearsign",
+          "x": 0.18,
+          "y": 0.5,
+          "text": "YE OLDE YEAR",
+          "num": "711",
+          "strike": {
+            "at": 1.6,
+            "num": "401"
+          }
+        },
+        {
+          "type": "doc",
+          "kind": "hangsign",
+          "x": 0.72,
+          "y": 0.42,
+          "at": 0.6,
+          "title": "TIMES CHINA FELL APART",
+          "num": 3,
+          "swap": {
+            "at": 2.6,
+            "num": 4
+          },
+          "scale": 0.8
+        }
+      ]
+    },
+    {
+      "id": "g10_mission",
+      "dur": 3.0,
+      "vo": "First mission: survive the trenches.",
+      "transition": "zoom-punch",
+      "bg": {
+        "kind": "flat",
+        "color": "#1a1210"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "mission",
+          "x": 0.5,
+          "y": 0.55,
+          "small": "FIRST MISSION:",
+          "word": "SURVIVE"
+        },
+        {
+          "type": "doc",
+          "kind": "ribbon",
+          "x": 0.5,
+          "y": 0.15,
+          "at": 0.8,
+          "text": "THE MANDATE OF HEAVEN",
+          "w": 1000
+        }
+      ]
+    },
+    {
+      "id": "g11_news",
+      "dur": 4.0,
+      "vo": "Breaking news: the war is over. Probably.",
+      "bg": {
+        "kind": "interior",
+        "wall": "#3a4a6a",
+        "dado": false,
+        "light": false
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "tv",
+          "style": "modern",
+          "x": 0.5,
+          "y": 0.42,
+          "w": 1000,
+          "who": "host",
+          "grayscale": false,
+          "talk": [
+            [
+              0.3,
+              3
+            ]
+          ]
+        },
+        {
+          "type": "doc",
+          "kind": "lowerthird",
+          "x": 0.5,
+          "y": 0.86,
+          "at": 0.4,
+          "headline": "NO MORE WAR!!! RIGHT?!",
+          "ticker": "Peace treaty signed in a train carriage, more at eleven"
+        }
+      ]
+    },
+    {
+      "id": "g12_quote_stat",
+      "dur": 4.5,
+      "vo": "One death is a tragedy. A million is a statistic.",
+      "bg": {
+        "kind": "flat",
+        "color": "#1a1414"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "quote",
+          "x": 0.5,
+          "y": 0.3,
+          "who": "leader",
+          "text": "One death is a tragedy, a million deaths is a statistic.",
+          "author": "attributed",
+          "scale": 0.85
+        },
+        {
+          "type": "doc",
+          "kind": "stat",
+          "x": 0.5,
+          "y": 0.72,
+          "at": 2.2,
+          "value": "1.5",
+          "words": [
+            "MILLION",
+            "PEOPLE"
+          ],
+          "scale": 0.55
+        }
+      ]
+    },
+    {
+      "id": "g13_timeline",
+      "dur": 5.0,
+      "vo": "Some wars were long. This one lasted seven hundred and eighty one years.",
+      "bg": {
+        "kind": "sky",
+        "preset": "dusk",
+        "clouds": 3
+      },
+      "layers": [
+        {
+          "type": "timeline",
+          "x": 0.5,
+          "y": 0.27,
+          "from": 500,
+          "to": 2000,
+          "spans": [
+            {
+              "from": 1337,
+              "to": 1453,
+              "label": "100 YEARS WAR",
+              "color": "#6a5ae0",
+              "at": 0.6
+            },
+            {
+              "from": 1568,
+              "to": 1648,
+              "label": "80 YEARS WAR",
+              "color": "#d0312d",
+              "at": 1.4
+            },
+            {
+              "from": 711,
+              "to": 1492,
+              "label": "RECONQUISTA",
+              "color": "#2e9e48",
+              "at": 2.4,
+              "grow": 0.8
+            }
+          ],
+          "pointer": {
+            "from": 500,
+            "year": 711,
+            "at": 3.4,
+            "dur": 1.2
+          }
+        },
+        {
+          "type": "bean",
+          "who": "host",
+          "x": 0.5,
+          "y": 0.98,
+          "size": 480,
+          "expr": "shock",
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 2.6,
+              "v": "hands-face"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g14_atlas",
+      "dur": 6.0,
+      "vo": "The empire grabbed its neighbour, drew a new front, and sent the trains.",
+      "bg": {
+        "kind": "flat",
+        "color": "#5b72d6"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ]
+      },
+      "layers": [
+        {
+          "type": "map",
+          "style": "atlas",
+          "land": [
+            [
+              0.55,
+              0.55,
+              0.38,
+              0.32
+            ]
+          ],
+          "regions": [
+            {
+              "id": "red",
+              "pts": [
+                [
+                  0.3,
+                  0.35
+                ],
+                [
+                  0.45,
+                  0.28
+                ],
+                [
+                  0.55,
+                  0.4
+                ],
+                [
+                  0.5,
+                  0.58
+                ],
+                [
+                  0.32,
+                  0.6
+                ]
+              ],
+              "color": "#d42a2a",
+              "face": {
+                "mood": [
+                  {
+                    "at": 0,
+                    "v": "smug"
+                  },
+                  {
+                    "at": 2,
+                    "v": "happy"
+                  }
+                ],
+                "accessory": "sunglasses"
+              },
+              "arms": {
+                "weapon": "sword",
+                "at": 0.6
+              },
+              "label": "EMPIRE"
+            },
+            {
+              "id": "east",
+              "pts": [
+                [
+                  0.55,
+                  0.4
+                ],
+                [
+                  0.72,
+                  0.3
+                ],
+                [
+                  0.84,
+                  0.45
+                ],
+                [
+                  0.75,
+                  0.62
+                ],
+                [
+                  0.5,
+                  0.58
+                ]
+              ],
+              "color": "#2e9e48",
+              "face": {
+                "mood": "worried"
+              },
+              "conquer": {
+                "by": "red",
+                "at": 2.0,
+                "dur": 1.0,
+                "mood": "cry"
+              },
+              "strikeLabel": {
+                "old": "EASTLAND",
+                "new": "EMPIRE",
+                "at": 3.2
+              }
+            },
+            {
+              "id": "south",
+              "pts": [
+                [
+                  0.32,
+                  0.6
+                ],
+                [
+                  0.5,
+                  0.58
+                ],
+                [
+                  0.6,
+                  0.75
+                ],
+                [
+                  0.42,
+                  0.82
+                ],
+                [
+                  0.28,
+                  0.74
+                ]
+              ],
+              "halftone": true,
+              "whiteout": {
+                "at": 4.2,
+                "dur": 0.5
+              }
+            }
+          ],
+          "fronts": [
+            {
+              "pts": [
+                [
+                  0.36,
+                  0.2
+                ],
+                [
+                  0.58,
+                  0.5
+                ],
+                [
+                  0.62,
+                  0.9
+                ]
+              ],
+              "at": 0.4,
+              "dur": 2.0
+            }
+          ],
+          "tokens": [
+            {
+              "icon": "train",
+              "pts": [
+                [
+                  0.3,
+                  0.45
+                ],
+                [
+                  0.7,
+                  0.45
+                ]
+              ],
+              "at": 3.0,
+              "dur": 2.0,
+              "size": 80
+            },
+            {
+              "icon": "helmet",
+              "pts": [
+                [
+                  0.4,
+                  0.7
+                ],
+                [
+                  0.55,
+                  0.5
+                ]
+              ],
+              "at": 1.0,
+              "dur": 1.8,
+              "count": 3,
+              "every": 0.3,
+              "size": 50
+            }
+          ],
+          "yearLabel": {
+            "text": "1938",
+            "at": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "g15_parchment",
+      "dur": 6.0,
+      "vo": "Fleets crossed, cities burned, the wall went up, and the map went grey.",
+      "bg": {
+        "kind": "parchment"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "map",
+          "land": [
+            [
+              0.38,
+              0.52,
+              0.26,
+              0.24
+            ],
+            [
+              0.78,
+              0.4,
+              0.16,
+              0.2
+            ]
+          ],
+          "regions": [
+            {
+              "id": "k",
+              "pts": [
+                [
+                  0.25,
+                  0.4
+                ],
+                [
+                  0.45,
+                  0.34
+                ],
+                [
+                  0.55,
+                  0.5
+                ],
+                [
+                  0.45,
+                  0.7
+                ],
+                [
+                  0.28,
+                  0.65
+                ]
+              ],
+              "color": "#c8323a",
+              "recolor": {
+                "color": "#2a2a2a",
+                "at": 3.6,
+                "dur": 0.8
+              }
+            }
+          ],
+          "rivers": [
+            {
+              "pts": [
+                [
+                  0.3,
+                  0.32
+                ],
+                [
+                  0.38,
+                  0.5
+                ],
+                [
+                  0.34,
+                  0.72
+                ]
+              ],
+              "at": 0.2,
+              "dur": 1.2
+            }
+          ],
+          "wall": {
+            "pts": [
+              [
+                0.24,
+                0.36
+              ],
+              [
+                0.4,
+                0.3
+              ],
+              [
+                0.56,
+                0.34
+              ]
+            ],
+            "at": 0.6,
+            "dur": 1.2
+          },
+          "tokens": [
+            {
+              "icon": "ship",
+              "pts": [
+                [
+                  0.95,
+                  0.75
+                ],
+                [
+                  0.6,
+                  0.62
+                ]
+              ],
+              "at": 0.4,
+              "dur": 2.0,
+              "count": 4,
+              "every": 0.35,
+              "size": 70
+            }
+          ],
+          "cities": [
+            {
+              "x": 0.4,
+              "y": 0.5,
+              "icon": "castle",
+              "at": 0.3,
+              "burning": 2.0
+            },
+            {
+              "x": 0.78,
+              "y": 0.4,
+              "icon": "pagoda",
+              "at": 0.5
+            },
+            {
+              "x": 0.3,
+              "y": 0.62,
+              "icon": "dome",
+              "at": 0.7,
+              "burning": 2.4
+            }
+          ],
+          "crosses": {
+            "region": "k",
+            "at": 2.6,
+            "dur": 1.2,
+            "count": 40
+          },
+          "punch": {
+            "x": 0.47,
+            "y": 0.44,
+            "at": 4.6
+          },
+          "pencil": {
+            "pts": [
+              [
+                0.62,
+                0.2
+              ],
+              [
+                0.66,
+                0.5
+              ],
+              [
+                0.62,
+                0.85
+              ]
+            ],
+            "at": 1.2,
+            "dur": 1.5
+          },
+          "pins": [
+            {
+              "x": 0.4,
+              "y": 0.5,
+              "label": "CAPITAL",
+              "style": "drop",
+              "at": 0.2
+            }
+          ],
+          "desaturate": {
+            "at": 5.2,
+            "dur": 0.6
+          }
+        }
+      ]
+    }
+  ]
+}

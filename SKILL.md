@@ -5,35 +5,34 @@ description: "Turn a narrated script/storyboard into a cutout-cartoon explainer 
 
 # Toon Explainer
 
+## Your role
+
 You are the director, animator and editor. The script becomes a **spec** (JSON with shots and layers), and the spec becomes a video. Code draws every frame in the browser (Canvas 2D, Playwright, ffmpeg); AI can optionally generate unique characters and backgrounds (see 04).
 
-The style grammar comes from frame-by-frame studies of **eight** videos by one history/myth explainer channel: Rome, China, the Reconquista, World War I, the road to World War II, a speech fact-check show, a Greek myth and a horror biography (about 3.5 hours). v1–v2 came from the Rome breakdown (`references/01-reference-breakdown.md`). v3 added the toolkits from the other seven: eras, creatures, vehicles, places, documents, living maps, horror and war effects. v4 is a second, frame-dense pass over all eight (1 fps sheets + motion strips): acting and gags, 46 body poses and body types, map views and living regions, game-UI parodies, studio and palace sets, materials, blood stand-ins, transitions, split screens and a story-craft guide. See `references/06-reference-library.md` and `references/09-story-craft.md`.
+The style grammar comes from frame-by-frame studies of **eight** videos by one history/myth explainer channel: Rome, China, the Reconquista, World War I, the road to World War II, a speech fact-check show, a Greek myth and a horror biography (about 3.5 hours, sampled every second, with motion strips and transcripts). `references/01-reference-breakdown.md` measures the base grammar, `references/06-reference-library.md` records what each video teaches, and `references/07-story-craft.md` turns the findings into shot recipes.
 
 ## Route the task
 
+All numbered guides are in `references/`; toolkit cards are in `references/toolkits/` and listed in `references/08-toolkits.md`.
+
 | Request | Workflow | Read |
 |---|---|---|
-| "Animate this script" / a storyboard exists | `script2spec.py` → beats → shot recipes → fill in layers → sheet → render | 05 → **09** → 02 → 03 |
-| Turn a line of narration into a shot | Find its intent in the sentence → recipe table | 09 §7, then the 08 guide it names |
-| Make a single shot or scene | Recipe from 02, check with `--stills` | 02, 03 |
-| Custom character / unique location | `bean` in `cast`, or an AI cutout + `key_green.py` + an `image` layer | 03 (bean), 04 |
+| "Animate this script" / a storyboard exists | `script2spec.py` → beats → shot recipes → fill in layers → sheet → render | 05 → 07 → 02 → 03 |
+| Turn a line of narration into a shot | Find the sentence's intent in the recipe table, then open the card it names | 07 §7 → 08 → card |
+| Make a single shot or scene | Recipe from 02 or a card, check with `--stills` | 02, 03, card |
+| Custom character / unique location | `bean` in `cast`, or an AI cutout + `key_green.py` + an `image` layer | `toolkits/01_characters.md`, 04 |
 | Fit to an existing voiceover | SRT → `script2spec.py --srt … --merge spec.json` | 05 §4 |
-| New reference style | `analyze_ref.py` → frame strips → extend 01 and the library | 01 |
-| Pick a toolkit for a new topic | Film type → backgrounds, characters, graphics and tone tools | 06 "Topic → toolkit matrix" |
-| War film (ancient, medieval, WWI, WWII) | Trenches, battlefields, fronts on atlas maps, uniforms, vehicles, muzzle/shell/gas FX | 07-places, 07-characters, 07-graphics, 07-fx-and-tone |
-| Long-span history (centuries, dynasties) | Timeline HUD, year sign, hanging counter, living territories, time-lapse sky | 07-graphics, 07-places |
-| Fact-check / myth vs truth | TV quote player, karaoke subtitles with flagged words, stamps, checklists, stat blocks | 07-graphics |
-| Mythology | Creatures, glow, flame shapes, sea/corridor/olympus, sepia backstory | 07-characters, 07-places, 07-fx-and-tone |
-| Horror / dark biography | Reaper lurker, voids, glitch, mono-red, jump-scare recipe, ink-blot/peephole transitions | 07-fx-and-tone, 07-characters |
-| Character acting: kneel, sit, lie, fly, hug, beg; kids, elders, brutes; costume changes | v4 poses + `build`/`age`, `swap` under a `poof`, `antic` | 03 (bean), 08-chars, 08-acting |
-| Gags: giant hand/arm, hat gags, no-X sign, liar nose, exits (tumble, zip, pivot-fall) | `arm` layer, `fx: poof/hat/marks/prohibit`, enter/exit kinds | 08-acting, 08-chars |
-| Objects with faces, signposts, furniture, screens, prize wheel, new animals/vehicles | `obj` layer, props v4, creatures/vehicles v4 | 08-props |
-| Throne halls, studios (game show, courtroom, news), rooms, dungeon, harbor, mood backdrops | `bg: palace/studio/room/cell/harbor/mood/...`, `fg: bg-front` | 08-places |
-| Map storytelling: tilt/globe/tabletop, split/shatter/annex, figures on the map, war arrows | `map` v4 fields and overlays | 08-map |
-| Names, time skips, picture bubbles, stat cards, graffiti, verdict sheets | `doc` v4 kinds | 08-docs |
-| Game parody framing (HUD, VS card, menus, cursor, quest chips) | `hud`, `cursor`, game `doc` kinds, `spec.overlays` | 08-game |
-| Materials (ghost, statue, gold, engraving), brawl cloud, blood stand-ins, mobs, shock, boom, grades | `fx` v4, layer modifiers, grade presets | 08-fx |
-| Transitions, split screen, comic grid, frame-in-frame, binocular/eye POV, depth of field | v4 transitions, `panel`, `fg` masks, `blur`/`focus`, `letterbox` | 08-lens, 03 |
+| New reference style | `analyze_ref.py` → frame strips → extend 01 and the library | 01, 06 |
+| Pick tools for a new topic | Film type → backgrounds, characters, graphics and tone tools | 06 "Topic → toolkit matrix" → 08 |
+| Characters, costumes, expressions, poses, body types | `cast` looks, `pose`/`expr` timelines, `build`/`age` | `toolkits/01_characters.md` |
+| Acting and gags: giant arm, poof costume change, hats, exits | `arm` layer, `fx: poof/hat/marks/prohibit`, `swap`, enter/exit kinds | `toolkits/02_acting.md` |
+| Props, objects with faces, animals, vehicles | `prop`, `obj`, `creature`, `vehicle` layers | `toolkits/03_props_creatures_vehicles.md` |
+| Places: skies, trenches, palaces, studios, rooms, foreground framing | `bg` kinds, `fg` kinds | `toolkits/04_places.md` |
+| Maps: territories, conquests, fronts, figures on the map, views | `map` layer | `toolkits/05_maps.md` |
+| Names, titles, counters, documents, bubbles, timelines, subtitles | lettering layers and `doc` kinds | `toolkits/06_paper_and_lettering.md` |
+| Game-parody framing: HUD, cursor, VS cards, menus, quest chips | `hud`, `cursor`, game `doc` kinds, `spec.overlays` | `toolkits/07_game_ui.md` |
+| Effects, materials, horror and war FX, grades | `fx` kinds, layer modifiers, `grade` | `toolkits/08_fx_and_tone.md` |
+| Transitions, split screens, frame-in-frame, POV masks, depth of field | transitions, `panel`, `fg` masks, `blur`/`focus`, `letterbox` | `toolkits/09_transitions_and_lens.md` |
 | New layer type / prop / effect | Register in the engine + `scripts/vocab/<module>.json` (no `spec.py` edit) | 03 "Extending" |
 
 ## Commands (run from the skill folder)
@@ -50,17 +49,15 @@ uv run --with pytest --with playwright --with pillow --with numpy pytest tests -
 
 Dependencies: `uv`, `ffmpeg`, Chromium for Playwright (`uv run --with playwright playwright install chromium`). The Rubik 800/900 font (OFL, includes Cyrillic) lives in `scripts/engine/lib/fonts/`.
 
-Examples:
-- `examples/calendar_445/spec.json` — 25 s based on the idea "The year that lasted 445 days";
-- `examples/grammar/spec.json` — recipe catalog: reveal, map, villain, episode, finale;
-- `examples/v2_showcase/spec.json` — v2: a balcony with a ledge and birds, a forest march as rain begins, a fear close-up, an over-the-shoulder palace shot, a slab map with an army, a cheering city, a fire, a chase, the aftermath of a battle;
-- `examples/character_sheet/spec.json` — character sheet: 4 angles, 14 emotions, 19 poses, costumes. Render it with `--stills` and check new characters against it;
-- `examples/v3_characters/spec.json` — headwear of every era, outfits, countryball flag heads, gas mask, creatures, cavalry, the reaper;
-- `examples/v3_places/spec.json` — a 37-shot tour of every v3 background and vehicle;
-- `examples/v3_graphics/spec.json` — newspapers, checklists, stamps, charts, bubbles, TV quotes, signs, timeline, subtitles, living atlas maps;
-- `examples/v3_fx/spec.json` — horror and war sequences, transitions, grades, layer modifiers and entrances;
-- `examples/v4_*` (acting, chars, props, places, map, docs, game, fx, lens) — one shot per v4 feature; render one with `--sheet` before using a module for the first time;
-- example storyboards: `assets/demo_*.jpg`.
+## Examples
+
+Films that show a whole story:
+- `examples/coffee_film/` — "How Coffee Conquered the World", 24 shots, 73 s, with its storyboard `script.md`. It was made from the docs alone and is the best model of a finished film;
+- `examples/calendar_445/` — 25 s on "The year that lasted 445 days";
+- `examples/showcase/` — a balcony with birds, a forest march as rain begins, a fear close-up, an over-the-shoulder palace shot, a slab map with an army, a cheering city, a fire, a chase, the aftermath of a battle;
+- `examples/grammar/` — recipe catalog: reveal, map, villain, episode, finale.
+
+Toolkit catalogs (one shot per feature; render one with `--sheet` before using its card for the first time): `character_sheet`, `eras_wardrobe`, `expressions_wardrobe`, `acting_gags`, `props_creatures`, `places_tour`, `sets_rooms`, `living_maps`, `paper_and_maps`, `paper_cards`, `game_ui`, `tone_and_horror`, `action_fx`, `transitions_lens`. `references/08-toolkits.md` says which card each one belongs to. Example storyboards: `assets/demo_*.jpg`.
 
 ## Production rules
 
@@ -68,11 +65,11 @@ Examples:
 2. **Characters move like the reference:** 3/4 angle; a pose holds, then changes over 2 frames with settle (hold-and-snap); the body sways; the mouth cycles through 3 shapes while speaking; `tremble` for fear; `walk`/`run` for movement.
 3. **No static shots.** The camera always drifts; this is the default. Add one main action per shot. Split shots longer than 5 s into internal beats.
 4. **Match the reference pace:** a new image every 1.5–3.5 s. Speed up the pace at the climax.
-5. **Word = event.** The key word of a line coincides with a label, a number or a camera hit appearing (`at`, `punch`).
+5. **Word = event.** The key word of a line coincides with a label, a number or a camera hit appearing (`at`, `punch`, `jump`).
 6. **Labels = key words**, not the whole sentence. Tag (`tag`) + name + an arrow pointing to the character.
 7. **Character sheet:** describe recurring characters once in `cast`, then reference them with `who` only.
-8. **Set the tone with palette, FX and `grade`**; the grammar stays the same. Cold tone: `dusk`/`night`/`storm`/`teal`, `spotlight`. Comedic: `sunset`/`day`, `splat`, `speedlines`. Horror: `horror`/`mono-red`/`cold`, lurker, glitch. See the tables in 02 and 07-fx-and-tone.
-9. **Story first:** split the script into beats, pick a recipe per beat from `09-story-craft.md` (map spine + 1.5–4 s gag inserts, a recurring device, a frame story for long films), and make every gag land on its key word.
+8. **Set the tone with palette, FX and `grade`**; the grammar stays the same. Cold tone: `dusk`/`night`/`storm`/`teal`, `spotlight`. Comedic: `sunset`/`day`, `splat`, `speedlines`. Horror: `horror`/`mono-red`/`cold`, lurker, glitch. See 02 and `toolkits/08_fx_and_tone.md`.
+9. **Story first:** split the script into beats, pick a recipe per beat from `07-story-craft.md` (map spine + 1.5–4 s gag inserts, a recurring device, a frame story for long films), and make every gag land on its key word.
 10. **Deflate every peak:** after a scare or a grim beat, cut to comedy or warmth within 2–6 s (all eight references do this).
 11. **Imply violence, never show it:** blood pools, X-eyes, crosses filling a region, tombstones, stat blocks, a grade shift with a silent hold. Use generic flags and emblems, never extremist symbols or real likenesses (06 "Handling dark material").
 12. **Determinism:** use only `T.rng`/`T.noise`; never `Math.random` or the system clock. Two renders of the same moment must match byte for byte (tested).
@@ -81,62 +78,43 @@ Examples:
    - the `--sheet` has been reviewed (text stays in frame, faces are not covered);
    - the preview has been handed for independent review to an agent that did not write the spec.
 
-## Structure
+## Project structure
 
 ```
-scripts/engine/      index.html + core.js (timeline, camera, transitions) + lib/
-  lib/paint.js       palette, outlines, toon text, grain/vignette
-  lib/bg.js          sky (streak/cumulus clouds, hills with aerial perspective) / interior (light wedges, panel) / parchment / burst / flat / image
-  lib/face.js        v2 head: egg-shaped, 4 angles, 14 emotions, 3-shape talking mouth, hairstyles, beards, headwear
-  lib/rig.js         v2 body: 2-segment arms + hands, 19 hold-and-snap poses, sway, tremble, walk and run, cloak, armor
-  lib/crowd.js       crowds and army ranks: phase-shifted copies, rank depth, marching, silhouettes
-  lib/scenery.js     foreground fg (bushes, tree canopies, ledge, grass, trunk, over-the-shoulder, rocks) + forest and city backgrounds
-  lib/atmos.js       flipbook fire, rain, light beam, birds, smoke, explosion, blood, lightning, arrows + grade color correction
-  lib/text.js        label / title / date / era / counter / timer / caption + title-safe area protection
-  lib/props.js       17 props (coin, scroll, sword, shield, spear, torch, light bulb, flag, temple…)
-  lib/widgets.js     image cutouts (idle/talk/blink), card, sign, calendar
-  lib/fx.js          rays, speedlines, sweat, anger, splat, flash, dust, sparkle, confetti, spotlight
-  v3 modules:
-  lib/costume.js     T.HEADWEAR registry (29 kinds across eras) + head modes: flag (countryball), gas mask, tint, bull/skull heads
-  lib/outfit.js      outfits: suit, tunic, greatcoat, hanfu, kimono, lamellar, surcoat, hivis, skeleton; medals, puttees
-  lib/creatures.js   creature layer: horse, bull, cow, camel, sheep (walk/gallop on twos, riders, glow)
-  lib/spirits.js     reaper, raven, dove, skeleton
-  lib/vehicles.js    vehicle layer: tank, car1910, train, steamer, submarine, junk, caravel, rowboat, biplane, cannon, cart
-  lib/places*.js     trench, battlefield, sea, underwater, corridor, void, office, graveyard, eastcity, karst, gallery,
-                     blueprint, desert, mountains, stage, bar, hospital, factory, street1920, minoan, olympus, chalkboard
-  lib/fgx.js, props2.js   more foreground kinds (sandbags, bars, window grid, curtains, fpv hands…) and 21 props
-  lib/docs*.js       doc layer: newspaper, document/checklist, stamp, chart, bubble, tv, idcard, poster, quote, stat,
-                     yearsign, hangsign, nametag, ribbon, lowerthird, mission
-  lib/hud.js         timeline HUD and karaoke subtitles with flagged words
-  lib/mapx*.js       map v3: atlas style, faces and arms on regions, conquer floods, fronts, tokens, cities, crosses,
-                     punch cracks, rivers, walls, pencil (the map moved here from widgets.js)
-  lib/atmos2/3.js    glitch, rgbsplit, alarm, cctv, mist, whirlpool, red eyes, wall shadow, eyelids, ink burst, gas,
-                     muzzle flashes, shell bursts, flame shapes; layer modifiers glow/silhouette/lineart; 7 transitions
-  v4 modules:
-  lib/shared4.js     T.num, clouds, starbursts, thick arrows, gloves, T.subShot (a shot inside another)
-  lib/chars4.js, wardrobe4.js   expressions, face gags, accessories, wings, build overlays, 29 headwear, 20 outfits, topbean
-  lib/acting.js      arm layer (rubber arm, giant hand, spring glove, foot, hook), poof, hat gags, marks, prohibit, 8 exits
-  lib/props3.js, creatures2.js, vehicles2.js   obj layer (faces on things), 54 props, 9 animals, 4 vehicles, screens
-  lib/places4/5.js   mood, palace, burning, floor, studio, room, cell, harbor, alley, antique, parchment-panel, corkboard,
-                     vehicle-interior; fg bg-front
-  lib/mapx3.js       map views tilt/globe/tabletop, living regions, figures, arrows, brawls, trails, words, drops
-  lib/docs3.js       nameplate, timeskip, pictobubble, statstack, unitcards, bigyear, band, graffiti, scorecard, tally, list, crayon
-  lib/gameui.js      hud layer, cursor layer, versus/challenger/menu/pause/dialog/... doc kinds, slides
-  lib/fx4.js, mods.js   brawl, blood stand-ins, shock, boom, word-shatter, light kit, memory; materials, sticker, split; 12 grades
-  lib/lens.js, layout.js   13 transitions, panel layer (split, grid, pip, frame), binoculars / spyglass / eye-pov masks
+scripts/engine/          index.html + core.js (timeline, camera, layer motion, swap, modifiers, focus, overlays, transitions)
+  lib/base/              paint (palette, outlines, toon text, grain), helpers (numbers, clouds, arrows, gloves, sub-shots),
+                         text (labels, titles, counters), widgets (image cutouts, cards, signs, calendar)
+  lib/characters/        face, rig (poses, legs, builds), headwear, outfits, wardrobe, expressions, crowd
+  lib/acting/            gags: off-screen arms, poof, hats, marks, prohibit, entrances and exits
+  lib/creatures/         quadrupeds, spirits (reaper, birds, skeleton), animals-objects (obj layer, more animals)
+  lib/props/             props, props-world, props-gags, vehicles, vehicles-machines (screens, clocks, wheels)
+  lib/places/            backgrounds (sky, interior, parchment, burst), scenery (fg, forest, city), foreground,
+                         places-war, places-world, places-towns, places-sets, places-rooms
+  lib/maps/              map (styles, regions, faces), map-overlays (rivers, fronts, routes, tokens), map-views (views,
+                         living regions, figures, arrows, trails)
+  lib/paper/             paper (newspaper, documents, stamps, charts), signs-bubbles, cards (nameplates, time skips,
+                         picture bubbles, number cards, graffiti), timeline-subtitles
+  lib/game/              game-ui: hud and cursor layers, game doc kinds
+  lib/fx/                emphasis, atmosphere (fire, rain, grades), tone (modifiers, comic and horror transitions),
+                         tone-fx (horror, surveillance, war), action-fx (brawls, stand-ins, booms, light), materials
+  lib/lens/              transitions, panels (split screen, grids, frames, POV masks)
+  lib/fonts/             Rubik 800/900 (OFL)
 scripts/vocab/*.json     validator vocabulary per module (merged by spec.py, compared with the engine by tests)
-scripts/render.py    MP4 / stills / sheet / serve, parallel workers, audio
-scripts/spec.py      loading + validation (KNOWN_* = the engine vocabulary)
+scripts/render.py        MP4 / stills / sheet / serve, parallel workers, audio
+scripts/spec.py          loading + validation (KNOWN_* = the engine vocabulary)
 scripts/script2spec.py   storyboard → spec, SRT alignment, --merge
 scripts/key_green.py     chroma key for AI cutouts
 scripts/analyze_ref.py   rhythm measurement and frame strips for a new reference
+scripts/check_repository.py   syntax, JSON, doc links and vocabulary coverage of the docs
+references/              01–08 numbered guides + toolkits/ (one card per domain)
+examples/                story films and toolkit catalogs
 ```
 
 ## Feedback loop
 
 After each film:
-- add recipes that worked to `02-visual-grammar.md`;
-- document new layers in `03-spec-reference.md`;
+- add recipes that worked to `02-visual-grammar.md`, `07-story-craft.md` or the card they belong to;
+- document new fields in the card of their domain (and core fields in `03-spec-reference.md`);
 - record mistakes and workarounds in the QA section of `05-workflow.md`.
 
 If the code and the documentation disagree, trust the code and fix the documentation.

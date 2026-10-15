@@ -1,0 +1,744 @@
+{
+  "title": "Showcase: background depth, 3/4 rig, atmosphere, crowds",
+  "fps": 30,
+  "seed": 22,
+  "style": {
+    "grain": true,
+    "vignette": 0.3
+  },
+  "cast": {
+    "king": {
+      "robe": "#b8323a",
+      "trim": "#e0b040",
+      "hair": "long",
+      "hairColor": "#4a3022",
+      "beard": "full",
+      "beardColor": "#4a3022",
+      "head": "crown",
+      "belt": "#e0b040"
+    },
+    "legion": {
+      "robe": "#c0202a",
+      "armor": "#a9aeb4",
+      "pleats": true,
+      "head": "helmet",
+      "hair": "bald",
+      "holdL": "shield",
+      "hold": "sword",
+      "sandal": "#5a3a22"
+    },
+    "citizen": {
+      "robe": "#e9e2d2",
+      "sash": "#6a8fbf",
+      "hair": "curly",
+      "hairColor": "#5a3a26"
+    },
+    "citizen2": {
+      "robe": "#c9a86a",
+      "hair": "short",
+      "hairColor": "#2e2018"
+    },
+    "emperor": {
+      "robe": "#f1eadb",
+      "cape": "#7a2a8f",
+      "sash": "#7a2a8f",
+      "hair": "short",
+      "hairColor": "#3b2a20",
+      "head": "laurel",
+      "belt": "#e0b040"
+    },
+    "runner": {
+      "robe": "#c8323a",
+      "cape": "#8f1f27",
+      "hair": "curly",
+      "hairColor": "#3a2618",
+      "head": "headband"
+    },
+    "barbarian": {
+      "robe": "#8a8b4a",
+      "hair": "long",
+      "hairColor": "#d9a040",
+      "beard": "full",
+      "beardColor": "#d9a040",
+      "hold": "spear"
+    }
+  },
+  "shots": [
+    {
+      "id": "s01_balcony",
+      "dur": 4.0,
+      "vo": "In 771 BC, King Numitor was relaxing on his balcony.",
+      "bg": {
+        "kind": "sky",
+        "preset": "sunset",
+        "clouds": 5,
+        "rays": true,
+        "sun": [
+          0.2,
+          0.6
+        ],
+        "ground": false,
+        "horizon": 0.7
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ],
+        "pan": [
+          [
+            0,
+            0
+          ],
+          [
+            -30,
+            0
+          ]
+        ]
+      },
+      "layers": [
+        {
+          "type": "fx",
+          "kind": "birds",
+          "x": 0.2,
+          "y": 0.18,
+          "count": 5,
+          "speed": 70
+        },
+        {
+          "type": "bean",
+          "who": "king",
+          "x": 0.62,
+          "y": 0.98,
+          "size": 620,
+          "expr": "content",
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 2.2,
+              "v": "thumbs-up"
+            }
+          ],
+          "talk": [
+            [
+              2.3,
+              3.6
+            ]
+          ]
+        },
+        {
+          "type": "fg",
+          "kind": "ledge",
+          "side": "right",
+          "h": 0.2,
+          "z": 1.3
+        },
+        {
+          "type": "label",
+          "tag": "KING",
+          "text": "NUMITOR",
+          "x": 0.28,
+          "y": 0.4,
+          "at": 0.8,
+          "arrow": "right",
+          "size": 96
+        }
+      ]
+    },
+    {
+      "id": "s02_forest_march",
+      "dur": 4.5,
+      "grade": {
+        "preset": "serious",
+        "at": 2.0,
+        "dur": 0.5
+      },
+      "vo": "Three legions marched through the forest. Then the rain began.",
+      "bg": {
+        "kind": "forest"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.03
+        ],
+        "pan": [
+          [
+            0,
+            0
+          ],
+          [
+            160,
+            0
+          ]
+        ]
+      },
+      "layers": [
+        {
+          "type": "crowd",
+          "who": "legion",
+          "x": 0.5,
+          "y": 0.92,
+          "count": 7,
+          "spread": 1500,
+          "size": 300,
+          "march": true,
+          "rows": 1
+        },
+        {
+          "type": "fx",
+          "kind": "rain",
+          "at": 2.0,
+          "enter": "fade",
+          "enterDur": 0.5,
+          "hud": true
+        },
+        {
+          "type": "fg",
+          "kind": "canopy",
+          "z": 1.4
+        },
+        {
+          "type": "fg",
+          "kind": "bushes",
+          "sides": [
+            "bl",
+            "br"
+          ],
+          "z": 1.5
+        },
+        {
+          "type": "era",
+          "small": "9 AD",
+          "parts": [
+            [
+              "TEUTOBURG",
+              "#e0393e"
+            ],
+            [
+              "FOREST",
+              "#ffffff"
+            ]
+          ],
+          "x": 0.025,
+          "y": 0.95
+        }
+      ]
+    },
+    {
+      "id": "s03_fear",
+      "dur": 3.0,
+      "grade": "storm",
+      "vo": "The soldiers could not see the enemy.",
+      "bg": {
+        "kind": "forest",
+        "rays": false
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.06
+        ],
+        "shake": [
+          {
+            "at": 1.8,
+            "dur": 0.5,
+            "amp": 10
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "legion",
+          "x": 0.42,
+          "y": 1.18,
+          "size": 980,
+          "expr": [
+            {
+              "at": 0,
+              "v": "worried"
+            },
+            {
+              "at": 1.8,
+              "v": "shock"
+            }
+          ],
+          "pose": "hold",
+          "tremble": [
+            [
+              0,
+              3
+            ]
+          ],
+          "gaze": 10
+        },
+        {
+          "type": "fx",
+          "kind": "arrows",
+          "at": 1.6,
+          "count": 5,
+          "dir": -1
+        },
+        {
+          "type": "fx",
+          "kind": "rain",
+          "hud": true
+        }
+      ]
+    },
+    {
+      "id": "s04_palace",
+      "dur": 4.0,
+      "transition": "fade-white",
+      "vo": "Augustus knew the army had to belong to the state.",
+      "bg": {
+        "kind": "interior",
+        "wall": "#d9b470",
+        "columns": [
+          0.08,
+          0.92
+        ],
+        "columnColor": "#d9a84a",
+        "drapes": [
+          0.22
+        ],
+        "trim": "#8e2a1e"
+      },
+      "camera": {
+        "zoom": [
+          1.02,
+          1.07
+        ],
+        "focus": [
+          0.55,
+          0.5
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "emperor",
+          "x": 0.6,
+          "y": 0.97,
+          "size": 640,
+          "expr": "smug",
+          "pose": [
+            {
+              "at": 0,
+              "v": "cross"
+            },
+            {
+              "at": 1.8,
+              "v": "point"
+            }
+          ],
+          "talk": [
+            [
+              0.4,
+              1.6
+            ],
+            [
+              2.0,
+              3.4
+            ]
+          ]
+        },
+        {
+          "type": "fg",
+          "kind": "ots",
+          "who": "legion",
+          "side": "left",
+          "z": 1.3
+        },
+        {
+          "type": "label",
+          "tag": "EMPEROR",
+          "text": "AUGUSTUS",
+          "x": 0.42,
+          "y": 0.22,
+          "at": 0.6,
+          "size": 90
+        }
+      ]
+    },
+    {
+      "id": "s05_map",
+      "dur": 4.0,
+      "transition": "dissolve",
+      "vo": "The border stopped at the Rhine. Rome went no further.",
+      "bg": {
+        "kind": "parchment"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.06
+        ],
+        "focus": [
+          0.45,
+          0.5
+        ]
+      },
+      "layers": [
+        {
+          "type": "map",
+          "land": [
+            [
+              0.4,
+              0.58,
+              0.32,
+              0.24
+            ],
+            [
+              0.74,
+              0.3,
+              0.18,
+              0.18
+            ]
+          ],
+          "regions": [
+            {
+              "pts": [
+                [
+                  0.25,
+                  0.55
+                ],
+                [
+                  0.42,
+                  0.45
+                ],
+                [
+                  0.58,
+                  0.52
+                ],
+                [
+                  0.52,
+                  0.72
+                ],
+                [
+                  0.3,
+                  0.7
+                ]
+              ],
+              "at": 0.2,
+              "dur": 1.2,
+              "pulse": true
+            },
+            {
+              "pts": [
+                [
+                  0.62,
+                  0.25
+                ],
+                [
+                  0.8,
+                  0.2
+                ],
+                [
+                  0.86,
+                  0.38
+                ],
+                [
+                  0.7,
+                  0.42
+                ]
+              ],
+              "color": "#8a2be2",
+              "at": 0.6,
+              "dur": 1.0,
+              "out": 3.0
+            }
+          ],
+          "armies": [
+            {
+              "x": 0.6,
+              "y": 0.38,
+              "at": 1.4,
+              "dur": 0.8,
+              "count": 45
+            }
+          ],
+          "pins": [
+            {
+              "x": 0.4,
+              "y": 0.6,
+              "at": 0.3,
+              "label": "ROME"
+            }
+          ]
+        },
+        {
+          "type": "bean",
+          "who": "legion",
+          "x": 0.24,
+          "y": 0.66,
+          "size": 300,
+          "pose": "point",
+          "expr": "worried",
+          "gaze": 8
+        },
+        {
+          "type": "sign",
+          "text": "RHINE",
+          "x": 0.62,
+          "y": 0.62,
+          "w": 220,
+          "scale": 0.7,
+          "at": 1.0,
+          "enter": "pop"
+        }
+      ]
+    },
+    {
+      "id": "s05_city",
+      "dur": 3.5,
+      "transition": "whip",
+      "vo": "And the Romans loved it.",
+      "bg": {
+        "kind": "city",
+        "preset": "day"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "crowd",
+          "who": [
+            "citizen",
+            "citizen2"
+          ],
+          "x": 0.5,
+          "y": 0.98,
+          "count": 11,
+          "rows": 2,
+          "spread": 1700,
+          "size": 340,
+          "armsUp": true,
+          "expr": "happy",
+          "flipAlt": true
+        },
+        {
+          "type": "fx",
+          "kind": "confetti",
+          "x": 0.5,
+          "y": 0.4,
+          "at": 0.4
+        },
+        {
+          "type": "fg",
+          "kind": "grass",
+          "z": 1.3,
+          "count": 18,
+          "h": 120
+        }
+      ]
+    },
+    {
+      "id": "s06_fire",
+      "dur": 3.5,
+      "transition": "zoom-punch",
+      "vo": "Half of Rome burned down.",
+      "grade": "night",
+      "bg": {
+        "kind": "city",
+        "preset": "night",
+        "style": "stone"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.08
+        ],
+        "shake": [
+          {
+            "at": 1.0,
+            "dur": 0.6,
+            "amp": 14
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "fx",
+          "kind": "smoke",
+          "x": 0.5,
+          "y": 0.45,
+          "w": 1800
+        },
+        {
+          "type": "fx",
+          "kind": "fire",
+          "x": 0.5,
+          "y": 0.78,
+          "w": 1700,
+          "count": 8,
+          "size": 260
+        },
+        {
+          "type": "fx",
+          "kind": "explosion",
+          "x": 0.7,
+          "y": 0.5,
+          "at": 1.0,
+          "size": 360
+        },
+        {
+          "type": "bean",
+          "who": "citizen2",
+          "x": 0.35,
+          "y": 1.02,
+          "size": 640,
+          "expr": "scream",
+          "pose": "clutch-head",
+          "tremble": [
+            [
+              0,
+              4
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s07_run",
+      "dur": 3.0,
+      "transition": "cut",
+      "vo": "The messenger ran all the way to Rome.",
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 5,
+        "trees": [
+          [
+            0.15,
+            0.8,
+            0.3
+          ],
+          [
+            0.7,
+            0.8,
+            0.26
+          ]
+        ]
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.0
+        ],
+        "pan": [
+          [
+            0,
+            0
+          ],
+          [
+            700,
+            0
+          ]
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "runner",
+          "x": 0.4,
+          "y": 0.95,
+          "size": 460,
+          "expr": "angry",
+          "run": [
+            [
+              0,
+              3
+            ]
+          ],
+          "move": [
+            {
+              "at": 0,
+              "dur": 3,
+              "to": [
+                0.77,
+                0.95
+              ],
+              "ease": "linear"
+            }
+          ]
+        },
+        {
+          "type": "fg",
+          "kind": "grass",
+          "z": 1.6,
+          "count": 30,
+          "h": 150
+        }
+      ]
+    },
+    {
+      "id": "s08_fallen",
+      "dur": 3.5,
+      "transition": "fade-black",
+      "grade": "solemn",
+      "vo": "Varus realized his army was gone.",
+      "bg": {
+        "kind": "forest",
+        "rays": false,
+        "path": false
+      },
+      "camera": {
+        "zoom": [
+          1.06,
+          1.0
+        ],
+        "ease": "inOut"
+      },
+      "layers": [
+        {
+          "type": "fx",
+          "kind": "blood",
+          "x": 0.42,
+          "y": 0.9,
+          "w": 260
+        },
+        {
+          "type": "bean",
+          "who": "legion",
+          "x": 0.3,
+          "y": 0.86,
+          "size": 420,
+          "rot": -88,
+          "expr": "dead",
+          "blink": false,
+          "rock": 0,
+          "look": {
+            "hold": null
+          }
+        },
+        {
+          "type": "bean",
+          "who": "barbarian",
+          "x": 0.72,
+          "y": 0.97,
+          "size": 560,
+          "flip": true,
+          "expr": "smug",
+          "pose": "sword-up"
+        },
+        {
+          "type": "fg",
+          "kind": "bushes",
+          "sides": [
+            "bl"
+          ],
+          "z": 1.4
+        }
+      ]
+    }
+  ]
+}

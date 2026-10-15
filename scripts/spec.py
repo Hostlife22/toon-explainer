@@ -186,6 +186,17 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         errors.append(f"{where}: fg kind {layer.get('kind')!r} not in {sorted(KNOWN_FG)}")
     if kind == "fg" and layer.get("kind") == "ots" and layer.get("who") and layer["who"] not in cast:
         errors.append(f"{where}: ots.who {layer['who']!r} is not defined in spec.cast")
+    if kind == "obj":  # a personified prop or vehicle: the nested kind must exist too
+        if layer.get("prop") is not None and layer["prop"] not in KNOWN_PROPS:
+            errors.append(f"{where}: obj prop {layer['prop']!r} not in {sorted(KNOWN_PROPS)}")
+        if layer.get("vehicle") is not None and "vehicle" in LAYER_KINDS and layer["vehicle"] not in LAYER_KINDS["vehicle"]:
+            errors.append(f"{where}: obj vehicle {layer['vehicle']!r} not in {sorted(LAYER_KINDS['vehicle'])}")
+        hold = (layer.get("arms") or {}).get("hold") if isinstance(layer.get("arms"), dict) else None
+        if hold is not None and hold not in KNOWN_PROPS:
+            errors.append(f"{where}: obj arms.hold {hold!r} not in {sorted(KNOWN_PROPS)}")
+    load = layer.get("load")
+    if isinstance(load, dict) and load.get("prop") is not None and load["prop"] not in KNOWN_PROPS:
+        errors.append(f"{where}: load prop {load['prop']!r} not in {sorted(KNOWN_PROPS)}")
     if kind == "prop" and layer.get("kind") not in KNOWN_PROPS:
         errors.append(f"{where}: prop kind {layer.get('kind')!r} not in {sorted(KNOWN_PROPS)}")
     if kind == "fx" and layer.get("kind") not in KNOWN_FX:
@@ -213,9 +224,9 @@ def _check_number_or_timeline(value, where: str, errors: list[str]) -> None:
 
 
 def _check_common(layer: dict, where: str, cast: dict, errors: list[str]) -> None:
-    """Fields every layer type accepts in v4: swap, blur, jitter, swing."""
+    """Fields every layer type accepts: swap, blur, jitter, swing."""
     swaps = layer.get("swap")
-    if swaps is not None:  # v3 doc hangsign keeps its own object form {at, value}
+    if swaps is not None:  # the doc hangsign keeps its own object form {at, num}
         if not isinstance(swaps, list):
             if not (layer.get("type") == "doc" and isinstance(swaps, dict)):
                 errors.append(f"{where}: swap must be a list of {{at, ...fields}}")
@@ -243,6 +254,37 @@ def _check_common(layer: dict, where: str, cast: dict, errors: list[str]) -> Non
         errors.append(f"{where}: swing must be an object {{at, amp, period, decay}}")
 
 
+def _check_map_refs(layer: dict, where: str, errors: list[str]) -> None:
+    """Region references inside a map must name a region id (conquer.by may also be a hex colour)."""
+    regions = [r for r in layer.get("regions", []) or [] if isinstance(r, dict)]
+    rids = {r.get("id") for r in regions if r.get("id")}
+    for r in regions:
+        by = (r.get("conquer") or {}).get("by") if isinstance(r.get("conquer"), dict) else None
+        if isinstance(by, str) and by not in rids and not HEX_RE.match(by):
+            errors.append(f"{where}: region {r.get('id', '?')!r} conquer.by {by!r} is neither a region id nor a hex colour")
+    for c in layer.get("crosses", []) or []:
+        if isinstance(c, dict) and isinstance(c.get("region"), str) and c["region"] not in rids:
+            errors.append(f"{where}: crosses region {c['region']!r} is not a region id")
+
+
+def _nested_whos(value):
+    """Cast names referenced inside nested objects of a doc layer (versus sides, challenger, joins, bubbles)."""
+    if isinstance(value, dict):
+        for k, v in value.items():
+            if k == "who" and isinstance(v, str):
+                yield v
+            else:
+                yield from _nested_whos(v)
+    elif isinstance(value, list):
+        for v in value:
+            yield from _nested_whos(v)
+
+
+# Backgrounds that paint a sky behind themselves and pass `preset` to it (other kinds use `preset` for their own variants).
+SKY_BACKED_BGS = {"sky", "city", "battlefield", "desert", "eastcity", "factory", "graveyard", "karst", "mountains",
+                  "street1920", "trench"}
+
+
 def _check_bg(bg, where: str, errors: list[str]) -> None:
     if not isinstance(bg, dict):
         errors.append(f"{where}: bg must be an object like {{\"kind\": \"sky\"}}")
@@ -250,7 +292,7 @@ def _check_bg(bg, where: str, errors: list[str]) -> None:
     kind = bg.get("kind") or ("image" if bg.get("image") else "sky")
     if kind not in KNOWN_BGS:
         errors.append(f"{where}: unknown bg kind {kind!r} (known: {sorted(KNOWN_BGS)})")
-    if kind in ("sky", "city") and bg.get("preset", "day") not in KNOWN_SKY:
+    if kind in SKY_BACKED_BGS and bg.get("preset", "day") not in KNOWN_SKY:
         errors.append(f"{where}: sky preset {bg.get('preset')!r} not in {sorted(KNOWN_SKY)}")
     for tr in bg.get("trees") if isinstance(bg.get("trees"), list) else []:  # some bgs take a tree count instead
         if isinstance(tr, list) and len(tr) >= 3 and _is_num(tr[2]) and tr[2] > 1.5:
@@ -319,6 +361,17 @@ def validate(spec: dict) -> list[str]:
                 errors.append(f"{where}.layers[{j}]: must be an object")
                 continue
             _check_layer(layer, f"{where}.layers[{j}]<{layer.get('type')}>", cast, errors)
+            target = layer.get("target")
+            if layer.get("type") == "fx" and isinstance(target, str) and target not in ids:
+                errors.append(f"{where}.layers[{j}]<fx>: target {target!r} is not the id of a layer in this shot")
+            if layer.get("type") == "map":
+                _check_map_refs(layer, f"{where}.layers[{j}]<map>", errors)
+            if layer.get("type") == "doc" and isinstance(layer.get("arrowTo"), str) and layer["arrowTo"] not in ids:
+                errors.append(f"{where}.layers[{j}]<doc>: arrowTo {layer['arrowTo']!r} is not the id of a layer in this shot")
+            if layer.get("type") == "doc":
+                for who in _nested_whos(layer):
+                    if who not in cast:
+                        errors.append(f"{where}.layers[{j}]<doc>: who {who!r} is not defined in spec.cast")
     overlays = spec.get("overlays", []) or []
     if not isinstance(overlays, list):
         errors.append("overlays must be a list of {from, to, layer}")

@@ -1,0 +1,7 @@
+{
+  "_about": "cards.js: nameplates, time-skip cards, pictobubbles, number cards, graffiti and verdict papers. Kinds merge with docs.json under the TOON.DOCS registry.",
+  "kinds": {
+    "doc": ["nameplate", "timeskip", "pictobubble", "statstack", "unitcards", "bigyear", "band", "graffiti",
+            "scorecard", "tally", "list", "crayon"]
+  }
+}

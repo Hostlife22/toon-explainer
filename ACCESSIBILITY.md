@@ -16,8 +16,8 @@ toon-explainer aims to make its documentation, preview controls and video output
 Render a contact sheet with one still per shot, or stills at chosen times:
 
 ```sh
-uv run --with playwright python scripts/render.py examples/v2_showcase/spec.json --sheet renders/sheet.jpg
-uv run --with playwright python scripts/render.py examples/v2_showcase/spec.json --stills 2,6 --out renders/stills
+uv run --with playwright python scripts/render.py examples/showcase/spec.json --sheet renders/sheet.jpg
+uv run --with playwright python scripts/render.py examples/showcase/spec.json --stills 2,6 --out renders/stills
 ```
 
 For narrated films, publish a transcript and burn or attach captions. The animation alone cannot communicate the narration to every viewer.

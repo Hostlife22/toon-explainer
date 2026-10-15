@@ -261,7 +261,7 @@ def test_every_example_renders_without_page_errors(tmp_path):
         assert r.returncode == 0, f"{path.parent.name}: {r.stdout[-800:]} {r.stderr[-800:]}"
 
 
-# ---------- v2 review regressions ----------
+# ---------- review regressions ----------
 def test_validator_checks_colours_crowd_props_and_city_preset():
     spec = {
         "cast": {"a": {"robe": "red", "hair": "curley"}},

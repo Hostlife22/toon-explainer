@@ -15,10 +15,10 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = {
     'SKILL.md', 'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'CHANGELOG.md',
     'CONTRIBUTING.md', 'SECURITY.md', 'ACCESSIBILITY.md',
-    'scripts/engine/index.html', 'scripts/engine/core.js', 'scripts/engine/lib/rig.js',
+    'scripts/engine/index.html', 'scripts/engine/core.js', 'scripts/engine/lib/characters/rig.js',
     'scripts/engine/lib/fonts/Rubik-900.woff2', 'scripts/engine/lib/fonts/OFL-Rubik.txt',
     'scripts/render.py', 'scripts/spec.py', 'scripts/script2spec.py',
-    'references/03-spec-reference.md', 'examples/v2_showcase/spec.json',
+    'references/03-spec-reference.md', 'examples/showcase/spec.json',
 }
 
 
