@@ -1,7 +1,7 @@
 # 05 · Maps
 In a word: a living map that carries the exposition spine of a history film: territories grow, get conquered, split, shatter and grow faces; armies, fleets, fronts, arrows and rulers move across it, seen flat, tilted, on a globe or on a war table.
 
-Engine: `scripts/engine/lib/maps/map.js` (layer, styles, land, regions, faces, labels), `scripts/engine/lib/maps/map-overlays.js` (base overlays, `T.MAP_ICONS`), `scripts/engine/lib/maps/map-views.js` (views, region effects, figures and the other overlays) · Vocabulary: `scripts/vocab/maps.json`, `scripts/vocab/map-views.json` (`map_icon`, `map_view`; map fields themselves are checked by the engine, not by `spec.py`) · Example films: [`examples/living_maps/spec.json`](../../examples/living_maps/spec.json) (one shot per feature) and [`examples/paper_and_maps/spec.json`](../../examples/paper_and_maps/spec.json) (shots `g09`, `g14`, `g15`); render with `--sheet` to browse · Related cards: [01 Characters](01_characters.md) (cast beans used as map `figures`), [03 Props, creatures and vehicles](03_props_creatures_vehicles.md) (props for `arms`, `squads`, `drops`), [06 Paper and lettering](06_paper_and_lettering.md) (`yearsign`, `hangsign`, `ribbon` over a map), [08 FX and tone](08_fx_and_tone.md) (flames, smoke, brawl clouds), [09 Transitions and lens](09_transitions_and_lens.md) (zoom into a region, `punch`). Shared layer fields: [03-spec-reference](../03-spec-reference.md); map spine method and pacing: [07-story-craft](../07-story-craft.md).
+Engine: `scripts/engine/lib/maps/map.js` (layer, styles, land, regions, faces, labels), `scripts/engine/lib/maps/map-overlays.js` (base overlays, `T.MAP_ICONS`), `scripts/engine/lib/maps/map-views.js` (views, region effects, figures and the other overlays) · Vocabulary: `scripts/vocab/maps.json`, `scripts/vocab/map-views.json`, `scripts/vocab/maps-hair.json` (`map_icon`, `map_view`; map fields themselves are checked by the engine, not by `spec.py`) · Example films: [`examples/living_maps/spec.json`](../../examples/living_maps/spec.json) (one shot per feature) and [`examples/paper_and_maps/spec.json`](../../examples/paper_and_maps/spec.json) (shots `g09`, `g14`, `g15`); render with `--sheet` to browse · Related cards: [01 Characters](01_characters.md) (cast beans used as map `figures`), [03 Props, creatures and vehicles](03_props_creatures_vehicles.md) (props for `arms`, `squads`, `drops`), [06 Paper and lettering](06_paper_and_lettering.md) (`yearsign`, `hangsign`, `ribbon` over a map), [08 FX and tone](08_fx_and_tone.md) (flames, smoke, brawl clouds), [09 Transitions and lens](09_transitions_and_lens.md) (zoom into a region, `punch`). Shared layer fields: [03-spec-reference](../03-spec-reference.md); map spine method and pacing: [07-story-craft](../07-story-craft.md).
 
 ## ① When to use it
 
@@ -36,6 +36,9 @@ Engine: `scripts/engine/lib/maps/map.js` (layer, styles, land, regions, faces, l
 | "Built forts along the river" | `rivers` + river `words` (`along`) + `forts` |
 | "Built the railway / the wall" | `tracks`; `wall` |
 | "Drew a new border" | `pencil` |
+| "The border shifted", "a straight line became a front" | `morphs` |
+| "Hurled its army at the neighbour" | region `face` + `throws` (`icon` `army`, `count` 3) |
+| "It left a trail of destruction / planted flags / spread the infection" | `drops` on the mover (`tokens`, `figures` with `path`, `squads`, `routes`, ...) — blasts turning to smoke, `flag`, `dot` |
 | "Trade flourished" | `coins` hopping along a route |
 | "Closed the strait" | `barriers` |
 | "Planted their flag" | `flags` |
@@ -52,7 +55,7 @@ Engine: `scripts/engine/lib/maps/map.js` (layer, styles, land, regions, faces, l
 - **Coordinates.** Everything is normalized to the map box: `w` × `h` of the frame (default 1.1 × 1.1, so the map bleeds past the frame). The box is centred on the layer `x`/`y`. Arrow ends and wound positions are the exceptions noted in ③.
 - **Present at the cut.** Regions grow over 1.2 s by default. A region that should already be there at frame 0 needs `"dur": 0.001` (all `living_maps` shots do this).
 - **Hold and snap.** Pops use stepped frames, not tweens; let each map beat hold 0.5–1 s before the next action. A map spine changes something every 1.5–3 s (see [07-story-craft](../07-story-craft.md)).
-- **Upright vs flat under a view.** With `view` set, flat things (regions, land, `words`, `arrows`, `trails`, `tracks`, `xmarks`, `rivers`, `fronts`, `routes`, `cities`, `crosses`, `armies`, `tokens`, `punch`, `pencil`, `pins`, `yearLabel`) are warped with the board. Upright things (`figures`, `flags`, `brawls`, `fires`, `forts`, `camps`, `squads`, `coins`, `barriers`, `drops`, `tacks`, `hand`) stand up, shrink with depth and are drawn over the board.
+- **Upright vs flat under a view.** With `view` set, flat things (regions, land, `words`, `arrows`, `trails`, `tracks`, `xmarks`, `rivers`, `fronts`, `routes`, `cities`, `crosses`, `armies`, `tokens`, `punch`, `pencil`, `pins`, `yearLabel`, `morphs`, `throws`) are warped with the board. Upright things (`figures`, `flags`, `brawls`, `fires`, `forts`, `camps`, `squads`, `coins`, `barriers`, `drops`, `tacks`, `hand`) stand up, shrink with depth and are drawn over the board.
 - **Figures.** Cast beans on a map wear a 6 px white sticker rim and a ground shadow, and are scaled down automatically so the head stays inside the 3.5 % safe margin at the top.
 - **Real geography.** `blob` regions and `land` ellipses read as abstract territory. When the outline matters, supply `image` (a parchment-style map PNG) and draw regions over it with `pts`.
 - **Symbols.** Flags use plain colours, simple patterns and initials only: no real emblems, logos or extremist symbols. Casualties are crosses, fires and statistics, never bodies.
@@ -144,7 +147,7 @@ Faces blink every 3.3 s (except the four special moods). A conquered region forc
 
 ### ③.6 Overlays
 
-Each overlay is a map field. Draw order (later on top): `rivers`, `wall`, `fronts`, `routes`, `cities`, `crosses`, `armies`, `tokens`, `punch`, `pencil`, `pins`, `yearLabel`, `tracks`, `trails`, `words`, `xmarks`, `arrows`, `camps`, `forts`, `squads`, `coins`, `barriers`, `flags`, `fires`, `figures`, `brawls`, `tacks`, `drops`, `hand`. "List" means an array; "one or list" accepts a single object too.
+Each overlay is a map field. Draw order (later on top): `rivers`, `wall`, `fronts`, `routes`, `cities`, `crosses`, `armies`, `tokens`, `punch`, `pencil`, `pins`, `yearLabel`, `morphs`, `throws`, `tracks`, `trails`, `words`, `xmarks`, `arrows`, `camps`, `forts`, `squads`, `coins`, `barriers`, `flags`, `fires`, `figures`, `brawls`, `tacks`, `drops`, `hand`. "List" means an array; "one or list" accepts a single object too.
 
 **Lines and borders**
 
@@ -157,6 +160,7 @@ Each overlay is a map field. Draw order (later on top): `rivers`, `wall`, `front
 | `tracks` | list `{pts, at 0, dur 0.2, color "#3a1d14"}` | Railway: two rails and ties |
 | `pencil` | object `{pts, at 0, dur 1.5, color "#1d1410", width 8}` | A pencil sprite draws a border; sparkles for 0.6 s at the end |
 | `wall` | object `{pts, at 0, dur 1.2, segments 24, color "#8a8a88", height 22}` | Crenellated strip snapping in segment by segment, a tower every third |
+| `morphs` | list `{from: [[x, y], …], to: [[x, y], …], at 0, dur 0.6, color "#2a1c15", width 6, dash false}` | Holds the `from` line, then morphs it into `to` (in-out, stepped on twos). Lists of different lengths are resampled by arc length to the longer count. `dash: true` uses `[3w, 2w]`, or pass an array |
 
 **Markers and lettering**
 
@@ -165,6 +169,7 @@ Each overlay is a map field. Draw order (later on top): `rivers`, `wall`, `front
 | `pins` | list `{x, y, at 0, label, color "#c8323a", size 48, style}` | Pulsing dot, or `style: "drop"` map pin; `size` is the label size |
 | `cities` | list `{x, y, icon "castle", at 0, size 90, burning, label, color}` | Map icon pops in; `burning: <time>` lights a flipbook fire from that time; `label` in 36 px; `color` tints the icons that take one (`pawn`, `cross`, `flag`, `army`, `fort`, `camp`, `formation`) |
 | `crosses` | object `{region \| pts, at 0, dur 1.5, count 60, size 34, color "#f2efe8"}` | Grave crosses pop (0.15 s each), back to front, until the area is tiled |
+| `throws` | list `{from: [x, y], to: [x, y], icon "army", size 70, count 1, every 0.12, at 0, windup 0.3, dur 0.37, arc 0.25, impact true, spin true}` | Each copy (started `every` s apart) winds up at `from` for `windup` (pulls back and squashes, 9 f), flies a parabola for `dur` (11 f) peaking `arc` × the distance above the straight line, spinning one turn unless `spin: false`, and lands in a dust puff with a 3 f star flash (25 f). `icon` is a map icon or any `prop` kind; other icon fields (`color`) pass through |
 | `punch` | object `{x, y, at 0, size 120, cracks 8}` | Black star hole with radial cracks, popping in 0.12 s |
 | `yearLabel` | object `{text, at 0, x 0.82, y 0.16, size 120, color "#fff", tilt -6}` | Big year stamped 1.3 → 1 over 0.2 s |
 | `words` | list `{text, x 0.5, y 0.5, rot -10, skew -0.25, size 160, style, color, extrude, side "#6b3a1d", at 0}` | Words lying on the map plane. `style`: `shade` (default; deep tone of the region underneath, or `color`), `toon` (white with ink, or `color`), `extrude` (cream `#efe3c8` 3D lettering, `extrude` px deep (10), slams 1.6 → 1); setting `extrude` alone implies `style: "extrude"` |
@@ -185,6 +190,21 @@ Each overlay is a map field. Draw order (later on top): `rivers`, `wall`, `front
 | `forts` | one or list `{along, count 6, every 0.2, at 1, size 120, icon "fort", color}` | Forts pop-tilt one by one along a polyline (2+ points) |
 | `coins` | one or list `{pts, at 0, every 0.25, count 8, size 36, hop 0.6, apex 40, loop false}` | Spinning gold coins hop point to point (`hop` s per hop, `apex` px high); `loop` repeats |
 | `figures` | one or list, see below | Cast beans standing on the map |
+
+**Route marks (`drops` on a mover).** `tokens[]`, `figures[]` with a `path`, `squads`, `camps` with `move`, and the drawn head of `routes[]` and `trails[]` (not `head` trails: put `drops` on the figure) accept `drops`; `throws` do not (a throw is a jump and already lands in a puff). A mark is dropped at the mover's position at its start time and every `every` s until it stops, pops in, and stays in map space (it zooms and pans with the map, and lies on the board under a `view`; `squads` and `camps` marks stand upright). Marks are drawn under the mover. This is a field of the moving item, unlike the map-level `drops` overlay (a prop slammed onto the map, below).
+
+| `drops` field | Default | Effect |
+|---|---|---|
+| `every` | 0.5 | Seconds between marks |
+| `icon` | `blast` | Any map icon (`blast`, `dot`, `flag`, `cross`, ...) or prop kind |
+| `size` | 60 | Mark size in flat-map px |
+| `pop` | 6 | Pop-in frames: scale 0 → 1.15 → 1, stepped per frame |
+| `spin` | 30 | Random tilt range in degrees (seeded per mark) |
+| `life` | none | Seconds before a mark turns into its `after` state; omit to keep the mark |
+| `after` | `smoke` | `smoke` (grey cloud pops in and drifts up slowly, then stays), `none` (mark collapses in 3 f), or a map icon / prop kind |
+| `color`, `afterColor` | icon default | Tint of the mark and of the `after` icon |
+
+`drops: true` takes every default. An unknown `icon` or `after` throws at render time.
 
 `figures` entries: `{who, x 0.5, y 0.5, at 0, out, scale 0.32, enter "pop", pose, expr, view, look, talk, flip, id, sticker true, rim 6, shadow true, fit true, hover, sit, strings, yank, path, walk, paint}`. Any other bean field (`look`, `talk`, `hold`, …) passes through to the bean ([01 Characters](01_characters.md)).
 
@@ -217,7 +237,7 @@ Each overlay is a map field. Draw order (later on top): `rivers`, `wall`, `front
 
 ### ③.7 Map icons (`map_icon`)
 
-Used by `cities[].icon`, `tokens[].icon`, `squads[].icon`, `forts[].icon`: `ship`, `train`, `helmet`, `tank`, `mug`, `pawn`, `castle`, `dome`, `pagoda`, `house`, `cross`, `flag`, `army`, `fort`, `camp`, `formation`, `factory` (smoking chimneys), `derrick`, `plane` (spinning prop), `church-hut`, `rubble`. An unknown icon throws.
+Used by `cities[].icon`, `tokens[].icon`, `squads[].icon`, `forts[].icon`, route marks (`drops.icon`, `drops.after`): `blast` (flat cartoon explosion, the route-mark default), `dot` (infection / marker dot, `color`), `ship`, `train`, `helmet`, `tank`, `mug`, `pawn`, `castle`, `dome`, `pagoda`, `house`, `cross`, `flag`, `army`, `fort`, `camp`, `formation`, `factory` (smoking chimneys), `derrick`, `plane` (spinning prop), `church-hut`, `rubble`. An unknown icon throws.
 
 ## ④ Timing
 
@@ -229,6 +249,9 @@ Frame counts at 30 fps. Engine defaults first, then the reference measurements t
 | Territory removed | 15 f fade; reference removes territories in ~1 s steps | `out`, `outDur` |
 | Face, arms, label, city, fort pop | 8 f (0.25 s) outBack | `face.at`, `arms.at`, `label.at`, `cities[].at` |
 | Pin pop | 9 f (0.3 s) | `pins[].at` |
+| Route marks | one every 0.5 s, pop 6 f (0 → 1.15 → 1), then hold; with `life` 1 the mark collapses in 3 f into smoke (reference: a toy car drives across a map dropping explosions ~0.5 s apart, grow ~0.2 s, hold ~1 s, turn to smoke) | `drops.every`, `pop`, `life` |
+| Throw | wind-up 9 f, flight 11 f, impact puff 25 f (reference: a map face throws its army at a neighbour) | `throws[].windup`, `dur` |
+| Border morph | 18 f (0.6 s) in-out on twos (reference: a straight border becomes a zigzag in a short) | `morphs[].dur` |
 | Flood conquest / recolor | 24 f (0.8 s) in-out | `conquer.dur`, `recolor.dur` |
 | Blotch conquest | 2 s | `conquer.dur` |
 | Annex flash | 6 f per colour × 2 colours × 2 flashes = 24 f, then hard switch | `annex` |
@@ -390,9 +413,26 @@ Snippets are complete `layers[]` entries. `blob` regions keep them short; swap i
               "shatter": {"at": 0.8, "pieces": 16, "dur": 0.6, "spread": 170, "bgStreaks": true}}]}
 ```
 
+**"It hurled its armies at the neighbour, and the border buckled."** A face throws three armies, then the straight border morphs into a zigzag.
+```json
+{"type": "map", "style": "atlas", "land": [[0.5, 0.5, 0.42, 0.36]],
+ "regions": [{"id": "west", "blob": [0.3, 0.5, 0.17, 0.24], "color": "#d9a441", "dur": 0.001, "face": {"mood": "angry"}},
+             {"id": "east", "blob": [0.72, 0.5, 0.17, 0.24], "color": "#7fae4a", "dur": 0.001, "face": {"mood": "shock"}}],
+ "throws": [{"from": [0.3, 0.5], "to": [0.72, 0.45], "icon": "army", "size": 110, "count": 3, "at": 0.4}],
+ "morphs": [{"from": [[0.5, 0.25], [0.5, 0.75]], "to": [[0.5, 0.25], [0.56, 0.35], [0.44, 0.45], [0.56, 0.55], [0.44, 0.65], [0.5, 0.75]], "at": 1.6, "width": 8}]}
+```
+
+**"It tore across the country, leaving ruin behind."** A tank drives across the map dropping a blast every half second; each blast holds 1 s and turns to smoke. Swap the `icon` for `flag` (planted along a trench line, no `life`) or `dot` with `color` (an infection spreading).
+```json
+{"type": "map", "style": "atlas", "land": [[0.5, 0.5, 0.42, 0.36]],
+ "regions": [{"id": "land", "blob": [0.5, 0.5, 0.36, 0.3], "color": "#d9a441", "dur": 0.001}],
+ "tokens": [{"icon": "tank", "pts": [[0.2, 0.35], [0.5, 0.48], [0.8, 0.4]], "at": 0.2, "dur": 3, "size": 90,
+             "drops": {"every": 0.5, "size": 70, "life": 1.0, "after": "smoke"}}]}
+```
+
 ## ⑥ Limits and pitfalls
 
-- **`spec.py` does not check map fields.** It validates the layer type and `who` ids of beans, not regions or overlays. Typos in enums (`view`, `conquer.pattern`, `wipe.shape`, `engulf.dir`, `slash.spill`, `split`/`arrows` style, `formation`, `camp` style, `sit`, figure `enter`, flag `pattern`, `words.style`, `hand.from`, unknown `drops` prop or map icon, unknown region id in `arrows`/`brawls`/`fires`/`paint.clip`) throw at render time. Render a still (`--stills`) of every new map shot.
+- **`spec.py` does not check map fields.** It validates the layer type and `who` ids of beans, not regions or overlays. Typos in enums (`view`, `conquer.pattern`, `wipe.shape`, `engulf.dir`, `slash.spill`, `split`/`arrows` style, `formation`, `camp` style, `sit`, figure `enter`, flag `pattern`, `words.style`, `hand.from`, unknown `drops` prop or map icon, unknown route-mark `drops.icon` / `drops.after`, unknown region id in `arrows`/`brawls`/`fires`/`paint.clip`) throw at render time. Render a still (`--stills`) of every new map shot.
 - **Region id lookups are silent in a few places.** `conquer.by` with an unknown id is treated as a colour string; `crosses.region` with an unknown id draws nothing. Double-check ids.
 - **`split` and `shatter` replace the region drawing** once they start: `label`, `arms` and a single face are not drawn after the split (each half gets its own face), and nothing remains after a shatter unless `keep` is set.
 - **`blob` shapes depend on ids.** Changing the map `id`, a region `id` or the region order (when ids are missing) reshapes every blob; keep them identical across the shots of one spine.

@@ -11,7 +11,7 @@ This is **cutout / puppet animation** in the vein of Toon Boom Harmony or After 
 |---|---|---|
 | Background | A painted "storybook" image: gradient sky (sunset, day), stylized comma-shaped clouds, hills with dark outlines, grass drawn as strokes | `bg: sky / interior / parchment / burst` or an AI-generated `bg.image` |
 | Characters | "Bean" heads: white face, dot eyes, simple mouth, thick dark-brown outline, short robe-like body, sausage arms | `bean` rig (code) or AI-generated `image` cutouts |
-| Character motion | Pose-to-pose keys (over 4–6 frames), blinking, a mouth that flaps during dialogue, breathing, shaking from fear or anger | `pose: [{at,v}]`, `talk`, `shake`, `jump`, auto blink and breathing |
+| Character motion | Pose-to-pose keys (the first pass read 4–6 frames; the frame-strip passes measured snaps of 0–2 frames plus a short settle, which is the engine default `poseBlend` 0.07 s), blinking, a mouth that flaps during dialogue, breathing, shaking from fear or anger | `pose: [{at,v}]`, `talk`, `shake`, `jump`, auto blink and breathing |
 | Camera | Almost always a slow push-in or drift (Ken Burns) of 2–6%; sharp "punch-zooms" on emotional words | `camera.zoom`, `camera.pan`, `camera.punch` |
 | Lettering | Bold rounded sans-serif, white fill, thick black outline, drop shadow; a small colored tag above the name ("KING" in yellow above "NUMITOR"), a thick white arrow pointing at the character | `label` (tag + arrow), `date`, `era`, `title` |
 | Infographics | Parchment map, territory fills in red, a character stands on the map; era badge in the lower left ("ROMAN KINGDOM" in red and white); speedrun timer | `map`, `era`, `timer` |
@@ -28,18 +28,20 @@ This is **cutout / puppet animation** in the vein of Toon Boom Harmony or After 
 
 \* "Motionless" means the frame-to-frame difference is < 0.5 (camera drift only). Another ~45% of frames show a small difference: a character moves a body part, or text pops in.
 
+**Re-measurement (2026-10-15).** A second decode of every frame (grey-frame difference spike plus a histogram check, 3-frame debounce) does not reproduce these counts: it finds 20 shots (median 5.2 s) in 0:00–2:00 and 23 shots (median 6.0 s) in 21:40–23:40, and the 2-second contact sheets show about 11 picture changes in minute 0. The first analyzer most likely counted fire boil, flashes and pop-ins as cuts. Read the table above as "visual events", not edits, and take the whole-video numbers from [07-story-craft §2.1](07-story-craft.md) (445 cuts, median 4.6 s; comic first half 3.5 s, serious second half 5.9 s). The Teutoburg climax does **not** cut faster (its shots run 1.7–8.8 s); it intensifies through content: black beats, creeping threats, rain and a grade change.
+
 Takeaways for the engine:
 - **Not a single fully static shot.** Even an "empty" frame drifts the camera (zoom 1.00→1.04–1.06 per shot). That's why the engine's default camera is `zoom [1, 1.04]`.
 - **A new image every 1.5–3.5 s.** This matches the pace in MASTER_PROMPT (15–18 images per minute). Split shots longer than 5 s into 2–3 internal beats: a pose change, a pop-in caption, a punch-zoom.
 - Clusters of "cuts" 0.23 s apart aren't cuts but a fast push-in with a white flash (frames 0:12.0–0:13.2) or a burst of flash frames. In the engine this is `zoom-punch`.
-- At the climax (the forest ambush) the pace **speeds up** rather than slows down: median 0.87 s.
+- At the climax (the forest ambush) the first pass reported a 0.87 s median; the re-measurement above does not support it. Escalate a serious climax through content and holds; reserve sub-second cutting for comic arguments and fights.
 
 ## 3. Technique timings (examples)
 
 - **0:05–0:12** Map of Europe with a character sitting on it. An "ALBA LONGA" flag pops in with overshoot (~0.3 s), the era badge switches from "ROMAN KINGDOM" to "ROME", the camera slowly pushes in, ending in a fast push-in to white.
 - **0:13.5–0:22** Empty balcony at sunset, rays, then the date "771 BC" pops in. Cut: the king on the balcony; after 1 s the "KING / NUMITOR" caption and arrow appear. His brother slides in from the edge of the frame.
 - **1:07–1:10** Rapid sequence: emblem title card, close-up, "K.O." splat, then a celebration scene with silhouettes.
-- **18:20–18:27** The empire map is filled red, a character on the map. A bandage flies in from off-screen and "patches" the map. Cut to a statue.
+- **18:20–18:27** The empire map is filled red, a character on the map. A bandage pops in above the emperor, who holds it up and "patches" the map (the first pass read it as flying in from off-screen; medium confidence). Cut to a statue.
 
 ## 4. Color and line
 
@@ -108,7 +110,7 @@ Method: contact sheets of the whole video (one frame every 4 s, about 580 frames
   - gold columns at the edges;
   - **diagonal shadow wedges at roughly 30°**, highlights on the floor.
 - Atmosphere:
-  - flipbook fire: shapes change every 2 frames, 3 colors, sparks;
+  - flipbook fire: small flames change every 2 frames, a large blaze about every 6 (Carthage, 11:35), 3 colors, sparks;
   - rain in 2 layers, starting mid-shot together with a color regrade;
   - rays from a corner, flocks of birds, smoke, explosions, blood, arrows.
 - Maps:

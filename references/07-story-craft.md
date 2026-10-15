@@ -1,6 +1,6 @@
-# 09 · Story craft: from any script to a well-animated film
+# 07 · Story craft: from any script to a well-animated film
 
-This guide is for the director: the agent that turns a narration script into a shot list and then into a spec. The numbers come from a frame-by-frame study of eight reference explainers (empire history, a Chinese dynasty survey, the Reconquista, World War I, the road to World War II, a speech fact-check show, a Greek myth and a horror biography), about 3.5 hours in total, measured at 12 fps and converted to 30 fps. Every recipe is topic-independent: X, Y and Z are people, groups, countries, companies or ideas, and N is a number.
+This guide is for the director: the agent that turns a narration script into a shot list and then into a spec. Plan the story first with [09-directing.md](09-directing.md) (central question, arc, shot cards); use this guide to turn each beat into a shot, [10-technique-library.md](10-technique-library.md) to choose a technique by purpose, and [11-vertical-shorts.md](11-vertical-shorts.md) for 9:16 shorts. The numbers come from a frame-by-frame study of eight reference explainers (empire history, a Chinese dynasty survey, the Reconquista, World War I, the road to World War II, a speech fact-check show, a Greek myth and a horror biography), about 3.5 hours in total, measured at 12 fps and converted to 30 fps. Every recipe is topic-independent: X, Y and Z are people, groups, countries, companies or ideas, and N is a number.
 
 Every name in backticks is real engine vocabulary. Field contracts live in [03-spec-reference.md](03-spec-reference.md) and the toolkit cards listed in [08-toolkits.md](08-toolkits.md): [characters](toolkits/01_characters.md), [acting](toolkits/02_acting.md), [props, creatures and vehicles](toolkits/03_props_creatures_vehicles.md), [places](toolkits/04_places.md), [maps](toolkits/05_maps.md), [paper and lettering](toolkits/06_paper_and_lettering.md), [game UI](toolkits/07_game_ui.md), [FX and tone](toolkits/08_fx_and_tone.md) and [transitions and lens](toolkits/09_transitions_and_lens.md). Core shot recipes (character intro, reveal, map, counter) are in [02-visual-grammar.md](02-visual-grammar.md).
 
@@ -28,9 +28,10 @@ Times are seconds unless written as frames (f). 1 f = 1/30 s: 2 f = 0.07, 3 f = 
 | Film | Shots | Beats | Mode changes | Dark beats | Recurring devices |
 |---|---|---|---|---|---|
 | 30 s short | 10–14 | 12–16 | 1–2 | 0–1 | 1 callback |
+| 40–95 s vertical short ([11](11-vertical-shorts.md)) | 12–25 compositions, mean 3–4.5 s | 15–40 | a new mode every 5–15 s | 0–1 (slows down for it) | 1 callback + a loop, photo or sting ending; no title card |
 | 60 s | 18–25 | 25–35 | 2–3 | 0–1 | 1 running gag |
 | 3 min | 45–60 | 70–100 | 3–4 | 1–3 | 1 counter + 1 running gag |
-| 10 min | 120–160 | 220–300 | 8–10 | 3–8 | counter, lurker or host, 2–3 prop callbacks |
+| 10 min | 70–160 (measured 73–157 detected shots per 10 min; five of eight long films are under 100) | 220–300 | 8–10 | 3–8 | counter, lurker or host, 2–3 prop callbacks |
 
 ### 1.3 The beat test
 
@@ -50,7 +51,21 @@ A beat is finished when the frame answers "what changed?" in one glance. If the 
 | Reconquista | 5.7–7.5 s (median 4–5) | ~2.3 s | gags 1.5–4 s; maps 8–25 s, a new element every 2–3 s |
 | World wars | 3.0–5.5 s | 1.5–2.5 s | reactions 1–2 s; maps 4–15 s; one chalkboard ran 73 s with 12 internal scenes |
 
-Rule: **mean shot 4–6 s, effective beat 1.5–3 s.** A shot may run long only if it keeps changing inside.
+Full-decode re-measurement (2026-10-15: every frame of every video decoded, cut = grey-frame difference spike with a 3-frame debounce; flashes, whips and stepped fire inflate the count, dissolves are missed, so treat these as ±10 %):
+
+| Video | Cuts | Mean shot | Median shot | Still frames |
+|---|---|---|---|---|
+| Empire history (38:29) | 445 | 5.2 s | 4.6 s (comic first half 3.5, serious second half 5.9) | 0.29 |
+| Dynasty survey (32:02) | 285 | 6.7 s | 5.9 s | 0.46 |
+| Reconquista (24:08) | 175 | 8.2 s | 7.1 s (climax 4.5) | 0.37 |
+| World War I (31:11) | 296 | 6.3 s | 4.8 s | 0.37 |
+| Road to World War II (18:57) | 240 | 4.7 s | 3.4 s | 0.28 |
+| Fact-check show (23:19) | 219 | 6.4 s | 5.0 s | 0.36 |
+| Greek myth (21:38) | 339 | 3.8 s | 3.0 s | 0.21 |
+| Horror biography (19:38) | 171 (about 140 real) | 6.9 s | 5.3 s | 0.31 |
+| 12 vertical shorts (40–95 s) | 9.5–17 per minute | 2.3–5.9 s | 2.3–6.0 s | 0.02–0.19 |
+
+Rule: **mean shot 4–8 s, effective beat 1.5–3 s.** A shot may run long only if it keeps changing inside. Conversational host scenes (two-shots of a host and a silent viewer) run 10–30 s; quote and map holds 15–23 s; next to them, sub-2 s inserts (a written joke, a reaction, a black sarcasm beat) keep the rhythm.
 
 ### 2.2 Shot length by scene type
 
@@ -60,7 +75,7 @@ Rule: **mean shot 4–6 s, effective beat 1.5–3 s.** A shot may run long only 
 | Punchline card | 2–3 s | one hit, then hold | `stamp`, `prohibit`, `boom` with `text` |
 | Reaction close-up | 1–2 s | one `expr` snap | `bg: burst` or `mood` |
 | Dialogue shot / reverse | 1.5–3.5 s | mouth + one pose snap | `talk`, `pose` keys, `fg: ots` |
-| Quote on a screen | 5–15 s | karaoke words, flagged lies | `doc kind:"tv"` + `subtitle` |
+| Quote on a screen | 5–22 s (measured holds of 19.5 and 21.5 s while the karaoke fills) | karaoke words, flagged lies | `doc kind:"tv"` + `subtitle` |
 | Map spine | 6–25 s | pop-in every 1.5–3 s | `map` + `camera.zoom` drift |
 | Establishing | 3–6 s | slow pan, birds, a sign | `fx: birds`, `signpost` |
 | Tableau / board | 3–9 s per tableau (a board 15–70 s) | one figure or line per clause | `parchment-panel`, `chalkboard`, `corkboard` |
@@ -73,17 +88,17 @@ Rule: **mean shot 4–6 s, effective beat 1.5–3 s.** A shot may run long only 
 ### 2.3 Cuts and holds
 
 - **85–90 % of cuts are hard cuts.** Transitions mean something: time (`cloud-wipe`, `timeskip`), memory (`dissolve`, `sepia-to-color`), a world switch (`fade-white`, `portal`), impact (`flash-cut`), death or a chapter (`fade-black`, `black-beat`). Budget one non-`cut` transition per 4–5 shots.
-- **No frame is frozen for more than ~1 s.** Holds stay alive through the default camera drift (`zoom` [1, 1.04]), blinks, idle rock, flames on twos, map tokens hopping, a slow `move`.
+- **Holds are alive, not frozen.** Long films are 21–46 % fully still frames, and characters freeze completely for 0.9–2.5 s between snaps (a 33 f held mallet, a 58 f still dinner shot); what keeps the frame from dying is the camera drift (`zoom` [1, 1.04]), blinks, idle rock, flames, map tokens hopping or a slow `move`. Shorts are stricter: 2–19 % still frames, so every hold drifts.
 - **Medium shots may hold the body still for 4–6 s** apart from the mouth; the pose snaps carry the acting.
 - **Prefer a beat inside the shot to a cut** when the framing would stay the same (map, board, stage).
-- **Empty beats are deliberate:** 3–12 f of an empty set before a character pops in; 1 s of an empty card after the gag; 1–3 s of black before a solemn title (`black-beat` with `dur` 2 and `title`).
-- **Speed up toward the climax:** cut every 1.0–1.6 s in fights and arguments, then hold the outcome 2–4 s.
+- **Black and empty beats are deliberate.** Measured black lengths by job: 16 f for an impact, 27 f between chapters, 1.3 s as a sarcasm pause, 3 s after a death, 7.3 s before entering a dread place. Empty sets: 3–12 f of an empty set before a character pops in; 1 s of an empty card after the gag; 1–3 s of black before a solemn title (`black-beat` with `dur` 2 and `title`).
+- **Speed up toward the climax, or get heavier:** fights and arguments cut every 0.1–1.6 s (an argument's shot/reverse shrinks from 1.6 s to 0.1 s, Rome 4:28), then hold the outcome 2–4 s. Serious climaxes may instead keep 2–9 s shots and escalate through content (Rome's ambush; earlier docs claimed a 0.87 s median there, which the full decode does not reproduce).
 
 ## 3. Structure
 
 ### 3.1 Hooks and cold opens (first 10–40 s)
 
-Every hook ends on a series or title card within 15–45 s (`title` letters popping, or `spin-zoom` into the first scene).
+In long films every hook ends on a series or title card within 15–45 s (`title` letters popping, or `spin-zoom` into the first scene). Vertical shorts never do: the first sentence is the claim and an event lands within 2 s ([11-vertical-shorts](11-vertical-shorts.md) §5).
 
 | Hook | Recipe |
 |---|---|
@@ -146,7 +161,7 @@ Every hook ends on a series or title card within 15–45 s (`title` letters popp
 | Relabel punchline | Same object, new text: a caption swaps in place, a sign flips, a list is retitled | `nameplate` `strike`, `signpost` `turn`, `list` `retitle`, `swap` on `text` |
 | Wrong one first | Show the decoy, then the right one pops beside it 0.6 s later | two layers, second `enter:"pop"` |
 | Downgrade | Show the grand version, scissors cut it, pan down to the tiny real thing with a sad bean | `crayon` `cut`, `scissors`, `camera.pan` |
-| Deflation | Within 2–6 s of a scare or a death: hard cut to a warm `burst`, deadpan `squint`, or the victim gives a thumbs-up | `flash-cut`, `expr:"squint"`, `pose:"thumbs-up"` |
+| Deflation | Within 2–6 s of a scare or a death: hard cut to a warm `burst` (shorts use a blue swirl backdrop, `bg: mood` `variant: "swirl"`), deadpan `squint`, or the victim gives a thumbs-up | `flash-cut`, `expr:"squint"`, `pose:"thumbs-up"` |
 | Absurd tool | A baguette in a sword clash, a bucket as a ladder | any prop as `hold` |
 | Object stand-ins for violence | Boxing gloves for attacks, a bowling strike for an offensive, food tokens as armies | `arm` `kind:"glove-spring"`, `bowling-ball` + `pins`, `squads` `prop:"croissant"` |
 | Absurd escalation | One becomes many in one frame; each prop pops bigger (1x, 1.6x, 2.5x); "x37" unit cards | same `at` on copies, `scale` steps, `unitcards` |
@@ -190,6 +205,7 @@ Rules: one joke per insert; the hold after the hit is the joke (1 s minimum); a 
 | Action | Measured | Engine |
 |---|---|---|
 | Pose snap | 1–2 f, no in-betweens, then hold 1.5–3 s (4–6 s in medium shots) | `pose` keys, `poseBlend` 0.07 (default) |
+| Slow-burn realisation | eyes widen over ~4 s while the pose holds ("wait a minute") | expressions do not blend: hold `neutral` with a slow push (`zoom` [1, 1.08]), add `marks` `ticks`, then snap `shock` on the last word |
 | Settle after snap | ~6 f, ~4.5 % squash | built into the rig |
 | Breakdown frame on big gestures | 1 drawing for 2–3 f, body tilted 8–10° | `snapTilt` 8 |
 | Anticipation dip | ~3 f dip before, 2 f stretch after | `antic` true |
@@ -210,7 +226,7 @@ Rules: one joke per insert; the hold after the hit is the joke (1 s minimum); a 
 
 | Entrance | Measured | Engine |
 |---|---|---|
-| Characters at the cut | 0 f, already there | `enter:"none"` (bean default) |
+| Characters at the cut | 0 f, already there; into a held shot, often an eased slide of the rigid cutout (~30 f in, 1.2–1.6 s out; Rome) | `enter:"none"` (bean default); `slide-left`/`slide-right` with `enterDur` 1 |
 | Pop (labels, icons) | 0 to 1.15 to 1 in 6–7 f, staggered 6–8 f | `enter:"pop"`, `pop-tilt` |
 | Stretch (figures) | 0.3 to 1.15 to 1 in 3 f | `enter:"stretch"` |
 | Drop-squash (objects, stats) | fall 2 f, squash 1 f, settle by ~12 f | `enter:"drop-squash"` |
@@ -233,7 +249,7 @@ Rules: one joke per insert; the hold after the hit is the joke (1 s minimum); a 
 | Exit | Measured | Engine |
 |---|---|---|
 | Shove / tumble | spins ~18°/f on a gravity arc, gone in ~15 f; hat pops up 80 px | `exit:"tumble"` `tumble.detach:"head"` + rubber `arm` arriving at `out` |
-| Zip | lean back 4 f, gone on f5, puff trail 5 f + 15 f fade | `exit:"zip"` |
+| Zip | lean back 4 f, gone on f5, puff trail 5 f + 15 f fade; panic variant: 15 f crouch + ~10 f of leg-wheels first | `exit:"zip"`, `zip.rev` |
 | Poof swap | cloud covers in 2 f, boils ~5 f, fades 12 f; swap under it | `fx: poof` at t, target `swap` at t + 0.07 |
 | Run away in a cloud | stacked clouds rising from the feet | `poof` `mode:"column"` + `out` |
 | Pivot fall | 90° about the feet in 10 f, squash 2 f, dust 30 f | `exit:"pivot-fall"`; `fall.snap` true for a faceplant |
@@ -254,7 +270,7 @@ Rules: one joke per insert; the hold after the hit is the joke (1 s minimum); a 
 | Wing flap | far: two poses every ~6 f | look `wings` + `flap` windows |
 | March bob on maps | ±3 px on twos | `tokens` `bob`, `squads` `hop`, `camps` `move` |
 | Oars | 0.6–0.9 s | `galley` `rowPeriod` 0.75 |
-| Flames | redrawn on twos | `fire`, `fires`, `torch` |
+| Flames | small flames redrawn on twos; large fires boil every 4–6 f (Rome 11:35), screen-filling fire on threes (vertical shorts) | `fire`, `fires`, `torch` |
 | Arms flail | alternate every 2–5 f | `flail` / `flail-b` keys |
 | Spring punch | 11 f (out 2, hold 3, back 3, rest 3), x3 | `arm` `kind:"glove-spring"` `count` 3 |
 | Region stab loop | 2 poses every 2 f | region `arms`, `split` `fight` |
@@ -269,7 +285,7 @@ Rules: one joke per insert; the hold after the hit is the joke (1 s minimum); a 
 |---|---|---|
 | Hit-cut | frame N walking, frame N+1 already hit; hold 3 s | `swap` at the hit time, no in-between |
 | Impact star | 2–7 f | `arm` `impact`, `explosion`, `fx: splat` |
-| Smash | 12 f windup hold, 1 f smash, 6 f jitter, 3 f empty | `pose:"hammer"` keys + `mallet` + `jitter` |
+| Smash | hold the raised tool 12–33 f, fall in 1–2 f, impact ticks on contact, hold 17–25 f; punches may arrive in 1–2 f with no wind-up at all (deadpan) | `pose:"hammer"` keys + `mallet` + `jitter` |
 | Punch through a map | hairline crack 1 f before, cracks grow 5 f, push-in 8 % over 12 f | map `punch` + `camera.punch` |
 | Fist close | palm to fist in 1 f, tremble 1 s | `arm` `kind:"hand"` `state` keys `open` then `fist` + `jitter` |
 | Stomp | 2–3 f, flattens instantly, holds 30+ f, no bounce | `arm` `kind:"foot"` `stomp`, target `swap` |
@@ -414,7 +430,7 @@ Rules: one joke per insert; the hold after the hit is the joke (1 s minimum); a 
 | 71 | "Rulers kept dying" | queue of beans walking off a cliff (`fg: ledge`), each `exit:"tumble"` 0.6 s apart + `hangsign` counter |
 | 72 | "Zapped / struck by lightning" | `fx kind:"shock"` `target` + target `swap` `alpha` 0 -> 1 with `expr:"dead"` |
 | 73 | "Poisoned" | `bg: mood variant:"swirl"` + `expr:"sick"` `tremble` + `fx kind:"hat"` `mode:"fly"` |
-| 74 | "Drowned / fell" | `bg: floor material:"water"` + `topbean` `move` `scale` 0.1 over 0.7 s + `fx: splat` >> empty sea 5 s |
+| 74 | "Drowned / fell" | `bg: floor material:"water"` + `topbean` `move` `scale` 0.1 over 0.7 s + `fx: splat` >> empty sea 8–10 s (the reference holds 10 s and lets the silence become the joke) |
 | 75 | "X lost its strength" | `pose:"flex"` -> `sit-slump` + `expr:"sad"` + look `gloom` |
 | 76 | "Mourning" | `bean view:"back"` `pose:"kneel"` facing `bg: burning` + look `tears:"stream"` + `grade:"cold"` |
 | 77 | "Their faith crumbled" | `fx kind:"disintegrate"` `target` with `stinger:true` |
@@ -740,7 +756,7 @@ Checks for this film: 11 shots in 30 s (mean 2.7 s, with internal beats every 1�
 
 ## 9. Quick rules
 
-1. One clause with a new idea = one beat; a new image every 1.5–3.5 s; the key word lands on `at`.
+1. One clause with a new idea = one beat; a new visual event every 1.5–3.5 s (a cut or an in-shot change; shots themselves run 3–7 s median); the key word lands on `at`.
 2. Decide the intent group (section 7), then the recipe; literalize the idiom when the line has one.
 3. A shot runs longer than 5 s only if something new appears every 1.5–3 s (map spine, board, quote).
 4. Build long stretches as a spine with gag inserts; return to the spine in the same state.

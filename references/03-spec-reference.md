@@ -1,6 +1,6 @@
 # 03 · Spec contract (spec.json)
 
-The engine draws in a fixed **1920×1080** space. Layer positions are normalized: `x`, `y` in the range 0..1 of the frame. Validator: `python3 scripts/spec.py spec.json`. The lists of allowed values live in `KNOWN_*` in `scripts/spec.py`; a test checks them against the engine.
+The engine draws in a fixed **1920×1080** space (the world). Layer positions are normalized: `x`, `y` in the range 0..1 of the world. A landscape film shows the whole world; a vertical film (`"format": "vertical"`) shows a 607.5-px-wide strip of it, full height, scaled to 1080×1920 (see [Output format](#output-format) and [11-vertical-shorts.md](11-vertical-shorts.md)). Validator: `python3 scripts/spec.py spec.json`. The lists of allowed values live in `KNOWN_*` in `scripts/spec.py`; a test checks them against the engine.
 
 **Two time bases** (seconds):
 - **shot time**, from the cut: `at`, `out`, `move[].at`, `shake[].at`, `jump[].at`, `camera.*`;
@@ -13,14 +13,27 @@ Colors must be `#rrggbb` or `#rgb`: shadows and haze are derived from them. The 
 ```jsonc
 {
   "title": "…", "fps": 30, "seed": 1,               // seed makes the render deterministic
+  "format": "landscape" | "vertical",                 // output 1920x1080 (default) or 1080x1920
   "style": { "grain": true, "vignette": 0.3 },        // post-processing; false disables
   "cast": { "<name>": { /* bean appearance */ } },    // character sheet
   "shots": [ { "id": "k01", "dur": 3.2, "vo": "…", "screen": "…",
                "transition": "cut" | { "kind": "zoom-punch", "dur": 0.3 },
                "bg": { … } | [ { … }, { … } ],        // backgrounds are drawn in order
-               "camera": { … }, "layers": [ … ] } ]
+               "camera": { … }, "layers": [ … ],
+               "pinned": [ … ],                       // layers without camera, centred in the visible frame
+               "frame": 0.5 | [ {"at": 0, "v": 0.3}, … ] } ]  // vertical films: x of the visible strip
 }
 ```
+
+## Output format
+
+| Field | Where | Values | What it does |
+|---|---|---|---|
+| `format` | spec | `landscape` (default), `vertical` | `vertical` renders 1080×1920: each frame shows a strip of the world 607.5 px wide and 1080 high (x 0.342–0.658 at the default frame). `width`/`height`, if given, must match (1920×1080 or 1080×1920) |
+| `frame` | shot (vertical only) | number or `[{at, v, ease}]`, default 0.5 | World x (fraction) of the visible strip's centre, clamped to 0.158–0.842. Keys pan or snap the window between subjects. The camera zoom centres on it unless `camera.focus` is set |
+| `pinned` | shot (both formats) | list of layers | Drawn after the shot without the camera. In a vertical film they stay centred in the visible frame while `frame` pans: step headers, titles, counters, a locator badge. An `fx` in `pinned` may target (or `follow`) a pinned layer or a world layer (an fx whose target is in `layers` is drawn in the world pass, so it follows the target's camera and frame), but all targets of one fx, including its `swap` entries, must stay in one list; an fx in `layers` targets `layers` only. A `panel` showing this shot draws its pinned layers too (`labels: false` removes their text) and, in a vertical film, crops the cell around the source's own `frame` unless the cell sets `focus` |
+
+In vertical films `keepInFrame` (labels, titles, counters) clamps to the visible strip, and corner widgets (`hud` `chip` and `timer-lcd`, `doc` `killfeed`, `fx` `cctv`) anchor to its corners; the vignette is centred on the strip. `spec.overlays` are centred like `pinned`. Text wider than the visible frame shrinks to fit (both formats; `fit: false` keeps the size). Only the visible strip is drawn and pixel-graded, so a vertical frame costs about 15 % more than a landscape one.
 
 ## Camera
 | Field | Example | What it does |
@@ -234,9 +247,11 @@ These are the base kinds. Over 40 more live in [08 FX and tone](toolkits/08_fx_a
 | `solemn` | Dusty gray-brown: execution, loss |
 | `warm` | Warm, comedic |
 | `gold` | Golden hour, triumph |
+| `mono` | Plain greyscale: the past turned into a photograph, a memory |
+| `negative` | Colour negative: a frozen title, a "what if" flash (use 0.2–2 s) |
 
 ## Transitions
-Built into `core.js`: `cut` (0 s), `dissolve` (0.35), `fade-white` (0.4), `fade-black` (0.5), `zoom-punch` (0.3), `whip` (0.3), `iris` (0.5). Twenty more (ink blot, peephole, cloud wipe, drip, …) with their parameters are in [09 Transitions and lens](toolkits/09_transitions_and_lens.md).
+Built into `core.js`: `cut` (0 s), `dissolve` (0.35), `fade-white` (0.4), `fade-black` (0.5), `zoom-punch` (0.3), `whip` (0.3; `dir` `left` default, `right`, `up`, `down`), `iris` (0.5). Twenty-six more, including `swirl` (the vertical shorts' spin cut), `pixelate`, `burn`, `swarm`, `squeeze` and `carry` (ink blot, peephole, cloud wipe, drip, …) with their parameters are in [09 Transitions and lens](toolkits/09_transitions_and_lens.md).
 A transition occupies the **start** of the shot it is set on. During it, the previous shot keeps playing (its time runs past `dur`).
 
 ## Extending

@@ -58,6 +58,10 @@ LAYER_KINDS: dict[str, set[str]] = {}
 REGISTRIES: dict[str, str] = {}
 
 
+# Output formats: width x height of the rendered video. The world is always 1920x1080 (see core.js T.FORMATS).
+FORMATS = {"landscape": (1920, 1080), "vertical": (1080, 1920)}
+
+
 def _load_vocab() -> None:
     global COLOR_KEYS
     targets = {"layers": KNOWN_LAYERS, "bgs": KNOWN_BGS, "transitions": KNOWN_TRANSITIONS, "enter": KNOWN_ENTER,
@@ -130,7 +134,147 @@ def _check_look(look, where: str, errors: list[str]) -> None:
             errors.append(f"{where}: {ck} must be a hex colour like #c8323a, got {v!r}")
 
 
+TRANSITION_ENUMS = {"burn": {"from": {"bottom", "top", "left", "right"}}, "swarm": {"creature": {"bat", "bird"}},
+                    "squeeze": {"axis": {"horizontal", "vertical"}}, "whip": {"dir": {"left", "right", "up", "down"}},
+                    "fg-pass": {"axis": {"horizontal", "vertical"}}}
+GLITCH_STYLES = {"corrupt", "stepped"}
+ISO_BUILDINGS = {"none", "house", "tower"}
+
+
+def _pair(v) -> bool:
+    return isinstance(v, list) and len(v) == 2 and all(_is_num(x) for x in v)
+
+
+def _swap_states(layer: dict) -> list[dict]:
+    """The layer as it is at each swap time, applied cumulatively like the engine (look merges, null deletes)."""
+    states, cur = [layer], dict(layer)
+    swaps = layer.get("swap")
+    if not isinstance(swaps, list):
+        return states
+    for sw in sorted((x for x in swaps if isinstance(x, dict)), key=lambda x: x.get("at", 0) if _is_num(x.get("at", 0)) else 0):
+        cur = dict(cur)
+        for k, v in sw.items():
+            if k == "at":
+                continue
+            if k == "look" and isinstance(v, dict):
+                cur["look"] = {**(cur.get("look") if isinstance(cur.get("look"), dict) else {}), **v}
+            elif v is None:
+                cur.pop(k, None)
+            else:
+                cur[k] = v
+        states.append(cur)
+    return states
+
+
+def _map_icons() -> set:
+    icons: set = set()
+    for f in sorted(VOCAB_DIR.glob("*.json")):
+        kinds = json.loads(f.read_text(encoding="utf-8")).get("kinds") or {}
+        icons |= set(kinds.get("map_icon", []) if isinstance(kinds, dict) else [])
+    return icons
+
+
+def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
+    """Names and shapes of the fields added with pile, xray, iso-tile, coin-gavel, chat, tierlist, map throws / morphs
+    and glitch styles (the engine would throw at render time), checked for every state the layer's swaps produce."""
+    def name_in(v, allowed, label):
+        if v is not None and (not isinstance(v, str) or v not in allowed):
+            errors.append(f"{where}: {label} {v!r} is not one of the allowed names")
+    for entry in _swap_states(layer):
+        kind, ltype = entry.get("kind"), entry.get("type")
+        if ltype == "fx" and kind == "pile":
+            name_in(entry.get("prop"), KNOWN_PROPS, "pile prop")
+        if ltype == "fx" and kind == "glitch":
+            name_in(entry.get("style"), GLITCH_STYLES, "glitch style")
+        if ltype != "fx" and entry.get("xray") is not None and not isinstance(entry["xray"], bool):
+            if isinstance(entry["xray"], dict):
+                name_in(entry["xray"].get("inner"), KNOWN_PROPS, "xray inner")
+            else:
+                errors.append(f"{where}: xray must be true or an object {{at, dur, inner, color}}")
+        if ltype == "bean" and entry.get("smear") is not None:
+            sm = entry["smear"] if isinstance(entry["smear"], list) else [entry["smear"]]
+            if not all(isinstance(x, dict) and _is_num(x.get("at")) and x.get("dir", 1) in (1, -1) for x in sm):
+                errors.append(f"{where}: smear must be {{at, dur, dir 1|-1, strength}} or a list of them")
+        if ltype == "map":
+            movers = []
+            for key in ("tokens", "figures", "squads", "camps", "routes", "trails"):
+                val = entry.get(key)
+                if val is None:
+                    continue
+                if isinstance(val, dict):
+                    val = [val]  # the engine accepts a single object too
+                if not isinstance(val, list):
+                    errors.append(f"{where}: map {key} must be a list of objects")
+                    continue
+                movers += [m for m in val if isinstance(m, dict)]
+            for m in movers:
+                d = m.get("drops")
+                if d is None or d is True:
+                    continue
+                if not isinstance(d, dict):
+                    errors.append(f"{where}: drops must be true or {{every, icon, size, life, after}}")
+                    continue
+                name_in(d.get("icon"), KNOWN_PROPS | _map_icons(), "drops icon")
+                if d.get("every") is not None and not (_is_num(d["every"]) and d["every"] > 0):
+                    errors.append(f"{where}: drops every must be a number of seconds above 0")
+                if d.get("after") not in (None, "smoke", "none"):
+                    name_in(d.get("after"), KNOWN_PROPS | _map_icons(), "drops after")
+        if ltype == "prop" and kind == "claw-crane":
+            name_in(entry.get("load"), KNOWN_PROPS, "claw-crane load")
+        if ltype == "prop" and kind == "meat-grinder":
+            name_in(entry.get("feed"), KNOWN_PROPS, "meat-grinder feed")
+            crank = entry.get("crank")
+            if crank is not None and not (isinstance(crank, list) and all(_pair(w) for w in crank)):
+                errors.append(f"{where}: meat-grinder crank must be a list of [start, end] windows")
+        if ltype == "prop" and kind == "iso-tile":
+            name_in(entry.get("building"), ISO_BUILDINGS, "iso-tile building")
+        if ltype == "prop" and kind == "coin-gavel" and entry.get("strike") is not None and not (isinstance(entry["strike"], list) and all(_is_num(t) for t in entry["strike"])):
+            errors.append(f"{where}: coin-gavel strike must be a list of times")
+        if ltype == "doc" and kind == "chat":
+            msgs = entry.get("messages", [])
+            if not (isinstance(msgs, list) and all(isinstance(m, dict) and isinstance(m.get("text", ""), str) for m in msgs)):
+                errors.append(f"{where}: chat messages must be a list of {{from, text, at, side}} objects")
+        if ltype == "doc" and kind == "tierlist":
+            rows, items = entry.get("rows", []), entry.get("items", [])
+            if not (isinstance(rows, list) and all(isinstance(r, dict) for r in rows)):
+                errors.append(f"{where}: tierlist rows must be a list of {{label, color}} objects")
+            if not (isinstance(items, list) and all(isinstance(i, dict) for i in items)):
+                errors.append(f"{where}: tierlist items must be a list of {{row, text | prop, at}} objects")
+            else:
+                for it in items:
+                    name_in(it.get("prop"), KNOWN_PROPS, "tierlist item prop")
+        if ltype == "map":
+            morphs, throws = entry.get("morphs", []) or [], entry.get("throws", []) or []
+            if not isinstance(morphs, list) or not all(isinstance(m, dict) and all(isinstance(m.get(k), list) and len(m[k]) >= 2 and all(_pair(q) for q in m[k]) for k in ("from", "to")) for m in morphs):
+                errors.append(f"{where}: map morphs need from and to as lists of [x, y] points")
+            if not isinstance(throws, list) or not all(isinstance(t, dict) and _pair(t.get("from")) and _pair(t.get("to")) for t in throws):
+                errors.append(f"{where}: map throws need from and to as [x, y]")
+            else:
+                for t in throws:
+                    name_in(t.get("icon"), KNOWN_PROPS | _map_icons(), "map throws icon")
+
+
+def _fx_refs(layer: dict) -> list[str]:
+    swaps = layer.get("swap") if isinstance(layer.get("swap"), list) else []
+    vals = [layer.get("target"), layer.get("follow")] + [x for sw in swaps if isinstance(sw, dict) for x in (sw.get("target"), sw.get("follow"))]
+    return [v for v in vals if isinstance(v, str)]
+
+
+def _check_transition(tr, where: str, errors: list[str]) -> None:
+    if not isinstance(tr, dict):
+        return
+    for field, allowed in TRANSITION_ENUMS.get(tr.get("kind"), {}).items():
+        if tr.get(field) is not None and (not isinstance(tr[field], str) or tr[field] not in allowed):
+            errors.append(f"{where}: {tr.get('kind')}.{field} {tr[field]!r} not in {sorted(allowed)}")
+    if tr.get("kind") == "carry":
+        for field in ("from", "to"):
+            v = tr.get(field)
+            if v is not None and not (isinstance(v, list) and len(v) == 4 and all(_is_num(x) for x in v)):
+                errors.append(f"{where}: carry.{field} must be [x, y, w, h]")
+
+
 def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None:
+    _check_extensions(layer, where, errors)
     kind = layer.get("type")
     if kind not in KNOWN_LAYERS:
         errors.append(f"{where}: unknown layer type {kind!r} (known: {sorted(KNOWN_LAYERS)})")
@@ -303,14 +447,34 @@ def _check_bg(bg, where: str, errors: list[str]) -> None:
         errors.append(f"{where}: windowSky {bg.get('windowSky')!r} not in {sorted(KNOWN_SKY)}")
 
 
+def _check_layer_refs(layer: dict, where: str, ids: set, cast: dict, errors: list[str]) -> None:
+    """Cross-references inside one shot (fx target, map refs, doc arrowTo and nested who), shared by layers and pinned."""
+    kind = layer.get("type")
+    target = layer.get("target")
+    if kind == "fx" and isinstance(target, str) and target not in ids:
+        errors.append(f"{where}<fx>: target {target!r} is not the id of a layer in this shot")
+    if kind == "map":
+        _check_map_refs(layer, f"{where}<map>", errors)
+    if kind == "doc" and isinstance(layer.get("arrowTo"), str) and layer["arrowTo"] not in ids:
+        errors.append(f"{where}<doc>: arrowTo {layer['arrowTo']!r} is not the id of a layer in this shot")
+    if kind == "doc":
+        for who in _nested_whos(layer):
+            if who not in cast:
+                errors.append(f"{where}<doc>: who {who!r} is not defined in spec.cast")
+
+
 def validate(spec: dict) -> list[str]:
     """Return a list of human-readable problems (empty list = valid)."""
     errors: list[str] = []
     if not isinstance(spec, dict):
         return ["spec must be a JSON object"]
-    for key, default in (("width", 1920), ("height", 1080)):
+    fmt = spec.get("format", "landscape")
+    if not isinstance(fmt, str) or fmt not in FORMATS:
+        errors.append(f"format {fmt!r} not in {sorted(FORMATS)}")
+        fmt = "landscape"
+    for key, default in zip(("width", "height"), FORMATS[fmt]):
         if spec.get(key, default) != default:
-            errors.append(f"{key} must be {default}: the engine draws in fixed 1920x1080 space (use --scale for previews)")
+            errors.append(f"{key} must be {default} for format {fmt!r}: the engine draws a fixed 1920x1080 world (use --scale for previews)")
     fps = spec.get("fps", 30)
     if not isinstance(fps, int) or not 1 <= fps <= 60:
         errors.append("fps must be an integer 1..60")
@@ -340,6 +504,7 @@ def validate(spec: dict) -> list[str]:
             errors.append(f"{where}: dur must be a positive number of seconds")
         tr = shot.get("transition", "cut")
         tr_kind = tr.get("kind", "cut") if isinstance(tr, dict) else tr
+        _check_transition(tr, f"{where}.transition", errors)
         if tr_kind not in KNOWN_TRANSITIONS:
             errors.append(f"{where}: transition {tr_kind!r} not in {sorted(KNOWN_TRANSITIONS)}")
         grade = shot.get("grade")
@@ -349,29 +514,50 @@ def validate(spec: dict) -> list[str]:
             g = g.get("preset") if isinstance(g, dict) else g
             if g not in KNOWN_GRADES:
                 errors.append(f"{where}: grade {g!r} not in {sorted(KNOWN_GRADES)}")
-        ids = {L.get("id") for L in shot.get("layers", []) or [] if isinstance(L, dict) and L.get("id")}
+        layer_list = shot.get("layers", []) or []
+        if not isinstance(layer_list, list):
+            errors.append(f"{where}: layers must be a list of layers")
+            layer_list = []
+        pinned_list = shot.get("pinned", []) or []
+        ids = {L.get("id") for L in layer_list if isinstance(L, dict) and L.get("id")}
+        pinned_ids = {L.get("id") for L in pinned_list if isinstance(L, dict) and L.get("id")} if isinstance(pinned_list, list) else set()
         for k, f in enumerate(shot.get("focus", []) or []):
             if not (isinstance(f, dict) and _is_num(f.get("at", 0)) and (f.get("on") in ids or f.get("on") == "bg")):
                 errors.append(f"{where}.focus[{k}]: needs at and on=<id of a layer in this shot>")
+        if "frame" in shot:
+            if fmt != "vertical":
+                errors.append(f"{where}: frame only applies to vertical films (spec.format = 'vertical')")
+            _check_number_or_timeline(shot["frame"], f"{where}.frame", errors)
+        pinned = shot.get("pinned", []) or []
+        if not isinstance(pinned, list):
+            errors.append(f"{where}: pinned must be a list of layers")
+            pinned = []
+        # pinned fx that target world layers (directly or through another moved fx) are drawn in the world pass
+        world_ids = set(ids)
+        for _ in range(len(pinned) + 1):
+            grown = {L.get("id") for L in pinned if isinstance(L, dict) and L.get("type") == "fx" and L.get("id") and any(r in world_ids for r in _fx_refs(L))}
+            if grown <= world_ids:
+                break
+            world_ids |= grown
+        for j, layer in enumerate(pinned):
+            if not isinstance(layer, dict):
+                errors.append(f"{where}.pinned[{j}]: must be an object")
+                continue
+            _check_layer(layer, f"{where}.pinned[{j}]<{layer.get('type')}>", cast, errors)
+            _check_layer_refs(layer, f"{where}.pinned[{j}]", pinned_ids | ids, cast, errors)  # a pinned fx may target either list
+            if layer.get("type") == "fx":
+                refs = _fx_refs(layer)
+                if any(r in world_ids for r in refs) and any(r in pinned_ids and r not in world_ids for r in refs):
+                    errors.append(f"{where}.pinned[{j}]<fx>: its targets mix world layers and pinned layers; keep them in one list")
         bgs = shot.get("bg", {"kind": "sky"})
         for j, bg in enumerate(bgs if isinstance(bgs, list) else [bgs]):
             _check_bg(bg, f"{where}.bg[{j}]", errors)
-        for j, layer in enumerate(shot.get("layers", []) or []):
+        for j, layer in enumerate(layer_list):
             if not isinstance(layer, dict):
                 errors.append(f"{where}.layers[{j}]: must be an object")
                 continue
             _check_layer(layer, f"{where}.layers[{j}]<{layer.get('type')}>", cast, errors)
-            target = layer.get("target")
-            if layer.get("type") == "fx" and isinstance(target, str) and target not in ids:
-                errors.append(f"{where}.layers[{j}]<fx>: target {target!r} is not the id of a layer in this shot")
-            if layer.get("type") == "map":
-                _check_map_refs(layer, f"{where}.layers[{j}]<map>", errors)
-            if layer.get("type") == "doc" and isinstance(layer.get("arrowTo"), str) and layer["arrowTo"] not in ids:
-                errors.append(f"{where}.layers[{j}]<doc>: arrowTo {layer['arrowTo']!r} is not the id of a layer in this shot")
-            if layer.get("type") == "doc":
-                for who in _nested_whos(layer):
-                    if who not in cast:
-                        errors.append(f"{where}.layers[{j}]<doc>: who {who!r} is not defined in spec.cast")
+            _check_layer_refs(layer, f"{where}.layers[{j}]", ids, cast, errors)
     overlays = spec.get("overlays", []) or []
     if not isinstance(overlays, list):
         errors.append("overlays must be a list of {from, to, layer}")

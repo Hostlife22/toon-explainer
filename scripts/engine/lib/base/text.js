@@ -12,16 +12,21 @@
   };
   // Safe frame: shift a centered text block horizontally so its screen extent stays inside a 3.5% margin.
   // Projects the layer through the camera (zoom/pan/focus, rotation ignored). Disable with keepInFrame:false.
+  // Text wider than the visible frame (a long name in a vertical film) is first shrunk to fit; fit:false keeps the size.
   T.keepInFrame = (ctx, L, env, halfW) => {
     if (L.keepInFrame === false || !env.st) return;
     const c = env.cam, hud = L.hud ?? (L.type === 'era' || L.type === 'timer');
     const f = hud || !c ? 0 : L.z ?? 1, z = c ? 1 + (c.z - 1) * f : 1;
     const bx = env.st.bx ?? env.st.x; // anchor without slide-in offsets, so entrances are not cancelled
     const sx = (c && f ? c.fx + (bx - c.fx - c.px * f) * z : bx) + (c ? c.sx : 0);
-    const m = T.W * 0.035, s = Math.abs(env.st.s) * z, left = sx - halfW * s, right = sx + halfW * s;
+    const [lo, vw] = T.visibleSpan(env); // the whole width, or in vertical films the strip centred on env.frameX
+    const m = vw * 0.035;
+    let s = Math.abs(env.st.s) * z;
+    if (L.fit !== false && halfW * s * 2 > vw - 2 * m && halfW > 0) { const k = (vw - 2 * m) / (halfW * s * 2); ctx.scale(k, k); s *= k; }
+    const left = sx - halfW * s, right = sx + halfW * s;
     let dx = 0;
-    if (left < m) dx = (m - left) / s;
-    else if (right > T.W - m) dx = (T.W - m - right) / s;
+    if (left < lo + m) dx = (lo + m - left) / s;
+    else if (right > lo + vw - m) dx = (lo + vw - m - right) / s;
     if (dx) ctx.translate(dx * env.st.flip, 0);
   };
   const DIRS = { right: 0, 'down-right': 35, down: 90, 'down-left': 145, left: 180, 'up-left': 215, up: 270, 'up-right': 325 };
@@ -55,14 +60,20 @@
     const text = String(L.text), st = L.stagger ?? 0.035;
     const size = T.fitSize(ctx, text, L.size ?? 120, T.W * 0.9);
     ctx.font = T.font(size);
-    const total = T.measure(ctx, text, size);
+    const total = T.measure(ctx, text, size), arcRad = (T.num(L.arc, lt, 0) || 0) * T.DEG; // arc: total bend in degrees
     T.keepInFrame(ctx, L, env, total / 2);
     let x = -total / 2;
     for (let i = 0; i < text.length; i++) {
       const ch = text[i], w = T.measure(ctx, ch, size);
       const p = T.ease.outBack(T.prog(lt, i * st, 0.28));
       if (p > 0) {
-        ctx.save(); ctx.translate(x + w / 2, Math.sin(lt * 3 + i) * (L.jiggle ?? 2)); ctx.scale(p, p);
+        const jig = Math.sin(lt * 3 + i) * (L.jiggle ?? 2), u = x + w / 2;
+        ctx.save();
+        if (arcRad) { // letters sit on a circle: arc > 0 arches like a badge top, arc < 0 curves like a smile
+          const R = total / Math.abs(arcRad), th = u / R, sg = Math.sign(arcRad);
+          ctx.translate(R * Math.sin(th), sg * R * (1 - Math.cos(th)) + jig); ctx.rotate(sg * th);
+        } else ctx.translate(u, jig);
+        ctx.scale(p, p);
         T.toonText(ctx, ch, 0, 0, { size, fill: L.color ?? P.red, shadow: true });
         ctx.restore();
       }

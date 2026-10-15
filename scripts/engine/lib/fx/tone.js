@@ -24,7 +24,8 @@
   // Run fn(data, w, h) over the physical pixels of ctx's canvas (optionally a sub-rect in physical px).
   T.pixels = (ctx, fn, rect) => {
     const cv = ctx.canvas;
-    const [x, y, w, h] = rect || [0, 0, cv.width, cv.height];
+    const pr = T.PIXEL_RECT && T.PIXEL_RECT.canvas === cv ? T.PIXEL_RECT.rect : null; // vertical films: only the visible strip
+    const [x, y, w, h] = rect || pr || [0, 0, cv.width, cv.height];
     if (w <= 0 || h <= 0) return;
     const img = ctx.getImageData(x, y, w, h);
     fn(img.data, w, h);

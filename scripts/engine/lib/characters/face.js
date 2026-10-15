@@ -260,11 +260,42 @@
     if (fn) fn(ctx, c, lt, sh, view);
   }
 
-  // s: { view, expr, mouthKind (talk override), blink, gazeX, lt, seed }
+  // ---------- hair smear on a sharp head turn ----------
+  // smear: [{at (shot time), dur 0.33, dir 1|-1, strength 1}]. Reference (despair -> resolve turn): 1-frame snap, the hair
+  // mass streaks ~10 frames behind the head, settled by frame 14. dir 1 trails toward the back of the head, -1 toward the
+  // face side. Drawn as 4 fading copies of hair + headwear behind the skull, plus ink speed lines; stepped per frame.
+  const SMEAR_COPIES = [0.8, 0.58, 0.38, 0.2], SMEAR_STEP = 46;
+  function smearAmount(list, lt) {
+    for (const m of Array.isArray(list) ? list : [list]) {
+      if (!m || typeof m.at !== 'number') throw new Error('bean smear: each entry needs a numeric "at"');
+      const n = Math.max(1, Math.round((m.dur ?? 0.33) * 30)), f = Math.floor((lt - m.at) * 30 + 1e-6);
+      if (f >= 0 && f < n) return { k: (m.strength ?? 1) * Math.pow(1 - f / n, 1.6), dir: m.dir === -1 ? -1 : 1 };
+    }
+    return null;
+  }
+  function hairSmear(ctx, c, s, sh, view) {
+    if (!s.smear || !c.hair || c.hair === 'bald') return;
+    const m = smearAmount(s.smear, s.lt);
+    if (!m || m.k <= 0.01) return;
+    const side = -m.dir, fade = T.clamp(m.k / 0.35);
+    ctx.save(); ctx.strokeStyle = P.ink; ctx.lineCap = 'round'; ctx.lineWidth = T.LINE * 0.8; ctx.globalAlpha *= fade;
+    for (const [y, len] of [[-585, 1], [-535, 0.8], [-485, 0.6]]) {
+      ctx.beginPath(); ctx.moveTo(side * HW * 0.9, y); ctx.lineTo(side * (HW + SMEAR_STEP * SMEAR_COPIES.length * m.k * len), y); ctx.stroke();
+    }
+    ctx.restore();
+    for (let i = SMEAR_COPIES.length; i >= 1; i--) { // farthest copy first, so nearer copies overlap it
+      ctx.save(); ctx.globalAlpha *= SMEAR_COPIES[i - 1] * fade; ctx.translate(side * SMEAR_STEP * i * m.k, 0);
+      T.filtered(ctx, 'none', (g) => { hairBack(g, c, s.seed, sh); hairFront(g, c, s.seed, sh, view); headwear(g, c, s.lt, sh, view); });
+      ctx.restore();
+    }
+  }
+
+  // s: { view, expr, mouthKind (talk override), blink, gazeX, lt, seed, smear }
   function draw(ctx, c, s) {
     const view = s.view, sh = VIEW_SHIFT[view] ?? 0.24, fx = sh * HW + (view === 'front' ? s.gazeX : s.gazeX * 0.4);
     const e = exprOf(s.expr);
     if (c.headShape && T.drawAltHead && T.drawAltHead(ctx, c, s)) { headwear(ctx, c, s.lt, sh, view); return; }
+    if (s.smear) hairSmear(ctx, c, s, sh, view);
     hairBack(ctx, c, s.seed, sh);
     if (c.flag && T.drawFlagHead) T.drawFlagHead(ctx, c, headPath, sh);
     else T.outlined(ctx, headPath, c.skin, {

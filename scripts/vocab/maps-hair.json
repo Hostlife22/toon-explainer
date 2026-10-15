@@ -1,0 +1,12 @@
+{
+  "_about": "map-overlays.js route marks (`drops` on tokens, routes, trails, squads, moving camps and walking figures; icons blast and dot) and face.js hair smear (bean `smear`). Fields are not validated by spec.py; they are listed in _fields for documentation and checked in JS.",
+  "kinds": {
+    "map_icon": ["blast", "dot"]
+  },
+  "registry": { "map_icon": "TOON.MAP_ICONS" },
+  "_fields": {
+    "map_mover": ["drops.every", "drops.icon", "drops.size", "drops.life", "drops.after", "drops.pop", "drops.spin", "drops.color", "drops.afterColor"],
+    "drop_after": ["smoke", "none", "any map icon or T.PROPS kind"],
+    "bean": ["smear.at", "smear.dur", "smear.dir", "smear.strength"]
+  }
+}

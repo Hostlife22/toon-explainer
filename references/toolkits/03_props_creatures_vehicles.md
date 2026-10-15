@@ -2,7 +2,7 @@
 
 In a word: give the narration physical things to point at. A treaty flexes its arms, a signpost spins to a new name, a cage drops on the accused, a crown is lowered by helicopter, a wolf sits at the door and a tank rolls into frame.
 
-Engine: `scripts/engine/lib/props/props.js`, `props/props-world.js`, `props/props-gags.js`, `props/vehicles.js`, `props/vehicles-machines.js`, `scripts/engine/lib/creatures/quadrupeds.js`, `creatures/spirits.js`, `creatures/animals-objects.js`, `scripts/engine/lib/base/widgets.js` · Vocabulary: `scripts/vocab/props.json`, `scripts/vocab/vehicles.json`, `scripts/vocab/creatures.json`, the `props` list of `scripts/vocab/places.json`, plus `KNOWN_PROPS` and the `prop` / `image` / `card` / `sign` / `calendar` layer types in `scripts/spec.py` · Example films: [`examples/props_creatures/spec.json`](../../examples/props_creatures/spec.json) (34 shots, one per feature), [`examples/places_tour/spec.json`](../../examples/places_tour/spec.json) (vehicles), [`examples/eras_wardrobe/spec.json`](../../examples/eras_wardrobe/spec.json) (horses, reaper, birds, skeleton); render any of them with `--sheet` to browse · Related cards: [01 Characters](01_characters.md) (the bean that holds props, `pose: "sit"`, `cradle`), [02 Acting](02_acting.md) (`prohibit` sign, off-screen arms, `drop-squash` and other entrances), [04 Places](04_places.md) (rooms and floors to stand props on), [06 Paper and lettering](06_paper_and_lettering.md) (labels and number cards next to an object), [08 FX and tone](08_fx_and_tone.md) (impact FX, smoke, fire), [09 Transitions and lens](09_transitions_and_lens.md) (sub-shots and POV masks) · Shared layer fields (`at`, `out`, `x`, `y`, `scale`, `rot`, `flip`, `move`, `swap`, `jitter`, `swing`, `blur`, `enter`, `exit`): [03-spec-reference.md](../03-spec-reference.md).
+Engine: `scripts/engine/lib/props/props.js`, `props/props-world.js`, `props/props-gags.js`, `props/props-extra.js`, `props/vehicles.js`, `props/vehicles-machines.js`, `scripts/engine/lib/creatures/quadrupeds.js`, `creatures/spirits.js`, `creatures/animals-objects.js`, `scripts/engine/lib/base/widgets.js` · Vocabulary: `scripts/vocab/props.json`, `scripts/vocab/props-extra.json`, `scripts/vocab/vehicles.json`, `scripts/vocab/creatures.json`, the `props` list of `scripts/vocab/places.json`, plus `KNOWN_PROPS` and the `prop` / `image` / `card` / `sign` / `calendar` layer types in `scripts/spec.py` · Example films: [`examples/props_creatures/spec.json`](../../examples/props_creatures/spec.json) (34 shots, one per feature), [`examples/places_tour/spec.json`](../../examples/places_tour/spec.json) (vehicles), [`examples/eras_wardrobe/spec.json`](../../examples/eras_wardrobe/spec.json) (horses, reaper, birds, skeleton); render any of them with `--sheet` to browse · Related cards: [01 Characters](01_characters.md) (the bean that holds props, `pose: "sit"`, `cradle`), [02 Acting](02_acting.md) (`prohibit` sign, off-screen arms, `drop-squash` and other entrances), [04 Places](04_places.md) (rooms and floors to stand props on), [06 Paper and lettering](06_paper_and_lettering.md) (labels and number cards next to an object), [08 FX and tone](08_fx_and_tone.md) (impact FX, smoke, fire), [09 Transitions and lens](09_transitions_and_lens.md) (sub-shots and POV masks) · Shared layer fields (`at`, `out`, `x`, `y`, `scale`, `rot`, `flip`, `move`, `swap`, `jitter`, `swing`, `blur`, `enter`, `exit`): [03-spec-reference.md](../03-spec-reference.md).
 
 ## ① When to use it
 
@@ -19,6 +19,8 @@ Engine: `scripts/engine/lib/props/props.js`, `props/props-world.js`, `props/prop
 | "On closer inspection" | `magnifier` with `reveal` | Revealed layers stay in world position |
 | "It was a game on a TV in a room"; "the news showed" | `crt` / `monitor` with `screen` + `pullback`; `smartphone`; `phone` `style: "smart"` | The screen plays another shot of the film |
 | "Night after night"; "time was running out"; "days passed" | `window-cycle`, `wall-calendar` `cross`, `clock` `fast`, `calendar` count, `hourglass` | Pair with a shot `grade` timeline |
+| Money buys the verdict, "justice for sale" (a pun close-up) | `coin-gavel` with `strike` | Hold it in a bean hand or fill the frame with it |
+| A strategy game, a board of territories | `iso-tile` rows with `building` and `owner` | Draw back tiles first |
 | Chance, fate, succession by lot | `prize-wheel` `spin`, `coin-flip` (`split` for a broken deal) | Both are deterministic |
 | Strategy, an offensive, a frozen front | `chess` `topple`, `bowling-ball` + `pins`, `ice-block` over a bean | |
 | Small handheld actions | `bottle` `pour`, `broom` `sweep`, `scissors` `snip`, `cleaver` `chop`, `remote` / `big-button` `press`, `phone` `ring`, `whistle` `on`, `magnet` `attract` | All work as bean `hold` items too |
@@ -33,7 +35,7 @@ Engine: `scripts/engine/lib/props/props.js`, `props/props-world.js`, `props/prop
 
 - **Ink and shade come for free.** Every kind draws through `T.outlined`: dark-brown ink (`#2a1c15`), one flat shade tone per colour, no gradients except glows, screens and the cleaver blade. When you pass `color`, pick a mid-saturation colour; the shade is derived from it.
 - **Sizes that read at 1080p.** Hand props 160–300 px; a prop that is the subject of the shot 380–640 px; furniture 420–640; beans in the examples are 330–420 px, so a throne at 640 seats a 330-px king. Creatures 150 (snail, bird) to 470 (elephant); a jump-scare reaper 1400–1600 at `y` ≈ 1.5. Vehicles 300 (rowboat, cart) to 1100 (a three-car train). Lettering on props should still come out 56 px or more; `fitSize` shrinks text that does not fit, so shorten the text rather than trusting the shrink.
-- **Origin.** Ground props stand with their bottom centre on (`x`, `y`): set `y` to the floor line (≈ 0.88). They are `signpost`, `fork-signs`, `throne`, `bed`, `lectern`, `easel`, `deckchair`, `coffin`, `crib`, `dinner-table`, `armchair`, `cage`, `door`, `gate`, `portcullis`, `coin-heap`, `big-button`, `bowling-ball`, `pins`, `chess`, `ice-block`, `clock`, `emblem3d`, `stat-block` and `prize-wheel` (`TOON.PROP_GROUND`). Every other prop is centred on (`x`, `y`) so a hand can hold it: a centred `crate` or `barrel` is 0.9 × `size` tall, so stand it on a floor with `y = floorY − 0.45 × size / 1080`, and its top is at `y − 0.45 × size / 1080`. Vehicles and creatures stand on (`x`, `y`) (ground or waterline contact); `image` uses `anchor` (bottom centre by default); `card`, `calendar` are centred; `sign` stands on its post foot.
+- **Origin.** Ground props stand with their bottom centre on (`x`, `y`): set `y` to the floor line (≈ 0.88). They are `signpost`, `fork-signs`, `throne`, `bed`, `lectern`, `easel`, `deckchair`, `coffin`, `crib`, `dinner-table`, `armchair`, `cage`, `door`, `gate`, `portcullis`, `coin-heap`, `big-button`, `bowling-ball`, `pins`, `chess`, `ice-block`, `clock`, `emblem3d`, `stat-block`, `prize-wheel`, `iso-tile` and `meat-grinder` (`TOON.PROP_GROUND`). Every other prop is centred on (`x`, `y`) so a hand can hold it: a centred `crate` or `barrel` is 0.9 × `size` tall, so stand it on a floor with `y = floorY − 0.45 × size / 1080`, and its top is at `y − 0.45 × size / 1080`. Vehicles and creatures stand on (`x`, `y`) (ground or waterline contact); `image` uses `anchor` (bottom centre by default); `card`, `calendar` are centred; `sign` stands on its post foot.
 - **Three planes.** Background (`bg`), midground (beans, props, creatures, vehicles), foreground (`fg` from [04](04_places.md)). Layer order is draw order: a cage, a lectern, an ice block or the `throne` `part: "front"` must come after the bean they cover.
 - **Safe frame.** Keep everything that must read inside 3.5 % of the edges; vehicles that drive through may start and end off-frame (`x` −0.1 → 1.1).
 - **Facing.** Creatures and vehicles face screen right; use `flip: true` (any layer) or `dir: -1` (vehicles) to face left. Keep three-quarter readability: animals are drawn in profile with a 3/4 eye, beans riding them default to `view: "3q"`.
@@ -91,7 +93,7 @@ Times inside a layer are layer-local (they count from the layer's `at`). A field
 
 | Kind | Fields (defaults) | Motion |
 |---|---|---|
-| `signpost` | `text` (`\n` breaks a line), `arrow` (`false` \| `"left"` \| `"right"`), `tilt` (−6°), `post` (true), `stake` (true), `w` (= `size`), `h` (0.42 × `size`), `color` (`#b07a3c`), `textColor` (`#3a2414`), `stack: ["TEXT", ...]` (joke planks below), `turn` (event `{at, text, dir: -1, arrow}`) | Wobbles ±1° at 0.5 Hz. `turn`: 1 frame of +15° anticipation, 22-frame pinwheel spin with 4 ghost copies, lands on `turn.text` with the arrow mirrored when `dir` is −1 (or set to `turn.arrow`), settles over 6 frames |
+| `signpost` | `text` (`\n` breaks a line), `arrow` (`false` \| `"left"` \| `"right"`), `tilt` (−6°), `post` (true), `stake` (true), `w` (= `size`), `h` (0.42 × `size`), `color` (`#b07a3c`), `textColor` (`#3a2414`), `stack: ["TEXT", ...]` (joke planks below), `turn` (event `{at, text, dir: -1, arrow}`; a 1-frame lean and a 22-frame pinwheel spin, the new text lands 23 frames after `at`, so start it 0.77 s before the word) | Wobbles ±1° at 0.5 Hz. `turn`: 1 frame of +15° anticipation, 22-frame pinwheel spin with 4 ghost copies, lands on `turn.text` with the arrow mirrored when `dir` is −1 (or set to `turn.arrow`), settles over 6 frames |
 | `fork-signs` | `left` (`LEFT`), `right` (`RIGHT`), `colorL` (`#b07a3c`), `colorR` (`#9a6a34`), `textColor`, `w` (0.62 × `size`), `stake` | Two arrow planks on one post pointing apart |
 | `marquee-arrow` (centred) | `text`, `curve` (0.4), `color` (`#3a1426`), `bulb` (`#ff7ad9`) | Curved thick arrow, 14 bulbs chasing in threes at 10 Hz, wobble ±2° at 1 Hz. Aim with `rot` |
 
@@ -119,6 +121,16 @@ Times inside a layer are layer-local (they count from the layer's `at`). A field
 | `gate` | `close` (event, `dur` 0.33) or `open` (event, `dur` 0.6), `behind`, `color` (`#5a5040`) | Two plank leaves in a stone arch; on closing a pale 12-spike starburst for 7 frames, ticks and dust |
 | `portcullis` | `drop` (event `{at, dur}`), `dur` (0.85), `bars` (7), `arch` (true), `behind` | The bars grow down (ease.in) with a 2 % overshoot in the last 3 frames. Without `drop` it drops at 0 |
 
+**Claw, awards and grinder** (`props-extra.js`; centred except the ground-standing grinder)
+
+| Kind | Fields (defaults) | Look and motion |
+|---|---|---|
+| `claw-crane` | `load` (optional prop-kind string), `drop: {at: 0, dur: 0.53, from: 0.6}` (these defaults also apply when omitted), `releaseAt` (`drop.at + drop.dur`), `color` (`#d0d4dc`) | Cable reaches the top edge, including vertical frames. Layer origin is the load's rest centre; the load is drawn at 0.5 × `size` with ground origins adjusted to centre. `drop.from` is a fraction of `size` above rest; lower over `dur` seconds, open over 0.1 s at `releaseAt`, leave the load at rest and raise the claw by `from` over 0.4 s. Schedule release after lowering. Use `enter: "none"` for this measured action |
+| `rosette` | `text` (`AWARD`; `\n` splits lines), `color` (`#c8323a`), `ribbon` (same as `color`; `ribbonColor` is an alias, `ribbon` takes precedence), `swing` (false; set true for the shared layer pendulum: ±8°, 1.2 s period, decay 2.2) | Pleated red badge, cream text centre, two ribbon tails. Pin a separate prop layer over a character's chest; shorten the text or split it across lines for phone readability |
+| `meat-bone` | `color` (`#c0503a`) | Neutral cartoon ham and cream bone, centred; works as bean `hold` / `holdL` |
+| `bucket` | `color` (`#9aa3ab`), `tilt` (0°, number or numeric timeline), `upside` (false) | Metal pail and arched handle, centred with the complete silhouette about `size` tall. `upside: true` adds 180° for a hat; position a separate layer over the head. Works as bean `hold` / `holdL` at their standard 170 px size |
+| `meat-grinder` (ground) | `crank` (`[]`, active windows `[[a,b], ...]`), `extrude` (absent; when set: `{at: 0, dur: 2, len: 600, color: "#c0503a"}`), `feed` (optional prop-kind string), `feedAt` (0) | Bottom-centre stand, hopper, hand crank and right-facing nozzle. Crank makes one turn per 0.6 active seconds on twos, pauses between windows and resumes; overlapping windows count once. Sausage grows horizontally to `extrude.len` logical px (independent of `size`), with pinches every 90 px. `feed` is 0.3 × `size`, waits above the hopper, then sinks out of sight in 0.53 s from `feedAt`. Use `flip` for a left-facing nozzle |
+
 **Handheld gag props** (centred, so they work as `hold` items)
 
 | Kind | Fields (defaults) | Motion |
@@ -139,6 +151,8 @@ Times inside a layer are layer-local (they count from the layer's `at`). A field
 | `boxing-glove` | `color` (`#c8302a`), `badge` (`true` or a list of stripe colours) | |
 | `chain` | `w` (= `size`), `link` (1, link scale), `scroll` (0 px/s), `ball`, `color` (`#8a8a92`) | Face-on and edge-on links; `scroll` drags the chain |
 | `coin-heap` (ground) | `count` (34), `chest`, `color` (`#f2c230`) | Seeded coins and banknotes; 3 glints jump at 7.5 Hz |
+| `coin-gavel` | `color` (`#f2c230` gold), `wood` (`#8a5a34`), `strike: [t, ...]` | A judge's gavel whose head is a stack of gold coins seen edge-on, a `$` coin face on the end and a glint. Each `strike` swings the head down 25° in 3 frames and back in 4 |
+| `iso-tile` (ground) | `color` (`#7cbf4a` grass), `earth` (`#8a5a34`), `depth` (0.2 of `size`), `owner` (border colour), `building` (`"none"` \| `"house"` \| `"tower"`) | Isometric strategy-game tile: a 2:1 grass diamond `size` wide on a thick earth slab, a grass lip, seeded tufts; `owner` draws a coloured border diamond inset on the top, and the tower flag takes the owner colour. Neighbours sit `size`/2 apart in x and `size`/4 apart in y |
 | `binoculars` | `color` (`#2e2e34`), `eyes` | Three-quarter view, 2 px hand jitter at 4 Hz; `eyes` puts a pupil in the front lens |
 | `white-flag` | `color` (`#f6f3ee`) | Cloth waves at 1.2 Hz |
 | `cleaver` | `chop: {at, from: -25, to: 35, dur: 0.8}` | Rotates about the wrist (outBack) |
@@ -314,6 +328,7 @@ All counts at 30 fps; field values are seconds unless marked.
 | Easel chart | 45 (1.5 s) draw + 4 crash | `chart.at`, `chart.dur`; `flipAt` page flip 6 |
 | Bottle pour | 15 (0.5 s) | `pour.dur` |
 | Scissors snip | 2 shut + 4 open | `snip` |
+| Coin-gavel strike | 3 down + 4 back | `strike` |
 | Button press | 3 sink | `press` |
 | Bowling roll | `wobble` (13) rock + 4 launch | `roll`; pins `hit.at = roll.at + (wobble + 4) / 30` |
 | Chess / emblem topple | 7 fall (+ 6 shake for emblems) | `topple.at` |
@@ -344,6 +359,12 @@ All counts at 30 fps; field values are seconds unless marked.
 Shot length guide: a prop gag beat (land, react) fits in 2.5–3.5 s; a vehicle crossing the frame 3–3.5 s; a reaper fade-in uses `enterDur` 2.5 inside a 4 s shot.
 
 ## ⑤ Recipes
+
+- **Claw delivery:** `{"type":"prop","kind":"claw-crane","x":0.5,"y":0.5,"size":420,"enter":"none","load":"pawn","drop":{"at":0.2,"dur":0.53,"from":0.6},"releaseAt":0.73}` lowers, releases and retracts; align the rest centre with a throne seat for a coronation gag.
+- **Unmerited award:** `{"type":"prop","kind":"rosette","x":0.52,"y":0.59,"size":260,"text":"DID NOTHING\nWRONG\nAWARD","swing":true}` goes after the bean, pinned over its chest.
+- **Neutral food icon:** `{"type":"prop","kind":"meat-bone","x":0.5,"y":0.5,"size":360,"color":"#c0503a"}`; a bean can instead use `"hold":"meat-bone"`.
+- **Bucket helmet:** `{"type":"prop","kind":"bucket","x":0.5,"y":0.36,"size":220,"upside":true,"tilt":-8}` goes over the head; use `"hold":"bucket"` on a bean for a carried pail.
+- **Grinder metaphor:** `{"type":"prop","kind":"meat-grinder","x":0.35,"y":0.88,"size":440,"enter":"none","crank":[[0.5,2.5]],"feed":"pawn","feedAt":0.5,"extrude":{"at":0.7,"dur":2,"len":600,"color":"#c0503a"}}` turns a neutral game piece into linked sausage.
 
 **1. "The treaty flexed its muscles"** (an abstraction acts): a personified scroll sprouts arms on the verb.
 ```json
@@ -422,7 +443,7 @@ For a whole charge use a `crowd` with `creature: "horse"` and `gallop: true` ([0
   "expr": [{"at": 0, "v": "neutral"}, {"at": 2.8, "v": "smile"}], "pose": [{"at": 0, "v": "idle"}, {"at": 2.8, "v": "sign"}]},
  {"type": "creature", "kind": "raven", "x": 0.12, "y": 0.4, "size": 140, "headTurn": true}]
 ```
-Jump-scare variant: hard cut, black `flat` bg, `reaper` at `size` 1500, `y` 1.5, `pose: "reach"`, `expr: "menace"`, `enter: "none"`, camera shake.
+Jump-scare variant: hard cut, black `flat` bg, `reaper` at `size` 1500, `y` 1.5, `pose: "reach"`, `expr: "menace"`, `enter: "none"`. The horror reference holds it **dead still for 4.2 s** (no shake, `camera.zoom` [1, 1]) and leaves through `fade-white` (The God of Horror 13:03.2); a short `camera.shake` is the louder, comic variant.
 
 **13. "A new weapon appeared"**: a tank drives in from the frame edge.
 ```json
@@ -464,6 +485,13 @@ Cut on a `zoom-punch` to the shocked soldier ([09](09_transitions_and_lens.md)).
 ```json
 {"type": "image", "src": "assets/c_idle.png", "frames": {"idle": "assets/c_idle.png", "talk": "assets/c_talk.png", "blink": "assets/c_blink.png"},
  "w": 520, "anchor": [0.5, 1], "x": 0.3, "y": 0.92, "talk": [[0.5, 2.5]]}
+```
+
+**20. "Justice was for sale"**: a coin gavel strikes on the verdict word over a board of owned tiles.
+```json
+{"type": "prop", "kind": "iso-tile", "x": 0.62, "y": 0.8, "size": 380, "building": "tower", "owner": "#c8302a"},
+{"type": "prop", "kind": "iso-tile", "x": 0.8, "y": 0.8, "size": 380, "building": "house", "owner": "#3a6ea5"},
+{"type": "prop", "kind": "coin-gavel", "x": 0.3, "y": 0.5, "size": 520, "enter": "drop-squash", "strike": [1.2]}
 ```
 
 ## ⑥ Limits and pitfalls

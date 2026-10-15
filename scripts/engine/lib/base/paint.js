@@ -183,7 +183,10 @@
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, T.W, T.H);
     } else if (st.vignette !== false) {
-      const g = ctx.createRadialGradient(T.W / 2, T.H / 2, T.H * 0.45, T.W / 2, T.H / 2, T.H * 1.05);
+      // Centred on the visible frame (vertical films see a strip at env.frameX); radii follow its half-diagonal.
+      const [lo, vw] = T.visibleSpan(env), cx = lo + vw / 2, d = Math.hypot(vw / 2, T.H / 2);
+      const g = env.frameX == null ? ctx.createRadialGradient(T.W / 2, T.H / 2, T.H * 0.45, T.W / 2, T.H / 2, T.H * 1.05)
+        : ctx.createRadialGradient(cx, T.H / 2, d * 0.44, cx, T.H / 2, d * 1.03);
       g.addColorStop(0, 'rgba(0,0,0,0)');
       g.addColorStop(1, `rgba(30,10,0,${st.vignette ?? 0.28})`);
       ctx.fillStyle = g;

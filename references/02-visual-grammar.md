@@ -6,7 +6,7 @@ The recipes below (A–P) are the core grammar. Topic-specific recipes live with
 
 ## Pacing rules (from the reference measurements)
 
-1. A shot lasts 1.5–4 s. If a line runs longer than 5 s, split the shot into 2–3 internal beats: a pose change (`pose:[{at,v}]`), a pop-in caption (`at`), a punch-zoom (`camera.punch`).
+1. Something new happens on screen every 1.5–3.5 s; a shot itself may last 2–8 s (the references' median shot is 3.0–7.1 s) if it carries those events. If a line runs longer than 5 s on one framing, give it 2–3 internal beats: a pose change (`pose:[{at,v}]`), a pop-in caption (`at`), a punch-zoom (`camera.punch`).
 2. Every shot moves:
    - the camera always drifts (default `zoom [1, 1.04]`);
    - the character at least breathes and blinks (automatic);
@@ -97,7 +97,7 @@ Dark preset (`night`, `storm`), villain large from below (`size` 750+, `y` 1.02)
 - face close-up (`size` 1100, `y` 1.35 — head fills the frame);
 - detail (`prop` large);
 - reaction (`burst` + `shock`).
-Speed up toward the climax (as in the reference, median 0.87 s).
+Speed up toward the climax of a comic argument or a fight (shots of 0.1–1.6 s, then a 2–4 s outcome hold); a serious episode may instead escalate through content and holds (see 07-story-craft §2.3).
 
 ### I. Twist ending (addressing "you")
 A viewer-stand-in character `who:"you"` (neutral clothing), `expr:"worried"`, then `"neutral"`. The key phrase appears letter by letter as a `title`. The last shot uses `fade-black`, with the camera slowly pulling out: `zoom [1.08, 1.0]`.

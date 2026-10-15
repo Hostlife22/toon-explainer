@@ -346,3 +346,64 @@ def test_frames_do_not_depend_on_render_order():
     finally:
         srv.shutdown()
     assert fresh == again
+
+
+# ---------- vertical (9:16) format ----------
+VERTICAL = {"seed": 5, "format": "vertical", "shots": [
+    {"id": "v1", "dur": 2, "bg": {"kind": "city"}, "frame": [{"at": 0, "v": 0.25}, {"at": 1, "v": 0.75}],
+     "layers": [{"type": "bean", "x": 0.25, "y": 0.95, "size": 600}],
+     "pinned": [{"type": "title", "text": "STEP 1", "x": 0.5, "y": 0.15, "size": 70, "at": 0}]},
+    {"id": "v2", "dur": 1, "transition": "whip", "bg": {"kind": "sky"}}]}
+
+
+@pytest.mark.parametrize("mutate, message", [
+    (lambda s: s.update(format="square"), "format 'square'"),
+    (lambda s: s.update(format=[]), "format []"),
+    (lambda s: s.update(width=1920), "width must be 1080 for format 'vertical'"),
+    (lambda s: s.pop("format"), "frame only applies to vertical films"),
+    (lambda s: s["shots"][0].update(frame="left"), "frame"),
+    (lambda s: s["shots"][0].update(pinned={"type": "title"}), "pinned must be a list"),
+    (lambda s: s["shots"][0]["pinned"].append({"type": "laser"}), "unknown layer type"),
+    (lambda s: s["shots"][0]["pinned"].append({"type": "fx", "kind": "marks", "target": "ghost"}), "target 'ghost'"),
+    (lambda s: s["shots"][0]["layers"].append({"type": "fx", "kind": "marks", "target": "p1"}) or s["shots"][0]["pinned"].append({"type": "title", "id": "p1", "text": "X"}), "target 'p1'"),
+    (lambda s: s["shots"][0].update(layers={"a": {"type": "title"}}), "layers must be a list"),
+])
+def test_validate_catches_vertical_mistakes(mutate, message):
+    spec = copy.deepcopy(VERTICAL)
+    assert validate(spec) == []
+    mutate(spec)
+    assert any(message in e for e in validate(spec)), validate(spec)
+
+
+def test_vertical_render_is_9x16_deterministic_and_frame_pans(tmp_path):
+    Image = pytest.importorskip("PIL.Image")
+    p = tmp_path / "v.json"
+    p.write_text(json.dumps(VERTICAL))
+
+    def stills(name):
+        out = tmp_path / name
+        r = subprocess.run([sys.executable, str(ROOT / "scripts" / "render.py"), str(p), "--stills", "0.0,1.5,2.1",
+                            "--scale", "0.25", "--out", str(out)], capture_output=True, text=True)
+        assert r.returncode == 0, r.stdout[-800:] + r.stderr[-800:]
+        return sorted(out.glob("*.png"))
+
+    a, b = stills("a"), stills("b")
+    assert [x.read_bytes() for x in a] == [x.read_bytes() for x in b]
+    assert Image.open(a[0]).size == (270, 480)
+    assert a[0].read_bytes() != a[1].read_bytes()  # frame moved from x 0.25 to 0.75
+
+
+def test_vertical_whip_slides_only_the_visible_strip(tmp_path):
+    Image = pytest.importorskip("PIL.Image")
+    spec = {"format": "vertical", "style": {"vignette": False, "grain": False}, "shots": [
+        {"id": "red", "dur": 1, "bg": {"kind": "flat", "color": "#ff0000"}},
+        {"id": "blue", "dur": 1, "transition": "whip", "bg": {"kind": "flat", "color": "#0000ff"}}]}
+    p = tmp_path / "w.json"
+    p.write_text(json.dumps(spec))
+    out = tmp_path / "s"
+    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "render.py"), str(p), "--stills", "1.0", "--scale", "0.25", "--out", str(out)],
+                       capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout[-800:] + r.stderr[-800:]
+    img = Image.open(next(out.glob("*.png"))).convert("RGB")
+    red, _, blue = img.getpixel((img.width // 2, img.height // 2))
+    assert red > 150 and blue < 60  # first frame of the whip: the outgoing shot only, no blend with the incoming one

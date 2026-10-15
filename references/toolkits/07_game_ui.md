@@ -37,7 +37,7 @@ Engine: `scripts/engine/lib/game/game-ui.js` (`hud` and `cursor` layers, game-sc
 - **Flat, not cartoon ink.** Game UI is drawn the way the reference draws it: a cold UI ink (`#1a1a1f`), bevelled buttons (darker bottom band, thin white top line), white caps with a dark outline. Only `meanwhile` and `tbc` use the warm character ink. Do not add outlines or grades to make it match the characters; the contrast is the joke.
 - **Screen-locked by default.** `hud` kinds and full-frame `doc` cards ignore the camera; `hud: false` puts them in world space (score popups over a character, a marker that should zoom with the scene). The `cursor` is screen space unless `hud: false`.
 - **No entrance needed.** Every kind animates its own entrance, so the default `enter` is `none` for `hud`, `cursor` and `doc`. Adding `pop` makes it pop twice.
-- **Safe frame.** Corner widgets sit 40 px (3.5 %) from the edge. Default anchors apply only when both `x` and `y` are omitted (per axis for `notice`, `meter`, `counter`, `warning`, `hearts`).
+- **Safe frame.** Corner widgets sit 40 px (3.5 %) from the edge of the visible frame (in a vertical film, the edge of the 607.5-px strip; see [11-vertical-shorts](../11-vertical-shorts.md)). Default anchors apply only when both `x` and `y` are omitted (per axis for `notice`, `meter`, `counter`, `warning`, `hearts`).
 - **Readable sizes.** Labels should be at least 56 px and captions at least 44 px ([05-workflow](../05-workflow.md) QA). Two defaults copy real game UI and are smaller: `notice` 26 px and `chip` 30 px. When the narration depends on the word, raise them: `notice` `size` 44–56, `chip` `size` 34–40 (keep the text short; it grows wide), `counter` 64 or more. Leave decorative chatter at the defaults.
 - **Full-frame cards** (`versus`, `challenger`, `joins`, `meanwhile`, `loading`, `insert`) paint their own backdrop; a plain `flat` `bg` is enough. Busts are ordinary beans drawn without legs; `who` and `look` work as elsewhere.
 - **Use sparingly.** One game device per beat; two or three per minute of film. The device is a frame around the story, not the story.
@@ -50,8 +50,9 @@ Screen-locked unless `hud: false` (`marker` is the exception: world space unless
 
 | `kind` | Fields (defaults) | Default anchor | Effect and timing |
 |---|---|---|---|
+| `ecg` | `w` 700, `h` 220, `bpm` 70 (constant or `[{at, v}]` through `T.num`), optional `flatAt` (layer seconds), `color` `#3fe07a`, `grid` true; common `x`, `y`, `scale`, `hud` apply | Bottom-right of `T.visibleSpan(env)`, 40 px inset when both `x` and `y` are omitted; auto-fits narrow frames. Explicit `x` / `y` position the strip centre | Deterministic heart-monitor trace scrolls left at 160 px/s. BPM and trace follow the keyed rate. The number counts down linearly over the final 0.6 s before `flatAt`; at `flatAt` it reads 0, the entire trace is flat, and trace, status and beep indicator turn red with a `FLAT` label. The indicator is visual; no audio is generated. `grid: false` hides grid lines. Implemented by `scripts/engine/lib/paper/screens.js`; vocabulary `scripts/vocab/screens.json` |
 | `notice` | `lines: [{at, text, color, icon}]` (or one `text` at 0), `life` 1.5, `size` 26, `max` 4, `color` #fff | `x` 0.02, `y` 0.94 (bottom-left of the newest line) | System log. A line slides 30 px in over 6 f on a dark translucent strip; older lines rise one row over 6 f; a line fades over 10 f after `life`; at most `max` lines. `icon` is a prop kind. |
-| `meter` | `label`, `labelSize` 40, `labelColor` #e0313a, `value` (0..1, keys), `w` 520, `h` 44, `style` `hazard` / `solid`, `color` (#f5c518 hazard, #5ad84a solid), `warnAt` 0.9 | `x` 0.04, `y` 0.1 (bar top-left) | Pops in over 6 f. Value changes ease (outBack) over 8 f. Hazard stripes scroll 1 px per frame. At `warnAt` or above a red triangle blinks 6 f on / 6 off; at 1.0 the bar shakes ±3 px on twos. |
+| `meter` | `orient` (`vertical`: the bar stands on the side edge and fills bottom-up; then `w` is the thickness 44 and `h` the length 520; default anchor x 0.06 of the visible frame (also in vertical films), y 0.3; reference: a falling meter beside a personified abstraction in the Zeppelin short), `label`, `labelSize` 40, `labelColor` #e0313a, `value` (0..1, keys), `w` 520, `h` 44, `style` `hazard` / `solid`, `color` (#f5c518 hazard, #5ad84a solid), `warnAt` 0.9 | `x` 0.04, `y` 0.1 (bar top-left) | Pops in over 6 f. Value changes ease (outBack) over 8 f. Hazard stripes scroll 1 px per frame. At `warnAt` or above a red triangle blinks 6 f on / 6 off; at 1.0 the bar shakes ±3 px on twos. |
 | `counter` | `icon` `coin` (any prop; `false` hides), `value` (keys), `prefix` `x`, `suffix`, `size` 64, `sep` (`","` or `" "`), `compact` | `x` 0.05, `y` 0.08 (icon centre) | Pops in. Each step pops the number 1.4 → 1 over 6 f and flashes the icon white for 3 f. `compact: true`: 2100000000 → `2.1B`, 340000000 → `340M`, 12000 → `12K`. |
 | `warning` | `text` `WARNING`, `tilt` −4, `glitch`, `w` 880, `h` 110, `color` #d8262a | `x` 0.5, `y` 0.2 | Banner with two warning triangles; pop-tilt over 7 f. `glitch: true` slices it into 3 offset bands on twos for the first 0.5 s, then for 4 f every 1.2 s. |
 | `score` | `text` `+100`, `sub`, `color` #ffe84a (green #8cf05a), `size` 72, `rise` 40, `pixels` 7, `style` `pixel` / `bold`, `life` 0.8 | layer `x` / `y` | Popup: 0.6 → 1.2 (f4) → 1 (f6), rises `rise` px over 12 f, white squares scatter over 8 f, fades over the last 6 f. `pixel` draws blocky arcade lettering. Usually `hud: false`. |
@@ -150,6 +151,8 @@ All counts at 30 fps.
 | Slides | 1.2 s per slide, cursor move 0.4 s | `every` |
 
 ## ⑤ Recipes
+
+**A heartbeat stops on the reveal.** `{"type":"hud","kind":"ecg","bpm":[{"at":0,"v":70},{"at":2,"v":110}],"flatAt":3.5}`. Omit `x` and `y` for a visible-frame corner anchor, including vertical shorts. For messenger `chat`, tier-board `tierlist`, and a bar-chart `grow` beat, see [06 Paper and lettering](06_paper_and_lettering.md).
 
 **"One by one, the soldiers deserted."** System log, raised for readability.
 ```json
@@ -250,8 +253,14 @@ All counts at 30 fps.
 - **Overlay time is not shot time.** `answerAt`, `stop` and `swap.at` inside an overlay count from the overlay's `from`.
 - **Overlays draw over transitions too.** Use `hideIn` for a shot that needs the corner (split screens, a finale with its own counter).
 - **`slides` renders other shots** of the same film; a slide showing its own shot fails (nesting is limited to 2 levels). Slides render slowly; keep 3–6.
-- **Busts are beans without legs,** drawn from the cast `who`; the validator does not check `who` inside `doc` side objects, so check the spelling against `cast`.
+- **Busts are beans without legs,** drawn from the cast `who`; the validator checks every nested `who` inside `doc` objects against `cast`.
 - **`versus` without `seam: "jagged"`** draws one shared burst; per-side `bg` colours only apply to the jagged layout.
 - **Game lettering does not auto-fit everywhere.** `notice` and `chip` grow with their text; long chip text runs off-frame. Keep game text to 2–4 words.
 - **`wheel` `steps` index into `items`;** an index past the end shows an empty label.
 - **Do not grade or blur game UI.** `hud`, `cursor` and `doc` are exempt from rack focus unless `focusable: true`; keep them sharp.
+
+### Measured against the reference (third study, 2026-10-15)
+
+- **`joins`:** the reference flashes 5 white frames, fades the name slab in over 2 f and holds about 1.27 s (WW1 25:19); the engine's card is close enough for most uses.
+- **`carousel`:** the reference snaps cards in 1 f with a 3 f chevron flash and a 2 f red select flash (WW1 4:09); the engine's 8 f bouncing slide is softer. For a snappier menu, give each card its own `at` and `enter: "none"`.
+- **Game UI as a frame story:** a whole long film can live inside a game (disc chapters, an "INSERT DISK #2" pause, a system antagonist that owns the frame; WW1). The UI disappears for the most serious segment and the host explicitly returns afterwards: drop the parody when the subject turns grave.

@@ -2,6 +2,10 @@
 
 Relation to the companion master prompt (MASTER_PROMPT.md, step 5 storyboard format): steps 1–5 of the master prompt produce the script-storyboard. This skill replaces or complements steps 6–7 (image and animation prompts): instead of 100+ generated images, most shots are **drawn and animated by code**. AI is needed only for unique characters and backgrounds (see 04).
 
+## Step 0: direct before writing shots
+
+If you start from a topic (no script yet) or the script is a list of facts, plan the film first with [09-directing.md](09-directing.md): central question → arc → meaning events → the visible action for each one → characters and locations → timing. Write the central question and the arc above the first `**Shot N**` (lines before the first shot are ignored by the parser) and put the shot card's "Happens / Changes" in each `- On screen:` line. For a 9:16 short also read [11-vertical-shorts.md](11-vertical-shorts.md) and add `"format": "vertical"` to the spec after `script2spec` builds it.
+
 ## Storyboard format
 
 One block per shot, with these labels:
@@ -72,7 +76,7 @@ uv run --with playwright python scripts/render.py film/spec.json --sheet film/sh
 ```
 `render.py` exits non-zero on any page error, including a failed script or image request (`[requestfailed]` in the log). An error such as `Unknown layer type "hud"` together with a failed request means an engine module did not load: re-run, and fix the path if the same file fails again.
 
-Review `sheet.jpg` (a frame at 75% of each shot):
+Review `sheet.jpg` (a frame at 75% of each shot; in a vertical film the tiles are 9:16):
 - text stays inside the frame;
 - labels do not cover faces;
 - characters stand on the ground;

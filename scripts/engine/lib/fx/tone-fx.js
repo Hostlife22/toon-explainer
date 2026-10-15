@@ -31,11 +31,40 @@
       ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(c, 0, y, cv.width, h, dx, y, cv.width, h); ctx.restore();
     }
   }
+  // Extra looks measured later: 'tear' (rows torn sideways like a corrupted video), 'blackout' (the lower part of the
+  // frame drops to black; horror biography 11:59), and flat 'black' / 'gray' / 'white' frames for a stepped fade
+  // (WW1 disc swap: black, grey, then white). style: 'corrupt' | 'stepped' picks a measured look list.
+  const STYLES = {
+    corrupt: ['tear', 'tear', 'blackout', 'normal', 'tear', 'blackout', 'blackout', 'gray-slice', 'tear'],
+    stepped: ['black', 'black', 'black', 'gray', 'gray', 'gray', 'white', 'white', 'white'],
+  };
+  function tear(ctx, seed) {
+    const cv = ctx.canvas, [c, k] = T.scratch('glitch', cv.width, cv.height), r = T.rng(T.hash(seed + ':tear'));
+    k.drawImage(cv, 0, 0);
+    const rows = 14 + Math.floor(r() * 10);
+    for (let i = 0; i < rows; i++) {
+      const y = Math.floor(r() * cv.height), h = Math.max(2, Math.floor(cv.height * (0.005 + r() * 0.03))), dx = Math.round((r() - 0.5) * 360 * (cv.width / W));
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(c, 0, y, cv.width, h, dx, y, cv.width, h);
+      if (r() < 0.3) { ctx.globalAlpha = 0.5; ctx.fillStyle = r() < 0.5 ? '#ff2a6a' : '#2affe0'; ctx.fillRect(0, y, cv.width, Math.max(1, h / 3)); }
+      ctx.restore();
+    }
+  }
   FX.glitch = (ctx, L, lt) => {
     const dur = L.dur ?? 0.6;
     if (lt > dur) return;
-    const f = f30(lt), look = (L.looks || LOOKS)[f % (L.looks || LOOKS).length], seed = (L.id ?? 'glitch') + f;
+    const list = L.looks || STYLES[L.style] || LOOKS;
+    const f = f30(lt), look = list[f % list.length], seed = (L.id ?? 'glitch') + f;
     if (look === 'normal') return;
+    if (look === 'black' || look === 'gray' || look === 'white') {
+      full(ctx); ctx.fillStyle = look === 'black' ? '#000000' : look === 'gray' ? '#7a7a7a' : '#ffffff'; ctx.fillRect(-10, -10, W + 20, H + 20); ctx.restore(); return;
+    }
+    if (look === 'tear') { tear(ctx, seed); return; }
+    if (look === 'blackout') {
+      tear(ctx, seed);
+      const r = T.rng(T.hash(seed + ':bo')), top = H * (0.45 + r() * 0.2);
+      full(ctx); ctx.fillStyle = '#000000'; ctx.fillRect(-10, top, W + 20, H - top + 10);
+      ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(-10, top - 3, W + 20, 3); ctx.restore(); return;
+    }
     if (look === 'gray-slice' || look === 'thermal' || look === 'posterize') {
       T.pixels(ctx, (d) => {
         for (let i = 0; i < d.length; i += 4) {
@@ -75,13 +104,28 @@
     full(ctx); ctx.globalCompositeOperation = 'multiply'; ctx.globalAlpha *= L.strength ?? 0.7;
     ctx.fillStyle = L.color ?? '#ff1010'; ctx.fillRect(0, 0, W, H); ctx.restore();
   };
-  FX.cctv = (ctx, L, lt) => {
+  FX.cctv = (ctx, L, lt, env) => {
     full(ctx);
     ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 6; ctx.lineCap = 'square';
-    const m = 60, len = 90;
-    [[m, m, 1, 1], [W - m, m, -1, 1], [m, H - m, 1, -1], [W - m, H - m, -1, -1]].forEach(([x, y, dx, dy]) => { ctx.beginPath(); ctx.moveTo(x, y + dy * len); ctx.lineTo(x, y); ctx.lineTo(x + dx * len, y); ctx.stroke(); });
-    ctx.font = T.font(44, 800); ctx.fillStyle = '#ffffff'; ctx.textAlign = 'left'; ctx.fillText(L.label ?? 'CAM 1', m + 30, m + 70);
-    if (Math.floor(lt * 2) % 2 === 0) { ctx.fillStyle = '#ff2a2a'; ctx.beginPath(); ctx.arc(W - m - 150, m + 56, 14, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#ffffff'; ctx.fillText('REC', W - m - 124, m + 70); }
+    const [lo, vw] = T.visibleSpan(env), m = 60, len = 90, x0 = lo + m, x1 = lo + vw - m; // corners of the visible frame
+    [[x0, m, 1, 1], [x1, m, -1, 1], [x0, H - m, 1, -1], [x1, H - m, -1, -1]].forEach(([x, y, dx, dy]) => { ctx.beginPath(); ctx.moveTo(x, y + dy * len); ctx.lineTo(x, y); ctx.lineTo(x + dx * len, y); ctx.stroke(); });
+    ctx.font = T.font(44, 800); ctx.fillStyle = '#ffffff'; ctx.textAlign = 'left';
+    if (L.variant === 'camcorder') {
+      // home-video camcorder: REC + running timecode top-left, battery top-right, centre crosshair (Rome 13:28)
+      if (Math.floor(lt * 2) % 2 === 0) { ctx.fillStyle = '#ff2a2a'; ctx.beginPath(); ctx.arc(x0 + 44, m + 56, 14, 0, Math.PI * 2); ctx.fill(); }
+      ctx.fillStyle = '#ffffff'; ctx.fillText(L.label ?? 'REC', x0 + 70, m + 70);
+      const sec = Math.floor((L.start ?? 0) + Math.max(0, lt)), tc = [Math.floor(sec / 3600), Math.floor(sec / 60) % 60, sec % 60].map((n) => String(n).padStart(2, '0')).join(':');
+      ctx.font = T.font(38, 800); ctx.fillText(tc, x0 + 30, H - m - 30);
+      const bx = x1 - 120, by = m + 40, cells = Math.round(T.clamp(L.battery ?? 0.75) * 3);
+      ctx.lineWidth = 5; ctx.strokeRect(bx, by, 90, 40); ctx.fillRect(bx + 90, by + 12, 8, 16);
+      for (let i = 0; i < cells; i++) ctx.fillRect(bx + 8 + i * 27, by + 8, 21, 24);
+      const cx = x0 + (x1 - x0) / 2, cy = H / 2;
+      ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(cx - 40, cy); ctx.lineTo(cx - 12, cy); ctx.moveTo(cx + 12, cy); ctx.lineTo(cx + 40, cy);
+      ctx.moveTo(cx, cy - 40); ctx.lineTo(cx, cy - 12); ctx.moveTo(cx, cy + 12); ctx.lineTo(cx, cy + 40); ctx.stroke();
+      ctx.restore(); return;
+    }
+    ctx.fillText(L.label ?? 'CAM 1', x0 + 30, m + 70);
+    if (Math.floor(lt * 2) % 2 === 0) { ctx.fillStyle = '#ff2a2a'; ctx.beginPath(); ctx.arc(x1 - 150, m + 56, 14, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#ffffff'; ctx.fillText('REC', x1 - 124, m + 70); }
     ctx.globalAlpha = 0.08; ctx.fillStyle = '#000';
     for (let y = 0; y < H; y += 4) ctx.fillRect(0, y, W, 2);
     ctx.restore();
@@ -115,14 +159,19 @@
   };
 
   // ---------- eyes in the dark ----------
-  // redeyes: { gap, size, color, on:[[a,b]] (visible windows), blink:[t...] }
+  // redeyes: { gap, size, color, on:[[a,b]] (visible windows), blink:[t...], close:{at, dur 0.8} } — `close` narrows
+  // the eyes to a slit and dims them to off over dur (slit first, the glow fades behind it), then they stay off.
   FX.redeyes = (ctx, L, lt) => {
     if (L.on && !L.on.some(([a, b]) => lt >= a && lt <= b)) return;
     if ((L.blink || []).some((t) => lt >= t && lt < t + 0.12)) return;
+    const cl = L.close == null || L.close === false ? null : typeof L.close === 'number' ? { at: L.close } : L.close;
+    const cp = cl ? T.prog(lt, cl.at ?? 0, cl.dur ?? 0.8) : 0;
+    if (cp >= 1) return;
+    const slit = 1 - 0.9 * T.ease.inOut(T.clamp(cp / 0.6)), dim = 1 - T.ease.in(cp);
     const gap = L.gap ?? 60, s = L.size ?? 22, col = L.color ?? '#ff2a2a';
-    ctx.save(); ctx.shadowColor = col; ctx.shadowBlur = ((L.bloom ?? 26) * (1 + Math.sin(lt * 6) * 0.15)) * T.DPR;
+    ctx.save(); ctx.globalAlpha *= dim; ctx.shadowColor = col; ctx.shadowBlur = ((L.bloom ?? 26) * dim * (1 + Math.sin(lt * 6) * 0.15)) * T.DPR;
     ctx.fillStyle = col;
-    for (const dx of [-gap / 2, gap / 2]) { ctx.beginPath(); ctx.ellipse(dx, Math.sin(lt * 2) * 3, s, s * 0.42, dx < 0 ? 0.18 : -0.18, 0, Math.PI * 2); ctx.fill(); }
+    for (const dx of [-gap / 2, gap / 2]) { ctx.beginPath(); ctx.ellipse(dx, Math.sin(lt * 2) * 3, s, s * 0.42 * slit, dx < 0 ? 0.18 : -0.18, 0, Math.PI * 2); ctx.fill(); }
     ctx.restore();
   };
   FX['eyes-white'] = (ctx, L, lt) => FX.redeyes(ctx, { ...L, color: L.color ?? '#ffffff', bloom: L.bloom ?? 10, size: L.size ?? 26 }, lt);

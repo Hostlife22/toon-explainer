@@ -164,16 +164,19 @@
     ctx.beginPath(); ctx.moveTo(x0, y0 + 10); ctx.lineTo(x0, y1 - 20); ctx.moveTo(x0 - 10, y0); ctx.lineTo(x1 + 20, y0); ctx.stroke();
     for (const [ax, ay, dx, dy] of [[x0, y1 - 30, 0, -1], [x1 + 30, y0, 1, 0]]) { ctx.beginPath(); ctx.moveTo(ax + dx * 18, ay + dy * 18); ctx.lineTo(ax - dy * 14, ay + dx * 14); ctx.lineTo(ax + dy * 14, ay - dx * 14); ctx.fill(); }
     if (L.yLabel) { ctx.save(); ctx.translate(x0 - 60, (y0 + y1) / 2); ctx.rotate(-Math.PI / 2); T.docText(ctx, L.yLabel, 0, 0, 40, { align: 'center', weight: 900 }); ctx.restore(); }
-    const max = Math.max(...vals) * 1.1 || 1, step = (x1 - x0) / Math.max(1, n - (L.chart === 'bar' ? 0 : 1));
+    const grow = L.chart === 'bar' ? L.grow : null;
+    const max = Math.max(...vals, ...(grow ? [grow.from ?? vals[grow.i] ?? 0, grow.to ?? vals[grow.i] ?? 0] : [])) * 1.1 || 1, step = (x1 - x0) / Math.max(1, n - (L.chart === 'bar' ? 0 : 1));
     const px = (i) => (L.chart === 'bar' ? x0 + step * (i + 0.5) : x0 + 30 + i * ((x1 - x0 - 60) / Math.max(1, n - 1)));
     const py = (v) => y0 - (v / max) * (y0 - y1);
     (L.labels || []).forEach((lab, i) => T.docText(ctx, lab, px(i), y0 + 50, 30, { align: 'center', weight: 800 }));
     const prog = T.prog(lt, 0.25, L.dur ?? 1.5), col = L.color ?? '#c8141c';
     if (L.chart === 'bar') {
       vals.forEach((v, i) => {
-        const p = T.ease.outBack(T.prog(lt, 0.25 + (i / n) * (L.dur ?? 1.5), 0.3));
+        const growing = grow && grow.i === i;
+        const p = growing ? 1 : T.ease.outBack(T.prog(lt, 0.25 + (i / n) * (L.dur ?? 1.5), 0.3));
         if (p <= 0) return;
-        const bh = (y0 - py(v)) * p, bw = step * 0.6;
+        const value = growing ? T.lerp(grow.from ?? v, grow.to ?? v, T.prog(lt, grow.at ?? 0, grow.dur ?? 1.5)) : v;
+        const bh = (y0 - py(value)) * p, bw = step * 0.6;
         T.outlined(ctx, (k) => k.rect(px(i) - bw / 2, y0 - bh, bw, bh), Array.isArray(col) ? col[i % col.length] : col, { line: 6 });
       });
     } else {

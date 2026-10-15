@@ -127,14 +127,30 @@
   const timelineOf = (spec) => { if (!timelines.has(spec)) timelines.set(spec, T.buildTimeline(spec)); return timelines.get(spec); };
   T.subShot = (id, lt, env, opts = {}) => {
     const tl = T.film && T.film.spec === env.spec ? T.film.timeline : timelineOf(env.spec);
-    const shot = tl.shots.find((s) => s.id === id);
+    const shot0 = tl.shots.find((s) => s.id === id), shot = shot0 && T.resolvePinned ? T.resolvePinned(shot0) : shot0;
     if (!shot) throw new Error(`subShot: no shot with id "${id}"`);
     if (subDepth >= 2) throw new Error(`subShot: "${id}" nests deeper than 2 levels (does a shot show itself?)`);
     const w = Math.round((T.W * env.dpr) / 2) * 2, h = Math.round((T.H * env.dpr) / 2) * 2;
     const [c, k] = T.scratch('sub:' + id + ':' + subDepth, w, h);
     subDepth++;
     try {
-      T.drawShot(k, shot, T.clamp(opts.t ?? lt, 0, shot.dur), { ...env, noPost: opts.grade === false, cam: undefined });
+      const t = T.clamp(opts.t ?? lt, 0, shot.dur), sub = { ...env, noPost: opts.grade === false, cam: undefined, frameX: undefined }; // the cell shows the whole source frame
+      if (T.FORMAT === 'vertical') {
+        // Vertical film: draw the source as its viewer saw it, with its frame x moved to the centre of the cell's world.
+        const half = T.STRIP_W / 2, fx = T.clamp(T.num(shot.frame, t, 0.5) * T.W, half, T.W - half), cam = shot.camera || {};
+        const framed = cam.focus ? shot : { ...shot, camera: { ...cam, focus: [fx / T.W, 0.5] } };
+        // The whole world is drawn (no black margins); panels crop the cell around this frame x (panels.js).
+        T.drawShot(k, framed, t, { ...sub, frameX: fx });
+        if (T.drawPinned && shot.pinned && shot.pinned.length) {
+          const [c2, k2] = T.scratch('sub2:' + id + ':' + subDepth, w, h);
+          k2.setTransform(1, 0, 0, 1, 0, 0); k2.clearRect(0, 0, w, h);
+          T.drawPinned(k2, shot, t, { ...sub, frameX: T.W / 2 });
+          k.save(); k.setTransform(1, 0, 0, 1, 0, 0); k.drawImage(c2, Math.round((fx - T.W / 2) * env.dpr), 0); k.restore();
+        }
+      } else {
+        T.drawShot(k, shot, t, sub);
+        if (T.drawPinned) T.drawPinned(k, shot, t, sub);
+      }
     } finally { subDepth--; }
     return c;
   };

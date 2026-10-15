@@ -1,7 +1,7 @@
 // map-overlays.js — map overlays (registered in T.MAP_OVERLAYS, drawn by map.js in a fixed order) and small map icons
 // (T.MAP_ICONS): growing rivers, a crenellated wall strip, jagged animated front lines, dashed routes, city icons
 // (optionally burning), grave crosses filling a region, dot armies, tokens travelling along paths, a punch hole with
-// cracks, a pencil drawing a border, pins and a big year label.
+// cracks, a pencil drawing a border, pins, a big year label, morphing lines and icons thrown in an arc.
 (function () {
   'use strict';
   const T = window.TOON, P = T.PAL;
@@ -98,9 +98,66 @@
       ctx.fillStyle = '#3a2a22'; for (let i = 0; i < 28; i++) { const a = r() * Math.PI * 2, d = Math.sqrt(r()); ctx.beginPath(); ctx.arc(Math.cos(a) * d * s * 0.55, Math.sin(a) * d * s * 0.26, s * 0.05, 0, Math.PI * 2); ctx.fill(); }
       ctx.save(); ctx.translate(s * 0.2, -s * 0.1); ICONS.flag(ctx, s * 0.6, lt, o); ctx.restore();
     },
+    // blast: flat cartoon explosion (orange jagged star, yellow core, white hot centre); o.seed varies the spikes
+    blast(ctx, s, lt, o) {
+      const seed = 'blast' + (o.seed ?? '');
+      T.starburst(ctx, 0, 0, s * 0.34, s * 0.62, 9, seed, o.color ?? '#f0742a', P.ink, Math.max(2, s * 0.07));
+      ctx.fillStyle = '#ffd23a'; ctx.beginPath(); T.starburstPath(ctx, 0, 0, s * 0.2, s * 0.4, 7, seed + ':in'); ctx.fill();
+      ctx.fillStyle = '#fff8dc'; ctx.beginPath(); ctx.arc(0, 0, s * 0.13, 0, Math.PI * 2); ctx.fill();
+    },
+    // dot: infection / marker dot with one flat shadow tone
+    dot(ctx, s, lt, o) {
+      const c = o.color ?? '#c8202a';
+      T.outlined(ctx, (k) => k.arc(0, 0, s * 0.3, 0, Math.PI * 2), c, { line: Math.max(2, s * 0.07), shade: (k) => { k.fillStyle = T.shade(c, -0.28); k.fillRect(-s, s * 0.1, s * 2, s); } });
+    },
   };
   T.MAP_ICONS = ICONS;
   T.mapIcon = (ctx, kind, s, lt, o = {}) => { const fn = ICONS[kind]; if (!fn) throw new Error('Unknown map icon: ' + kind); ctx.save(); fn(ctx, s, lt, o); ctx.restore(); };
+
+  // ---------- route marks: `drops` on anything that travels along a map path ----------
+  // Reference: a toy car crossing a map leaves an explosion every ~0.5 s (pops in ~6 f, holds ~1 s, turns to smoke);
+  // fight clouds plant flags along a trench line; a virus leaves infection dots. Marks live in map space.
+  const FR = 1 / 30;
+  const popScale = (age, n) => { // 0 -> 1.15 -> 1 over n frames, stepped per frame (first frame already visible)
+    const q = (Math.floor(age * 30 + 1e-6) + 1) / n;
+    return q >= 1 ? 1 : q < 0.6 ? 1.15 * T.ease.out(q / 0.6) : T.lerp(1.15, 1, (q - 0.6) / 0.4);
+  };
+  const markKind = (kind, what) => { if (!ICONS[kind] && !T.PROPS[kind]) throw new Error(`map drops: unknown ${what} "${kind}" (map icon or prop kind)`); };
+  function markIcon(ctx, kind, size, lt, o) {
+    if (ICONS[kind]) return T.mapIcon(ctx, kind, size, lt, o);
+    ctx.save(); if (T.PROP_GROUND && T.PROP_GROUND.has(kind)) ctx.translate(0, size / 2); T.drawProp(ctx, kind, size, lt, o); ctx.restore();
+  }
+  function routeMark(ctx, o, i, age, lt, tag) {
+    const size = o.size ?? 60, popN = Math.max(1, o.pop ?? 6), icon = o.icon ?? 'blast', after = o.after ?? 'smoke';
+    const rot = (T.rng(T.hash(tag + ':rot:' + i))() - 0.5) * (o.spin ?? 30) * T.DEG, mo = { ...o, id: tag + ':' + i, seed: tag + ':' + i };
+    const drawAs = (kind, q, o2 = mo) => { ctx.save(); ctx.rotate(rot); ctx.scale(q, q); markIcon(ctx, kind, size, lt, o2); ctx.restore(); };
+    if (o.life == null || age < o.life) return drawAs(icon, popScale(age, popN));
+    const a2 = age - o.life;
+    if (a2 < 3 * FR) drawAs(icon, 1 - a2 / (3 * FR)); // the mark collapses in 3 frames as its after-state pops in
+    if (after === 'smoke') {
+      const q = popScale(a2, popN), rise = Math.min(a2, 2) * size * 0.08;
+      T.drawCloud(ctx, 0, -size * 0.12 - rise, size * 1.1 * q, size * 0.85 * q, tag + ':smoke:' + i, { line: 3, count: 6, color: '#8a8580', shade: '#6c6763', boil: lt });
+    } else if (after !== 'none') drawAs(after, popScale(a2, popN), { ...mo, color: o.afterColor }); // `color` tints the mark only
+  }
+  // D: {every 0.5, icon 'blast', size 60, life, after 'smoke'|'none'|kind, pop 6, spin 30, color, afterColor}; posAt(t) -> [x, y] in
+  // flat map px; place(x, y) -> [px, py, scale] (identity on the flat map, the view projection for upright overlays).
+  // A mark is dropped at t0, t0 + every, ... up to min(lt, t1), at the mover's position at that time.
+  T.mapRouteMarks = (ctx, D, posAt, t0, t1, lt, tag, place = (x, y) => [x, y, 1]) => {
+    if (!D || lt < t0) return;
+    const o = D === true ? {} : D, every = o.every ?? 0.5;
+    if (!(every > 0)) throw new Error('map drops: "every" must be a number > 0');
+    markKind(o.icon ?? 'blast', 'icon'); if (o.after != null && o.after !== 'smoke' && o.after !== 'none') markKind(o.after, 'after');
+    const n = Math.floor((Math.min(lt, t1) - t0) / every + 1e-6) + 1;
+    for (let i = 0; i < n; i++) {
+      const ti = t0 + i * every, pos = posAt(ti);
+      if (!pos) continue;
+      const [x, y, s] = place(pos[0], pos[1]);
+      if (!(s > 0.01)) continue;
+      ctx.save(); ctx.translate(x, y); ctx.scale(s, s); routeMark(ctx, o, i, lt - ti, lt, tag); ctx.restore();
+    }
+  };
+  const pathMover = (pts, t0, dur, ease = (v) => v) => (t) => { const q = T.pathAt(pts, ease(T.prog(t, t0, dur))); return [q.x, q.y]; };
+  T.mapPathMover = pathMover;
 
   const pip = (pts, x, y) => { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j]; if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c; } return c; };
 
@@ -143,6 +200,7 @@
         const p = T.prog(lt, Rt.at ?? 0, Rt.dur ?? 1.2);
         ctx.save(); ctx.setLineDash([26, 18]); ctx.lineDashOffset = -lt * 60; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.strokeStyle = Rt.color ?? P.red;
         strokePartial(ctx, toPx(g, Rt.pts), p); ctx.restore();
+        if (Rt.drops) T.mapRouteMarks(ctx, Rt.drops, pathMover(toPx(g, Rt.pts), Rt.at ?? 0, Rt.dur ?? 1.2), Rt.at ?? 0, (Rt.at ?? 0) + (Rt.dur ?? 1.2), lt, 'route' + JSON.stringify(Rt.pts[0]));
       }
     },
     // cities: [{x, y, icon:'castle'|'dome'|'pagoda'|'house', at, size, burning, label}]
@@ -181,6 +239,11 @@
     },
     // tokens: [{icon, pts, at, dur, size, bob, count, every, color, face}] — icons travelling along a path (staggered copies)
     tokens(ctx, list, g, lt) {
+      list.forEach((K, j) => { // marks first, so every token rides above the trail it leaves
+        if (!K.drops) return;
+        const pts = toPx(g, K.pts);
+        for (let c = 0; c < (K.count ?? 1); c++) { const t0 = (K.at ?? 0) + c * (K.every ?? 0.3); T.mapRouteMarks(ctx, K.drops, pathMover(pts, t0, K.dur ?? 2, T.ease.inOut), t0, t0 + (K.dur ?? 2), lt, 'token' + j + ':' + c); }
+      });
       for (const K of list) {
         const pts = toPx(g, K.pts);
         for (let c = 0; c < (K.count ?? 1); c++) {
@@ -237,5 +300,73 @@
       ctx.save(); ctx.translate(g.X(Y.x ?? 0.82), g.Y(Y.y ?? 0.16)); ctx.rotate((Y.tilt ?? -6) * T.DEG); ctx.scale(T.lerp(1.3, 1, q), T.lerp(1.3, 1, q));
       T.toonText(ctx, String(Y.text), 0, 0, { size: Y.size ?? 120, fill: Y.color ?? '#fff' }); ctx.restore();
     },
+    // morphs: [{from:[[x,y]...], to:[[x,y]...], at, dur 0.6, color, width 6, dash false}] — a line that holds `from`,
+    // then morphs into `to` (both resampled to the same point count by arc length), stepped on twos.
+    morphs(ctx, list, g, lt) {
+      for (const M of list) {
+        if (!Array.isArray(M.from) || !Array.isArray(M.to) || M.from.length < 2 || M.to.length < 2) throw new Error('map morphs: from and to need at least 2 points each');
+        const n = Math.max(M.from.length, M.to.length), a = resample(M.from, n), b = resample(M.to, n);
+        const p = T.ease.inOut(T.prog(twos(lt), M.at ?? 0, M.dur ?? 0.6)), w = M.width ?? 6;
+        const pts = toPx(g, a.map(([x, y], i) => [T.lerp(x, b[i][0], p), T.lerp(y, b[i][1], p)]));
+        ctx.save(); ctx.strokeStyle = M.color ?? P.ink; ctx.lineWidth = w; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        if (M.dash) ctx.setLineDash(Array.isArray(M.dash) ? M.dash : [w * 3, w * 2]);
+        ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke();
+        ctx.restore();
+      }
+    },
+    // throws: [{from:[x,y], to:[x,y], icon 'army' (map icon or prop kind), size 70, count 1, every 0.12, at, windup 0.3,
+    // dur 0.37, arc 0.25, impact true, spin true}] — each copy winds up at `from` (9 f), flies a parabola (11 f) whose
+    // peak is arc x distance above the line, and lands in a dust puff with a star flash (25 f).
+    throws(ctx, list, g, lt) {
+      list.forEach((Th, j) => {
+        if (!Array.isArray(Th.from) || !Array.isArray(Th.to)) throw new Error('map throws: from and to must be [x, y] map fractions');
+        const icon = Th.icon ?? 'army', isIcon = !!ICONS[icon];
+        if (!isIcon && !T.PROPS[icon]) throw new Error('map throws: unknown icon or prop "' + icon + '"');
+        const x0 = g.X(Th.from[0]), y0 = g.Y(Th.from[1]), x1 = g.X(Th.to[0]), y1 = g.Y(Th.to[1]), size = Th.size ?? 70;
+        const wind = Th.windup ?? 0.3, dur = Th.dur ?? 0.37, dist = Math.hypot(x1 - x0, y1 - y0), dir = x1 >= x0 ? 1 : -1;
+        for (let c = 0; c < (Th.count ?? 1); c++) {
+          const t0 = (Th.at ?? 0) + c * (Th.every ?? 0.12), d = lt - t0;
+          if (d < 0) continue;
+          const tag = 'throw' + j + ':' + c;
+          if (d < wind + dur) {
+            let x = x0, y = y0, rot = 0, sx = 1, sy = 1;
+            if (d < wind) { // wind-up: pull back away from the target and squash, then release
+              const q = T.ease.out(T.clamp(d / wind)), back = Math.sin(q * Math.PI * 0.5) * size * 0.35;
+              x -= ((x1 - x0) / (dist || 1)) * back; y -= ((y1 - y0) / (dist || 1)) * back; sx = 1 + 0.18 * q; sy = 1 - 0.18 * q; rot = -dir * 0.35 * q;
+            } else {
+              const u = T.clamp((d - wind) / dur);
+              x = T.lerp(x0, x1, u); y = T.lerp(y0, y1, u) - 4 * (Th.arc ?? 0.25) * dist * u * (1 - u);
+              rot = Th.spin === false ? 0 : dir * u * Math.PI * 2;
+            }
+            ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(sx * (isIcon ? dir : 1), sy);
+            if (isIcon) T.mapIcon(ctx, icon, size, lt, Th);
+            else { if (T.PROP_GROUND && T.PROP_GROUND.has(icon)) ctx.translate(0, size / 2); T.drawProp(ctx, icon, size, lt, { id: tag }); }
+            ctx.restore();
+          } else if (Th.impact !== false) impactPuff(ctx, x1, y1, size, d - wind - dur, tag);
+        }
+      });
+    },
   };
+  T.MAP_OVERLAY_ORDER.push('morphs', 'throws');
+
+  // Resample a polyline to n points evenly spaced by arc length (keeps both ends).
+  function resample(pts, n) {
+    if (pts.length === n) return pts;
+    return Array.from({ length: n }, (_, i) => { const q = T.pathAt(pts, i / (n - 1)); return [q.x, q.y]; });
+  }
+  // Dust cloud at a throw's target: a 3-frame star flash, then seeded puffs swell and fade over 25 frames.
+  function impactPuff(ctx, x, y, size, d, tag) {
+    const life = 25 / 30;
+    if (d > life) return;
+    const p = d / life, r = T.rng(T.hash(tag + ':puff'));
+    ctx.save(); ctx.translate(x, y);
+    if (d < 0.1) T.starburst(ctx, 0, 0, size * 0.45, size * 1.05, 10, tag + ':flash', '#fff2a8', P.ink, 4);
+    ctx.globalAlpha *= 1 - T.ease.in(p);
+    for (let i = 0; i < 7; i++) {
+      const a = (i / 7) * Math.PI * 2 + r() * 0.5, out = size * (0.25 + T.ease.outCubic(p) * (0.55 + r() * 0.35)), rr = size * (0.28 + r() * 0.14) * (0.7 + 0.5 * T.ease.outCubic(p));
+      const px = Math.cos(a) * out, py = Math.sin(a) * out * 0.55 - p * size * 0.3;
+      T.outlined(ctx, (k) => k.arc(px, py, rr, 0, Math.PI * 2), i % 2 ? '#d9cbb0' : '#c4b393', { line: 4 });
+    }
+    ctx.restore();
+  }
 })();

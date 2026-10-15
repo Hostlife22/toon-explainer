@@ -90,6 +90,10 @@ The style grammar was learned from eight studied explainer videos: Rome, China, 
 </tr>
 </table>
 
+## Directing and vertical shorts
+
+A third pass studied twenty videos by the channel, eight long films and twelve vertical shorts. Every frame was decoded for cut detection, contact sheets covered each video end to end, and 274 frame strips were cut at 30 fps (coverage in [06-reference-library](references/06-reference-library.md)). It added a planning method, [09-directing](references/09-directing.md): topic → central question → arc → meaning events → visible actions → shot cards. It also added a [technique library](references/10-technique-library.md) indexed by what a scene must do, and a 9:16 format ([11-vertical-shorts](references/11-vertical-shorts.md); `"format": "vertical"`). Two films built with the method show it on non-historical topics: [`examples/vertical_short`](examples/vertical_short/spec.json) ("Why Ice Floats", 9:16) and [`examples/money_film`](examples/money_film/spec.json) ("Why Printing Money Raises Prices", 16:9).
+
 ## Acting, staging and story
 
 A second, frame-dense pass over the same eight videos (1 frame per second, motion strips, transcripts) filled in acting, staging and story tools, collected in the [toolkit cards](references/08-toolkits.md) and a [story-craft guide](references/07-story-craft.md) that maps narration to shot recipes. The film below was made by an agent that had only the skill's docs and a one-paragraph brief: [`examples/coffee_film`](examples/coffee_film/spec.json), "How Coffee Conquered the World", 24 shots, 73 s.
@@ -227,8 +231,8 @@ For unique characters or locations, generate cutouts with an image model and com
 
 ```text
 SKILL.md                  agent instructions
-references/               numbered guides 01–08 and toolkits/ (one card per domain)
-examples/                 story films (coffee_film, calendar_445, showcase, grammar) and one catalog film per toolkit
+references/               numbered guides 01–11 (09 directing, 10 technique library, 11 vertical shorts) and toolkits/
+examples/                 story films (coffee_film, vertical_short, money_film, calendar_445, showcase, grammar) and one catalog film per toolkit
 scripts/engine/           index.html, core.js and lib/<domain>/ (base, characters, acting, creatures, props, places, maps,
                           paper, game, fx, lens)
 scripts/vocab/            validator vocabulary per engine module

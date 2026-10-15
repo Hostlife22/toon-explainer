@@ -117,7 +117,8 @@ GRAB = """async ([t, label]) => {
 
 def open_page(pw, spec: dict, port: int, scale: float):
     browser = pw.chromium.launch(args=["--disable-web-security", "--ignore-gpu-blocklist"])
-    page = browser.new_page(viewport={"width": int(1920 * scale), "height": int(1080 * scale) + 80})
+    w, h = (1080, 1920) if spec.get("format") == "vertical" else (1920, 1080)
+    page = browser.new_page(viewport={"width": int(w * scale), "height": int(h * scale) + 80})
     errors: list[str] = []
     page.on("console", lambda m: (print("[page]", m.text), errors.append(m.text)) if m.type == "error" else None)
     page.on("pageerror", lambda e: (print("[pageerror]", e), errors.append(str(e))))
@@ -226,7 +227,7 @@ def main(argv=None) -> None:
             rows = -(-len(shots) // cols)
             Path(args.sheet).parent.mkdir(parents=True, exist_ok=True)
             subprocess.run(["ffmpeg", "-y", "-v", "error", "-pattern_type", "glob", "-i", str(tmp / "*.png"),
-                            "-vf", f"scale=480:-2,tile={cols}x{rows}:padding=4:color=black", "-frames:v", "1", "-q:v", "3", args.sheet], check=True)
+                            "-vf", f"scale={270 if spec.get('format') == 'vertical' else 480}:-2,tile={cols}x{rows}:padding=4:color=black", "-frames:v", "1", "-q:v", "3", args.sheet], check=True)
             shutil.rmtree(tmp, ignore_errors=True)
             print("sheet ->", args.sheet)
         elif args.stills:

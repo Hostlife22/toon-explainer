@@ -21,6 +21,7 @@ Engine: `scripts/engine/lib/places/backgrounds.js`, `scripts/engine/lib/places/s
 | Fleet, crossing, departure, farewell | `sea`, `harbor`, `underwater` | `foam` |
 | Dread, horror, inner mind | `corridor`, `void` (`flesh`, `stage`, `boil`), `graveyard`, `alley` | `bars`, `trunk` |
 | Fact-check host, storyteller bookend | `office`, `room` `gamer` | `hands-fpv` |
+| Looking out from inside a vat, a box, a cell or a window | any outdoor or set bg | `aperture` (`bars` for a window) |
 | "They explained it on air", verdict, "sold to the highest bidder" | `studio` (`news`, `podcast`, `courtroom`, `auction`, `gameshow`, `quiz`, `classroom`) | `bg-front` |
 | News reaching home, "night after night", illness, poverty | `room` (`living`, `bedroom`, `hospital`, `parlour`) | `bg-front`, `window-grid` |
 | Imprisoned, secret visit | `cell` | `bg-front` (bars) or `bars` |
@@ -132,6 +133,8 @@ Engine: `scripts/engine/lib/places/backgrounds.js`, `scripts/engine/lib/places/s
 | `burst` | `color` `#2f8f8a`, `center` `#bfe8d8`, `edge` `#0f2f35`, `at` [0.5, 0.5], `wedges` true | Radial reaction gradient, 14 faint wedges turning 0.08 rad/s, 60 drifting specks. Plane 0.3 |
 | `parchment-panel` | `color` `#d9a06a`, `frame` true, `torn` true, `ornament` true | Full-frame torn tan sheet, mauve inner shadow bottom-left, grain, dark wood frame, round ornament top-right. For engraving backstories |
 | `blueprint` | `sketch` [], `stamp`, `tilt` -1.5 (deg), `color` `#3d7fd0` | Blue grid sheet on a plank table with a pencil. `sketch` items (coordinates normalized to the sheet): `{line: [[x,y],...], at, dur}` draws along the polyline, `{circle: [x, y, r], at, dur}` (`r` as a fraction of the sheet width) sweeps an arc, `{text, x, y, size: 54, at, dur}` fades in. `dur` default 0.8 s. `stamp` is a boxed text top-right |
+
+Blueprint boards in the reference replace the whole drawing on each beat (about 12 drawings inside one 70 s shot, WW1 2:40–3:50): stack several `blueprint` backgrounds as separate shots, or swap `sketch` with `swap`, rather than only adding items.
 | `chalkboard` | `lines` [{`text`, `at`, `size` 64}], `wall` `#d8c8a0`, `board` `#3c4a3a`, `floor` `#8a6a45` | Wall-mounted board; each line types in over 0.4 s, default `at` = index × 0.6 s |
 | `corkboard` | `board` `cork` or `felt`, `notes` 12, `strings` [], `sign`, `vignette` 0.35 | `notes` is a count of seeded notes or a list of strings / `{text, at, color}` (`""` = scribble, `\n` splits lines). Notes are cream, yellow, pale blue or grey photos, tilted ±8°, each pinned; a note with `at` pop-tilts in over 0.2 s. `strings`: `[from, to, at]` note indices, a sagging red string drawn over 0.3 s. `sign`: hand-lettered cardboard title. Any other `board` value throws |
 
@@ -274,6 +277,7 @@ Common rules: put `fg` after the characters and before the lettering. Leave `x`,
 | `foam` | Scalloped white cloud or foam band along the bottom | `rim` `#9fc4e8` (outline) |
 | `hands-fpv` | First-person gloved hands rising from the bottom corners with a bob | `color` `#f6f2ea` (glove), `sleeve` `#5a6a8a` |
 | `lamp-post` | A street lamp as a vertical band near one edge | `side` `right` |
+| `aperture` | Looking out from inside: a dark frame over the whole screen with one rectangular or rounded hole, an ink rim and one lighter bevel tone around the hole, optional vertical window bars | `hole` [0.2, 0.18, 0.6, 0.64] (`[x, y, w, h]` fractions of the visible frame; in vertical films of the strip), `radius` 0 (px), `color` `#120c09`, `edge` true (ink rim + bevel), `bars` 0 (count), `barWidth` (3 % of the hole width, at least 18 px); ignores `x`, `y`, `scale`, `z` and the camera (fixed to the screen) |
 | `bg-front` | Redraws the shot background's front plane over everything drawn so far | none; ignores `x`, `y`, `scale`, `z` (the plane keeps its background parallax) |
 
 `bg-front` front planes:
@@ -299,6 +303,7 @@ All values at 30 fps. Background motion runs on shot time.
 | Sky cloud drift | 8 px/s × 0.6–1.6 per cloud, wisps 13 px/s | `wind` |
 | Sky god rays | 0.03 rad/s turn | `rays` |
 | Time-lapse day | 1.6 s per full day (sun half 24 frames, moon half 24 frames) | `timelapse.dayDur` |
+| Accelerating time-lapse (measured) | first day ~4.5 s, first night ~0.8 s, then ~1.0–1.2 s per day; a map version flips ~0.7 s lit / 0.3 s dark (Reconquista 10:34, Rome 37:48) | `dayDur` is constant: cut to a second shot with a smaller `dayDur` to accelerate |
 | Burst wedges / specks | 0.08 rad/s; specks 20–60 px/s | `burst` |
 | Interior drapes | ±10 px sway, period about 5 s | `drapes` |
 | Fg grass sway / hands bob | ±6 px, period 3.9 s / ±10 px, period 3.1 s | `grass`, `hands-fpv` |
@@ -440,6 +445,13 @@ Hold rules: hold a `mood` backdrop at least 1.5 s so the spin reads, and swap th
  "layers": [{"type": "crowd", "who": "soldier", "x": 0.5, "y": 0.95, "count": 6, "rows": 2, "spread": 1400, "size": 320, "march": true},
             {"type": "fg", "kind": "canopy", "z": 1.4, "enter": "none"},
             {"type": "fg", "kind": "bushes", "sides": ["bl", "br"], "z": 1.5, "enter": "none"}]}
+```
+
+**Looking out from inside the vat.** The world seen through a rounded hole; push the camera so the outside drifts while the frame holds.
+```json
+{"bg": {"kind": "sky", "preset": "day"}, "camera": {"zoom": [1, 1.08]},
+ "layers": [{"type": "bean", "who": "brewer", "size": 600, "x": 0.5, "y": 0.92, "expr": "shock"},
+            {"type": "fg", "kind": "aperture", "hole": [0.2, 0.15, 0.6, 0.6], "radius": 40, "bars": 2}]}
 ```
 
 ## ⑥ Limits and pitfalls

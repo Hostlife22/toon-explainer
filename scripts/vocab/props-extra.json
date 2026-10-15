@@ -1,0 +1,4 @@
+{
+  "_doc": "props-extra.js; field reference and recipes in references/toolkits/03_props_creatures_vehicles.md.",
+  "props": ["claw-crane", "rosette", "meat-bone", "bucket", "meat-grinder"]
+}

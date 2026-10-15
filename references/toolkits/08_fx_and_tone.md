@@ -38,6 +38,8 @@ browse) · Related cards: [01_characters.md](01_characters.md) (beans, `expr: "d
 | "He remembered", "a dark thought" | `memory` (bubble, framed shot or giant face) |
 | A corrupted memory, a twist | `glitch`, `rgbsplit`, grade `mono-red` |
 | Security footage, an alarm | `cctv`, `alarm`, grade `crt-cyan` |
+| A portrait cracks for a death elsewhere; a screen or a window breaks; "the illusion shattered" | `crack` over the picture |
+| "And you were turned to stone"; a curse freezes the viewer; an ending that addresses the viewer | `petrify` |
 | Something watches from the dark | `silhouette` modifier, `redeyes`, `eyes-white`, `wallshadow` |
 | Final breath, fainting, POV | `eyelids` |
 | Omen, vision, prophecy | `flameshape`, `inkburst`, `paperstorm`, grade `sepia` |
@@ -112,7 +114,7 @@ centre unless the table says otherwise. Three placement families:
 
 | `kind` | Fields (defaults) | Look and timing |
 | --- | --- | --- |
-| `fire` | `w` 600, `count` 5, `size` 220, `embers` 18, `glow` true | Row of flipbook flames (3 nested tongues, new shape every 2 frames, no outline), rising embers, warm glow (`glow: false` drops it) |
+| `fire` | `w` 600, `count` 5, `size` 220, `embers` 18, `glow` true, `step` 2 | Row of flipbook flames (3 nested tongues, new shape every `step` frames, no outline), rising embers, warm glow (`glow: false` drops it). Measured: torches on twos; a large blaze boils every 4–6 f (Rome 11:35), a furnace on threes (zombie-child short): use `step` 3–6 for big fires |
 | `rain` | `density` 90, `angle` 4 | Full frame, two layers of streaks. For a gradual start use `at` + `enter: "fade"` |
 | `beam` | `from` tl/tr, `width` 260, `color` #fff6d0, `strength` 0.28 | Diagonal light wedge from a frame corner (keep `x`/`y` 0.5), grows over 10 frames, flickers ±6 % |
 | `birds` | `count` 5, `speed` 90, `dir` 1, `size` 26, `color` #1d1410 | V flock of "m" birds gliding at `speed` px/s, wings on twos |
@@ -127,13 +129,15 @@ centre unless the table says otherwise. Three placement families:
 
 | `kind` | Fields (defaults) | Look and timing |
 | --- | --- | --- |
-| `glitch` | `dur` 0.6, `looks` | One look per frame from `looks` (default `gray-slice, gray-slice, thermal, thermal, normal, halfhue, posterize, posterize, gray-slice`); slice offsets on gray and posterize frames. Screen |
+| `glitch` | `dur` 0.6, `looks`, `style` | `style: "corrupt"` (rows torn sideways, the lower part of the frame dropping to black, like a corrupted video file) or `"stepped"` (flat black, then grey, then white frames: a disc-swap fade) picks a measured look list; extra looks `tear`, `blackout`, `black`, `gray`, `white` can be used in `looks`. One look per frame from `looks` (default `gray-slice, gray-slice, thermal, thermal, normal, halfhue, posterize, posterize, gray-slice`); slice offsets on gray and posterize frames. Screen |
 | `rgbsplit` | `dur` 0.8, `offset` 5, `strength` 0.55 | Cyan and magenta ghosts of everything drawn so far, slice jumps every 4 frames. Screen |
-| `alarm` | `period` 8, `on` 5, `strength` 0.7, `color` #ff1010 | Multiply strobe, `on` frames on out of every `period`. Screen |
-| `cctv` | `label` "CAM 1" | Corner brackets, camera label, REC dot blinking at 1 Hz, scanlines. Pair with `camera.rot` for a tilted security view. Screen |
+| `alarm` | `period` 8, `on` 5, `strength` 0.7, `color` #ff1010 | Multiply strobe, `on` frames on out of every `period`. Screen. For the slow siren of an overruled verdict (about 1 s on, 0.8 s off, continuing across cuts; Fact-Checking 19:16) use `period` 54, `on` 30, and put it in `spec.overlays` |
+| `crack` | `size` 420 (radius), `spokes` 9, `rings` 2, `dur` 0.07, `color` #f4fbff, `shade` 0.18 | Cracked glass around the layer position: jagged radial spokes and broken rings with an ink edge spread in 2 frames, a milky tint and a bright impact knot. Place it over a `panel` frame or a window; seeded by `id`. Reference: a portrait glass cracks in one frame (horror biography 5:57) |
+| `petrify` | `dur` 0.4, `stage2` (`dur` + 0.8), `color` #8e8a84, `strength` 0.85 | Whole visible frame: colour drains to grey, stone speckle and cracks creep in from the frame edges; at `stage2` a heavier grey and a crack across the middle. Draw it last. Reference: the myth film ends by turning the viewer to stone in two stages (21:23) |
+| `cctv` | `label` "CAM 1", `variant` (`camcorder`: blinking REC dot + `label` "REC" top-left, a running timecode from `start` seconds bottom-left, a battery icon with `battery` 0..1 top-right, a centre crosshair; reference: a home-video overlay over a subject's good deeds, Rome 13:28) | Corner brackets, camera label, REC dot blinking at 1 Hz, scanlines. Pair with `camera.rot` for a tilted security view. Screen |
 | `mist` | `w` 1400, `count` 9, `rise` 320 | Soft wisps rising and swaying over water or ground |
 | `whirlpool` | `size` 420 | Top-down rotating rings contracting into a dark centre |
-| `redeyes` | `gap` 60, `size` 22, `color` #ff2a2a, `bloom` 26, `on` [[a, b]], `blink` [t] | Two glowing slanted eyes that breathe; `on` limits them to windows, each `blink` hides them for 0.12 s (4 frames) |
+| `redeyes` | `gap` 60, `size` 22, `color` #ff2a2a, `bloom` 26, `on` [[a, b]], `blink` [t], `close` {`at`, `dur` 0.8} | Two glowing slanted eyes that breathe; `on` limits them to windows, each `blink` hides them for 0.12 s (4 frames); `close` narrows the eyes to a slit over the first 60 % of `dur` while they dim to off, and they stay off after |
 | `eyes-white` | as `redeyes`; `color` #ffffff, `bloom` 10, `size` 26 | White slit eyes, for shadows on a wall |
 | `wallshadow` | `size` 520, `grow` 1.0, `hornsAt` 0.6, `eyesAt` 1.2, `alpha` 0.88, `color` #120c0a, `eyeColor` (white) | Silhouette on the wall swells 0.8 → 1.1 over `grow` s, sprouts horns over 0.3 s from `hornsAt`, eyes pop on at `eyesAt` with a 2-frame glow flash |
 | `darkness` | `dur` 4, `count` 10, `strength` 1 | Soft black blobs creeping from the edges toward the centre. Screen |
@@ -155,6 +159,8 @@ centre unless the table says otherwise. Three placement families:
 | `blood-splash` | `from` left/right, `count` 6, `spread` 220, `size` 1 | Teardrops fly in from off-screen on decelerating arcs (10 frames), land as spiky outlined splats ringed by droplets, each grows a drip 60 px over 1.5 s. The first splat is 1.6× larger |
 | `pool` | `size` 260, `dur` 6, `color` #5a0a10, `flat` 0.32 | Flat lobed outlined pool with a shade tone, spreading (outCubic) under a body |
 | `spill` | `size` 300, `dur` 2, `color` #7a1420 (ink: #2b2050), `tendrils` 0, `flood` false, `flat` 1 | One outlined stain with tendrils (growing 1.4× faster), shade and gloss; `flood` keeps growing until the frame is covered at `dur` + 1.5 s |
+| `pile` | `prop` coin (any prop kind), `count` (auto: enough `size` objects to reach `level`; a smaller count scales the objects up), `size` 110, `level` 0.85, `dur` 1.2, `seed`, `body` (gap fill; #b8860b for coins) | Objects drop from above the frame (0.3 s ease-in with a spin) and settle in hex-packed rows from the bottom edge up to `level` with a 0.2 s squash-bounce, seeded order, the whole pile filling in `dur`. Full frame (visible strip in vertical films): leave `x`/`y` at 0.5. An avalanche on the quantity word, or a pile rising to a character's chin (`level` ≈ 0.6) |
+| `flood` | `level` 0.85, `dur` 1.5, `color` #e8b440 (beer), `foam` #fff6dc ("" for none), `bubbles` true, `count` 26, `wave` 18 | Liquid rises from the bottom edge (ease-out) with one shadow tone in its lower half, a scalloped foam crest rolling on twos and seeded bubbles rising inside. Full frame (visible strip in vertical films) |
 | `shadow-hands` | `count` 5, `dur` 1.2, `alpha` 0.55, `weapons` true, `darken` 0.4 | Clawed arm shadows (every other one gripping a spear with `weapons`) slide in from both edges (outCubic, staggered 0.1 s) while the frame darkens by `darken`; then sway 2 px at 2 Hz and flex on twos. Composited as one shadow |
 | `shock` | `target`, `dur` 0.8, `color` #4fd2ff, `xray` true, `spikes` true, `count` 6 | Repaints layer `target`: normal / white / black x-ray (skull, spine, ribs) / half alpha on a seeded 2-3 frame rhythm, `count` zigzag bolts and a starburst re-seeded every 2 frames, hair standing up |
 | `disintegrate` | `target`, `pieces` 20 (min 6), `ash` true, `stinger` false | Optional 2-frame blue negative stinger; shards drift out over 4 frames, turn black and fall over 12 into an ash pile with a smoke stem, which holds |
@@ -188,7 +194,7 @@ Heads and shoulders with ears, caps and brimmed hats, one arm raised and bent at
 ### Layer modifiers (any layer type)
 
 A modifier turns on when its field is set. The layer is painted offscreen and post-processed; modifiers stack in this
-order: `silhouette` 10, `lineart` 20, `material` 30, `freeze` 32, `split` 60, `sticker` 80, `glow` 90, `blur` 95.
+order: `silhouette` 10, `lineart` 20, `material` 30, `freeze` 32, `xray` 34, `split` 60, `sticker` 80, `glow` 90, `blur` 95.
 They all work inside `swap` (`{"at": 1.0, "material": "stone"}` makes a statue in one frame). `at` inside
 `material`, `freeze` and `split` is **shot time**.
 
@@ -198,6 +204,7 @@ They all work inside `swap` (`{"at": 1.0, "material": "stone"}` makes a statue i
 | `lineart` | `true` or {`color` #ffffff, `width` 4} | Outline only (computed at half resolution above 1000 px wide). With `bg: flat #050505` it is the "inside his mind" world |
 | `material` | "ghost"/"stone"/"gold"/"engrave"/"ice" or {`kind`, `at`, `dur` 0.5, ...} | Recolours the layer; with `at` it crossfades from the plain layer over `dur`. Kinds below |
 | `freeze` | `true` or {`at` 0, `dur` 0.2, `pad` 0.08, `tint` #bfe8ea, `color` (front face) rgba(178,226,234,0.5)} | Frosted figure inside a faceted ice block (top, side and front faces, ink edges, facets, highlights); fades in over `dur` with a 2 % pop. Stop the motion at `at` (for example `jitter: {to: at}`) |
+| `xray` | `true` or {`at` 0, `dur` 0.2, `inner` (prop kind), `innerSize` (half the shorter side), `color` #7fd0ff, `alpha` 0.8} | From `at` (shot time) the layer crossfades over `dur` into a see-through blue silhouette: a translucent tinted body with faint inner structure, a light inner rim, scan stripes rolling on twos and an ink outline, with `inner` drawn at its centre ("it is hollow inside"). Order 34. Ignored on `fx` layers (`shock` uses `xray` for itself) |
 | `split` | {`at` 0, `gap` 0.18, `angle` 90, `jag` 0.06, `rot` 6, `label`: "text" or {`text`, `color` #c8202a}} | Crack line 1 frame before `at`; at `at` a 1-frame squash, then the jagged halves spring apart over 3 frames (outBack) and rotate ±`rot`°, with a ribbon label in the gap. `angle` 90 is a vertical cut |
 | `sticker` | `true` or {`width` 6, `color` #ffffff, `shadow` 0.25, `hover` false} | Die-cut border and soft drop shadow; `hover` bobs ±3 px every 0.8 s with a 1 px boil on twos |
 | `glow` | `true` or {`color` #fffbe6, `blur` 34, `pulse` 0.1} | Soft outer glow pulsing at 0.5 Hz: gods, relics, ghosts |
@@ -250,6 +257,8 @@ grain and vignette.
 | `crt-cyan` | Footage on a monitor, CCTV playback: desaturated cyan, scanlines, dark vignette |
 | `dusk-blue` | Dignified tragedy, no gags |
 | `red-flash` | A 4-6 frame impact (`at`, `out` = `at` + 0.17) or a 1 s realisation |
+| `mono` | Plain greyscale. The past turned into a photograph (end of a short, with `panel` `frame: "photo"`), a memory, an archive look without sepia |
+| `negative` | Colour negative (a `difference` with white). A battle title frozen as a negative for about 2 s (The Longest War 20:34); a 0.2–0.3 s flash on "what if" |
 | `sunset-epic` | Founding sagas, villains arriving |
 
 Presets are op lists in `T.GRADE_PRESETS` (composite fills, `vignette`, `bloom`, `pixel`); pixel ops live in
@@ -269,7 +278,8 @@ All at 30 fps. "Twos" means a new drawing every 2 frames.
 
 | Event | Frames | Field |
 | --- | --- | --- |
-| Flipbook fire, lightning, brawl, boils, mob sway | new shape every 2 | fixed |
+| Flipbook fire | new shape every 2 | `fire` `step` (3–6 for a large blaze) |
+| Lightning, brawl, boils, mob sway | new shape every 2 | fixed |
 | `speedlines` re-seed | every 2.5 (12 per s) | fixed |
 | `flash` | 9 | `dur` 0.3 |
 | `splat` slam / `dust` spread | 5 / 24 | fixed |
@@ -299,6 +309,7 @@ All at 30 fps. "Twos" means a new drawing every 2 frames.
 | `lightpool` open | 20 | `open.dur` 0.66 |
 | `material` crossfade | 15 | `material.dur` 0.5 |
 | `freeze` | 6 | `freeze.dur` 0.2 |
+| `xray` | `true` or {`at` 0, `dur` 0.2, `inner` (prop kind), `innerSize` (half the shorter side), `color` #7fd0ff, `alpha` 0.8} | From `at` (shot time) the layer crossfades over `dur` into a see-through blue silhouette: a translucent tinted body with faint inner structure, a light inner rim, scan stripes rolling on twos and an ink outline, with `inner` drawn at its centre ("it is hollow inside"). Order 34. Ignored on `fx` layers (`shock` uses `xray` for itself) |
 | `split` crack / squash / spring | 1 before / 1 / 3, settle 6 | `split.at` |
 | `drop-squash` / `pop-tilt` / `slam` | 15 / 7 / 4 + 6 shake | `enterDur` |
 | Grade ramp in | 15 (`dur` 0.5) for rage; 1-2 for a cut-like change | `dur`, `outDur` |
@@ -326,7 +337,7 @@ blood stand-in and a `back` view.
             {"type": "fx", "kind": "redeyes", "id": "r08_eyes", "x": 0.297, "y": 0.475, "at": 2.6, "gap": 56, "size": 16, "blink": [0.8]}]}
 ```
 
-**Jump scare, then deflate.** Hard cut in, `flash-cut` out to a warm burst with a deadpan face.
+**Jump scare, then deflate.** Hard cut in, `flash-cut` out to a warm burst with a deadpan face. The stiller variant the horror reference actually uses: hard cut to black with a giant face and two clawed hands, **no motion for 4.2 s**, exit through `fade-white` (13:03.2–13:07.7); stillness, not shake, carries the shock.
 ```json
 {"id": "r08_scare", "dur": 1.6, "bg": {"kind": "flat", "color": "#050404"},
  "camera": {"zoom": [1.06, 1.1], "shake": [{"at": 0, "dur": 1.6, "amp": 4}]},
@@ -422,6 +433,14 @@ blood stand-in and a `back` view.
  "layers": [{"type": "bean", "who": "hero", "x": 0.5, "y": 0.96, "size": 520, "expr": "worried"},
             {"type": "label", "text": "MEANWHILE, BELOW", "x": 0.5, "y": 0.14}]}
 ```
+
+**The counted thing buries the frame** (bunkers short 0:13). On the quantity word: `{"type": "fx", "kind": "pile", "prop": "coin", "level": 0.9, "dur": 1.2, "at": 0.4}`, hold 0.5 s, then `transition: "fade-black"` into the next fact. A liquid version (a beer flood): `{"type": "fx", "kind": "flood", "color": "#e8b440", "level": 0.85, "dur": 1.5}` with a bean `tremble` in front.
+
+**Hollow inside** (a hyped product, a fake institution): the object on a `bg: "blueprint"` or plain set, then `"xray": {"at": 1.2, "inner": "coin"}` on its layer (or no `inner` for "nothing inside") + `camera.punch` on the reveal word.
+
+**The light in the eye goes out** (a monster or machine dies): a letterboxed close-up of `redeyes`, then `"close": {"at": 1.5, "dur": 0.8}`, hold the dark frame 2–3 s; no music sting, no gag.
+
+**Turned to stone / the screen breaks** (an ending that addresses the viewer): `fg: "hands-fpv"` + `{"type": "fx", "kind": "petrify", "at": 0.5, "stage2": 1.4}` as the last layer; a framed portrait for a death elsewhere: `panel` `frame: "gilt"` + `{"type": "fx", "kind": "crack", "at": 1.1, "size": 260}` over it, with a rack `focus` onto the portrait first.
 
 ## ⑥ Limits and pitfalls
 

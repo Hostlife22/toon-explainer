@@ -728,4 +728,70 @@
     throne, bed, lectern, easel, deckchair, coffin, crib, 'dinner-table': dinnerTable, armchair, swaddle,
     cage, door, gate, portcullis, ...H,
   });
+
+  // ---------- pun close-up and strategy-game props ----------
+  // coin-gavel (centred): a judge's gavel whose head is a stack of gold coins seen edge-on, coin faces on both ends.
+  // o: {color gold, wood '#8a5a34', strike: [t...] (head swings down 25 deg over 3 frames and back over 4)}.
+  function coinGavel(ctx, s, lt, o) {
+    const gold = o.color ?? P.gold, wood = o.wood ?? '#8a5a34', hw = s * 0.62, hh = s * 0.3, hy = -s * 0.22;
+    const hit = (o.strike || []).map((t) => F(lt - t)).find((f) => f >= 0 && f < 7);
+    if (hit != null) { ctx.translate(0, s * 0.45); ctx.rotate((hit < 3 ? hit / 3 : 1 - (hit - 3) / 4) * 25 * D); ctx.translate(0, -s * 0.45); }
+    stick(ctx, s, [[0, hy + hh * 0.3], [0, s * 0.42]], s * 0.075, wood, 'butt');
+    ctx.save(); ctx.strokeStyle = sh(wood, -0.25); ctx.lineWidth = s * 0.022; ctx.beginPath(); ctx.moveTo(s * 0.02, hy + hh * 0.6); ctx.lineTo(s * 0.02, s * 0.4); ctx.stroke(); ctx.restore();
+    O(ctx, s, (k) => ell(k, 0, s * 0.45, s * 0.07, s * 0.05), sh(wood, -0.1));
+    const n = 9, cw = hw / n, ry = hh / 2, rx = hh * 0.2;
+    O(ctx, s, (k) => { k.moveTo(-hw / 2, hy - ry); k.lineTo(hw / 2, hy - ry); k.ellipse(hw / 2, hy, rx, ry, 0, -PI / 2, PI / 2); k.lineTo(-hw / 2, hy + ry); k.closePath(); }, gold,
+      (k) => { k.fillStyle = sh(gold, -0.25); k.fillRect(-hw / 2, hy + ry * 0.35, hw + rx, ry); });
+    ctx.save(); ctx.strokeStyle = sh(gold, -0.4); ctx.lineWidth = LW(s) * 0.7;
+    for (let i = 1; i < n; i++) { const x = -hw / 2 + i * cw; ctx.beginPath(); ctx.moveTo(x, hy - ry + LW(s) * 0.5); ctx.lineTo(x, hy + ry - LW(s) * 0.5); ctx.stroke(); }
+    ctx.restore();
+    O(ctx, s, (k) => ell(k, -hw / 2, hy, rx, ry), sh(gold, 0.12), (k) => { k.strokeStyle = sh(gold, -0.3); k.lineWidth = LW(s) * 0.7; k.beginPath(); ell(k, -hw / 2, hy, rx * 0.62, ry * 0.7); k.stroke(); });
+    ctx.save(); ctx.translate(-hw / 2, hy); ctx.scale(rx / ry, 1); T.toonText(ctx, '$', 0, ry * 0.32, { size: ry * 0.9, fill: sh(gold, -0.35), stroke: 0, shadow: false }); ctx.restore();
+    glint(ctx, -hw * 0.18, hy - ry * 0.45, s * 0.035);
+  }
+  function glint(ctx, x, y, r) {
+    ctx.fillStyle = '#fffbe6'; ctx.beginPath(); ctx.moveTo(x, y - r * 2); ctx.quadraticCurveTo(x, y, x + r, y); ctx.quadraticCurveTo(x, y, x, y + r * 2); ctx.quadraticCurveTo(x, y, x - r, y); ctx.quadraticCurveTo(x, y, x, y - r * 2); ctx.fill();
+  }
+  // iso-tile (ground): an isometric strategy-game tile — grass diamond (2:1) on a thick earth slab, seeded tufts.
+  // o: {color '#7cbf4a' grass, earth '#8a5a34', depth 0.2 (of size), owner (border colour), building 'none'|'house'|'tower'}.
+  const ISO_BUILD = {
+    none() {},
+    house(ctx, s) {
+      const w = s * 0.2, h = s * 0.16, wall = '#e8dcc0', roof = '#c0503a';
+      O(ctx, s, (k) => { k.moveTo(-w, 0); k.lineTo(0, w * 0.5); k.lineTo(0, w * 0.5 - h); k.lineTo(-w, -h); k.closePath(); }, wall);
+      O(ctx, s, (k) => { k.moveTo(0, w * 0.5); k.lineTo(w * 0.8, w * 0.1); k.lineTo(w * 0.8, w * 0.1 - h); k.lineTo(0, w * 0.5 - h); k.closePath(); }, sh(wall, -0.18));
+      O(ctx, s, (k) => { k.moveTo(-w * 1.08, -h + 2); k.lineTo(-w * 0.5, -h - s * 0.14); k.lineTo(w * 0.4, -h - s * 0.14 - w * 0.25); k.lineTo(w * 0.86, w * 0.1 - h + 2); k.lineTo(0, w * 0.5 - h + 4); k.closePath(); }, roof,
+        (k) => { k.fillStyle = sh(roof, -0.2); k.beginPath(); k.moveTo(-w * 0.5, -h - s * 0.14); k.lineTo(w * 0.4, -h - s * 0.14 - w * 0.25); k.lineTo(w * 0.86, w * 0.1 - h + 2); k.lineTo(0, w * 0.5 - h + 4); k.closePath(); k.fill(); });
+      O(ctx, s, (k) => k.rect(-w * 0.55, -h * 0.55, w * 0.22, h * 0.55 + w * 0.13), '#5a3a22');
+    },
+    tower(ctx, s, o) {
+      const r = s * 0.12, h = s * 0.42, stone = '#b9b2a4', top = -h;
+      O(ctx, s, (k) => { k.moveTo(-r, top); k.lineTo(-r, 0); k.ellipse(0, 0, r, r * 0.5, 0, PI, 0, true); k.lineTo(r, top); k.closePath(); }, stone, (k) => { k.fillStyle = sh(stone, -0.18); k.fillRect(r * 0.3, top, r, h + r); });
+      for (let i = 0; i < 4; i++) { const x = -r + (i * 2 * r) / 3.5; O(ctx, s, (k) => k.rect(x, top - s * 0.05, r * 0.4, s * 0.05), stone); }
+      O(ctx, s, (k) => ell(k, 0, top, r, r * 0.42), sh(stone, 0.1));
+      O(ctx, s, (k) => { k.moveTo(-r * 0.3, -h * 0.25); k.lineTo(-r * 0.3, -h * 0.45); k.arc(0, -h * 0.45, r * 0.3, PI, 0); k.lineTo(r * 0.3, -h * 0.25); k.closePath(); }, '#3a2a22');
+      stick(ctx, s, [[0, top - s * 0.02], [0, top - s * 0.2]], s * 0.012, '#5a3a22');
+      O(ctx, s, (k) => { k.moveTo(0, top - s * 0.2); k.lineTo(s * 0.12, top - s * 0.17); k.lineTo(0, top - s * 0.13); k.closePath(); }, o.owner ?? P.red);
+    },
+  };
+  function isoTile(ctx, s, lt, o) {
+    const grass = o.color ?? '#7cbf4a', earth = o.earth ?? '#8a5a34', dep = s * (o.depth ?? 0.2), hw = s / 2, hh = s / 4, cy = -dep - hh;
+    const build = ISO_BUILD[o.building ?? 'none'];
+    if (!build) throw new Error(`iso-tile: unknown building "${o.building}" (none, house, tower)`);
+    O(ctx, s, (k) => { k.moveTo(-hw, cy); k.lineTo(0, cy + hh); k.lineTo(0, 0); k.lineTo(-hw, -dep + 0); k.closePath(); }, earth);
+    O(ctx, s, (k) => { k.moveTo(hw, cy); k.lineTo(0, cy + hh); k.lineTo(0, 0); k.lineTo(hw, -dep); k.closePath(); }, sh(earth, -0.22));
+    ctx.fillStyle = sh(grass, -0.2); // grass lip hanging over the earth sides
+    ctx.beginPath(); ctx.moveTo(-hw, cy); ctx.lineTo(0, cy + hh); ctx.lineTo(hw, cy);
+    for (let i = 0; i <= 8; i++) { const u = 1 - i / 8, x = hw * (2 * u - 1), y = cy + hh * (1 - Math.abs(2 * u - 1)) + s * (i % 2 ? 0.05 : 0.025); ctx.lineTo(x, y); }
+    ctx.closePath(); ctx.fill();
+    const top = (k, g = 0) => { k.moveTo(0, cy - hh + g * 0.5); k.lineTo(hw - g, cy); k.lineTo(0, cy + hh - g * 0.5); k.lineTo(-hw + g, cy); k.closePath(); };
+    O(ctx, s, (k) => top(k), grass, (k) => { k.fillStyle = sh(grass, -0.1); k.beginPath(); k.moveTo(0, cy); k.lineTo(hw, cy); k.lineTo(0, cy + hh); k.closePath(); k.fill(); });
+    const r = RNG(o, 'iso-tile', 'tufts');
+    ctx.strokeStyle = sh(grass, -0.3); ctx.lineWidth = LW(s) * 0.6; ctx.lineCap = 'round';
+    for (let i = 0; i < 7; i++) { const u = r() - 0.5, v = r() - 0.5, x = (u + v) * hw * 0.8, y = cy + (v - u) * hh * 0.8; ctx.beginPath(); ctx.moveTo(x - s * 0.015, y); ctx.lineTo(x - s * 0.02, y - s * 0.03); ctx.moveTo(x + s * 0.01, y); ctx.lineTo(x + s * 0.02, y - s * 0.035); ctx.stroke(); }
+    if (o.owner) { ctx.save(); ctx.strokeStyle = o.owner; ctx.lineWidth = s * 0.035; ctx.lineJoin = 'round'; ctx.beginPath(); top(ctx, s * 0.06); ctx.stroke(); ctx.restore(); }
+    ctx.save(); ctx.translate(0, cy + hh * 0.15); build(ctx, s, o); ctx.restore();
+  }
+  Object.assign(T.PROPS, { 'coin-gavel': coinGavel, 'iso-tile': isoTile });
+  T.PROP_GROUND.add('iso-tile');
 })();

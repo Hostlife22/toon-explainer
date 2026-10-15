@@ -7,8 +7,9 @@
   const step2 = (lt) => Math.floor(lt * 15); // "on twos" at 30 fps
 
   // One flame: 3 nested tongue silhouettes (edge / mid / core), redrawn from a new seed every 2 frames, no tweening.
-  T.drawFlame = (ctx, size, lt, seed = 'fl') => {
-    const k = step2(lt) % 4, r = T.rng(T.hash(seed + ':' + k));
+  // `step` (frames per drawing, default 2) picks a new shape every `step` frames.
+  T.drawFlame = (ctx, size, lt, seed = 'fl', step = 2) => {
+    const k = (step === 2 ? step2(lt) : Math.floor(lt * 30 / step + 1e-6)) % 4, r = T.rng(T.hash(seed + ':' + k));
     const tongue = (scale, color) => {
       const n = 5, pts = [];
       for (let i = 0; i <= n; i++) {
@@ -27,12 +28,13 @@
 
   const FX = T.FX;
 
-  // fire: { w, count, size, embers, glow }
+  // fire: { w, count, size, embers, glow, step }. step = frames per flame drawing (default 2; the reference boils a
+  // large blaze every 4-6 frames and a furnace on threes): the tongues hold each shape for `step` frames.
   FX.fire = (ctx, L, lt) => {
-    const n = L.count ?? 5, w = L.w ?? 600, s = L.size ?? 220;
+    const n = L.count ?? 5, w = L.w ?? 600, s = L.size ?? 220, step = Math.max(1, Math.round(L.step ?? 2));
     if (L.glow !== false) { const g = ctx.createRadialGradient(0, -s * 0.3, 0, 0, -s * 0.3, w * 0.9); g.addColorStop(0, 'rgba(255,190,60,0.45)'); g.addColorStop(1, 'rgba(255,150,40,0)'); ctx.fillStyle = g; ctx.fillRect(-w, -s * 2, w * 2, s * 3); }
     const r = T.rng(T.hash((L.id ?? 'fire') + 'pos'));
-    for (let i = 0; i < n; i++) { ctx.save(); ctx.translate((n === 1 ? 0 : i / (n - 1) - 0.5) * w, r() * 20); T.drawFlame(ctx, s * (0.7 + r() * 0.6), lt + i * 0.07, (L.id ?? 'fire') + i); ctx.restore(); }
+    for (let i = 0; i < n; i++) { ctx.save(); ctx.translate((n === 1 ? 0 : i / (n - 1) - 0.5) * w, r() * 20); T.drawFlame(ctx, s * (0.7 + r() * 0.6), lt + i * 0.07, (L.id ?? 'fire') + i, step); ctx.restore(); }
     const er = T.rng(T.hash((L.id ?? 'fire') + 'emb'));
     ctx.fillStyle = '#ffd860';
     const a0 = ctx.globalAlpha;
