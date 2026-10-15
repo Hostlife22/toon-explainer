@@ -347,7 +347,101 @@
       });
     },
   };
-  T.MAP_OVERLAY_ORDER.push('morphs', 'throws');
+  T.MAP_OVERLAY_ORDER.push('morphs', 'throws'); // `fights` is placed right after `brawls` by map-views.js
+  T.MAP_OVERLAYS.fights = fights;
+
+  // ---------- fights: a brawl cloud that travels along a map path ----------
+  // Reference (race to the sea): two dust clouds full of heads race across an empty field in ~5.8 s, planting flags along
+  // the line they leave, then the shot holds on the two lines. F: {path [[x,y]...] (map fractions), at 0, dur 4,
+  // ease 'linear', size 120, count 3 (clouds in the clump), heads 6, dust true, skins, drops (route marks, as on tokens),
+  // trail false | true | {color, width 7, dash}, out (time; without it the cloud keeps boiling at the path end), outDur 0.4, id}.
+  const FIGHT_POP = [0.3, 0.7, 1.12, 1];
+  const FIGHT_SKINS = ['#f2c9a0', '#d9a070', '#a8703f', '#f6d6b8'];
+  const fightTwos = (lt) => Math.floor(lt * 15 + 1e-6);
+  const fightList = (v) => (v == null ? [] : Array.isArray(v) ? v : [v]);
+  function fightCheck(F) {
+    const path = F.path;
+    if (!Array.isArray(path) || path.length < 2 || !path.every((q) => Array.isArray(q) && q.length >= 2 && q.every(Number.isFinite)))
+      throw new Error('map fights: "path" needs 2+ [x, y] points (map fractions)');
+    if (!((F.dur ?? 4) > 0)) throw new Error('map fights: "dur" must be > 0');
+    if (F.ease != null && !T.ease[F.ease]) throw new Error(`map fights: unknown ease "${F.ease}"`);
+    for (const k of ['size', 'count', 'heads']) if (F[k] != null && !(F[k] >= 0)) throw new Error(`map fights: "${k}" must be a number >= 0`);
+  }
+  // A cartoon head bobbing out of the cloud: skin disc, helmet in a team colour, angry brows, gritted mouth.
+  function fightHead(ctx, x, y, r, skin, helmet, flip) {
+    T.outlined(ctx, (k) => k.arc(x, y, r, 0, Math.PI * 2), skin, { line: Math.max(2, r * 0.18) });
+    if (helmet) T.outlined(ctx, (k) => { k.arc(x, y - r * 0.15, r * 1.05, Math.PI, 0); k.closePath(); }, helmet, { line: Math.max(2, r * 0.18) });
+    ctx.fillStyle = P.ink; ctx.strokeStyle = P.ink; ctx.lineCap = 'round'; ctx.lineWidth = Math.max(1.5, r * 0.14);
+    for (const d of [-1, 1]) {
+      ctx.beginPath(); ctx.arc(x + d * r * 0.36, y + r * 0.12, r * 0.12, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(x + d * r * 0.62, y - r * 0.12); ctx.lineTo(x + d * r * 0.14, y + r * 0.02 * flip); ctx.stroke();
+    }
+    ctx.beginPath(); ctx.moveTo(x - r * 0.3, y + r * 0.55); ctx.lineTo(x + r * 0.3, y + r * 0.5); ctx.stroke();
+  }
+  // Dust puffs kicked up behind the cloud: one every 0.1 s while it moves, each swells and fades over 0.6 s.
+  function fightDust(ctx, F, posAt, place, lt, tag, size) {
+    const at = F.at ?? 0, end = at + (F.dur ?? 4), life = 0.6, every = 0.1;
+    const first = Math.max(0, Math.ceil((lt - life - at) / every - 1e-6)), last = Math.floor((Math.min(lt, end) - at) / every + 1e-6);
+    for (let i = first; i <= last; i++) {
+      const ti = at + i * every, age = lt - ti, q = age / life, r = T.rng(T.hash(tag + ':dust:' + i));
+      if (q < 0 || q >= 1) continue;
+      const pos = posAt(ti), [x, y, s] = place(pos[0] + (r() - 0.5) * size * 0.5, pos[1] + (r() - 0.5) * size * 0.3);
+      if (!(s > 0.01)) continue;
+      const w = size * (0.35 + 0.45 * T.ease.outCubic(q)) * s;
+      ctx.save(); ctx.globalAlpha *= 0.85 * (1 - T.ease.in(q));
+      T.drawCloud(ctx, x, y + size * 0.2 * s, w, w * 0.6, tag + ':dc:' + i, { count: 5, line: 3, color: '#d9cbb0', shade: '#c4b393' });
+      ctx.restore();
+    }
+  }
+  function fightTrail(ctx, F, pts, place, p) {
+    if (!F.trail || p <= 0) return;
+    const o = F.trail === true ? {} : F.trail, n = 48, out = [];
+    for (let i = 0; i <= n; i++) { const u = (i / n) * p, q = T.pathAt(pts, u), [x, y] = place(q.x, q.y); out.push([x, y]); }
+    ctx.save(); ctx.strokeStyle = o.color ?? '#5a3a24'; ctx.lineWidth = o.width ?? 7; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    if (o.dash) ctx.setLineDash(Array.isArray(o.dash) ? o.dash : [18, 12]);
+    ctx.beginPath(); out.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke(); ctx.restore();
+  }
+  // The clump: `count` brawl clouds jittering on twos around the mover, `heads` heads popping in and out on twos, a star burst.
+  function fightCloud(ctx, F, x, y, s, k, lt, tag) {
+    const size = F.size ?? 120, count = Math.max(1, Math.round(F.count ?? 3)), heads = Math.round(F.heads ?? 6), f = fightTwos(lt);
+    const base = T.rng(T.hash(tag + ':base')), boil = T.rng(T.hash(tag + ':boil:' + f)), skins = F.skins;
+    ctx.save(); ctx.translate(x, y); ctx.scale(k * s, k * s);
+    const clouds = Array.from({ length: count }, (_, i) => {
+      const a = (i / count) * Math.PI * 2 + base() * 0.8, d = count > 1 ? size * 0.32 : 0;
+      return [i, Math.cos(a) * d + (boil() - 0.5) * size * 0.08, Math.sin(a) * d * 0.55 + (boil() - 0.5) * size * 0.08];
+    }).sort((a, b) => a[2] - b[2]);
+    for (const [i, cx, cy] of clouds) T.drawBrawl(ctx, cx, cy - size * 0.3, size, lt, tag + ':c' + i, { dust: F.dust !== false && i === clouds[0][0], stars: 2, skins });
+    for (let i = 0; i < heads; i++) { // each head is up on 3 of every 4 twos-steps, at a fresh spot on the upper rim
+      const hr = T.rng(T.hash(tag + ':head:' + i + ':' + Math.floor((f + i) / 2)));
+      if (hr() < 0.25) continue;
+      const a = -Math.PI * (0.1 + hr() * 0.8), spread = size * (0.45 + 0.25 * (count > 1 ? 1 : 0));
+      const hx = Math.cos(a) * spread, hy = -size * 0.3 + Math.sin(a) * size * 0.42 - hr() * size * 0.05;
+      const skin = FIGHT_SKINS[Math.floor(hr() * FIGHT_SKINS.length)], helm = hr() < 0.6 ? (skins && skins[i % skins.length]) || (i % 2 ? '#4f7fb8' : '#c8323a') : null;
+      fightHead(ctx, hx, hy, size * (0.12 + hr() * 0.03), skin, helm, hr() < 0.5 ? 1 : -1);
+    }
+    if (boil() < 0.7) T.starburst(ctx, (boil() - 0.5) * size, -size * 0.75 - boil() * size * 0.15, size * 0.05, size * 0.13, 6, tag + ':star:' + f, '#ffe14a', P.ink, 3);
+    ctx.restore();
+  }
+  function fights(ctx, arr, g, lt) {
+    fightList(arr).forEach((F, j) => {
+      fightCheck(F);
+      const at = F.at ?? 0, dur = F.dur ?? 4, tag = 'fight' + (F.id ?? j), ease = T.ease[F.ease ?? 'linear'];
+      if (lt < at) return;
+      const fade = F.out != null ? 1 - T.prog(lt, F.out, F.outDur ?? 0.4) : 1;
+      const pts = toPx(g, F.path), posAt = pathMover(pts, at, dur, ease), place = (x, y) => g.project(x / g.mw + 0.5, y / g.mh + 0.5);
+      const p = ease(T.prog(lt, at, dur)), moving = lt < at + dur;
+      fightTrail(ctx, F, pts, place, p);
+      if (F.drops) T.mapRouteMarks(ctx, F.drops, posAt, at, at + dur, lt, tag, place);
+      if (fade <= 0) return;
+      ctx.save(); ctx.globalAlpha *= fade;
+      if (F.dust !== false) fightDust(ctx, F, posAt, place, lt, tag, F.size ?? 120);
+      const pos = posAt(lt), [x, y, s] = place(pos[0], pos[1]), fr = Math.floor((lt - at) * 30 + 1e-6);
+      const k = FIGHT_POP[Math.min(fr, FIGHT_POP.length - 1)] * (F.out != null ? T.lerp(1, 0.6, T.prog(lt, F.out, F.outDur ?? 0.4)) : 1);
+      if (s > 0.01) fightCloud(ctx, F, x, y + (moving && fightTwos(lt) % 2 ? -4 : 0), s, k, lt, tag);
+      ctx.restore();
+    });
+  }
+  fights.upright = true;
 
   // Resample a polyline to n points evenly spaced by arc length (keeps both ends).
   function resample(pts, n) {

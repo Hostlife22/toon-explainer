@@ -1,4 +1,11 @@
 {
-  "_doc": "overlays-fx.js: cracked glass (crack) and the whole-frame petrify overlay. Guide: references/toolkits/08_fx_and_tone.md.",
-  "fx": ["crack", "petrify"]
+  "_doc": "overlays-fx.js: cracked glass (crack), petrify, the hatch net; places-grid.js: the grid void background. Guide: references/toolkits/08_fx_and_tone.md, 04_places.md.",
+  "fx": [
+    "crack",
+    "hatch",
+    "petrify"
+  ],
+  "bgs": [
+    "grid"
+  ]
 }

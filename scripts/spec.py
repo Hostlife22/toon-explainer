@@ -134,6 +134,13 @@ def _check_look(look, where: str, errors: list[str]) -> None:
             errors.append(f"{where}: {ck} must be a hex colour like #c8323a, got {v!r}")
 
 
+def _ease_names() -> set:
+    src = (Path(__file__).parent / "engine" / "core.js").read_text(encoding="utf-8")
+    block = src[src.index("T.ease = {"):]
+    block = block[:block.index("};")]
+    return set(re.findall(r"^\s*'?([A-Za-z]+)'?\s*:", block, re.M))
+
+
 TRANSITION_ENUMS = {"burn": {"from": {"bottom", "top", "left", "right"}}, "swarm": {"creature": {"bat", "bird"}},
                     "squeeze": {"axis": {"horizontal", "vertical"}}, "whip": {"dir": {"left", "right", "up", "down"}},
                     "fg-pass": {"axis": {"horizontal", "vertical"}}}
@@ -184,6 +191,8 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
         kind, ltype = entry.get("kind"), entry.get("type")
         if ltype == "fx" and kind == "pile":
             name_in(entry.get("prop"), KNOWN_PROPS, "pile prop")
+        if ltype == "fx" and kind == "hatch" and entry.get("spacing") is not None and not (_is_num(entry["spacing"]) and entry["spacing"] >= 6):
+            errors.append(f"{where}: hatch spacing must be a number >= 6")
         if ltype == "fx" and kind == "glitch":
             name_in(entry.get("style"), GLITCH_STYLES, "glitch style")
         if ltype != "fx" and entry.get("xray") is not None and not isinstance(entry["xray"], bool):
@@ -197,7 +206,7 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
                 errors.append(f"{where}: smear must be {{at, dur, dir 1|-1, strength}} or a list of them")
         if ltype == "map":
             movers = []
-            for key in ("tokens", "figures", "squads", "camps", "routes", "trails"):
+            for key in ("tokens", "figures", "squads", "camps", "routes", "trails", "fights"):
                 val = entry.get(key)
                 if val is None:
                     continue
@@ -207,6 +216,17 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
                     errors.append(f"{where}: map {key} must be a list of objects")
                     continue
                 movers += [m for m in val if isinstance(m, dict)]
+            fights = entry.get("fights")
+            for f in ([fights] if isinstance(fights, dict) else fights if isinstance(fights, list) else []):
+                if not (isinstance(f, dict) and isinstance(f.get("path"), list) and len(f["path"]) >= 2 and all(_pair(q) for q in f["path"])):
+                    errors.append(f"{where}: map fights need a path of 2+ [x, y] points")
+                    continue
+                if f.get("dur") is not None and not (_is_num(f["dur"]) and f["dur"] > 0):
+                    errors.append(f"{where}: map fights dur must be above 0")
+                name_in(f.get("ease"), _ease_names(), "map fights ease")
+                for k in ("size", "count", "heads"):
+                    if f.get(k) is not None and not (_is_num(f[k]) and f[k] >= 0):
+                        errors.append(f"{where}: map fights {k} must be a number >= 0")
             for m in movers:
                 d = m.get("drops")
                 if d is None or d is True:
@@ -219,6 +239,12 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
                     errors.append(f"{where}: drops every must be a number of seconds above 0")
                 if d.get("after") not in (None, "smoke", "none"):
                     name_in(d.get("after"), KNOWN_PROPS | _map_icons(), "drops after")
+        if ltype == "prop" and kind == "cobweb":
+            name_in(entry.get("corner"), {"tl", "tr", "bl", "br"}, "cobweb corner")
+        if ltype == "prop" and kind == "region" and entry.get("pts") is not None:
+            pts = entry["pts"]
+            if not (isinstance(pts, list) and len(pts) >= 3 and all(_pair(q) for q in pts)):
+                errors.append(f"{where}: region pts must be a list of at least 3 [x, y] points")
         if ltype == "prop" and kind == "claw-crane":
             name_in(entry.get("load"), KNOWN_PROPS, "claw-crane load")
         if ltype == "prop" and kind == "meat-grinder":
@@ -441,6 +467,19 @@ def _check_bg(bg, where: str, errors: list[str]) -> None:
     for tr in bg.get("trees") if isinstance(bg.get("trees"), list) else []:  # some bgs take a tree count instead
         if isinstance(tr, list) and len(tr) >= 3 and _is_num(tr[2]) and tr[2] > 1.5:
             errors.append(f"{where}: trees [x, y, h] use fractions of the frame (h {tr[2]} looks like pixels; 0.35 = a third of the height)")
+    tl = bg.get("timelapse")
+    if isinstance(tl, dict):
+        d = tl.get("dayDur")
+        if d is not None and not ((_is_num(d) and d >= 0.05) or (isinstance(d, list) and d and all(isinstance(k, dict) and _is_num(k.get("v")) and k["v"] >= 0.05 and _is_num(k.get("at", 0)) for k in d))):
+            errors.append(f"{where}: timelapse dayDur must be a number >= 0.05 or [{{at, v}}] keys with v >= 0.05")
+        a = tl.get("accel")
+        if a is not None and not (isinstance(a, dict) and all(_is_num(a.get(k)) and a[k] > 0 for k in ("from", "to", "over"))):
+            errors.append(f"{where}: timelapse accel must be {{from, to, over}} with values > 0")
+        elif a is not None and a.get("ease") is not None and a["ease"] not in _ease_names():
+            errors.append(f"{where}: timelapse accel ease {a['ease']!r} is not an engine ease")
+    clear = bg.get("clear")
+    if clear is not None and not (isinstance(clear, list) and all(_is_num(t) for t in clear)):
+        errors.append(f"{where}: blueprint clear must be a list of times")
     if kind == "image" and not (bg.get("image") or bg.get("src")):
         errors.append(f"{where}: image bg needs image")
     if kind == "interior" and bg.get("windowSky", "day") not in KNOWN_SKY:

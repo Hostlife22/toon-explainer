@@ -796,5 +796,5 @@
       T.drawGlove(ctx, wx, wy, dir, Hd.state ?? 'pinch', { size }); }
   });
 
-  T.MAP_OVERLAY_ORDER.push('tracks', 'trails', 'words', 'xmarks', 'arrows', 'camps', 'forts', 'squads', 'coins', 'barriers', 'flags', 'fires', 'figures', 'brawls', 'tacks', 'drops', 'hand');
+  T.MAP_OVERLAY_ORDER.push('tracks', 'trails', 'words', 'xmarks', 'arrows', 'camps', 'forts', 'squads', 'coins', 'barriers', 'flags', 'fires', 'figures', 'brawls', 'fights', 'tacks', 'drops', 'hand');
 })();

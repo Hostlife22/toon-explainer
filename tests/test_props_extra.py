@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from spec import KNOWN_PROPS, validate  # noqa: E402
 
-KINDS = {"claw-crane", "rosette", "meat-bone", "bucket", "meat-grinder"}
+KINDS = {"claw-crane", "rosette", "meat-bone", "bucket", "meat-grinder", "cobweb", "banana-peel", "region"}
 LAYERS = [
     {"type": "prop", "kind": "claw-crane", "x": 0.5, "y": 0.42, "size": 360,
      "load": "pawn", "drop": {"at": 0.2, "dur": 0.53, "from": 0.6}, "releaseAt": 0.8},
@@ -68,6 +68,8 @@ const T = {PAL:{ink:'#2a1c15'},DEG:Math.PI/180,PROPS:{},PROP_GROUND:new Set(['th
   clamp:(v)=>Math.max(0,Math.min(1,v)),ease:{inOut:(p)=>p*p*(3-2*p)},
   shade:(c)=>'shadow:'+c,font:(s)=>s+'px sans-serif',fitSize:(ctx,t,s,w)=>Math.min(s,w/Math.max(1,t.length)*1.5),
   num:(v,t,d)=>typeof v==='number'?v:d,
+  hash:(str)=>{let h=2166136261;for(const ch of String(str))h=Math.imul(h^ch.charCodeAt(0),16777619);return h>>>0;},
+  rng:(seed)=>{let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=Math.imul(a^(a>>>15),1|a);t^=t+Math.imul(t^(t>>>7),61|t);return((t^(t>>>14))>>>0)/4294967296;};},
   rrect:(c,x,y,w,h,r)=>c.rect(x,y,w,h),
   outlined:(c,path,fill,o)=>{c.beginPath();path(c);shapes.push({fill,path:c.path.slice(),m:c.m});
     if(o.shade){c.save();o.shade(c);c.restore();} c.beginPath();path(c);},
@@ -155,7 +157,7 @@ def test_bucket_tilt_and_inversion_and_all_default_paths_are_finite():
     frames = record(*[{"kind": "bucket", "t": 0, "o": o} for o in ({}, {"tilt": 25}, {"upside": True})],
                     *[{"kind": kind, "t": 0.4} for kind in sorted(KINDS)])
     assert [f["rotations"][0] for f in frames[:3]] == pytest.approx([0, 25 * 3.141592653589793 / 180, 3.141592653589793])
-    assert all(f["shapes"] for f in frames)
+    assert all(f["shapes"] or f["strokes"] for f in frames)  # the cobweb is drawn with strokes only
 
 
 @pytest.mark.parametrize("vertical", [False, True], ids=["landscape", "vertical"])

@@ -100,7 +100,7 @@ These share the `doc` layer with the paper kinds ([06](06_paper_and_lettering.md
 | `loading` | `text` `Loading..`, `full` true, `color` #111111, `size` 1 | 12-dot spinner (r 96 px) turning once per second; the label's dots cycle every 8 f. `full: false` draws no backdrop (e.g. on a TV screen). |
 | `insert` | `text` `INSERT DISK #2`, `size` 96, `numColor` #d21f1f, `drip` true, `full` true, `color` #151515 | The last number is red; 2–4 drips grow 30–70 px from its baseline over 0.6 s. |
 | `wheel` | `items: [prop | {prop, label}]`, `steps: [i…]` ([0]), `every` 0.4, `size` 230, `activeColor` #2f7fd6, `dim` 0.4 | Weapon wheel. The highlight hard-snaps to the next step every `every` s (no tween); the last pick pulses twice. Label in the centre. |
-| `carousel` | `items: [{prop, label}]`, `select: [{at, i}]`, `start` 0, `dim` 0.85 | Item cards (360 px selected, 250 px neighbours, 48 px labels) slide over 8 f per selection; the chosen card bounces once. |
+| `carousel` | `snap` (true: the reference menu, a card lands in 1 frame with a 3-frame arrow flash and a 2-frame red border on the selected card; default false: an 8-frame slide with a bounce), `items: [{prop, label}]`, `select: [{at, i}]`, `start` 0, `dim` 0.85 | Item cards (360 px selected, 250 px neighbours, 48 px labels) slide over 8 f per selection; the chosen card bounces once. |
 
 **Boxes and panels**
 

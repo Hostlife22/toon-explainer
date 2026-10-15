@@ -82,4 +82,30 @@
     if (p2 > 0) { ctx.save(); ctx.translate(cx, H * 0.48); strokeLines(ctx, crackPaths((L.id ?? 'petrify') + ':m', Math.max(vw, H) * 0.7, 7, 1), p2, '#4a4540', 5); ctx.restore(); }
     ctx.restore();
   };
+  // ---------- hatch: a cross-hatch net closes over the frame (the "render collapse" of a game world, WW1 30:23) ----------
+  // { dur 0.4 (the net spreads in from `from`), from 'left' | 'right' | 'all', spacing 26, width 3, color #2a1c15,
+  //   wash (a colour washed over the frame first, e.g. #ffd6e0), washAt (seconds before the net; 1.0) }; the layer `alpha` scales it
+  FX.hatch = (ctx, L, lt, env) => {
+    if (lt < 0) return;
+    const [lo, vw] = T.visibleSpan(env), washAt = L.washAt ?? (L.wash ? 1.0 : 0), t = lt - washAt, a0 = ctx.globalAlpha; // keeps exit fades
+    full(ctx);
+    if (L.wash) { // the wash creeps over the first half of the frame, then the whole frame
+      const pw = T.clamp(lt / Math.max(0.01, washAt || 0.4));
+      ctx.globalAlpha = a0 * 0.85; ctx.fillStyle = L.wash; ctx.fillRect(lo, 0, vw * (0.5 + 0.5 * T.clamp(t / 0.3 + 1)) * pw, H); ctx.globalAlpha = a0;
+    }
+    if (t >= 0) {
+      const p = T.ease.out(T.clamp(t / (L.dur ?? 0.4))), from = L.from ?? 'left', sp = Math.max(6, Number(L.spacing) || 26);
+      ctx.save(); ctx.beginPath();
+      if (from === 'all') ctx.rect(lo, 0, vw, H);
+      else if (from === 'right') ctx.rect(lo + vw * (1 - p), 0, vw * p, H);
+      else ctx.rect(lo, 0, vw * p, H);
+      ctx.clip();
+      ctx.globalAlpha = a0 * 0.85 * (from === 'all' ? p : 1); // the layer's own `alpha` already sits in a0
+      ctx.strokeStyle = L.color ?? INK; ctx.lineWidth = L.width ?? 3;
+      ctx.beginPath();
+      for (let x = lo - H; x < lo + vw + H; x += sp) { ctx.moveTo(x, 0); ctx.lineTo(x + H, H); ctx.moveTo(x + H, 0); ctx.lineTo(x, H); }
+      ctx.stroke(); ctx.restore();
+    }
+    ctx.restore();
+  };
 })();

@@ -237,7 +237,7 @@ in-shot events (a new visual idea every 1.5-2.5 s, counted on 0.5 s sheets).
 - Composition and order: plan surface (table top-down or blueprint) -> clause 1 drawing -> dissolve or redraw -> clause 2 -> ... -> a figure on the plan acts out the cost.
 - Timing: Greek 2-4 s per clause; strokes grow over ~3 s; 2-3 f dissolve between plans [strip 10 fps]. WW1 a burst pops in 1 f and holds 6 f; an arm drifts up over ~1 s while a car creeps a quarter of the frame in 2 s [strip].
 - Transfer: a software architecture explained requirement by requirement; a heist-style replay of how an outage happened.
-- Engine: COMPOSABLE. One shot (or one `doc`) per clause on `bg:"blueprint"` (with `sketch` items) or `parchment-panel`, joined by `dissolve`; beans with the `lineart` modifier or `material:"engrave"`. Strokes that draw on per clause inside one shot already work: `bg:"blueprint"` `sketch` items take a `line` with their own `at` and `dur`. Removing an item mid-shot would need code (cut to a new shot instead).
+- Engine: COMPOSABLE. One shot (or one `doc`) per clause on `bg:"blueprint"` (with `sketch` items) or `parchment-panel`, joined by `dissolve`; beans with the `lineart` modifier or `material:"engrave"`. Strokes that draw on per clause inside one shot already work: `bg:"blueprint"` `sketch` items take a `line` with their own `at` and `dur`. Wiping the board between beats: item `out` or `bg.clear: [t]`.
 - Docs: extends toolkits/04_places.md (blueprint) and 07 §2.1 ("one chalkboard ran 73 s with 12 internal scenes"); clause-by-clause drawing is new.
 
 ### M2 Struck clause, consequence in the same frame
@@ -377,7 +377,7 @@ in-shot events (a new visual idea every 1.5-2.5 s, counted on 0.5 s sheets).
 - Composition and order: options -> pointer flash or wobble -> selection -> cut to the chosen path or item.
 - Timing: WW1 cards static ~13 f, chevron flashes 3 f, cards snap in 1 f, the selected card flashes red 2 f [strip]. Rome wheel ~3.3 s ease-out with two near-misses, confetti 4-5 f after the stop [strip 15 fps].
 - Transfer: choosing a tool (hammer / glue / tape); two career paths; one wrong branch in a code path.
-- Engine: SUPPORTED. `doc kind:"carousel"` with `select`, `doc kind:"wheel"`, `prop kind:"prize-wheel"` `spin`, `prop kind:"fork-signs"` `left`/`right` + `vehicle kind:"car1910"`; POV: `fg:"hands-fpv"`. The carousel slides over 8 f with a bounce; a 1 f snap mode would need code.
+- Engine: SUPPORTED. `doc kind:"carousel"` with `select`, `doc kind:"wheel"`, `prop kind:"prize-wheel"` `spin`, `prop kind:"fork-signs"` `left`/`right` + `vehicle kind:"car1910"`; POV: `fg:"hands-fpv"`. The carousel slides over 8 f with a bounce; `snap: true` gives the reference's 1-frame menu.
 - Docs: extends toolkits/07_game_ui.md (carousel) and 07 recipes #34, #164, #234.
 
 ## 5. Quantity, scale and comparison
@@ -521,7 +521,7 @@ in-shot events (a new visual idea every 1.5-2.5 s, counted on 0.5 s sheets).
 - Composition and order: held pose -> counter or month title steps -> on "runs out" the character exits -> camera tilts to the empty result.
 - Timing: Pope 11 values in ~35 f, 2-3 f each [strip]; Suiyang a month every 4-6 f at 15 fps (0.3-0.4 s), held pose 2.6 s, 3 f turn, 0.5 s tilt [strip 15 fps].
 - Transfer: "the case sat in court for 12 years"; "the savings slowly drained".
-- Engine: SUPPORTED. `hud kind:"counter"` with dense `value` keys, or a `title`/`date` with a `swap` sequence; `camera.pan` for the tilt; grade stepping: repeated shots with `grade` `storm`, `warm`, `night`, then `pose:"lie"`. The cobweb itself is an asset gap (use `fx kind:"dust"` or an empty `prop kind:"sack"`).
+- Engine: SUPPORTED. `hud kind:"counter"` with dense `value` keys, or a `title`/`date` with a `swap` sequence; `camera.pan` for the tilt; grade stepping: repeated shots with `grade` `storm`, `warm`, `night`, then `pose:"lie"`. The cobweb itself: `prop kind:"cobweb"` (`corner`, `spider`).
 - Docs: new.
 
 ### C8 Day and night compress the wait
@@ -531,7 +531,7 @@ in-shot events (a new visual idea every 1.5-2.5 s, counted on 0.5 s sheets).
 - Composition and order: first cycle slow -> later cycles fast (or fixed hard-cut rhythm) -> the state change lands on a dark phase.
 - Timing: Reconquista first day ~4.5 s, first night ~0.8 s, then ~1.0-1.2 s per day [strip 30 fps + 5 fps]. Rome ~0.7 s lit / 0.3 s dark per cycle for ~12 s [shot sheet]. Fact-check 1-frame dusk shift [strip 15 fps].
 - Transfer: waiting for a patent decision; a coastline eroding over centuries.
-- Engine: COMPOSABLE. `bg:"sky"` `timelapse` (`dayDur` is constant: use two shots, 4.5 then 1.1); the map flicker as alternating short shots (lit / `grade:"night"`; regions cannot `swap` mid-shot); the 1-frame dusk as a `grade` key with `dur` 0. A `dayDur` timeline would need code.
+- Engine: COMPOSABLE. `bg:"sky"` `timelapse` (`dayDur` is constant: use two shots, 4.5 then 1.1); the map flicker as alternating short shots (lit / `grade:"night"`; regions cannot `swap` mid-shot); the 1-frame dusk as a `grade` key with `dur` 0. Or one shot: `timelapse.dayDur` as `[{at, v}]` keys (e.g. 4.5 s day, 0.8 s night, then 1.1 s per day) or `accel: {from, to, over}`.
 - Docs: extends toolkits/04_places.md `timelapse` and 07 recipe #117.
 
 ### C9 Power-up or heal item consumed
@@ -603,7 +603,7 @@ in-shot events (a new visual idea every 1.5-2.5 s, counted on 0.5 s sheets).
 - Composition and order: subject foreground -> threat visible -> ~2 s of irony -> turn and 1 f shock snap (or the accident) -> hold -> culprits revealed next.
 - Timing: Reconquista toss 1 f snap, army visible ~2.5 s before the take [strip 15 fps]. Poe hold 1.7 s, rise ~6 f with dust [strip]. Church peek ~13 f [strip]. Rome hazard 0.6 s before the entrance, date ~1.3 s before the slip, ~0.35 s airborne [strip 15 fps].
 - Transfer: an IT admin ignoring an alert while a server rack burns behind him; a "last day before the outage" date shown while a developer commits.
-- Engine: SUPPORTED. Background `crowd`/`creature` `enter:"rise"` or `enter:"peek"` + subject `swap` `view`/`expr` at the word; `date` `at` before `exit:"pivot-fall"`. A peel-type slip hazard is an asset gap (use any `prop`).
+- Engine: SUPPORTED. Background `crowd`/`creature` `enter:"rise"` or `enter:"peek"` + subject `swap` `view`/`expr` at the word; `date` `at` before `exit:"pivot-fall"`. The slip hazard: `prop kind:"banana-peel"`.
 - Docs: extends 07 recipes #56 and #169; the "threat visible about 2 s before the take" rule is new.
 
 ### T3 The hold sits on the threat, not on the action
@@ -663,7 +663,7 @@ in-shot events (a new visual idea every 1.5-2.5 s, counted on 0.5 s sheets).
 - Composition and order: meter above the characters -> one step per item -> max -> breakdown (glitch, popup, line-art world).
 - Timing: Zeppelin bomb falls 21 f, fireball peaks in 4 f, meter drops while the smoke covers (46.0-46.3 s), sad face at 46.43 s [strip]. WW1 steps per demand over ~1 min [sheet 2 s]; the collapse is staged over ~19 s: torn circular vignette ~2.7 s, half the garden washes out, a cross-hatch net, a wireframe world, a run on a perspective grid floor 2.7 s, file icons in a swirl, black 0.7 s [strip 15 fps + shot sheet].
 - Transfer: stress during exam week; server load during a launch.
-- Engine: SUPPORTED. `hud kind:"meter"` `style:"hazard"` with `value` keys + `hud kind:"warning"` + `doc kind:"error"` + the `lineart` modifier for the overload. A vertical meter: `hud kind:"meter"` `orient:"vertical"` (fills bottom-up on the side edge).; a grid-floor background and a cross-hatch overlay for the collapse would need code.
+- Engine: SUPPORTED. `hud kind:"meter"` `style:"hazard"` with `value` keys + `hud kind:"warning"` + `doc kind:"error"` + the `lineart` modifier for the overload. A vertical meter: `hud kind:"meter"` `orient:"vertical"` (fills bottom-up on the side edge).; the collapse: `fx kind:"hatch"` (`wash`, then the net) and a cut to `bg: grid` (`speed` for running).
 - Docs: extends toolkits/07_game_ui.md (meter); the overload payoff is new.
 
 ### T9 Futile loop: wave after wave
@@ -1022,7 +1022,7 @@ of the joke, mass death is an object or a number. Where the reference goes furth
 - Composition and order: token start -> move -> marks every 0.5-1 s -> end state.
 - Timing: Rome explosions ~0.5 s apart (grow ~0.2 s, hold ~1 s, turn to smoke) [strip 15 fps]; USA one heading per 1.0 s on the words [sheet 0.5 s]; WW1 empty field 2.3 s, the clouds cross in ~5.8 s, hold 3.4 s on the two lines [strip 5 fps].
 - Transfer: a delivery van leaving "late" stamps; a virus leaving infection dots.
-- Engine: COMPOSABLE. `map` `figures` `path` (or `tokens`) + `trails` `head` + several `fx kind:"explosion"` at staggered `at`; headings as a `title` `swap` sequence. Marks dropped behind the mover: `drops: {every 0.5, icon "blast" | "dot" | any prop, life, after "smoke"}` on `tokens`, `figures`, `squads`, `camps`, `routes` or `trails`; a `brawls` cloud that travels along a path would still need code.
+- Engine: COMPOSABLE. `map` `figures` `path` (or `tokens`) + `trails` `head` + several `fx kind:"explosion"` at staggered `at`; headings as a `title` `swap` sequence. Marks dropped behind the mover: `drops: {every 0.5, icon "blast" | "dot" | any prop, life, after "smoke"}` on `tokens`, `figures`, `squads`, `camps`, `routes` or `trails`; a fight cloud along a path: map `fights: [{path, dur, heads, drops: {icon: "flag"}}]`.
 - Docs: extends 07 recipe #149.
 
 ### L4 Round locator badge for a zoomed map
@@ -1122,7 +1122,7 @@ of the joke, mass death is an object or a number. Where the reference goes furth
 - Composition and order: scene with the prop -> action on the prop -> narration names the country.
 - Timing: 2-4 s per beat [sheet 2 s].
 - Transfer: a country-shaped cookie being eaten; a state-shaped puzzle piece.
-- Engine: COMPOSABLE. A small `map` layer (`scale`, `x`, `y`, `alpha`) placed on a `prop`; `doc kind:"crayon"`. A region-as-plain-prop with a material would need code.
+- Engine: COMPOSABLE. A small `map` layer (`scale`, `x`, `y`, `alpha`) placed on a `prop`; `doc kind:"crayon"`. A region as a standalone object: `prop kind:"region"` (`pts`, `face`, `label`) with `material:"gold"` or `"stone"`.
 - Docs: new.
 
 ### L14 Capture as a cage dropped on a map token

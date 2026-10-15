@@ -40,6 +40,7 @@ browse) · Related cards: [01_characters.md](01_characters.md) (beans, `expr: "d
 | Security footage, an alarm | `cctv`, `alarm`, grade `crt-cyan` |
 | A portrait cracks for a death elsewhere; a screen or a window breaks; "the illusion shattered" | `crack` over the picture |
 | "And you were turned to stone"; a curse freezes the viewer; an ending that addresses the viewer | `petrify` |
+| `hatch` | `dur` 0.4, `from` `left` (`right`, `all`), `spacing` 26, `width` 3, `color` #2a1c15 (net opacity 0.85, scaled by the layer `alpha`), `wash` (a colour washed over the frame first), `washAt` 1.0 | A cross-hatch net closes over the visible frame, after an optional pink-white wash creeps over half of it. Reference: the render collapse of a game world (WW1 30:23): half the garden washes out, then a net covers everything; follow with a cut to `bg: grid` |
 | Something watches from the dark | `silhouette` modifier, `redeyes`, `eyes-white`, `wallshadow` |
 | Final breath, fainting, POV | `eyelids` |
 | Omen, vision, prophecy | `flameshape`, `inkburst`, `paperstorm`, grade `sepia` |

@@ -74,6 +74,8 @@
     if (acc === 'bandage') { ctx.save(); ctx.rotate(-0.5); T.outlined(ctx, (k) => T.rrect(k, -70, -60, 140, 34, 10), '#f2c9a0', { line: 6 }); ctx.restore(); }
     ctx.restore();
   }
+  T.regionFace = regionFace; // shared with the standalone `region` prop (props-extra.js)
+
 
   // ---------- region arms holding a weapon, swinging on twos: { weapon:'sword'|'spear'|'torch'|null, swing } ----------
   function regionArms(ctx, cx, cy, bw, col, A, lt) {

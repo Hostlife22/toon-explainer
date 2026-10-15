@@ -129,6 +129,8 @@ def test_panel_shows_a_vertical_shot_as_framed(tmp_path):
     ({"type": "map", "tokens": [{"pts": [[0.2, 0.5], [0.8, 0.5]], "drops": {"every": 0}}]}, "drops every"),
     ({"type": "map", "tokens": 42}, "tokens must be a list"),
     ({"type": "map", "camps": {"pts": [[0, 0]], "drops": {"icon": "con"}}}, "drops icon"),
+    ({"type": "prop", "kind": "cobweb", "corner": "middle"}, "cobweb corner"),
+    ({"type": "prop", "kind": "region", "pts": [[0, 0], [1, 1]]}, "region pts"),
 ])
 def test_validator_checks_new_fields(layer, message):
     errors = validate({"shots": [{"id": "a", "dur": 1, "layers": [layer]}]})
@@ -188,3 +190,29 @@ def test_vertical_meter_default_anchor_is_inside_the_strip(tmp_path):
         "layers": [{"type": "hud", "kind": "meter", "orient": "vertical", "value": 1, "style": "solid", "color": "#00ff00"}]}]}
     img = Image.open(_stills(tmp_path, spec, "0.8")[0]).convert("RGB")
     assert any(img.getpixel((x, y))[1] > 150 and img.getpixel((x, y))[0] < 100 for x in range(img.width // 3) for y in range(0, img.height, 4))
+
+
+def test_blueprint_erase_carousel_snap_grid_and_hatch(tmp_path):
+    np = pytest.importorskip("numpy")
+    spec = {"style": {"vignette": False, "grain": False}, "shots": [
+        {"id": "bp", "dur": 2, "camera": {"zoom": [1, 1]}, "bg": {"kind": "blueprint", "clear": [1.0], "sketch": [{"line": [[0.1, 0.5], [0.9, 0.5]], "at": 0, "dur": 0.2}]}},
+        {"id": "car", "dur": 1, "layers": [{"type": "doc", "kind": "carousel", "snap": True, "items": [{"prop": "sword", "label": "A"}, {"prop": "bomb", "label": "B"}],
+                                            "select": [{"at": 0.3, "i": 1}]}]},
+        {"id": "gr", "dur": 1, "bg": {"kind": "grid", "speed": 2}},
+        {"id": "h", "dur": 1, "bg": {"kind": "forest"}, "layers": [{"type": "fx", "kind": "hatch", "wash": "#ffd6e0", "washAt": 0.3, "from": "all"}]}]}
+    assert validate(spec) == []
+    drawn, wiped, *_ = _stills(tmp_path, spec, "0.5,1.5,2.4,3.5,4.9")
+    def chalk(path):  # near-white pixels on the middle row of the sheet
+        row = np.asarray(Image.open(path).convert("RGB"))
+        mid = row[row.shape[0] // 2 - 2: row.shape[0] // 2 + 3]
+        return int(((mid > 220).all(axis=2)).sum())
+    assert chalk(drawn) > 50 and chalk(wiped) < 5
+
+
+def test_cobweb_banana_peel_and_region_render(tmp_path):
+    spec = {"shots": [{"id": "a", "dur": 1, "bg": {"kind": "interior"}, "layers": [
+        {"type": "prop", "kind": "cobweb", "x": 0.1, "y": 0.2, "size": 300, "corner": "tl", "spider": True},
+        {"type": "prop", "kind": "banana-peel", "x": 0.3, "y": 0.9, "size": 240},
+        {"type": "prop", "kind": "region", "x": 0.6, "y": 0.5, "size": 400, "face": "angry", "label": "X", "material": "gold"}]}]}
+    assert validate(spec) == []
+    assert _stills(tmp_path, spec, "0.5")

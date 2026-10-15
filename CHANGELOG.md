@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.5.0 · 2026-10-15
+
+The last open caveats of the technique library.
+
+- `blueprint` sketches can be erased mid-shot: an item's `out` fades it over `eraseDur` (0.15 s), and `bg.clear: [t, ...]` wipes everything drawn before each time.
+- `hud` `carousel` `snap: true`: the instant mode, where the position jumps in one frame, the arrows flash and the picked card gets a red frame.
+- Background `grid` (a perspective floor grid, "the simulation" look) and `fx` `hatch` (a cross-hatch net closes over the frame, with an optional colour `wash`, for a render "collapse").
+- Props `cobweb` (corner web, optional spider), `banana-peel` (ground prop) and `region` (one map region as a standalone prop with a seeded coastline, a raised edge shadow, an optional `face` and `label`).
+- Map `fights`: a brawl cloud that travels along a `path`, with heads, dust, route `trail` and `drops`.
+- Sky `timelapse` takes `dayDur` keys (`[{at, v}]`), `accel {from, to, over, at, ease}` and a start `phase`; the phase is integrated on a fixed grid so frames stay order-independent.
+- The validator checks the new fields (`fights` path, dur, ease and counts; `hatch` spacing; `dayDur` keys; `accel` ease; `blueprint` `clear`; `cobweb` corner; `region` points).
+
 ## 3.4.0 · 2026-10-15
 
 The remaining asset and detail gaps from the technique library.

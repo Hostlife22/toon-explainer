@@ -31,6 +31,7 @@ Engine: `scripts/engine/lib/maps/map.js` (layer, styles, land, regions, faces, l
 | "The army marched in" | `squads` with `wipe`; `camps` with `move` for sieges |
 | "He conquered region after region" | walking `figures` (`path`, `walk`, `paint`) + `trails` `head` |
 | "Chaos, everyone fought" | `brawls`, then `out` to leave the land empty for 2 s |
+| "They raced each other to the sea, fighting all the way" | `fights` (a brawl cloud travelling along a `path`) with `drops` `flag` and `trail` |
 | "The land burned" | `fires` overlay, `cities` `burning` |
 | "Millions died" | `crosses` over the region, then a `stat` doc; never bodies |
 | "Built forts along the river" | `rivers` + river `words` (`along`) + `forts` |
@@ -55,7 +56,7 @@ Engine: `scripts/engine/lib/maps/map.js` (layer, styles, land, regions, faces, l
 - **Coordinates.** Everything is normalized to the map box: `w` × `h` of the frame (default 1.1 × 1.1, so the map bleeds past the frame). The box is centred on the layer `x`/`y`. Arrow ends and wound positions are the exceptions noted in ③.
 - **Present at the cut.** Regions grow over 1.2 s by default. A region that should already be there at frame 0 needs `"dur": 0.001` (all `living_maps` shots do this).
 - **Hold and snap.** Pops use stepped frames, not tweens; let each map beat hold 0.5–1 s before the next action. A map spine changes something every 1.5–3 s (see [07-story-craft](../07-story-craft.md)).
-- **Upright vs flat under a view.** With `view` set, flat things (regions, land, `words`, `arrows`, `trails`, `tracks`, `xmarks`, `rivers`, `fronts`, `routes`, `cities`, `crosses`, `armies`, `tokens`, `punch`, `pencil`, `pins`, `yearLabel`, `morphs`, `throws`) are warped with the board. Upright things (`figures`, `flags`, `brawls`, `fires`, `forts`, `camps`, `squads`, `coins`, `barriers`, `drops`, `tacks`, `hand`) stand up, shrink with depth and are drawn over the board.
+- **Upright vs flat under a view.** With `view` set, flat things (regions, land, `words`, `arrows`, `trails`, `tracks`, `xmarks`, `rivers`, `fronts`, `routes`, `cities`, `crosses`, `armies`, `tokens`, `punch`, `pencil`, `pins`, `yearLabel`, `morphs`, `throws`) are warped with the board. Upright things (`figures`, `flags`, `brawls`, `fights`, `fires`, `forts`, `camps`, `squads`, `coins`, `barriers`, `drops`, `tacks`, `hand`) stand up, shrink with depth and are drawn over the board.
 - **Figures.** Cast beans on a map wear a 6 px white sticker rim and a ground shadow, and are scaled down automatically so the head stays inside the 3.5 % safe margin at the top.
 - **Real geography.** `blob` regions and `land` ellipses read as abstract territory. When the outline matters, supply `image` (a parchment-style map PNG) and draw regions over it with `pts`.
 - **Symbols.** Flags use plain colours, simple patterns and initials only: no real emblems, logos or extremist symbols. Casualties are crosses, fires and statistics, never bodies.
@@ -147,7 +148,7 @@ Faces blink every 3.3 s (except the four special moods). A conquered region forc
 
 ### ③.6 Overlays
 
-Each overlay is a map field. Draw order (later on top): `rivers`, `wall`, `fronts`, `routes`, `cities`, `crosses`, `armies`, `tokens`, `punch`, `pencil`, `pins`, `yearLabel`, `morphs`, `throws`, `tracks`, `trails`, `words`, `xmarks`, `arrows`, `camps`, `forts`, `squads`, `coins`, `barriers`, `flags`, `fires`, `figures`, `brawls`, `tacks`, `drops`, `hand`. "List" means an array; "one or list" accepts a single object too.
+Each overlay is a map field. Draw order (later on top): `rivers`, `wall`, `fronts`, `routes`, `cities`, `crosses`, `armies`, `tokens`, `punch`, `pencil`, `pins`, `yearLabel`, `morphs`, `throws`, `tracks`, `trails`, `words`, `xmarks`, `arrows`, `camps`, `forts`, `squads`, `coins`, `barriers`, `flags`, `fires`, `figures`, `brawls`, `fights`, `tacks`, `drops`, `hand`. "List" means an array; "one or list" accepts a single object too.
 
 **Lines and borders**
 
@@ -191,7 +192,7 @@ Each overlay is a map field. Draw order (later on top): `rivers`, `wall`, `front
 | `coins` | one or list `{pts, at 0, every 0.25, count 8, size 36, hop 0.6, apex 40, loop false}` | Spinning gold coins hop point to point (`hop` s per hop, `apex` px high); `loop` repeats |
 | `figures` | one or list, see below | Cast beans standing on the map |
 
-**Route marks (`drops` on a mover).** `tokens[]`, `figures[]` with a `path`, `squads`, `camps` with `move`, and the drawn head of `routes[]` and `trails[]` (not `head` trails: put `drops` on the figure) accept `drops`; `throws` do not (a throw is a jump and already lands in a puff). A mark is dropped at the mover's position at its start time and every `every` s until it stops, pops in, and stays in map space (it zooms and pans with the map, and lies on the board under a `view`; `squads` and `camps` marks stand upright). Marks are drawn under the mover. This is a field of the moving item, unlike the map-level `drops` overlay (a prop slammed onto the map, below).
+**Route marks (`drops` on a mover).** `tokens[]`, `figures[]` with a `path`, `squads`, `camps` with `move`, `fights[]`, and the drawn head of `routes[]` and `trails[]` (not `head` trails: put `drops` on the figure) accept `drops`; `throws` do not (a throw is a jump and already lands in a puff). A mark is dropped at the mover's position at its start time and every `every` s until it stops, pops in, and stays in map space (it zooms and pans with the map, and lies on the board under a `view`; `squads` and `camps` marks stand upright). Marks are drawn under the mover. This is a field of the moving item, unlike the map-level `drops` overlay (a prop slammed onto the map, below).
 
 | `drops` field | Default | Effect |
 |---|---|---|
@@ -225,6 +226,7 @@ Each overlay is a map field. Draw order (later on top): `rivers`, `wall`, `front
 | Field | Shape | Defaults and effect |
 |---|---|---|
 | `brawls` | one or list `{region \| pts, at 0, count 9, every 0.06, size 170, out, outDur 0.6, id}` | Fight clouds with fists, stars and grimaces pop 2 f apart (0.3 → 0.7 → 1.12 → 1), jitter on twos, fade together on `out` |
+| `fights` | one or list `{path, at 0, dur 4, ease "linear", size 120, count 3, heads 6, dust true, skins, drops, trail false, out, outDur 0.4, id}` | A brawl cloud that travels: `path` is 2+ `[x, y]` map fractions. A clump of `count` brawl clouds (the `brawls` look: limbs, weapons, stars) jitters around the mover and hops ±4 px on twos while it moves; `heads` cartoon heads (team helmets from `skins`, else red / blue) pop in and out of the rim on twos; `dust` kicks up a puff every 0.1 s behind it (each swells and fades over 0.6 s). It pops in over 4 f (0.3 → 0.7 → 1.12 → 1), travels along the path over `dur` with `ease` (any `T.ease` name), then keeps boiling at the end until `out` (fade and shrink over `outDur`). `drops` takes the route-mark object (below), e.g. `{every 0.5, icon "flag", color}` for a planted trench line; `trail: true` or `{color "#5a3a24", width 7, dash}` draws the line it leaves. Stays in map space and stands upright under a `view` |
 | `fires` | one or list `{region \| pts, at 0, count 18, every 0.08, size 84, smoke true, out, outDur 0.5, id}` | Free-standing flames scattered over the area, every third with a smoke column |
 
 **Props on the map (upright)**
@@ -269,6 +271,7 @@ Frame counts at 30 fps. Engine defaults first, then the reference measurements t
 | Walker paint | one lobe every 5 f | `paint.every` |
 | Arrow | 0 → 1.1 at f4 → 1 at f6, or draw over `draw` s | `arrows[].at` |
 | Brawl clouds | one every 2 f (0.06 s), 4-step pop, fade 18 f | `brawls` |
+| Travelling fight (measured) | two clouds race the length of an empty field in ~5.8 s planting a flag every ~0.5 s, then hold ~3.4 s on the two lines (WW1 6:33.7–6:45.3) | `fights[].dur`, `drops.every` |
 | Fires overlay | one every 0.08 s, 3-step pop | `fires` |
 | Front / route / river / wall | 1.5 s / 1.2 s / 1.2 s / 1.2 s | `dur` |
 | Tokens march | 2 s per copy, copies 0.3 s apart; fleets 4–6 at 0.35 s | `tokens` |
@@ -430,9 +433,19 @@ Snippets are complete `layers[]` entries. `blob` regions keep them short; swap i
              "drops": {"every": 0.5, "size": 70, "life": 1.0, "after": "smoke"}}]}
 ```
 
+**"Both armies raced north to the sea, leaving a trench line behind."** Two fight clouds full of heads race up an empty field in 5.8 s, each planting its colour's flags every half second, then the shot holds on the two lines (shot `dur` ~9.4).
+```json
+{"type": "map", "style": "atlas", "land": [[0.5, 0.5, 0.44, 0.44]],
+ "regions": [{"id": "field", "blob": [0.5, 0.5, 0.4, 0.42], "color": "#c9b47a", "dur": 0.001}],
+ "fights": [{"id": "west", "path": [[0.42, 0.85], [0.4, 0.6], [0.44, 0.35], [0.41, 0.14]], "at": 0.2, "dur": 5.8, "skins": ["#c8323a"],
+             "trail": true, "out": 6.1, "drops": {"every": 0.5, "icon": "flag", "size": 50, "color": "#c8323a"}},
+            {"id": "east", "path": [[0.58, 0.85], [0.6, 0.6], [0.56, 0.35], [0.59, 0.14]], "at": 0.2, "dur": 5.8, "skins": ["#4f7fb8"],
+             "trail": true, "out": 6.1, "drops": {"every": 0.5, "icon": "flag", "size": 50, "color": "#4f7fb8"}}]}
+```
+
 ## ⑥ Limits and pitfalls
 
-- **`spec.py` does not check map fields.** It validates the layer type and `who` ids of beans, not regions or overlays. Typos in enums (`view`, `conquer.pattern`, `wipe.shape`, `engulf.dir`, `slash.spill`, `split`/`arrows` style, `formation`, `camp` style, `sit`, figure `enter`, flag `pattern`, `words.style`, `hand.from`, unknown `drops` prop or map icon, unknown route-mark `drops.icon` / `drops.after`, unknown region id in `arrows`/`brawls`/`fires`/`paint.clip`) throw at render time. Render a still (`--stills`) of every new map shot.
+- **`spec.py` does not check map fields.** It validates the layer type and `who` ids of beans, not regions or overlays. Typos in enums (`view`, `conquer.pattern`, `wipe.shape`, `engulf.dir`, `slash.spill`, `split`/`arrows` style, `formation`, `camp` style, `sit`, figure `enter`, flag `pattern`, `words.style`, `hand.from`, unknown `drops` prop or map icon, unknown route-mark `drops.icon` / `drops.after`, unknown region id in `arrows`/`brawls`/`fires`/`paint.clip`, a `fights` `path` with fewer than 2 points or an unknown `fights` `ease`) throw at render time. Render a still (`--stills`) of every new map shot.
 - **Region id lookups are silent in a few places.** `conquer.by` with an unknown id is treated as a colour string; `crosses.region` with an unknown id draws nothing. Double-check ids.
 - **`split` and `shatter` replace the region drawing** once they start: `label`, `arms` and a single face are not drawn after the split (each half gets its own face), and nothing remains after a shatter unless `keep` is set.
 - **`blob` shapes depend on ids.** Changing the map `id`, a region `id` or the region order (when ids are missing) reshapes every blob; keep them identical across the shots of one spine.

@@ -577,23 +577,28 @@
     if (label) uiText(ctx, label, 0, 0, T.fitSize(ctx, label, 34, r0 * 1.6), { stroke: 8 });
   };
   // carousel: { items [{prop,label}], select [{at,i}], start 0 } — item cards slide 8 frames per selection
+  // snap: true — the reference menu (WW1 4:09): a card lands in 1 frame, the arrows flash for 3 frames and the selected
+  // card's border flashes red for 2 frames, instead of the 8-frame slide with a bounce.
   D.carousel = (ctx, L, lt, env) => {
     if (L.dim !== 0) backdrop(ctx, env, `rgba(20,20,26,${L.dim ?? 0.85})`); screen(ctx, L, env); const items = arr(L.items), sel = arr(L.select);
-    let pos = L.start ?? 0, bounce = 1;
+    let pos = L.start ?? 0, bounce = 1, since = Infinity;
     for (const c of sel) {
-      if (lt < c.at) break; const e = T.ease.outCubic(T.prog(lt, c.at, 8 * F)); pos = T.lerp(pos, c.i ?? 0, e);
+      if (lt < c.at) break; since = lt - c.at;
+      if (L.snap) { pos = c.i ?? 0; continue; }
+      const e = T.ease.outCubic(T.prog(lt, c.at, 8 * F)); pos = T.lerp(pos, c.i ?? 0, e);
       bounce = 1 + 0.05 * Math.sin(Math.PI * T.prog(lt, c.at + 8 * F, 6 * F));
     }
+    const f = frames(since), chevronFlash = L.snap && f < 3, redFlash = L.snap && f >= 1 && f < 3;
     const order = items.map((_, i) => i).sort((a, b) => Math.abs(b - pos) - Math.abs(a - pos));
     for (const i of order) {
       const d = i - pos, ad = Math.abs(d); if (ad > 1.6) continue;
       const sz = T.lerp(360, 250, Math.min(1, ad)) * (ad < 0.5 ? bounce : 1), x = d * 470; ctx.save(); ctx.translate(x, -30);
-      ctx.beginPath(); T.rrect(ctx, -sz / 2, -sz / 2, sz, sz, 14); ctx.fillStyle = '#34343e'; ctx.fill(); ctx.lineWidth = 8; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+      ctx.beginPath(); T.rrect(ctx, -sz / 2, -sz / 2, sz, sz, 14); ctx.fillStyle = '#34343e'; ctx.fill(); ctx.lineWidth = 8; ctx.strokeStyle = redFlash && ad < 0.5 ? '#e0302a' : '#ffffff'; ctx.stroke();
       if (items[i].prop) prop(ctx, items[i].prop, sz * 0.55, lt);
       if (ad > 0.05) { ctx.fillStyle = `rgba(0,0,0,${0.4 * Math.min(1, ad)})`; ctx.beginPath(); T.rrect(ctx, -sz / 2 - 4, -sz / 2 - 4, sz + 8, sz + 8, 14); ctx.fill(); }
       uiText(ctx, String(items[i].label ?? '').toUpperCase(), 0, sz / 2 + 54, 48, { stroke: 8, fill: ad < 0.5 ? '#fff' : '#9a9aa4' }); ctx.restore();
     }
-    for (const sx of [-1, 1]) uiText(ctx, sx < 0 ? '<' : '>', sx * 800, -30, 90, { stroke: 12 });
+    for (const sx of [-1, 1]) uiText(ctx, sx < 0 ? '<' : '>', sx * 800, -30, chevronFlash ? 110 : 90, { stroke: 12, fill: chevronFlash ? '#ffe066' : '#fff' });
   };
 
   // ---------- doc kinds: boxes and panels ----------
