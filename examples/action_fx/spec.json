@@ -1,0 +1,1446 @@
+{
+ "title": "Action FX: materials, modifiers, brawls, stand-ins, booms, rivalry, light and grades",
+ "fps": 30,
+ "seed": 404,
+ "style": {
+  "grain": true,
+  "vignette": 0.28
+ },
+ "cast": {
+  "king": {
+   "robe": "#6a3f8a",
+   "sash": "#e0b040",
+   "hair": "short",
+   "hairColor": "#5a3a22",
+   "beard": "full",
+   "beardColor": "#5a3a22",
+   "head": "crown"
+  },
+  "hero": {
+   "robe": "#c8323a",
+   "hair": "curly",
+   "hairColor": "#4a2e1f"
+  },
+  "rival": {
+   "robe": "#3d5a8a",
+   "hair": "short",
+   "hairColor": "#2a1d18",
+   "mustache": true,
+   "mustacheColor": "#2a1d18"
+  },
+  "legion": {
+   "robe": "#8f1f27",
+   "armor": "#9a9e94",
+   "head": "helmet",
+   "headColor": "#7a7a70",
+   "crest": "#c8323a",
+   "hair": "bald",
+   "hold": "sword"
+  },
+  "gaul": {
+   "robe": "#6f8a3a",
+   "hair": "long",
+   "hairColor": "#c87a2a",
+   "mustache": true,
+   "mustacheColor": "#c87a2a",
+   "hold": "spear"
+  },
+  "monk": {
+   "robe": "#8a6a48",
+   "hair": "bald",
+   "beard": "long",
+   "beardColor": "#e8e2d0"
+  }
+ },
+ "shots": [
+  {
+   "id": "ghost",
+   "dur": 3.0,
+   "bg": {
+    "kind": "graveyard"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.3,
+     "y": 0.96,
+     "size": 520,
+     "expr": "shock",
+     "pose": "scared",
+     "flip": true,
+     "talk": [
+      [
+       1.4,
+       2.2
+      ]
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.66,
+     "y": 0.78,
+     "size": 500,
+     "id": "ghost",
+     "material": {
+      "kind": "ghost",
+      "alpha": 0.6
+     },
+     "pose": "point",
+     "expr": "angry",
+     "enter": "fade",
+     "enterDur": 0.5,
+     "at": 0.3,
+     "glow": {
+      "color": "#dff2ff",
+      "blur": 24
+     }
+    },
+    {
+     "type": "label",
+     "text": "THE OLD KING",
+     "x": 0.66,
+     "y": 0.12,
+     "enter": "pop-tilt",
+     "at": 0.6
+    }
+   ],
+   "vo": "The old king came back, and he was not happy."
+  },
+  {
+   "id": "statue",
+   "dur": 3.0,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.6,
+     "y": 0.84,
+     "size": 500,
+     "id": "statue",
+     "pose": "hips",
+     "expr": "smug",
+     "rock": 0,
+     "blink": false,
+     "swap": [
+      {
+       "at": 1.0,
+       "material": {
+        "kind": "stone",
+        "plinth": true,
+        "cracks": 4
+       }
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.24,
+     "y": 0.96,
+     "size": 520,
+     "pose": "point",
+     "expr": "happy",
+     "talk": [
+      [
+       0.2,
+       0.9
+      ]
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "x": 0.6,
+     "y": 0.84,
+     "at": 1.0
+    },
+    {
+     "type": "label",
+     "text": "HE BECAME A STATUE",
+     "x": 0.5,
+     "y": 0.14,
+     "enter": "pop-tilt",
+     "at": 1.1
+    }
+   ],
+   "vo": "Later, he became a statue."
+  },
+  {
+   "id": "engrave",
+   "dur": 3.0,
+   "bg": {
+    "kind": "parchment"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "monk",
+     "x": 0.26,
+     "y": 0.96,
+     "size": 480,
+     "material": "engrave",
+     "pose": "pray",
+     "rock": 0
+    },
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 540,
+     "material": "engrave",
+     "pose": "hold-high",
+     "rock": 0
+    },
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.74,
+     "y": 0.96,
+     "size": 480,
+     "material": "engrave",
+     "pose": "kneel-offer",
+     "rock": 0
+    },
+    {
+     "type": "fx",
+     "kind": "sparkle",
+     "x": 0.5,
+     "y": 0.3,
+     "radius": 120,
+     "count": 4
+    },
+    {
+     "type": "label",
+     "text": "THE ANCESTORS",
+     "x": 0.5,
+     "y": 0.12,
+     "enter": "pop-tilt",
+     "at": 0.2
+    }
+   ],
+   "vo": "Long ago, in the age of the ancestors."
+  },
+  {
+   "id": "gold",
+   "dur": 2.6,
+   "bg": {
+    "kind": "burst",
+    "color": "#f2b43a",
+    "center": "#fff1b0",
+    "edge": "#c86a1a"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.5,
+     "y": 0.92,
+     "size": 560,
+     "id": "golden",
+     "material": "gold",
+     "pose": "flex",
+     "expr": "smug",
+     "rock": 0
+    },
+    {
+     "type": "label",
+     "text": "PURE GOLD",
+     "x": 0.5,
+     "y": 0.12,
+     "enter": "pop-tilt",
+     "at": 0.2
+    }
+   ],
+   "vo": "Everything he touched turned to gold."
+  },
+  {
+   "id": "freeze",
+   "dur": 3.0,
+   "bg": {
+    "kind": "mountains"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "gaul",
+     "x": 0.3,
+     "y": 0.96,
+     "size": 480,
+     "material": "ice",
+     "pose": "hands-face",
+     "expr": "sad",
+     "rock": 0
+    },
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.66,
+     "y": 0.96,
+     "size": 500,
+     "id": "frozen",
+     "pose": "scared",
+     "expr": "shock",
+     "jitter": {
+      "amp": 3,
+      "to": 1.0
+     },
+     "freeze": {
+      "at": 1.0,
+      "dur": 0.2
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "sparkle",
+     "x": 0.66,
+     "y": 0.5,
+     "radius": 200,
+     "at": 1.0
+    },
+    {
+     "type": "label",
+     "text": "FROZEN OUT",
+     "x": 0.66,
+     "y": 0.12,
+     "enter": "pop-tilt",
+     "at": 1.2
+    }
+   ],
+   "vo": "And then the winter froze them out."
+  },
+  {
+   "id": "sticker",
+   "dur": 3.0,
+   "bg": {
+    "kind": "parchment"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.3,
+     "y": 0.86,
+     "size": 380,
+     "sticker": true,
+     "enter": "pop-tilt",
+     "at": 0.2,
+     "pose": "wave",
+     "expr": "happy"
+    },
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.68,
+     "y": 0.86,
+     "size": 380,
+     "sticker": {
+      "width": 8,
+      "hover": true
+     },
+     "enter": "pop-tilt",
+     "at": 0.5,
+     "pose": "hips",
+     "expr": "smug"
+    },
+    {
+     "type": "prop",
+     "kind": "castle",
+     "x": 0.5,
+     "y": 0.5,
+     "size": 220,
+     "sticker": true,
+     "enter": "pop-tilt",
+     "at": 0.8
+    },
+    {
+     "type": "label",
+     "text": "STICKERS ON THE MAP",
+     "x": 0.5,
+     "y": 0.12,
+     "enter": "pop-tilt",
+     "at": 1.0
+    }
+   ],
+   "vo": "Each player claims a corner of the map."
+  },
+  {
+   "id": "split",
+   "dur": 3.0,
+   "bg": {
+    "kind": "burst",
+    "color": "#e68aa0",
+    "center": "#ffe0e8",
+    "edge": "#b04a6a"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.2,
+     "y": 0.96,
+     "size": 440,
+     "pose": "clutch-chest",
+     "expr": "sad",
+     "swap": [
+      {
+       "at": 1.0,
+       "expr": "cry"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.8,
+     "y": 0.96,
+     "size": 440,
+     "pose": "shrug",
+     "expr": "smug",
+     "flip": true
+    },
+    {
+     "type": "prop",
+     "kind": "heart",
+     "x": 0.5,
+     "y": 0.62,
+     "size": 300,
+     "split": {
+      "at": 1.0,
+      "gap": 0.2,
+      "label": {
+       "text": "BETRAYED"
+      }
+     }
+    }
+   ],
+   "vo": "The alliance broke in two."
+  },
+  {
+   "id": "brawl",
+   "dur": 3.4,
+   "bg": {
+    "kind": "battlefield"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "legion",
+     "x": 0.3,
+     "y": 0.96,
+     "size": 440,
+     "pose": "sword-up",
+     "expr": "rage",
+     "out": 0.5,
+     "exit": "fade",
+     "exitDur": 0.05
+    },
+    {
+     "type": "bean",
+     "who": "gaul",
+     "x": 0.7,
+     "y": 0.96,
+     "size": 440,
+     "pose": "fist",
+     "expr": "rage",
+     "flip": true,
+     "out": 0.5,
+     "exit": "fade",
+     "exitDur": 0.05
+    },
+    {
+     "type": "fx",
+     "kind": "brawl",
+     "x": 0.5,
+     "y": 0.66,
+     "size": 520,
+     "at": 0.5,
+     "dur": 2.3,
+     "path": [
+      [
+       0.42,
+       0.66
+      ],
+      [
+       0.58,
+       0.66
+      ]
+     ],
+     "travel": 2.0,
+     "haze": true,
+     "limbs": [
+      "fist",
+      "sword",
+      "boot",
+      "spear"
+     ],
+     "skins": [
+      "legion",
+      "gaul"
+     ],
+     "end": "puffs"
+    },
+    {
+     "type": "bean",
+     "who": "legion",
+     "x": 0.46,
+     "y": 0.96,
+     "size": 440,
+     "pose": "sword-up",
+     "expr": "smug",
+     "at": 2.95,
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "who": "gaul",
+     "x": 0.66,
+     "y": 0.97,
+     "size": 440,
+     "pose": "lie",
+     "expr": "dead",
+     "at": 2.95,
+     "enter": "none"
+    },
+    {
+     "type": "label",
+     "text": "IT GOT MESSY",
+     "x": 0.5,
+     "y": 0.14,
+     "enter": "pop-tilt",
+     "at": 0.7
+    }
+   ],
+   "vo": "They fought. It got messy."
+  },
+  {
+   "id": "blood_wipe",
+   "dur": 2.6,
+   "bg": {
+    "kind": "sky",
+    "preset": "night"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 560,
+     "pose": "scared",
+     "expr": "scream"
+    },
+    {
+     "type": "fx",
+     "kind": "blood-wipe",
+     "hud": true,
+     "at": 0.9,
+     "dur": 1.7,
+     "cover": true
+    }
+   ],
+   "vo": "Then came the massacre."
+  },
+  {
+   "id": "blood_streaks",
+   "dur": 2.2,
+   "bg": {
+    "kind": "corridor"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 520,
+     "pose": "throw",
+     "expr": "evil"
+    },
+    {
+     "type": "fx",
+     "kind": "blood-streaks",
+     "hud": true,
+     "at": 0.8
+    }
+   ],
+   "vo": "The knife came down."
+  },
+  {
+   "id": "blood_splash",
+   "dur": 2.6,
+   "bg": {
+    "kind": "corridor"
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "blood-splash",
+     "x": 0.55,
+     "y": 0.48,
+     "at": 0.4,
+     "from": "left",
+     "size": 1.4,
+     "spread": 260,
+     "count": 7
+    },
+    {
+     "type": "label",
+     "text": "NOBODY SAW IT",
+     "x": 0.5,
+     "y": 0.86,
+     "enter": "pop-tilt",
+     "at": 1.2
+    }
+   ],
+   "vo": "Nobody saw what happened."
+  },
+  {
+   "id": "pool",
+   "dur": 3.0,
+   "bg": {
+    "kind": "interior",
+    "wall": "#6e5444",
+    "floor": "#3e2e22",
+    "trim": "#2a1c15"
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "pool",
+     "x": 0.52,
+     "y": 0.84,
+     "size": 480,
+     "dur": 3
+    },
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.84,
+     "size": 560,
+     "pose": "lie",
+     "expr": "dead"
+    }
+   ],
+   "vo": "He never got up again."
+  },
+  {
+   "id": "mob",
+   "dur": 3.0,
+   "bg": {
+    "kind": "city"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.5,
+     "y": 0.62,
+     "size": 380,
+     "pose": "scared",
+     "expr": "worried",
+     "tremble": [
+      [
+       0.8,
+       3.0
+      ]
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "mob",
+     "at": 0.3,
+     "count": 8
+    },
+    {
+     "type": "label",
+     "text": "THE PEOPLE REVOLTED",
+     "x": 0.5,
+     "y": 0.14,
+     "enter": "pop-tilt",
+     "at": 1.0
+    }
+   ],
+   "vo": "The people revolted.",
+   "grade": {
+    "preset": "sunset-epic",
+    "strength": 0.7
+   }
+  },
+  {
+   "id": "shadow_hands",
+   "dur": 3.0,
+   "bg": {
+    "kind": "interior",
+    "wall": "#5a4a6a",
+    "floor": "#2e2632",
+    "trim": "#1a1420"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 520,
+     "pose": "kneel-pray",
+     "expr": "worried"
+    },
+    {
+     "type": "fx",
+     "kind": "shadow-hands",
+     "hud": true,
+     "at": 0.3,
+     "dur": 1.4
+    }
+   ],
+   "vo": "Doom closed in around him."
+  },
+  {
+   "id": "shock",
+   "dur": 2.6,
+   "bg": {
+    "kind": "interior"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 560,
+     "id": "victim",
+     "pose": "idle",
+     "expr": "neutral",
+     "swap": [
+      {
+       "at": 0.6,
+       "alpha": 0
+      },
+      {
+       "at": 1.4,
+       "alpha": 1,
+       "pose": "scared",
+       "expr": "dead"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "shock",
+     "target": "victim",
+     "at": 0.6,
+     "dur": 0.8
+    }
+   ],
+   "vo": "He touched the wire."
+  },
+  {
+   "id": "disintegrate",
+   "dur": 2.4,
+   "bg": {
+    "kind": "flat",
+    "color": "#3a2a40"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 560,
+     "id": "dust",
+     "pose": "hips",
+     "expr": "shock",
+     "swap": [
+      {
+       "at": 0.8,
+       "alpha": 0
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "disintegrate",
+     "target": "dust",
+     "at": 0.8,
+     "stinger": true
+    }
+   ],
+   "vo": "And his zeal crumbled to dust."
+  },
+  {
+   "id": "boom",
+   "dur": 2.4,
+   "bg": {
+    "kind": "battlefield"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "legion",
+     "x": 0.22,
+     "y": 0.96,
+     "size": 420,
+     "pose": "cover-ears",
+     "expr": "shock"
+    },
+    {
+     "type": "fx",
+     "kind": "boom",
+     "x": 0.6,
+     "y": 0.58,
+     "size": 420,
+     "at": 0.3,
+     "id": "b1"
+    },
+    {
+     "type": "fx",
+     "kind": "boom",
+     "x": 0.82,
+     "y": 0.5,
+     "size": 300,
+     "at": 0.6,
+     "id": "b2"
+    }
+   ],
+   "vo": "The bombs fell."
+  },
+  {
+   "id": "mushroom",
+   "dur": 2.4,
+   "bg": {
+    "kind": "desert"
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "boom",
+     "x": 0.5,
+     "y": 0.78,
+     "size": 520,
+     "style": "mushroom",
+     "at": 0.2
+    },
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.15,
+     "y": 0.96,
+     "size": 360,
+     "pose": "shade-eyes",
+     "expr": "shock"
+    }
+   ],
+   "vo": "Then the big one."
+  },
+  {
+   "id": "boom_card",
+   "dur": 1.8,
+   "bg": {
+    "kind": "interior"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "monk",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 560,
+     "pose": "point-up",
+     "expr": "happy",
+     "talk": [
+      [
+       0,
+       0.6
+      ]
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "boom",
+     "text": "WE DON'T\nHAVE TIME",
+     "at": 0.6,
+     "hud": true
+    }
+   ],
+   "vo": "(interrupted)"
+  },
+  {
+   "id": "onomatopoeia",
+   "dur": 2.2,
+   "bg": {
+    "kind": "sky",
+    "preset": "dusk"
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "onomatopoeia",
+     "x": 0.5,
+     "y": 0.48,
+     "text": "BOOOM",
+     "score": "+1914 PTS",
+     "at": 0.2,
+     "dur": 1.8
+    }
+   ],
+   "vo": "Score one for chaos."
+  },
+  {
+   "id": "word_shatter",
+   "dur": 2.4,
+   "bg": {
+    "kind": "flat",
+    "color": "#e9dcc0"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "legion",
+     "x": 0.78,
+     "y": 0.96,
+     "size": 440,
+     "pose": "shrug",
+     "expr": "worried",
+     "flip": true
+    },
+    {
+     "type": "fx",
+     "kind": "word-shatter",
+     "x": 0.28,
+     "y": 0.42,
+     "text": "ORDERS",
+     "size": 150,
+     "at": 0.1,
+     "burstAt": 1.0
+    }
+   ],
+   "vo": "The orders never arrived."
+  },
+  {
+   "id": "duel",
+   "dur": 3.0,
+   "bg": {
+    "kind": "flat",
+    "color": "#2a1e30"
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "duel",
+     "hud": true,
+     "eyes": false
+    },
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.3,
+     "y": 0.96,
+     "size": 640,
+     "pose": "fist",
+     "expr": "mad",
+     "id": "duel_a"
+    },
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.7,
+     "y": 0.96,
+     "size": 640,
+     "pose": "fist",
+     "expr": "mad",
+     "flip": true,
+     "id": "duel_b"
+    },
+    {
+     "type": "fx",
+     "kind": "crackle",
+     "from": "duel_a",
+     "to": "duel_b",
+     "hud": true,
+     "width": 14,
+     "glow": 26,
+     "at": 0.3
+    }
+   ],
+   "vo": "Two rivals, one throne."
+  },
+  {
+   "id": "beam_clash",
+   "dur": 3.0,
+   "bg": {
+    "kind": "flat",
+    "color": "#2a2650"
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "beam-clash",
+     "hud": true,
+     "from": [
+      0.24,
+      0.48
+     ],
+     "to": [
+      0.76,
+      0.48
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.12,
+     "y": 0.96,
+     "size": 520,
+     "pose": "reach",
+     "expr": "rage"
+    },
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.88,
+     "y": 0.96,
+     "size": 520,
+     "pose": "reach",
+     "expr": "rage",
+     "flip": true
+    }
+   ],
+   "vo": "A battle of wills."
+  },
+  {
+   "id": "lightpool",
+   "dur": 3.0,
+   "bg": {
+    "kind": "corridor"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.4,
+     "y": 0.96,
+     "size": 480,
+     "id": "torchbearer",
+     "hold": "torch",
+     "pose": "hold",
+     "expr": "worried",
+     "walk": [
+      [
+       0,
+       3
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 3,
+       "to": [
+        0.6,
+        0.96
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "lightpool",
+     "follow": "torchbearer",
+     "part": "hand",
+     "r": 380,
+     "open": {
+      "at": 0.1,
+      "dur": 0.66
+     }
+    }
+   ],
+   "vo": "He walked into the dark."
+  },
+  {
+   "id": "shafts",
+   "dur": 3.0,
+   "bg": {
+    "kind": "interior",
+    "wall": "#7a6450",
+    "floor": "#4a3a2c",
+    "trim": "#2a1c15"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "gaul",
+     "x": 0.45,
+     "y": 0.96,
+     "size": 520,
+     "pose": "sit-slump",
+     "expr": "sad"
+    },
+    {
+     "type": "fx",
+     "kind": "shafts",
+     "hud": true,
+     "items": [
+      {
+       "x": 0.42,
+       "w": 0.16,
+       "angle": 22
+      },
+      {
+       "x": 0.72,
+       "w": 0.1,
+       "angle": 22
+      }
+     ],
+     "bars": 4
+    }
+   ],
+   "vo": "Imprisoned for years."
+  },
+  {
+   "id": "godbeam",
+   "dur": 3.0,
+   "bg": {
+    "kind": "sky",
+    "preset": "storm"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "monk",
+     "x": 0.55,
+     "y": 0.96,
+     "size": 520,
+     "pose": "kneel-pray",
+     "expr": "content"
+    },
+    {
+     "type": "fx",
+     "kind": "godbeam",
+     "from": "tl",
+     "target": [
+      0.55,
+      0.62
+     ],
+     "width": 260
+    }
+   ],
+   "vo": "And then, a miracle."
+  },
+  {
+   "id": "spotcone",
+   "dur": 3.0,
+   "bg": {
+    "kind": "flat",
+    "color": "#3a3030"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.5,
+     "y": 0.9,
+     "size": 480,
+     "pose": "sit-slump",
+     "expr": "sad"
+    },
+    {
+     "type": "fx",
+     "kind": "spotcone",
+     "x": 0.5,
+     "floor": 0.9,
+     "w": 0.34
+    }
+   ],
+   "vo": "Alone with his addiction."
+  },
+  {
+   "id": "spill",
+   "dur": 3.0,
+   "bg": {
+    "kind": "parchment"
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "spill",
+     "x": 0.42,
+     "y": 0.62,
+     "size": 300,
+     "dur": 1.6,
+     "color": "#2b2050",
+     "tendrils": 5,
+     "flood": true
+    },
+    {
+     "type": "label",
+     "text": "PEACE TREATY",
+     "x": 0.5,
+     "y": 0.3,
+     "enter": "none"
+    }
+   ],
+   "vo": "The ink ruined everything."
+  },
+  {
+   "id": "memory",
+   "dur": 3.0,
+   "bg": {
+    "kind": "interior",
+    "wall": "#4a4a5e",
+    "floor": "#2a2a36",
+    "trim": "#1a1a24"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.28,
+     "y": 1.25,
+     "size": 900,
+     "pose": "think",
+     "expr": "sad"
+    },
+    {
+     "type": "fx",
+     "kind": "memory",
+     "who": "king",
+     "pose": "kneel",
+     "expr": "cry",
+     "x": 0.72,
+     "y": 0.86,
+     "size": 580,
+     "backdrop": "fire",
+     "at": 0.4,
+     "tail": [
+      0.42,
+      0.42
+     ]
+    }
+   ],
+   "vo": "He remembered the fire."
+  },
+  {
+   "id": "dark_thought",
+   "dur": 3.0,
+   "bg": {
+    "kind": "sky",
+    "preset": "dusk"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.28,
+     "y": 0.96,
+     "size": 560,
+     "pose": "think",
+     "expr": "worried"
+    },
+    {
+     "type": "fx",
+     "kind": "memory",
+     "who": "rival",
+     "face": true,
+     "expr": "evil",
+     "x": 0.64,
+     "y": 0.42,
+     "at": 0.6,
+     "dim": 0.45
+    }
+   ],
+   "vo": "A dark thought crept in."
+  },
+  {
+   "id": "grade_rage",
+   "dur": 2.6,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "gaul",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 600,
+     "pose": "fist",
+     "expr": "rage",
+     "swap": [
+      {
+       "at": 0.6,
+       "expr": "rage"
+      }
+     ]
+    }
+   ],
+   "vo": "He was furious.",
+   "grade": {
+    "preset": "rage",
+    "at": 0.6,
+    "dur": 0.5
+   }
+  },
+  {
+   "id": "grade_golden",
+   "dur": 2.2,
+   "bg": {
+    "kind": "mountains"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 520,
+     "pose": "wave",
+     "view": "back"
+    }
+   ],
+   "vo": "Farewell.",
+   "grade": "golden-hour"
+  },
+  {
+   "id": "grade_trauma",
+   "dur": 2.8,
+   "bg": {
+    "kind": "interior"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 560,
+     "pose": "clutch-head",
+     "expr": "worried",
+     "tremble": [
+      [
+       0,
+       2.8
+      ]
+     ]
+    }
+   ],
+   "vo": "The nightmares returned.",
+   "grade": [
+    {
+     "preset": "moonlit",
+     "strength": 0.8,
+     "out": 0.93,
+     "outDur": 0.05
+    },
+    {
+     "preset": "gaslight",
+     "at": 0.93,
+     "dur": 0.05,
+     "out": 1.86,
+     "outDur": 0.05
+    },
+    {
+     "preset": "night-violet",
+     "at": 1.86,
+     "dur": 0.05
+    }
+   ]
+  },
+  {
+   "id": "grade_pink",
+   "dur": 2.0,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.36,
+     "y": 0.96,
+     "size": 500,
+     "pose": "hug"
+    },
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.62,
+     "y": 0.96,
+     "size": 500,
+     "pose": "hug",
+     "flip": true
+    }
+   ],
+   "vo": "An alliance.",
+   "grade": "pink"
+  },
+  {
+   "id": "grade_redflash",
+   "dur": 2.0,
+   "bg": {
+    "kind": "battlefield"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "legion",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 560,
+     "pose": "scared",
+     "expr": "shock"
+    }
+   ],
+   "vo": "Impact.",
+   "grade": {
+    "preset": "red-flash",
+    "at": 0.5,
+    "dur": 0.03,
+    "out": 0.67,
+    "outDur": 0.03
+   },
+   "camera": {
+    "shake": [
+     {
+      "at": 0.5,
+      "dur": 0.3,
+      "amp": 14
+     }
+    ]
+   }
+  },
+  {
+   "id": "grade_crt",
+   "dur": 2.0,
+   "bg": {
+    "kind": "office"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 520,
+     "pose": "point",
+     "expr": "neutral"
+    }
+   ],
+   "vo": "Footage on a monitor.",
+   "grade": "crt-cyan"
+  }
+ ]
+}

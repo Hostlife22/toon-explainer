@@ -1,0 +1,944 @@
+{
+  "title": "Paper cards: nameplates, time cards, picture bubbles, number cards, graffiti and verdict papers",
+  "fps": 30,
+  "seed": 44,
+  "style": {
+    "grain": true,
+    "vignette": 0.24
+  },
+  "cast": {
+    "general": {
+      "robe": "#b8262a",
+      "head": "helmet",
+      "hair": "short",
+      "hairColor": "#4a3022",
+      "armor": "#c9ccd2"
+    },
+    "clerk": {
+      "robe": "#6a8fbf",
+      "hair": "curly",
+      "hairColor": "#5a3a26"
+    },
+    "boy": {
+      "robe": "#8a6a4a",
+      "hair": "short",
+      "hairColor": "#2a1c15",
+      "head": "hat"
+    },
+    "hero": {
+      "robe": "#c8323a",
+      "hair": "curly",
+      "hairColor": "#6a4022"
+    },
+    "rival": {
+      "robe": "#3a3f6a",
+      "hair": "short",
+      "hairColor": "#1e1e1e",
+      "beard": "full",
+      "beardColor": "#1e1e1e"
+    },
+    "boss": {
+      "robe": "#2f3238",
+      "outfit": "suit",
+      "hair": "short",
+      "hairColor": "#3b2a20",
+      "mustache": true
+    },
+    "queen": {
+      "robe": "#7a2ea0",
+      "hair": "long",
+      "hairColor": "#3b2a20",
+      "head": "crown"
+    },
+    "host": {
+      "robe": "#2f3238",
+      "sash": "#c8323a",
+      "hair": "short",
+      "hairColor": "#3b2a20"
+    }
+  },
+  "shots": [
+    {
+      "id": "d01_rank",
+      "dur": 3.0,
+      "vo": "Meet Marcus, the general nobody asked for.",
+      "bg": {
+        "kind": "interior",
+        "wall": "#d9b470",
+        "columns": [
+          0.08,
+          0.92
+        ],
+        "columnColor": "#d9a84a",
+        "drapes": [
+          0.22
+        ],
+        "trim": "#8e2a1e"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "general",
+          "who": "general",
+          "x": 0.58,
+          "y": 0.98,
+          "size": 640,
+          "expr": "smug",
+          "pose": "hips"
+        },
+        {
+          "type": "bean",
+          "id": "clerk",
+          "who": "clerk",
+          "x": 0.86,
+          "y": 0.99,
+          "size": 420,
+          "flip": true,
+          "expr": "worried",
+          "pose": "hold"
+        },
+        {
+          "type": "doc",
+          "kind": "nameplate",
+          "style": "rank",
+          "rank": "GENERAL",
+          "name": "MARCUS",
+          "sub": "(MAR-KUS)",
+          "anchor": "bottom-left",
+          "at": 0.3,
+          "bullets": [
+            "- lost three battles",
+            "- won one argument"
+          ],
+          "bulletEvery": 0.6
+        }
+      ]
+    },
+    {
+      "id": "d02_hand_hook",
+      "dur": 3.6,
+      "vo": "A boy called Temujin, who later renamed himself.",
+      "bg": {
+        "kind": "parchment"
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "boy",
+          "who": "boy",
+          "x": 0.47,
+          "y": 0.66,
+          "size": 300,
+          "expr": "neutral",
+          "pose": "cross"
+        },
+        {
+          "type": "doc",
+          "kind": "nameplate",
+          "style": "hand",
+          "name": "TEMUJIN",
+          "x": 0.5,
+          "y": 0.82,
+          "size": 96,
+          "at": 0.2,
+          "arrow": "hook-right",
+          "arrowTo": "boy",
+          "strike": {
+            "at": 1.6,
+            "new": "GENGHIS KHAN"
+          }
+        }
+      ]
+    },
+    {
+      "id": "d03_big_slant",
+      "dur": 3.4,
+      "vo": "Octavius arrives, and so does his rival.",
+      "bg": {
+        "kind": "city",
+        "preset": "day"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "nameplate",
+          "style": "big",
+          "name": "OCTAVIUS",
+          "x": 0.36,
+          "y": 0.4,
+          "size": 170
+        },
+        {
+          "type": "bean",
+          "id": "hero",
+          "who": "hero",
+          "x": 0.33,
+          "y": 1.0,
+          "size": 560,
+          "expr": "happy",
+          "pose": "cheeks"
+        },
+        {
+          "type": "bean",
+          "id": "rival",
+          "who": "rival",
+          "x": 0.76,
+          "y": 1.0,
+          "size": 560,
+          "flip": true,
+          "expr": "evil",
+          "pose": "rub-hands"
+        },
+        {
+          "type": "doc",
+          "kind": "nameplate",
+          "style": "slant",
+          "name": "THE RIVAL",
+          "anchor": "head",
+          "who": "rival",
+          "size": 74,
+          "at": 1.2,
+          "hold": 2
+        }
+      ]
+    },
+    {
+      "id": "d04_timeskip_black",
+      "dur": 2.0,
+      "vo": "Nine months later.",
+      "bg": {
+        "kind": "flat",
+        "color": "#000000"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "timeskip",
+          "text": "9 MONTHS LATER",
+          "style": "black"
+        }
+      ]
+    },
+    {
+      "id": "d05_timeskip_cloud",
+      "dur": 2.6,
+      "vo": "Twenty years passed.",
+      "bg": {
+        "kind": "city",
+        "preset": "day"
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "hero",
+          "who": "hero",
+          "x": 0.25,
+          "y": 1.0,
+          "size": 520,
+          "expr": "sleepy",
+          "pose": "idle"
+        },
+        {
+          "type": "doc",
+          "kind": "timeskip",
+          "text": "20 YEARS LATER",
+          "style": "cloud",
+          "y": 0.4,
+          "at": 0.3,
+          "scale": 0.8
+        },
+        {
+          "type": "doc",
+          "kind": "timeskip",
+          "text": "(roughly)",
+          "style": "inline",
+          "y": 0.12,
+          "size": 56,
+          "at": 0.9
+        }
+      ]
+    },
+    {
+      "id": "d06_bubble_icons",
+      "dur": 3.4,
+      "vo": "His plan: skulls first, then a castle. The castle was cancelled.",
+      "bg": {
+        "kind": "office",
+        "window": "porthole",
+        "lamp": true
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "boss",
+          "who": "boss",
+          "x": 0.3,
+          "y": 1.0,
+          "size": 620,
+          "expr": "evil",
+          "pose": "steeple"
+        },
+        {
+          "type": "doc",
+          "kind": "pictobubble",
+          "style": "speech",
+          "x": 0.66,
+          "y": 0.32,
+          "w": 700,
+          "h": 300,
+          "tail": [
+            -260,
+            200
+          ],
+          "icons": [
+            {
+              "prop": "skull"
+            },
+            {
+              "arrow": true
+            },
+            {
+              "prop": "moneybag"
+            },
+            {
+              "arrow": true
+            },
+            {
+              "prop": "castle",
+              "strike": 2.4
+            }
+          ],
+          "every": 0.4
+        }
+      ]
+    },
+    {
+      "id": "d07_bubble_scene",
+      "dur": 3.6,
+      "vo": "She dreamed of the city, and then of a crown.",
+      "bg": {
+        "kind": "sky",
+        "preset": "sunset",
+        "clouds": 4,
+        "hills": 2
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "queen",
+          "who": "queen",
+          "x": 0.22,
+          "y": 1.0,
+          "size": 560,
+          "expr": "content",
+          "pose": "think"
+        },
+        {
+          "type": "doc",
+          "kind": "pictobubble",
+          "style": "thought",
+          "x": 0.6,
+          "y": 0.42,
+          "w": 720,
+          "h": 420,
+          "tail": [
+            -330,
+            240
+          ],
+          "scene": {
+            "shot": "d05_timeskip_cloud",
+            "t": 0.1
+          },
+          "child": {
+            "icons": [
+              {
+                "prop": "castle"
+              }
+            ],
+            "at": 1.6,
+            "w": 300,
+            "h": 210,
+            "dx": 300,
+            "dy": -310
+          }
+        }
+      ]
+    },
+    {
+      "id": "d08_bubble_list_shout",
+      "dur": 3.8,
+      "vo": "The plan had steps. The crowd had opinions.",
+      "bg": {
+        "kind": "stage"
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "host",
+          "who": "host",
+          "x": 0.18,
+          "y": 1.0,
+          "size": 520,
+          "expr": "happy",
+          "pose": "present"
+        },
+        {
+          "type": "doc",
+          "kind": "pictobubble",
+          "style": "speech",
+          "x": 0.36,
+          "y": 0.3,
+          "w": 480,
+          "h": 150,
+          "tail": [
+            -130,
+            160
+          ],
+          "list": [
+            "1. stabilise",
+            "2. trade",
+            "3. ???",
+            "4. profit"
+          ],
+          "listEvery": 0.6,
+          "size": 40
+        },
+        {
+          "type": "bean",
+          "id": "clerk",
+          "who": "clerk",
+          "x": 0.84,
+          "y": 1.0,
+          "size": 520,
+          "flip": true,
+          "expr": "rage",
+          "pose": "fist"
+        },
+        {
+          "type": "doc",
+          "kind": "pictobubble",
+          "style": "shout",
+          "x": 0.72,
+          "y": 0.36,
+          "w": 440,
+          "h": 240,
+          "text": "NO WAY!",
+          "at": 1.4,
+          "grow": 1.4
+        }
+      ]
+    },
+    {
+      "id": "d09_statstack",
+      "dur": 3.4,
+      "vo": "Twenty-five legions: a hundred and fifty thousand soldiers, plus auxiliaries.",
+      "bg": {
+        "kind": "battlefield",
+        "craters": 4,
+        "trees": 2
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "general",
+          "who": "general",
+          "x": 0.6,
+          "y": 0.92,
+          "size": 460,
+          "expr": "smug",
+          "pose": "sword-up",
+          "walk": [
+            [
+              0,
+              3.4
+            ]
+          ]
+        },
+        {
+          "type": "doc",
+          "kind": "statstack",
+          "main": {
+            "value": "25",
+            "label": "LEGIONS"
+          },
+          "lines": [
+            {
+              "at": 1.0,
+              "value": "150 000",
+              "label": "SOLDIERS"
+            },
+            {
+              "at": 2.0,
+              "value": "150 000",
+              "label": "AUXILIARY"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d10_unitcards",
+      "dur": 3.2,
+      "vo": "He had fifty thousand men and thirty-seven horses.",
+      "bg": {
+        "kind": "flat",
+        "color": "#5a2a22"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "boss",
+          "who": "boss",
+          "x": 0.5,
+          "y": 1.55,
+          "size": 1500,
+          "expr": "evil",
+          "blur": 6
+        },
+        {
+          "type": "doc",
+          "kind": "unitcards",
+          "y": 0.5,
+          "cards": [
+            {
+              "who": "general",
+              "n": "x50,000"
+            },
+            {
+              "creature": "horse",
+              "n": "x37"
+            },
+            {
+              "prop": "moneybag",
+              "n": "x9"
+            }
+          ],
+          "scale": 1.45
+        }
+      ]
+    },
+    {
+      "id": "d11_bigyear",
+      "dur": 3.4,
+      "vo": "Then came twelve-twelve.",
+      "bg": {
+        "kind": "desert",
+        "preset": "sunset"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "bigyear",
+          "text": "1212",
+          "y": 0.42,
+          "fade": {
+            "at": 2.2,
+            "to": 0.3,
+            "dur": 0.5
+          }
+        },
+        {
+          "type": "bean",
+          "id": "general",
+          "who": "general",
+          "x": 0.5,
+          "y": 1.0,
+          "size": 420,
+          "at": 2.4,
+          "enter": "pop",
+          "expr": "angry",
+          "pose": "sword-up"
+        }
+      ]
+    },
+    {
+      "id": "d12_band",
+      "dur": 4.2,
+      "vo": "Legions seventeen, eighteen and nineteen were never used again.",
+      "bg": {
+        "kind": "forest",
+        "rays": false
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "general",
+          "who": "general",
+          "x": 0.3,
+          "y": 1.0,
+          "size": 480,
+          "expr": "sad",
+          "pose": "idle"
+        },
+        {
+          "type": "bean",
+          "id": "clerk",
+          "who": "clerk",
+          "x": 0.7,
+          "y": 1.0,
+          "size": 480,
+          "flip": true,
+          "expr": "worried",
+          "pose": "idle"
+        },
+        {
+          "type": "doc",
+          "kind": "band",
+          "header": "LEGION",
+          "items": [
+            "XVII",
+            "XVIII",
+            "XIX"
+          ],
+          "every": 0.8,
+          "retireAt": 3.0,
+          "outAt": 3.8
+        }
+      ]
+    },
+    {
+      "id": "d13_graffiti_cover",
+      "dur": 4.6,
+      "vo": "Officially, the money was not stolen. It was misplaced.",
+      "bg": {
+        "kind": "flat",
+        "color": "#cfcfcb"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "graffiti",
+          "text": "3 MILLION\nSTOLEN",
+          "style": "paint",
+          "wall": "brick",
+          "write": {
+            "at": 0.1,
+            "dur": 0.8
+          },
+          "cover": {
+            "at": 1.4,
+            "dur": 1.1
+          },
+          "rewrite": {
+            "text": "MISPLACED!!",
+            "at": 2.6,
+            "perLetter": 0.12
+          },
+          "thumb": {
+            "at": 4.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "d14_graffiti_blood",
+      "dur": 3.6,
+      "vo": "They signed the oath in blood. Theatrically.",
+      "bg": {
+        "kind": "flat",
+        "color": "#e8d8c0"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "graffiti",
+          "text": "WE SWEAR",
+          "style": "blood",
+          "wall": "parchment",
+          "size": 200,
+          "hands": true,
+          "write": {
+            "at": 0.2,
+            "dur": 1.4
+          },
+          "flood": {
+            "at": 2.0,
+            "dur": 1.2,
+            "to": "#c0302a"
+          }
+        }
+      ]
+    },
+    {
+      "id": "d15_graffiti_erase",
+      "dur": 2.6,
+      "vo": "His name was quietly erased.",
+      "bg": {
+        "kind": "flat",
+        "color": "#d9cdb0"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "graffiti",
+          "text": "MAYOR BORIS",
+          "style": "brush",
+          "color": "#2a3a8a",
+          "wall": "plaster",
+          "size": 150,
+          "write": {
+            "at": 0,
+            "dur": 0.6
+          },
+          "erase": {
+            "word": 1,
+            "at": 1.0,
+            "dur": 1.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "d16_scorecard",
+      "dur": 3.6,
+      "vo": "Let's check the speech, claim by claim.",
+      "bg": {
+        "kind": "office",
+        "window": "porthole",
+        "lamp": true,
+        "desk": false
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "host",
+          "who": "host",
+          "x": 0.3,
+          "y": 1.02,
+          "size": 640,
+          "expr": "smug",
+          "pose": "point"
+        },
+        {
+          "type": "doc",
+          "kind": "scorecard",
+          "title": "The Speech",
+          "x": 0.68,
+          "y": 0.42,
+          "scale": 1.25,
+          "marks": [
+            {
+              "row": 0,
+              "col": "false",
+              "at": 0.4
+            },
+            {
+              "row": 1,
+              "col": "false",
+              "at": 0.8
+            },
+            {
+              "row": 2,
+              "col": "true",
+              "at": 1.2
+            },
+            {
+              "row": 3,
+              "col": "false",
+              "at": 1.6
+            },
+            {
+              "row": 4,
+              "col": "false",
+              "at": 2.0
+            }
+          ],
+          "verdict": {
+            "text": "FALSE",
+            "at": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "id": "d17_tally",
+      "dur": 3.6,
+      "vo": "The official steel figures looked suspicious.",
+      "bg": {
+        "kind": "factory",
+        "banner": "#b8262a"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "tally",
+          "x": 0.42,
+          "y": 0.4,
+          "scale": 0.95,
+          "title": "AMOUNT OF USEFUL STEEL PRODUCED:",
+          "value": "0",
+          "scribble": {
+            "at": 1.0,
+            "text": ",0999999999",
+            "every": 0.1
+          }
+        },
+        {
+          "type": "bean",
+          "id": "boss",
+          "who": "boss",
+          "x": 0.82,
+          "y": 1.0,
+          "size": 560,
+          "flip": true,
+          "expr": "smug",
+          "pose": "rub-hands"
+        }
+      ]
+    },
+    {
+      "id": "d18_list_retitle",
+      "dur": 4.0,
+      "vo": "The list of prisoners became a menu.",
+      "bg": {
+        "kind": "interior",
+        "wall": "#7a5a3a"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "list",
+          "paper": "scroll",
+          "x": 0.5,
+          "y": 0.5,
+          "title": "PRISONERS",
+          "items": [
+            "Theseus",
+            "Pirithous",
+            "a goat"
+          ],
+          "every": 0.3,
+          "pencil": true,
+          "strike": [
+            {
+              "item": "title",
+              "at": 1.8
+            }
+          ],
+          "retitle": {
+            "text": "MENU",
+            "at": 2.3
+          },
+          "ticks": [
+            {
+              "item": 2,
+              "at": 3.0
+            }
+          ],
+          "scale": 1.3
+        }
+      ]
+    },
+    {
+      "id": "d19_list_todo",
+      "dur": 3.8,
+      "vo": "They treated the treaty as a to-do list.",
+      "bg": {
+        "kind": "office",
+        "window": "porthole",
+        "lamp": true
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "list",
+          "paper": "sheet",
+          "x": 0.45,
+          "y": 0.52,
+          "items": [
+            "take the coast",
+            "take the hills",
+            "take the rest"
+          ],
+          "itemsAt": 0,
+          "every": 0.01,
+          "pencil": true,
+          "insertTitle": {
+            "text": "TO DO LIST:",
+            "at": 0.3
+          },
+          "ticks": [
+            {
+              "item": 0,
+              "at": 1.6
+            },
+            {
+              "item": 1,
+              "at": 2.1
+            },
+            {
+              "item": 2,
+              "at": 2.6
+            }
+          ],
+          "spill": {
+            "at": 3.1
+          },
+          "scale": 1.3
+        },
+        {
+          "type": "bean",
+          "id": "boss",
+          "who": "boss",
+          "x": 0.84,
+          "y": 1.0,
+          "size": 520,
+          "flip": true,
+          "expr": "happy",
+          "pose": "thumbs-up"
+        }
+      ]
+    },
+    {
+      "id": "d20_crayon",
+      "dur": 4.6,
+      "vo": "On paper, his kingdom was magnificent. Then it was downgraded.",
+      "bg": {
+        "kind": "flat",
+        "color": "#6b8a5a"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "crayon",
+          "x": 0.5,
+          "y": 0.48,
+          "items": [
+            "figure",
+            "castle",
+            "$",
+            "rocket",
+            "box",
+            "star"
+          ],
+          "caption": "PLAN by THE BOSS age 55",
+          "recolor": {
+            "at": 1.8,
+            "color": "#3a6ae0"
+          },
+          "cut": {
+            "at": 3.0
+          }
+        }
+      ]
+    }
+  ]
+}

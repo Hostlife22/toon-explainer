@@ -14,7 +14,7 @@ Fork the repository, clone your fork and create a branch for your change. Instal
 
 ```sh
 uv run --with playwright playwright install chromium
-uv run --with playwright python scripts/render.py examples/v2_showcase/spec.json --serve
+uv run --with playwright python scripts/render.py examples/showcase/spec.json --serve
 ```
 
 The preview prints a local URL. Space plays and pauses, the arrow keys step one frame, and the slider scrubs the film.
@@ -31,13 +31,13 @@ The preview prints a local URL. Space plays and pauses, the arrow keys step one 
 
 ## Adding a layer, prop, effect or background
 
-Register the drawing function in the relevant registry: `T.layers`, `T.PROPS`, `T.FX`, `T.FG`, `T.bgs` or the pose table in `scripts/engine/lib/rig.js`. Add the new name to the matching `KNOWN_*` set in `scripts/spec.py`; a test compares both vocabularies. Document every field in [references/03-spec-reference.md](references/03-spec-reference.md) and add a recipe to [references/02-visual-grammar.md](references/02-visual-grammar.md) when it enables a new kind of shot.
+Register the drawing function in the relevant registry: `T.layers`, `T.PROPS`, `T.FX`, `T.FG`, `T.bgs` or the pose table in `scripts/engine/lib/characters/rig.js`. Add the new name to the matching `KNOWN_*` set in `scripts/spec.py`; a test compares both vocabularies. Document every field in [references/03-spec-reference.md](references/03-spec-reference.md) and add a recipe to [references/02-visual-grammar.md](references/02-visual-grammar.md) when it enables a new kind of shot.
 
 Design and inspect a still before animating. Use an example spec and a contact sheet:
 
 ```sh
 uv run --with playwright python scripts/render.py examples/character_sheet/spec.json --stills 0.5,1.5,2.5,3.5 --out renders/review
-uv run --with playwright python scripts/render.py examples/v2_showcase/spec.json --sheet renders/review/sheet.jpg
+uv run --with playwright python scripts/render.py examples/showcase/spec.json --sheet renders/review/sheet.jpg
 ```
 
 ## Validate your change

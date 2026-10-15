@@ -1,0 +1,3204 @@
+{
+ "title": "Expressions and wardrobe: ages and builds, expressions, face gags, accessories, wings, headwear, outfits, overhead view",
+ "fps": 30,
+ "seed": 404,
+ "style": {
+  "grain": true,
+  "vignette": 0.25
+ },
+ "cast": {
+  "dad": {
+   "robe": "#3d6a8a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "beard": "goatee"
+  },
+  "kid": {
+   "robe": "#d0812a",
+   "hair": "short",
+   "hairColor": "#6a4022",
+   "age": "child"
+  },
+  "tot": {
+   "robe": "#e8b0c0",
+   "hair": "short",
+   "hairColor": "#c89a5a",
+   "age": "toddler"
+  },
+  "baby": {
+   "age": "baby",
+   "hair": "bald"
+  },
+  "baby2": {
+   "age": "baby",
+   "hair": "bald",
+   "swaddle": "#b83a3a"
+  },
+  "granny": {
+   "robe": "#8a6aa8",
+   "hair": "bun",
+   "age": "elder"
+  },
+  "grandpa": {
+   "robe": "#6a7a4a",
+   "hair": "bald-sides",
+   "age": "elder",
+   "beard": "long",
+   "beardColor": "#e6e2da"
+  },
+  "brute": {
+   "build": "brute",
+   "bare": true,
+   "plates": true,
+   "robe": "#6a4a3a",
+   "sleeve": "#f6f2ea",
+   "legColor": "#4a3226",
+   "hair": "spikes",
+   "hairColor": "#2a1c15"
+  },
+  "fatman": {
+   "build": "fat",
+   "robe": "#c8a040",
+   "belt": "#5a3a2a",
+   "hair": "bald-sides",
+   "mustache": true
+  },
+  "thinman": {
+   "build": "thin",
+   "robe": "#4a5a6a",
+   "hair": "wild",
+   "hairColor": "#3a3a3a"
+  },
+  "muscle": {
+   "build": "muscle",
+   "robe": "#c8323a",
+   "hair": "short",
+   "hairColor": "#2a1c15"
+  },
+  "plain": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022"
+  },
+  "face": {
+   "robe": "#5a7a9a",
+   "hair": "short",
+   "hairColor": "#4a3022"
+  },
+  "face_v": {
+   "robe": "#5a7a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "vision": "coin-heap"
+  },
+  "liar1": {
+   "robe": "#2f3238",
+   "outfit": "suit",
+   "hair": "short",
+   "hairColor": "#2a1c15",
+   "nose": {
+    "grow": [
+     0.4,
+     1.9
+    ],
+    "len": 0.45
+   }
+  },
+  "liar2": {
+   "robe": "#b8262a",
+   "outfit": "suit",
+   "hair": "bald-sides",
+   "mustache": true,
+   "nose": {
+    "grow": [
+     0.5,
+     2.0
+    ],
+    "len": 0.35,
+    "tilt": -14
+   }
+  },
+  "liar3": {
+   "robe": "#3d5a8a",
+   "outfit": "suit",
+   "hair": "long-straight",
+   "hairColor": "#c89a3a",
+   "nose": {
+    "grow": [
+     0.6,
+     2.0
+    ],
+    "len": 0.4,
+    "pops": true
+   }
+  },
+  "weeper": {
+   "robe": "#d0812a",
+   "age": "child",
+   "hair": "short",
+   "hairColor": "#6a4022"
+  },
+  "puppy": {
+   "robe": "#6a8aa8",
+   "hair": "curly-big",
+   "hairColor": "#c89a5a",
+   "tears": "drop"
+  },
+  "crush": {
+   "robe": "#c86a8a",
+   "hair": "ponytail",
+   "hairColor": "#4a2e1f",
+   "blush": "squiggle"
+  },
+  "shy": {
+   "robe": "#8aa86a",
+   "hair": "short",
+   "hairColor": "#2a1c15",
+   "blush": "hatch"
+  },
+  "almost": {
+   "robe": "#7a6aa8",
+   "hair": "braids",
+   "hairColor": "#d8a050",
+   "tears": "bead"
+  },
+  "joy": {
+   "robe": "#e0b040",
+   "hair": "short",
+   "hairColor": "#4a2e1f",
+   "tears": "joy"
+  },
+  "gloomy": {
+   "robe": "#6a6a8a",
+   "hair": "short",
+   "hairColor": "#3a2a22",
+   "gloom": {
+    "at": 0.5,
+    "count": 8
+   }
+  },
+  "gloomhat": {
+   "robe": "#4a4a5a",
+   "outfit": "suit",
+   "head": "fedora",
+   "gloom": {
+    "at": 1.0,
+    "count": 7
+   }
+  },
+  "dreader": {
+   "robe": "#8a6a4a",
+   "hair": "bald-sides",
+   "dread": true
+  },
+  "taped": {
+   "robe": "#3d6a8a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "mouthTape": true
+  },
+  "bruiser": {
+   "robe": "#8a3a2a",
+   "hair": "short",
+   "hairColor": "#2a1c15",
+   "bruise": "both",
+   "bandage": "cross"
+  },
+  "wrapped": {
+   "robe": "#6a8a4a",
+   "hair": "short",
+   "hairColor": "#c89a5a",
+   "bandage": "head"
+  },
+  "blind": {
+   "robe": "#8a7a6a",
+   "hair": "bald-sides",
+   "bandage": "eyes"
+  },
+  "burglar": {
+   "outfit": "stripes",
+   "head": "newsboy-cap",
+   "headColor": "#2a2a2a",
+   "mask": "eye",
+   "hair": "short",
+   "hairColor": "#2a1c15"
+  },
+  "cool": {
+   "robe": "#2a2a30",
+   "outfit": "suit",
+   "hair": "short",
+   "hairColor": "#2a1c15",
+   "glasses": "sun"
+  },
+  "party": {
+   "robe": "#2a6ad0",
+   "hair": "spikes",
+   "hairColor": "#e0b040",
+   "glasses": "shutter",
+   "glassesColor": "#e04a8a",
+   "head": "party-hat",
+   "hatText": 5
+  },
+  "nerd": {
+   "outfit": "labcoat",
+   "hair": "curly-big",
+   "hairColor": "#6a4022",
+   "glasses": "round",
+   "opaque": true
+  },
+  "toff": {
+   "outfit": "frockcoat",
+   "head": "tophat",
+   "hair": "bald-sides",
+   "monocle": true,
+   "mustache": true
+  },
+  "hello": {
+   "robe": "#5a8a6a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "badge": {
+    "text": "MARCUS",
+    "style": "hello",
+    "badgeSwap": [
+     {
+      "at": 1.4,
+      "text": "BRUTUS"
+     }
+    ]
+   }
+  },
+  "tagged": {
+   "robe": "#8a5a9a",
+   "hair": "long",
+   "hairColor": "#2a1c15",
+   "badge": {
+    "text": "BOSS",
+    "style": "tag"
+   },
+   "bowtie": true,
+   "tie": "#e0b040"
+  },
+  "plank": {
+   "robe": "#a8743a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "badge": {
+    "text": "THE TRUTH",
+    "style": "plank"
+   }
+  },
+  "labelled": {
+   "robe": "#c8323a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "label": "NEW",
+   "stickers": [
+    {
+     "kind": "star",
+     "anchor": "chest",
+     "at": 0.8
+    },
+    {
+     "kind": "heart",
+     "anchor": "cheek",
+     "at": 1.2
+    }
+   ]
+  },
+  "renter": {
+   "outfit": "rags",
+   "hair": "wild",
+   "hairColor": "#6a5a4a",
+   "sign": "FOR RENT"
+  },
+  "messy": {
+   "outfit": "labcoat",
+   "hair": "short",
+   "hairColor": "#c8c8c8",
+   "stains": {
+    "color": "#3a8a3a",
+    "count": 6,
+    "seed": "lab"
+   },
+   "stickers": [
+    {
+     "kind": "check",
+     "anchor": "forehead",
+     "at": 0.6
+    }
+   ]
+  },
+  "angel": {
+   "robe": "#f4f2ea",
+   "hair": "curly",
+   "hairColor": "#f0c860",
+   "head": "halo",
+   "wings": "angel"
+  },
+  "devil": {
+   "robe": "#c8323a",
+   "hair": "short",
+   "hairColor": "#2a1c15",
+   "devil": true
+  },
+  "icarus": {
+   "outfit": "chiton",
+   "hair": "curly-big",
+   "hairColor": "#c89a5a",
+   "wings": {
+    "kind": "bird",
+    "span": 2.0,
+    "wax": true,
+    "melt": {
+     "at": 1.4
+    }
+   },
+   "flap": [
+    [
+     0,
+     1.4
+    ]
+   ]
+  },
+  "pest": {
+   "robe": "#5a6a3a",
+   "hair": "short",
+   "hairColor": "#2a1c15",
+   "wings": "insect",
+   "flap": [
+    [
+     0,
+     3
+    ]
+   ]
+  },
+  "h_mianguan": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "mianguan",
+   "outfit": "hanfu",
+   "beard": "long",
+   "beardColor": "#2a1c15"
+  },
+  "h_winged-helm": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "winged-helm"
+  },
+  "h_bucket-hat": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "bucket-hat"
+  },
+  "h_dotted-cap": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "dotted-cap"
+  },
+  "h_kettle-hat": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "kettle-hat"
+  },
+  "h_mail-coif": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "mail-coif"
+  },
+  "h_visor-helmet": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "visor-helmet",
+   "eyeColor": "#ff2020"
+  },
+  "h_hood-dark": {
+   "robe": "#5a4a3a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "hood-dark"
+  },
+  "h_hijab": {
+   "robe": "#8e6aa8",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "hijab"
+  },
+  "h_veil-wrap": {
+   "robe": "#5a4136",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "veil-wrap"
+  },
+  "h_clown-wig": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "clown-wig"
+  },
+  "h_hard-hat": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "hard-hat"
+  },
+  "h_star-tophat": {
+   "robe": "#2a3a8a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "star-tophat",
+   "outfit": "frockcoat"
+  },
+  "h_party-hat": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "party-hat"
+  },
+  "h_halo": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "halo"
+  },
+  "h_imperial-helmet": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "imperial-helmet",
+   "outfit": "cuirass"
+  },
+  "h_crested-bronze": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "crested-bronze",
+   "outfit": "chiton"
+  },
+  "h_court-hat": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "court-hat",
+   "outfit": "hanfu"
+  },
+  "h_phoenix-crown": {
+   "robe": "#c8202c",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "phoenix-crown",
+   "outfit": "hanfu"
+  },
+  "h_fur-cap": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "fur-cap"
+  },
+  "h_deerstalker": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "deerstalker"
+  },
+  "h_straw-boater": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "straw-boater"
+  },
+  "h_chef-hat": {
+   "robe": "#f4f4f0",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "chef-hat"
+  },
+  "h_shako": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "shako"
+  },
+  "h_phrygian": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "phrygian"
+  },
+  "h_barrister-wig": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "barrister-wig",
+   "outfit": "judge-robe"
+  },
+  "h_nightcap": {
+   "robe": "#9ab0d8",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "nightcap"
+  },
+  "h_bucket-helmet": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "bucket-helmet",
+   "headText": "BOT"
+  },
+  "h_wide-brim": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "wide-brim"
+  },
+  "o_toga": {
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "outfit": "toga",
+   "trim": "#a4302a",
+   "head": "laurel"
+  },
+  "o_chiton": {
+   "hair": "curly",
+   "hairColor": "#2a1c15",
+   "outfit": "chiton",
+   "drapeColor": "#2c3350"
+  },
+  "o_dress": {
+   "hair": "long",
+   "hairColor": "#4a3022",
+   "outfit": "dress",
+   "bodice": "#e6c44a",
+   "veilColor": "#cfe0ea"
+  },
+  "o_cuirass": {
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "outfit": "cuirass",
+   "cape": "#8f1f27",
+   "head": "imperial-helmet"
+  },
+  "o_cloak": {
+   "hair": "braids",
+   "hairColor": "#4a3022",
+   "outfit": "cloak"
+  },
+  "o_robe-royal": {
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "outfit": "robe-royal",
+   "head": "crown",
+   "beard": "full"
+  },
+  "o_habit": {
+   "hair": "bald-sides",
+   "hairColor": "#4a3022",
+   "outfit": "habit"
+  },
+  "o_frockcoat": {
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "outfit": "frockcoat",
+   "head": "tophat",
+   "mustache": true
+  },
+  "o_labcoat": {
+   "hair": "wild",
+   "hairColor": "#4a3022",
+   "outfit": "labcoat",
+   "glasses": "round"
+  },
+  "o_overalls": {
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "outfit": "overalls",
+   "stripeColor": "#2a5ac8",
+   "head": "bucket-hat"
+  },
+  "o_jersey": {
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "outfit": "jersey",
+   "jerseyNum": 23
+  },
+  "o_rags": {
+   "hair": "wild",
+   "hairColor": "#6a5a4a",
+   "outfit": "rags"
+  },
+  "o_fur-vest": {
+   "hair": "braids",
+   "hairColor": "#d8a050",
+   "outfit": "fur-vest",
+   "beard": "bushy",
+   "beardColor": "#d8a050"
+  },
+  "o_stripes": {
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "outfit": "stripes",
+   "mask": "eye"
+  },
+  "o_boxers": {
+   "hair": "bald-sides",
+   "hairColor": "#4a3022",
+   "outfit": "boxers"
+  },
+  "o_cow-suit": {
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "outfit": "cow-suit"
+  },
+  "o_gown": {
+   "hair": "volute",
+   "hairColor": "#d8a050",
+   "outfit": "gown"
+  },
+  "o_tracht": {
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "outfit": "tracht",
+   "head": "straw-boater"
+  },
+  "o_party-tunic": {
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "outfit": "party-tunic",
+   "head": "officer-cap",
+   "headColor": "#6f6b4c",
+   "headColor2": "#3a3d2a"
+  },
+  "o_judge-robe": {
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "outfit": "judge-robe",
+   "head": "barrister-wig"
+  },
+  "hr_braids": {
+   "robe": "#7a8a9a",
+   "hair": "braids",
+   "hairColor": "#d8a050"
+  },
+  "hr_curly-big": {
+   "robe": "#7a8a9a",
+   "hair": "curly-big",
+   "hairColor": "#2a1c15"
+  },
+  "hr_volute": {
+   "robe": "#7a8a9a",
+   "hair": "volute",
+   "hairColor": "#c86a2a"
+  },
+  "hr_long-straight": {
+   "robe": "#7a8a9a",
+   "hair": "long-straight",
+   "hairColor": "#4a2e1f"
+  },
+  "hr_ponytail": {
+   "robe": "#7a8a9a",
+   "hair": "ponytail",
+   "hairColor": "#4a2e1f"
+  },
+  "hr_wild": {
+   "robe": "#7a8a9a",
+   "hair": "wild"
+  },
+  "hr_spikes": {
+   "robe": "#7a8a9a",
+   "hair": "spikes",
+   "hairColor": "#e0b040"
+  },
+  "hr_bushy": {
+   "robe": "#6a4a3a",
+   "hair": "curly",
+   "hairColor": "#3a2e2a",
+   "beard": "bushy"
+  },
+  "hr_bushy_grey": {
+   "robe": "#4a5a7a",
+   "hair": "wild",
+   "age": "elder",
+   "beard": "bushy",
+   "beardColor": "#e6e2da"
+  },
+  "hr_back": {
+   "robe": "#7a8a9a",
+   "hair": "ponytail",
+   "hairColor": "#4a2e1f"
+  },
+  "king": {
+   "robe": "#b82a2a",
+   "hair": "short",
+   "hairColor": "#4a2e1f",
+   "head": "crown",
+   "cape": "#e2b23c"
+  },
+  "guard": {
+   "robe": "#3d5a8a",
+   "head": "helmet",
+   "hair": "short"
+  },
+  "fallen": {
+   "robe": "#3d6a8a",
+   "hair": "short",
+   "hairColor": "#2a1c15"
+  }
+ },
+ "shots": [
+  {
+   "id": "ages",
+   "dur": 3,
+   "bg": {
+    "kind": "interior",
+    "wall": "#d9b98a",
+    "floor": "#8a5a3a",
+    "trim": "#2a1c15"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "AGES: ADULT, CHILD, TODDLER, BABY, ELDER",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8323a"
+    },
+    {
+     "type": "bean",
+     "who": "grandpa",
+     "x": 0.1,
+     "y": 0.92,
+     "size": 420,
+     "pose": "hips",
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 1.2,
+       "v": "smug-closed"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "granny",
+     "x": 0.26,
+     "y": 0.92,
+     "size": 420,
+     "pose": "cradle",
+     "hold": "swaddle",
+     "expr": "content"
+    },
+    {
+     "type": "bean",
+     "who": "dad",
+     "x": 0.45,
+     "y": 0.92,
+     "size": 420,
+     "pose": "point",
+     "expr": "happy",
+     "talk": [
+      [
+       0.3,
+       1.6
+      ]
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "kid",
+     "x": 0.62,
+     "y": 0.92,
+     "size": 420,
+     "pose": "wave",
+     "expr": "happy"
+    },
+    {
+     "type": "bean",
+     "who": "tot",
+     "x": 0.75,
+     "y": 0.92,
+     "size": 420,
+     "pose": [
+      {
+       "at": 0,
+       "v": "flail"
+      },
+      {
+       "at": 0.07,
+       "v": "flail-b"
+      },
+      {
+       "at": 0.13,
+       "v": "flail"
+      },
+      {
+       "at": 0.2,
+       "v": "idle"
+      }
+     ],
+     "expr": "wail"
+    },
+    {
+     "type": "bean",
+     "who": "baby",
+     "x": 0.86,
+     "y": 0.92,
+     "size": 250,
+     "expr": "sleep-drool"
+    },
+    {
+     "type": "bean",
+     "who": "baby2",
+     "x": 0.95,
+     "y": 0.92,
+     "size": 250,
+     "expr": "cute"
+    }
+   ]
+  },
+  {
+   "id": "builds",
+   "dur": 3,
+   "bg": {
+    "kind": "stage"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "BUILDS: BRUTE, FAT, THIN, MUSCLE",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8323a"
+    },
+    {
+     "type": "bean",
+     "who": "brute",
+     "x": 0.14,
+     "y": 0.94,
+     "size": 420,
+     "pose": "fist",
+     "expr": "roar"
+    },
+    {
+     "type": "bean",
+     "who": "fatman",
+     "x": 0.36,
+     "y": 0.94,
+     "size": 420,
+     "pose": "hips",
+     "expr": "content"
+    },
+    {
+     "type": "bean",
+     "who": "plain",
+     "x": 0.54,
+     "y": 0.94,
+     "size": 420,
+     "expr": "shock"
+    },
+    {
+     "type": "bean",
+     "who": "thinman",
+     "x": 0.7,
+     "y": 0.94,
+     "size": 420,
+     "pose": "shrug",
+     "expr": "side-eye"
+    },
+    {
+     "type": "bean",
+     "who": "muscle",
+     "x": 0.88,
+     "y": 0.94,
+     "size": 420,
+     "pose": "flex",
+     "expr": "smug"
+    }
+   ]
+  },
+  {
+   "id": "expr_1",
+   "dur": 2.4,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "EXPRESSIONS 1/3  (snap at 0.6 s)",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#2f6db8"
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.1,
+     "y": 0.52,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "grimace"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "grimace",
+     "x": 0.23500000000000001,
+     "y": 0.22000000000000003,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.42000000000000004,
+     "y": 0.52,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "star-eyes"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "star-eyes",
+     "x": 0.555,
+     "y": 0.22000000000000003,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.74,
+     "y": 0.52,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "sparkle"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "sparkle",
+     "x": 0.875,
+     "y": 0.22000000000000003,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.1,
+     "y": 0.97,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "hollow"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "hollow",
+     "x": 0.23500000000000001,
+     "y": 0.6699999999999999,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.42000000000000004,
+     "y": 0.97,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "side-eye"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "side-eye",
+     "x": 0.555,
+     "y": 0.6699999999999999,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.74,
+     "y": 0.97,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "smug-closed"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "smug-closed",
+     "x": 0.875,
+     "y": 0.6699999999999999,
+     "size": 44
+    }
+   ]
+  },
+  {
+   "id": "expr_2",
+   "dur": 2.4,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "EXPRESSIONS 2/3  (snap at 0.6 s)",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#2f6db8"
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.1,
+     "y": 0.52,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "squeeze"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "squeeze",
+     "x": 0.23500000000000001,
+     "y": 0.22000000000000003,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.42000000000000004,
+     "y": 0.52,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "menace"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "menace",
+     "x": 0.555,
+     "y": 0.22000000000000003,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.74,
+     "y": 0.52,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "wail"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "wail",
+     "x": 0.875,
+     "y": 0.22000000000000003,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.1,
+     "y": 0.97,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "bruised"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "bruised",
+     "x": 0.23500000000000001,
+     "y": 0.6699999999999999,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.42000000000000004,
+     "y": 0.97,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "jaw-drop"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "jaw-drop",
+     "x": 0.555,
+     "y": 0.6699999999999999,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.74,
+     "y": 0.97,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "sleep-drool"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "sleep-drool",
+     "x": 0.875,
+     "y": 0.6699999999999999,
+     "size": 44
+    }
+   ]
+  },
+  {
+   "id": "expr_3",
+   "dur": 2.4,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "EXPRESSIONS 3/3  (snap at 0.6 s)",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#2f6db8"
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.1,
+     "y": 0.52,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "dollar"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "dollar",
+     "x": 0.23500000000000001,
+     "y": 0.22000000000000003,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.42000000000000004,
+     "y": 0.52,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "heart"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "heart",
+     "x": 0.555,
+     "y": 0.22000000000000003,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face_v",
+     "x": 0.74,
+     "y": 0.52,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "vision"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "vision",
+     "x": 0.875,
+     "y": 0.22000000000000003,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.1,
+     "y": 0.97,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "roar"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "roar",
+     "x": 0.23500000000000001,
+     "y": 0.6699999999999999,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.42000000000000004,
+     "y": 0.97,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "dying"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "dying",
+     "x": 0.555,
+     "y": 0.6699999999999999,
+     "size": 44
+    },
+    {
+     "type": "bean",
+     "who": "face",
+     "x": 0.74,
+     "y": 0.97,
+     "size": 420,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.6,
+       "v": "cute"
+      }
+     ],
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "cute",
+     "x": 0.875,
+     "y": 0.6699999999999999,
+     "size": 44
+    }
+   ]
+  },
+  {
+   "id": "liar_nose",
+   "dur": 3,
+   "bg": {
+    "kind": "office",
+    "window": "porthole",
+    "lamp": true
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "liar1",
+     "x": 0.3,
+     "y": 0.97,
+     "size": 520,
+     "pose": "arm-around",
+     "expr": "happy",
+     "talk": [
+      [
+       0.2,
+       1.4
+      ]
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "liar2",
+     "x": 0.52,
+     "y": 0.97,
+     "size": 520,
+     "pose": "arm-around",
+     "expr": "smug"
+    },
+    {
+     "type": "bean",
+     "who": "liar3",
+     "x": 0.74,
+     "y": 0.97,
+     "size": 520,
+     "pose": "thumbs-up",
+     "expr": [
+      {
+       "at": 0,
+       "v": "happy"
+      },
+      {
+       "at": 1.6,
+       "v": "grimace"
+      }
+     ]
+    },
+    {
+     "type": "label",
+     "tag": "PROMISE",
+     "text": "BEST FRIENDS",
+     "x": 0.5,
+     "y": 0.18,
+     "at": 0.3,
+     "size": 70
+    }
+   ]
+  },
+  {
+   "id": "tears_blush",
+   "dur": 3,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 3,
+    "hills": 2
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "TEARS: STREAM, DROP, BEAD, JOY  /  BLUSH: SQUIGGLE, HATCH",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 50,
+     "color": "#ffffff"
+    },
+    {
+     "type": "bean",
+     "who": "weeper",
+     "x": 0.1,
+     "y": 0.86,
+     "size": 440,
+     "expr": "wail",
+     "pose": "cheeks"
+    },
+    {
+     "type": "caption",
+     "text": "stream",
+     "x": 0.1,
+     "y": 0.93,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "puppy",
+     "x": 0.27,
+     "y": 0.86,
+     "size": 380,
+     "expr": "sparkle",
+     "pose": "beg"
+    },
+    {
+     "type": "caption",
+     "text": "drop",
+     "x": 0.27,
+     "y": 0.93,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "almost",
+     "x": 0.43,
+     "y": 0.86,
+     "size": 380,
+     "expr": "sad"
+    },
+    {
+     "type": "caption",
+     "text": "bead",
+     "x": 0.43,
+     "y": 0.93,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "joy",
+     "x": 0.59,
+     "y": 0.86,
+     "size": 380,
+     "expr": "happy",
+     "pose": "arms-up"
+    },
+    {
+     "type": "caption",
+     "text": "joy",
+     "x": 0.59,
+     "y": 0.93,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "crush",
+     "x": 0.76,
+     "y": 0.86,
+     "size": 380,
+     "expr": "heart",
+     "pose": "cheeks"
+    },
+    {
+     "type": "caption",
+     "text": "squiggle",
+     "x": 0.76,
+     "y": 0.93,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "shy",
+     "x": 0.91,
+     "y": 0.86,
+     "size": 380,
+     "expr": "content",
+     "view": "front"
+    },
+    {
+     "type": "caption",
+     "text": "hatch",
+     "x": 0.91,
+     "y": 0.93,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "gloom_dread",
+   "dur": 3,
+   "bg": {
+    "kind": "flat",
+    "color": "#4a4060"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "GLOOM DRIPS + DREAD LINES",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8b8f0"
+    },
+    {
+     "type": "bean",
+     "who": "gloomy",
+     "x": 0.22,
+     "y": 0.97,
+     "size": 560,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.5,
+       "v": "sad"
+      }
+     ],
+     "pose": "idle"
+    },
+    {
+     "type": "bean",
+     "who": "dreader",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 560,
+     "expr": "worried",
+     "pose": "clutch-chest",
+     "tremble": [
+      [
+       0.3,
+       3
+      ]
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "gloomhat",
+     "x": 0.78,
+     "y": 0.97,
+     "size": 560,
+     "expr": [
+      {
+       "at": 0,
+       "v": "shock"
+      },
+      {
+       "at": 1.0,
+       "v": "hollow"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "injury_disguise",
+   "dur": 3,
+   "bg": {
+    "kind": "street1920"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "TAPE, BRUISES, BANDAGES, EYE MASK",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8323a"
+    },
+    {
+     "type": "bean",
+     "who": "taped",
+     "x": 0.11,
+     "y": 0.86,
+     "size": 400,
+     "expr": "shock",
+     "jitter": {
+      "amp": 2,
+      "on": 2
+     }
+    },
+    {
+     "type": "caption",
+     "text": "mouthTape",
+     "x": 0.11,
+     "y": 0.93,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "bruiser",
+     "x": 0.31,
+     "y": 0.86,
+     "size": 400,
+     "expr": "bruised",
+     "pose": "fist"
+    },
+    {
+     "type": "caption",
+     "text": "bruise + cross",
+     "x": 0.31,
+     "y": 0.93,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "wrapped",
+     "x": 0.5,
+     "y": 0.86,
+     "size": 400,
+     "expr": "sad"
+    },
+    {
+     "type": "caption",
+     "text": "bandage head",
+     "x": 0.5,
+     "y": 0.93,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "blind",
+     "x": 0.69,
+     "y": 0.86,
+     "size": 400,
+     "expr": "neutral",
+     "pose": "reach"
+    },
+    {
+     "type": "caption",
+     "text": "bandage eyes",
+     "x": 0.69,
+     "y": 0.93,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "burglar",
+     "x": 0.89,
+     "y": 0.86,
+     "size": 400,
+     "expr": "side-eye",
+     "pose": "hold",
+     "hold": "sack"
+    },
+    {
+     "type": "caption",
+     "text": "mask eye",
+     "x": 0.89,
+     "y": 0.93,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "accessories_1",
+   "dur": 2.4,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e0d0"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "ACCESSORIES 1/2",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8323a"
+    },
+    {
+     "type": "bean",
+     "who": "toff",
+     "x": 0.23750000000000004,
+     "y": 0.48,
+     "size": 340,
+     "pose": "hips",
+     "expr": "smug"
+    },
+    {
+     "type": "caption",
+     "text": "monocle",
+     "x": 0.23750000000000004,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "party",
+     "x": 0.5,
+     "y": 0.48,
+     "size": 340,
+     "pose": "arms-up",
+     "expr": "happy"
+    },
+    {
+     "type": "caption",
+     "text": "shutter, party-hat",
+     "x": 0.5,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "nerd",
+     "x": 0.7625,
+     "y": 0.48,
+     "size": 340,
+     "pose": "think"
+    },
+    {
+     "type": "caption",
+     "text": "round opaque",
+     "x": 0.7625,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "cool",
+     "x": 0.36875,
+     "y": 0.905,
+     "size": 340,
+     "pose": "cross"
+    },
+    {
+     "type": "caption",
+     "text": "glasses sun",
+     "x": 0.36875,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "hello",
+     "x": 0.63125,
+     "y": 0.905,
+     "size": 340
+    },
+    {
+     "type": "caption",
+     "text": "badge hello",
+     "x": 0.63125,
+     "y": 0.9500000000000001,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "accessories_2",
+   "dur": 2.4,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e0d0"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "ACCESSORIES 2/2",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8323a"
+    },
+    {
+     "type": "bean",
+     "who": "tagged",
+     "x": 0.23750000000000004,
+     "y": 0.48,
+     "size": 340,
+     "expr": "smug"
+    },
+    {
+     "type": "caption",
+     "text": "tag + bowtie",
+     "x": 0.23750000000000004,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "plank",
+     "x": 0.5,
+     "y": 0.48,
+     "size": 340,
+     "pose": "offer"
+    },
+    {
+     "type": "caption",
+     "text": "badge plank",
+     "x": 0.5,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "labelled",
+     "x": 0.7625,
+     "y": 0.48,
+     "size": 340,
+     "expr": "cute"
+    },
+    {
+     "type": "caption",
+     "text": "label, stickers",
+     "x": 0.7625,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "renter",
+     "x": 0.36875,
+     "y": 0.905,
+     "size": 340,
+     "expr": "sad"
+    },
+    {
+     "type": "caption",
+     "text": "sign + rags",
+     "x": 0.36875,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "messy",
+     "x": 0.63125,
+     "y": 0.905,
+     "size": 340,
+     "expr": "grimace"
+    },
+    {
+     "type": "caption",
+     "text": "stains",
+     "x": 0.63125,
+     "y": 0.9500000000000001,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "wings_halo_devil",
+   "dur": 3.2,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "WINGS, HALO, DEVIL, WAX MELT",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#2f6db8"
+    },
+    {
+     "type": "bean",
+     "who": "angel",
+     "x": 0.14,
+     "y": 0.9,
+     "size": 420,
+     "expr": "content",
+     "pose": "pray",
+     "view": "front"
+    },
+    {
+     "type": "bean",
+     "who": "devil",
+     "x": 0.3,
+     "y": 0.9,
+     "size": 420,
+     "expr": "menace",
+     "pose": "steeple"
+    },
+    {
+     "type": "bean",
+     "who": "icarus",
+     "x": 0.64,
+     "y": 0.8,
+     "size": 360,
+     "expr": [
+      {
+       "at": 0,
+       "v": "star-eyes"
+      },
+      {
+       "at": 1.4,
+       "v": "shock"
+      }
+     ],
+     "pose": "arms-up",
+     "bob": 12
+    },
+    {
+     "type": "bean",
+     "who": "pest",
+     "x": 0.86,
+     "y": 0.6,
+     "size": 360,
+     "expr": "smug-closed",
+     "pose": "point",
+     "bob": 8,
+     "bobHz": 3
+    }
+   ]
+  },
+  {
+   "id": "headwear_1",
+   "dur": 2,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "HEADWEAR 1/4",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8323a"
+    },
+    {
+     "type": "bean",
+     "who": "h_mianguan",
+     "x": 0.185,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "mianguan",
+     "x": 0.185,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_winged-helm",
+     "x": 0.395,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "winged-helm",
+     "x": 0.395,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_bucket-hat",
+     "x": 0.605,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "bucket-hat",
+     "x": 0.605,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_dotted-cap",
+     "x": 0.815,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "dotted-cap",
+     "x": 0.815,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_kettle-hat",
+     "x": 0.185,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "kettle-hat",
+     "x": 0.185,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_mail-coif",
+     "x": 0.395,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "mail-coif",
+     "x": 0.395,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_visor-helmet",
+     "x": 0.605,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "visor-helmet",
+     "x": 0.605,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_hood-dark",
+     "x": 0.815,
+     "y": 0.905,
+     "size": 340,
+     "expr": "menace",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "hood-dark",
+     "x": 0.815,
+     "y": 0.9500000000000001,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "headwear_2",
+   "dur": 2,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "HEADWEAR 2/4",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8323a"
+    },
+    {
+     "type": "bean",
+     "who": "h_hijab",
+     "x": 0.185,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "hijab",
+     "x": 0.185,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_veil-wrap",
+     "x": 0.395,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "veil-wrap",
+     "x": 0.395,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_clown-wig",
+     "x": 0.605,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "clown-wig",
+     "x": 0.605,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_hard-hat",
+     "x": 0.815,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "hard-hat",
+     "x": 0.815,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_star-tophat",
+     "x": 0.185,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "star-tophat",
+     "x": 0.185,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_party-hat",
+     "x": 0.395,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "party-hat",
+     "x": 0.395,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_halo",
+     "x": 0.605,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "halo",
+     "x": 0.605,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_imperial-helmet",
+     "x": 0.815,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "imperial-helmet",
+     "x": 0.815,
+     "y": 0.9500000000000001,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "headwear_3",
+   "dur": 2,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "HEADWEAR 3/4",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8323a"
+    },
+    {
+     "type": "bean",
+     "who": "h_crested-bronze",
+     "x": 0.185,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "crested-bronze",
+     "x": 0.185,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_court-hat",
+     "x": 0.395,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "court-hat",
+     "x": 0.395,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_phoenix-crown",
+     "x": 0.605,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "phoenix-crown",
+     "x": 0.605,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_fur-cap",
+     "x": 0.815,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "fur-cap",
+     "x": 0.815,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_deerstalker",
+     "x": 0.185,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "deerstalker",
+     "x": 0.185,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_straw-boater",
+     "x": 0.395,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "straw-boater",
+     "x": 0.395,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_chef-hat",
+     "x": 0.605,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "chef-hat",
+     "x": 0.605,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_shako",
+     "x": 0.815,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "shako",
+     "x": 0.815,
+     "y": 0.9500000000000001,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "headwear_4",
+   "dur": 2,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "HEADWEAR 4/4",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8323a"
+    },
+    {
+     "type": "bean",
+     "who": "h_phrygian",
+     "x": 0.23750000000000004,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "phrygian",
+     "x": 0.23750000000000004,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_barrister-wig",
+     "x": 0.5,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "barrister-wig",
+     "x": 0.5,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_nightcap",
+     "x": 0.7625,
+     "y": 0.48,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "nightcap",
+     "x": 0.7625,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_bucket-helmet",
+     "x": 0.36875,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "bucket-helmet",
+     "x": 0.36875,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "h_wide-brim",
+     "x": 0.63125,
+     "y": 0.905,
+     "size": 340,
+     "expr": "neutral",
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "wide-brim",
+     "x": 0.63125,
+     "y": 0.9500000000000001,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "outfits_1",
+   "dur": 2,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "OUTFITS 1/3",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#2f6db8"
+    },
+    {
+     "type": "bean",
+     "who": "o_toga",
+     "x": 0.185,
+     "y": 0.48,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "toga",
+     "x": 0.185,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_chiton",
+     "x": 0.395,
+     "y": 0.48,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "chiton",
+     "x": 0.395,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_dress",
+     "x": 0.605,
+     "y": 0.48,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "dress",
+     "x": 0.605,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_cuirass",
+     "x": 0.815,
+     "y": 0.48,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "cuirass",
+     "x": 0.815,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_cloak",
+     "x": 0.29000000000000004,
+     "y": 0.905,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "cloak",
+     "x": 0.29000000000000004,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_robe-royal",
+     "x": 0.5,
+     "y": 0.905,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "robe-royal",
+     "x": 0.5,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_habit",
+     "x": 0.71,
+     "y": 0.905,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "habit",
+     "x": 0.71,
+     "y": 0.9500000000000001,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "outfits_2",
+   "dur": 2,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "OUTFITS 2/3",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#2f6db8"
+    },
+    {
+     "type": "bean",
+     "who": "o_frockcoat",
+     "x": 0.185,
+     "y": 0.48,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "frockcoat",
+     "x": 0.185,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_labcoat",
+     "x": 0.395,
+     "y": 0.48,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "labcoat",
+     "x": 0.395,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_overalls",
+     "x": 0.605,
+     "y": 0.48,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "overalls",
+     "x": 0.605,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_jersey",
+     "x": 0.815,
+     "y": 0.48,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "jersey",
+     "x": 0.815,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_rags",
+     "x": 0.29000000000000004,
+     "y": 0.905,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "rags",
+     "x": 0.29000000000000004,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_fur-vest",
+     "x": 0.5,
+     "y": 0.905,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "fur-vest",
+     "x": 0.5,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_stripes",
+     "x": 0.71,
+     "y": 0.905,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "stripes",
+     "x": 0.71,
+     "y": 0.9500000000000001,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "outfits_3",
+   "dur": 2,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "OUTFITS 3/3",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#2f6db8"
+    },
+    {
+     "type": "bean",
+     "who": "o_boxers",
+     "x": 0.23750000000000004,
+     "y": 0.48,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "boxers",
+     "x": 0.23750000000000004,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_cow-suit",
+     "x": 0.5,
+     "y": 0.48,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "cow-suit",
+     "x": 0.5,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_gown",
+     "x": 0.7625,
+     "y": 0.48,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "gown",
+     "x": 0.7625,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_tracht",
+     "x": 0.23750000000000004,
+     "y": 0.905,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "tracht",
+     "x": 0.23750000000000004,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_party-tunic",
+     "x": 0.5,
+     "y": 0.905,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "party-tunic",
+     "x": 0.5,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "o_judge-robe",
+     "x": 0.7625,
+     "y": 0.905,
+     "size": 340,
+     "blink": false
+    },
+    {
+     "type": "caption",
+     "text": "judge-robe",
+     "x": 0.7625,
+     "y": 0.9500000000000001,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "hair_beards_1",
+   "dur": 2.4,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "HAIR AND BEARDS 1/2",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8323a"
+    },
+    {
+     "type": "bean",
+     "who": "hr_braids",
+     "x": 0.23750000000000004,
+     "y": 0.48,
+     "size": 340
+    },
+    {
+     "type": "caption",
+     "text": "braids",
+     "x": 0.23750000000000004,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "hr_curly-big",
+     "x": 0.5,
+     "y": 0.48,
+     "size": 340
+    },
+    {
+     "type": "caption",
+     "text": "curly-big",
+     "x": 0.5,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "hr_volute",
+     "x": 0.7625,
+     "y": 0.48,
+     "size": 340
+    },
+    {
+     "type": "caption",
+     "text": "volute",
+     "x": 0.7625,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "hr_long-straight",
+     "x": 0.36875,
+     "y": 0.905,
+     "size": 340
+    },
+    {
+     "type": "caption",
+     "text": "long-straight",
+     "x": 0.36875,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "hr_ponytail",
+     "x": 0.63125,
+     "y": 0.905,
+     "size": 340
+    },
+    {
+     "type": "caption",
+     "text": "ponytail",
+     "x": 0.63125,
+     "y": 0.9500000000000001,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "hair_beards_2",
+   "dur": 2.4,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "HAIR AND BEARDS 2/2",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#c8323a"
+    },
+    {
+     "type": "bean",
+     "who": "hr_wild",
+     "x": 0.23750000000000004,
+     "y": 0.48,
+     "size": 340
+    },
+    {
+     "type": "caption",
+     "text": "wild",
+     "x": 0.23750000000000004,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "hr_spikes",
+     "x": 0.5,
+     "y": 0.48,
+     "size": 340
+    },
+    {
+     "type": "caption",
+     "text": "spikes",
+     "x": 0.5,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "hr_bushy",
+     "x": 0.7625,
+     "y": 0.48,
+     "size": 340,
+     "talk": [
+      [
+       0.2,
+       1.8
+      ]
+     ]
+    },
+    {
+     "type": "caption",
+     "text": "beard bushy",
+     "x": 0.7625,
+     "y": 0.525,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "hr_bushy_grey",
+     "x": 0.36875,
+     "y": 0.905,
+     "size": 340
+    },
+    {
+     "type": "caption",
+     "text": "elder, bushy",
+     "x": 0.36875,
+     "y": 0.9500000000000001,
+     "size": 40
+    },
+    {
+     "type": "bean",
+     "who": "hr_back",
+     "x": 0.63125,
+     "y": 0.905,
+     "size": 340,
+     "view": "back"
+    },
+    {
+     "type": "caption",
+     "text": "ponytail back",
+     "x": 0.63125,
+     "y": 0.9500000000000001,
+     "size": 40
+    }
+   ]
+  },
+  {
+   "id": "overhead",
+   "dur": 3.4,
+   "bg": {
+    "kind": "flat",
+    "color": "#b0784a"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "TOPBEAN: OVERHEAD PACING AND LYING",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 60,
+     "color": "#ffffff"
+    },
+    {
+     "type": "topbean",
+     "who": "king",
+     "id": "king",
+     "x": 0.34,
+     "y": 0.58,
+     "size": 420,
+     "walk": [
+      [
+       0,
+       3.4
+      ]
+     ],
+     "expr": "angry",
+     "facing": [
+      {
+       "at": 0,
+       "v": 90
+      },
+      {
+       "at": 1.5,
+       "v": 270
+      },
+      {
+       "at": 3.0,
+       "v": 90
+      }
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 1.4,
+       "to": [
+        0.62,
+        0.58
+       ],
+       "ease": "linear"
+      },
+      {
+       "at": 1.6,
+       "dur": 1.3,
+       "to": [
+        0.34,
+        0.58
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "topbean",
+     "who": "guard",
+     "id": "guard1",
+     "x": 0.87,
+     "y": 0.33,
+     "size": 340,
+     "facing": 250
+    },
+    {
+     "type": "topbean",
+     "who": "guard",
+     "id": "guard2",
+     "x": 0.87,
+     "y": 0.78,
+     "size": 340,
+     "facing": 290
+    },
+    {
+     "type": "topbean",
+     "who": "fallen",
+     "id": "fallen",
+     "x": 0.12,
+     "y": 0.4,
+     "size": 300,
+     "facing": 15,
+     "lie": true,
+     "expr": "dead"
+    }
+   ]
+  }
+ ]
+}

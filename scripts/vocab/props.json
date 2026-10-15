@@ -1,0 +1,9 @@
+{
+  "_doc": "props-gags.js + animals-objects.js + vehicles-machines.js : personified `obj` layer, new prop kinds, more creatures and vehicles. See references/08-props.md.",
+  "layers": ["obj"],
+  "props": ["signpost", "marquee-arrow", "fork-signs", "throne", "bed", "lectern", "easel", "deckchair", "coffin", "crib", "dinner-table", "armchair", "cage", "door", "gate", "portcullis", "sack", "bottle", "candle", "key", "broom", "magnet", "phone", "megaphone", "magnifier", "scissors", "mallet", "dagger", "boxing-glove", "chain", "coin-heap", "binoculars", "white-flag", "cleaver", "bandage", "pitchfork", "whistle", "remote", "big-button", "bowling-ball", "pins", "chess", "ice-block", "crt", "monitor", "smartphone", "wall-calendar", "window-cycle", "clock", "emblem3d", "stat-block", "prize-wheel", "coin-flip", "swaddle"],
+  "kinds": {
+    "creature": ["wolf", "dog", "elephant", "pig", "rabbit", "turtle", "goat", "snail", "kangaroo"],
+    "vehicle": ["galley", "bicycle", "dump-truck", "helicopter"]
+  }
+}
