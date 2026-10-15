@@ -1,0 +1,454 @@
+# 08 · FX and tone
+In a word: effects, materials, colour grades and film post that change the mood of a shot (emphasis, weather,
+horror, fights, implied violence, rivalry, light, memory) without leaving the cutout-cartoon look.
+
+Engine: `scripts/engine/lib/fx/emphasis.js`, `atmosphere.js` (also every grade), `tone.js` (glow, silhouette and
+lineart modifiers, pixel helpers), `tone-fx.js`, `action-fx.js` (also `fg: mob`), `materials.js`, plus
+`scripts/engine/core.js` (modifier pipeline, `blur`, entrances) and `scripts/engine/lib/base/paint.js` (grain and
+vignette) · Vocabulary: `scripts/vocab/fx-tone.json`, `scripts/vocab/fx-action.json`, `scripts/vocab/modifiers.json`,
+base `KNOWN_FX` and `KNOWN_GRADES` in `scripts/spec.py` · Example films:
+[`examples/tone_and_horror/spec.json`](../../examples/tone_and_horror/spec.json) and
+[`examples/action_fx/spec.json`](../../examples/action_fx/spec.json), one shot per feature (render with `--sheet` to
+browse) · Related cards: [01_characters.md](01_characters.md) (beans, `expr: "dead"`, poses),
+[02_acting.md](02_acting.md) (`poof`, `swap`, `jitter`, tremble), [04_places.md](04_places.md) (backgrounds, other
+`fg` kinds), [09_transitions_and_lens.md](09_transitions_and_lens.md) (cuts, camera, rack focus),
+[../07-story-craft.md](../07-story-craft.md) (tone arcs).
+
+## ① When to use it
+
+| Sentence or beat | Feature |
+| --- | --- |
+| "Look at this", a reveal, a punchline | `rays`, `speedlines`, `sparkle`, `flash`, `splat` with text |
+| Nervous, angry, landed | `sweat`, `anger`, `dust` |
+| Celebration, win | `confetti`, `onomatopoeia` with `score` |
+| Investigation, alone with it | `spotlight`, `spotcone`, shot `vignette` |
+| Weather, setting | `rain`, `smoke`, `mist`, `birds`, `beam`, `lightning`, `fire`, `whirlpool` |
+| A battle, a volley | `arrows`, `muzzle`, `shellburst`, `gas`, `explosion` |
+| "It blew up" / interruption gag "we don't have time" | `boom` (puff or mushroom) / `boom` with `text` |
+| "They fought", "civil war", a scuffle | `brawl` |
+| "Massacre", "killed", "sacrificed" (always implied) | `blood-wipe`, `blood-streaks`, `blood-splash`, `pool`, `blood` |
+| "Corruption spread", "the ink ruined it" | `spill` (`flood` to cut on it) |
+| "The people revolted" | `fg: mob` |
+| "Doom closed in" | `shadow-hands`, `darkness` |
+| "Zapped", "struck down" / "his zeal crumbled" | `shock` / `disintegrate` |
+| "The orders never arrived", "the deal collapsed" | `word-shatter` |
+| "Rivals", "a battle of wills" | `duel` + `crackle`, `beam-clash` |
+| "Into the darkness", "only the torch" | `lightpool` |
+| "Imprisoned" / "a miracle" | `shafts` / `godbeam`, `glow`, grade `divine` |
+| "He remembered", "a dark thought" | `memory` (bubble, framed shot or giant face) |
+| A corrupted memory, a twist | `glitch`, `rgbsplit`, grade `mono-red` |
+| Security footage, an alarm | `cctv`, `alarm`, grade `crt-cyan` |
+| Something watches from the dark | `silhouette` modifier, `redeyes`, `eyes-white`, `wallshadow` |
+| Final breath, fainting, POV | `eyelids` |
+| Omen, vision, prophecy | `flameshape`, `inkburst`, `paperstorm`, grade `sepia` |
+| "He died and returned to haunt them" | `material: "ghost"` + `glow` |
+| "A statue was raised" / "rich beyond measure" / "in the age of myth" | `material` `stone` (`plinth`) / `gold` / `engrave` |
+| "Froze to death", "put on ice" | `freeze` or `material: "ice"` |
+| Characters on a map or a busy background | `sticker` |
+| "The alliance broke", "heartbroken", "divided" | `split` on a heart prop, a flag or a character |
+| Inside his mind | `lineart` on `bg: flat #050505` |
+| Statistic dropped as an object / map note / verdict | entrances `drop-squash` / `pop-tilt` / `slam` |
+| Mood of the whole shot | `grade` (presets in ③) |
+
+## ② Look and staging rules
+
+- Keep the house style inside effects: dark-brown ink outlines and one flat shadow tone on anything solid (pools,
+  spills, splats, clouds, stickers); glows and light are soft and never outlined.
+- Every effect is deterministic and seeded by the layer `id`. Give every fx layer an `id`, and a different one per
+  copy, or two copies draw the same shapes.
+- Full-frame effects ignore the layer position. Set `"hud": true` so the camera does not move or zoom them.
+- Use modifiers and pixel grades on a few layers per shot, not on everything (cost in ⑥).
+- **Dread, then scare, then deflation.** Hold a quiet shot 3-5 s with a 1 %/s push-in. Hard cut (no transition) to
+  the scare: a black background, `wallshadow` or a `silhouette`, `redeyes`, a slight camera shake, held 1.5-4 s.
+  Within 2-6 s of the peak, deflate with comedy: a hard cut or `flash-cut` to a warm `burst` background, a deadpan or
+  `squint` face and a gag line. Never leave a scare undeflated.
+- **The lurker.** Keep the threat small in the background (`silhouette`, scale 0.4-0.8), fade it in over 2-3 s
+  (`enter: "fade"`, `enterDur` 2.4) while the subject stays unaware, then reveal `redeyes`.
+- **Imply violence with stand-ins.** Never show a death. Use a pool, X eyes (`expr: "dead"`), a cut to black, a
+  tombstone or a statistic as an object. Hold that shot 3-4 s without gags, then grade the next one `solemn`,
+  `cold` or `dusk-blue`.
+- **One lighting idea per dark shot:** a candle or torch (`lightpool`), a window wedge (`shafts`, `beam`) or a
+  spotlight (`spotcone`), with a heavy `vignette` around it (0.6-0.85, centred on the light).
+- Sizes that read at 1080p: a `pool` 400+ under a 500 px bean, `redeyes` `size` 16-38, labels over effects at least
+  60 px. Keep the main character above y 0.65 when `fg: mob` is on (the heads fill the lower quarter).
+- Grades recolour everything drawn in the shot, labels and HUD included. Use `"target": "bg"` or a lower `strength`
+  when lettering or a character must stay clean.
+- Draw order matters: `pool`, `duel`, `beam-clash` and shellbursts behind a trench lip go before the beans; `crackle`
+  between eyes, `shafts`, `gas` and full-frame overlays go after them; a title goes after a `spill` flood.
+- No real logos, flags of extremist movements or likenesses in emblems, mobs or memories.
+
+## ③ Field reference
+
+### fx layer basics
+
+`{"type": "fx", "kind": ..., "id": ..., "x", "y", "at", "out", "hud", "scale", ...}`. Default entrance `none`. All
+fx timings below are **layer time** (seconds from the layer's `at`). The layer `x`/`y` (default 0.5) is the effect's
+centre unless the table says otherwise. Three placement families:
+
+| Family | Kinds | Position and camera |
+| --- | --- | --- |
+| Local | emphasis, atmosphere (except `rain`), `mist`, `whirlpool`, eyes, `wallshadow`, `inkburst`, `paperstorm`, `flameshape`, war kinds, `brawl`, `blood-splash`, `pool`, `spill`, `boom` (no text), `onomatopoeia`, `word-shatter` | At the layer position, scaled by `scale`, moved by the camera unless `hud` |
+| Frame space | `blood-wipe`, `blood-streaks`, `shadow-hands`, `crackle`, `lightpool`, `shafts`, `godbeam`, `spotcone` | Frame coordinates (0..1 fields); camera applied unless `hud` |
+| Screen | `rain`, `glitch`, `rgbsplit`, `alarm`, `cctv`, `darkness`, `eyelids`, `beam-clash`, `duel`, `boom` with `text`, `memory`, `shock`, `disintegrate` | Whole frame, never moved by the camera (`memory` uses its own `x`/`y` as frame fractions) |
+
+`fx` layers stay sharp under a shot's rack `focus` unless they set `"focusable": true`.
+
+### Emphasis (`emphasis.js`)
+
+| `kind` | Fields (defaults) | Look and timing |
+| --- | --- | --- |
+| `rays` | `color` rgba(255,248,215,0.25), `count` 10, `spin` 0.05 | Slowly turning god rays around the layer point |
+| `speedlines` | `inner` 380, `count` 70, `color` rgba(255,255,255,0.85) | Radial anime lines from radius `inner` outward, re-seeded 12 times a second |
+| `sweat` | `count` 3, `speed` 1.4 | Blue outlined drops falling 120 px and fading, `speed` cycles per second |
+| `anger` | none | Red cross-popping vein mark, pulsing up to 1.15 |
+| `splat` | `size` 360, `color` #1a0f0b, `text`, `textSize` 170, `textColor` #f0e6e6 | Ink splat slams in over 0.18 s (outBack) with droplets; optional text ("K.O.", "GOTCHA") |
+| `flash` | `dur` 0.3, `strength` 0.9, `color` #fff | Full-frame flash fading over `dur` |
+| `dust` | `count` 9, `color` #e8dcc4 | Outlined puffs spreading and fading over 0.8 s (landings, stomps) |
+| `sparkle` | `count` 6, `radius` 160, `color` #fff6b0 | Four-point outlined stars twinkling inside `radius` |
+| `confetti` | `count` 60 | Five-colour paper rain falling from above the frame |
+| `spotlight` | `radius` 420, `strength` 0.82 | Dark vignette around the layer point, breathing ±2 % |
+
+### Atmosphere and weather (`atmosphere.js`)
+
+| `kind` | Fields (defaults) | Look and timing |
+| --- | --- | --- |
+| `fire` | `w` 600, `count` 5, `size` 220, `embers` 18, `glow` true | Row of flipbook flames (3 nested tongues, new shape every 2 frames, no outline), rising embers, warm glow (`glow: false` drops it) |
+| `rain` | `density` 90, `angle` 4 | Full frame, two layers of streaks. For a gradual start use `at` + `enter: "fade"` |
+| `beam` | `from` tl/tr, `width` 260, `color` #fff6d0, `strength` 0.28 | Diagonal light wedge from a frame corner (keep `x`/`y` 0.5), grows over 10 frames, flickers ±6 % |
+| `birds` | `count` 5, `speed` 90, `dir` 1, `size` 26, `color` #1d1410 | V flock of "m" birds gliding at `speed` px/s, wings on twos |
+| `smoke` | `w` 1400, `count` 14, `rise` 220, `color` #8a8580 | Band of grey puffs rising and fading |
+| `puff` | `size` 260, `color` #efe2c8 | Older swap cloud, 0.45 s, opaque for the first 30 %. Prefer `poof` ([02_acting.md](02_acting.md)) |
+| `explosion` | `size` 320, `debris` #5a4a30 (a colour) | Three-colour starburst with debris, 0.6 s |
+| `blood` | `shape` pool/splat, `w` 220, `dur` 0.8 | Dark-red blob (fixed #8a0f12) with a highlight; `pool` spreads over `dur` |
+| `lightning` | `h` 500, `count` 2, `color` #fff7a0 | Glowing jagged bolts re-seeded every 2 frames |
+| `arrows` | `count` 6, `dir` 1, `every` 0.18 | Arrows cross the frame in 0.17 s each, staggered by `every` plus up to 0.1 s |
+
+### Tone and horror (`tone-fx.js`)
+
+| `kind` | Fields (defaults) | Look and timing |
+| --- | --- | --- |
+| `glitch` | `dur` 0.6, `looks` | One look per frame from `looks` (default `gray-slice, gray-slice, thermal, thermal, normal, halfhue, posterize, posterize, gray-slice`); slice offsets on gray and posterize frames. Screen |
+| `rgbsplit` | `dur` 0.8, `offset` 5, `strength` 0.55 | Cyan and magenta ghosts of everything drawn so far, slice jumps every 4 frames. Screen |
+| `alarm` | `period` 8, `on` 5, `strength` 0.7, `color` #ff1010 | Multiply strobe, `on` frames on out of every `period`. Screen |
+| `cctv` | `label` "CAM 1" | Corner brackets, camera label, REC dot blinking at 1 Hz, scanlines. Pair with `camera.rot` for a tilted security view. Screen |
+| `mist` | `w` 1400, `count` 9, `rise` 320 | Soft wisps rising and swaying over water or ground |
+| `whirlpool` | `size` 420 | Top-down rotating rings contracting into a dark centre |
+| `redeyes` | `gap` 60, `size` 22, `color` #ff2a2a, `bloom` 26, `on` [[a, b]], `blink` [t] | Two glowing slanted eyes that breathe; `on` limits them to windows, each `blink` hides them for 0.12 s (4 frames) |
+| `eyes-white` | as `redeyes`; `color` #ffffff, `bloom` 10, `size` 26 | White slit eyes, for shadows on a wall |
+| `wallshadow` | `size` 520, `grow` 1.0, `hornsAt` 0.6, `eyesAt` 1.2, `alpha` 0.88, `color` #120c0a, `eyeColor` (white) | Silhouette on the wall swells 0.8 → 1.1 over `grow` s, sprouts horns over 0.3 s from `hornsAt`, eyes pop on at `eyesAt` with a 2-frame glow flash |
+| `darkness` | `dur` 4, `count` 10, `strength` 1 | Soft black blobs creeping from the edges toward the centre. Screen |
+| `eyelids` | `mode` close/open/blink, `dur` 0.8 | POV almond lids. Screen |
+| `inkburst` | `bursts` [0], `color` #3b2a7a, `count` 9, `spread` 300, `puddle` 260 | Ink blobs erupt for 8 frames and fall into splats; the puddle spreads over 20 frames from 0.2 s. One burst per entry |
+| `paperstorm` | `count` 14, `color` #f3ead6, `ink` | Outlined sheets with text lines drifting outward and turning |
+| `flameshape` | `emblem` bull/skull/eye/crown/man, `size` 320, `morphAt` 1.2, `color` #f08a1a | A fire grows until `morphAt`, crossfades over 0.2 s into an emblem silhouette (outBack 0.3 s) with a flickering gold outline and flame tongues on top |
+| `gas` | `from` right/left, `dur` 3, `h` 220, `count` 26, `color` rgba(127,174,74,0.75) | Green band drifting along the horizon and swelling as it advances; covers what is under it |
+| `muzzle` | `count` 6, `spacing` 220, `dir` 1/-1, `every` 0.12 | A line of shooters firing in turn: 4-point star flash and tracer, 0.09 s (about 3 frames) each |
+| `shellburst` | `every` 0.4, `w` 1600, `size` 200 | Mushroom flashes popping behind a lip across width `w` |
+
+### Action (`action-fx.js`, `materials.js`)
+
+| `kind` | Fields (defaults) | Look and timing |
+| --- | --- | --- |
+| `brawl` | `size` 480, `path` [[x, y], ...], `travel` (= `dur`, 1.5 without `dur`), `dur` (endless), `end` pop/puffs, `limbs` [fist, boot, sword, spear], `skins` [hex or cast names], `stars` 5, `haze` false, `dust` true | White fight cloud with limbs and weapons poking out (any `T.PROPS` kind works as a limb), helmet heads, an angry face, popping stars; everything re-seeds on twos. `path` (frame fractions) moves it over `travel`, `haze` trails dust behind. After `dur` it pops (0.2 s) or breaks into 6 puffs. Skins from cast names use the robe colour |
+| `blood-wipe` | `from` bottom/top/both, `color` #8a0a0a, `count` 9, `drips` 5, `dur` 2, `cover` false | Flame-like tongues rise in 3 frames and boil on twos, thin drips grow 6 px per frame from the opposite edge; `cover` fills the frame over the last 0.2 s of `dur` so you can cut on it |
+| `blood-streaks` | `count` 7, `color` #8a0a14, `inner` #c02030 | Diagonal tapered brush strokes, each sweeping in over 2 frames, staggered 1 frame |
+| `blood-splash` | `from` left/right, `count` 6, `spread` 220, `size` 1 | Teardrops fly in from off-screen on decelerating arcs (10 frames), land as spiky outlined splats ringed by droplets, each grows a drip 60 px over 1.5 s. The first splat is 1.6× larger |
+| `pool` | `size` 260, `dur` 6, `color` #5a0a10, `flat` 0.32 | Flat lobed outlined pool with a shade tone, spreading (outCubic) under a body |
+| `spill` | `size` 300, `dur` 2, `color` #7a1420 (ink: #2b2050), `tendrils` 0, `flood` false, `flat` 1 | One outlined stain with tendrils (growing 1.4× faster), shade and gloss; `flood` keeps growing until the frame is covered at `dur` + 1.5 s |
+| `shadow-hands` | `count` 5, `dur` 1.2, `alpha` 0.55, `weapons` true, `darken` 0.4 | Clawed arm shadows (every other one gripping a spear with `weapons`) slide in from both edges (outCubic, staggered 0.1 s) while the frame darkens by `darken`; then sway 2 px at 2 Hz and flex on twos. Composited as one shadow |
+| `shock` | `target`, `dur` 0.8, `color` #4fd2ff, `xray` true, `spikes` true, `count` 6 | Repaints layer `target`: normal / white / black x-ray (skull, spine, ribs) / half alpha on a seeded 2-3 frame rhythm, `count` zigzag bolts and a starburst re-seeded every 2 frames, hair standing up |
+| `disintegrate` | `target`, `pieces` 20 (min 6), `ash` true, `stinger` false | Optional 2-frame blue negative stinger; shards drift out over 4 frames, turn black and fall over 12 into an ash pile with a smoke stem, which holds |
+| `boom` | `size` 420, `style` puff/mushroom, `debris` 8 (a count), `text` | Puff: spark on frame 0, white-hot core grows frames 1-15, yellow then orange with debris 16-30, brown smoke and embers fade 31-42. Mushroom: stem and cap grow 15 frames, hold, fade by frame 72. `text` makes a full-frame interruption card (yellow cloud, dark rim, white disc of heavy text, `\n` for line breaks) that pops in over 6 frames |
+| `onomatopoeia` | `text` "BOOOM", `size` 360, `score`, `dur` 1.5 | Grey smoke cloud, flickering red-orange-yellow star, bouncing graffiti letters; scales 0.8 → 1.1 over 12 frames, fades over the last 8 of `dur`. `score` rises green with an overshoot at frame 4 |
+| `word-shatter` | `text` "ORDERS", `color` #d8242a, `size` 140, `angle` -18, `vx` 240, `burstAt` 0.9 | Extruded word pops in (0.4 → 1.1 → 1.0 by frame 5), drifts at `vx` px/s turning 0.4° per frame; at `burstAt` every glyph flies off with spin and gravity behind a yellow puff |
+| `crackle` | `from`, `to` ([x, y] or bean ids; default [0.38, 0.42] → [0.62, 0.42]), `color` #ffe14a, `width` 4, `glow` 12, `jitter` 10 | Jagged glowing line re-seeded every frame with a midpoint spark. With two bean ids it runs eye to eye as a bold stare beam (`width` 14, `glow` 26, `jitter` 16) that follows the beans |
+| `beam-clash` | `from` [0.15, 0.5], `to` [0.85, 0.5], `color` #7fe6ff, `bg` #2a2650, `flash` true | Full-frame rivalry backdrop: scrolling streaks, two jagged beams meeting at an orb that drifts ±80 px (1.3 s period) and toggles orb / ring / sparkle; 5-frame white flash at the start |
+| `duel` | `left` 0.22, `right` 0.78, `h` 0.62, `color` #0d0a0c, `rim` #6b4a8a, `eyes` [idA, idB] / [[x, y], [x, y]] / false, `width` 14, `spark` #ffe14a | Two black masses bristling with blades behind the rivals, inner rim light, a stare beam between the eyes (bean ids anchor to the eyes) |
+| `lightpool` | `follow` (layer id), `part` hand/head/center, `r` 420, `color` #ffd04a, `dark` 0.85, `open` {at, dur 0.66}; without `follow`: `x`/`y` | Darkness with a warm hole around a character; `open` grows it from 60 px; radius flickers ±5 % on twos. Follows the target's parallax `z` |
+| `shafts` | `items` [{x 0.5, w 0.12, angle 25}] (default one shaft at x 0.7), `bars` 4, `color` #fff4d0, `alpha` 0.28 | Soft window light with faint bar shadows that fade by mid-frame; `x` is the floor end; drifts 1 % of the width per second |
+| `godbeam` | `from` tl/tr/t, `target` [0.55, 0.7], `width` 220, `color` #fff6b0, `alpha` 0.6 | One feathered beam that grows to the target over 10 frames with a glow ellipse there |
+| `spotcone` | `x` 0.5, `top` 0, `floor` 0.86, `w` 0.32, `alpha` 0.18, `dark` 0.85 | Stage cone and floor ellipse; everything outside is darkened |
+| `memory` | bubble mode: `who`, `pose`, `expr`, `look`, `view`, `flip`, `legs`, `x` 0.75, `y` 0.9, `size` 520, `alpha` 0.85, `tint` #8fa6d8, `backdrop` fire/rays, `bubble` true, `tail` [0.5, 0.35], `dur` 0.66 | Tinted cast bean inside an outlined thought cloud popping in over `dur`, three shrinking circles trailing toward `tail`; `backdrop` clipped inside. `bubble: false` gives a free-floating ghost (`alpha` 0.45) |
+| `memory` | shot mode: `shot`, `t` 0, `rect` [0.55, 0.1, 0.42, 0.8], `tint`, `alpha` | A frozen frame of another shot, tinted, in an ink-framed rounded panel |
+| `memory` | face mode: `face` true, `who`, `expr` "evil", `look`, `view` front, `size` 600, `scale` 1.6, `x` 0.5, `y` 0.42, `dim` 0.45, `alpha` 0.65 | Darkens the scene by `dim` and adds a grey giant face (a dark thought) |
+
+### Foreground `mob` (`"type": "fg", "kind": "mob"`)
+
+| Field | Default | Effect |
+| --- | --- | --- |
+| `items` | [`pitchfork`, `torch`, `spear`, `scimitar`, `banner`, `arm`] | Tool per person, cycled; any other name throws |
+| `count` | 8 | People across the width, in two rows (odd ones behind, smaller and higher) |
+| `color` | #141010 | Silhouette colour; torch flames are the only coloured part |
+| `h` | [200, 320] | Raised-arm height range |
+| `rise` | 0.27 | Seconds each person takes to rise from below (outCubic), 2 frames apart |
+| `sway` | 8 | Sway amplitude in px, on twos |
+
+Heads and shoulders with ears, caps and brimmed hats, one arm raised and bent at the elbow. Leave `x`/`y` at 0.5.
+
+### Layer modifiers (any layer type)
+
+A modifier turns on when its field is set. The layer is painted offscreen and post-processed; modifiers stack in this
+order: `silhouette` 10, `lineart` 20, `material` 30, `freeze` 32, `split` 60, `sticker` 80, `glow` 90, `blur` 95.
+They all work inside `swap` (`{"at": 1.0, "material": "stone"}` makes a statue in one frame). `at` inside
+`material`, `freeze` and `split` is **shot time**.
+
+| Field | Values (defaults) | Look and motion |
+| --- | --- | --- |
+| `silhouette` | "#hex" | The whole layer in one flat colour: the threat in the dark, an audience, a figure behind glass |
+| `lineart` | `true` or {`color` #ffffff, `width` 4} | Outline only (computed at half resolution above 1000 px wide). With `bg: flat #050505` it is the "inside his mind" world |
+| `material` | "ghost"/"stone"/"gold"/"engrave"/"ice" or {`kind`, `at`, `dur` 0.5, ...} | Recolours the layer; with `at` it crossfades from the plain layer over `dur`. Kinds below |
+| `freeze` | `true` or {`at` 0, `dur` 0.2, `pad` 0.08, `tint` #bfe8ea, `color` (front face) rgba(178,226,234,0.5)} | Frosted figure inside a faceted ice block (top, side and front faces, ink edges, facets, highlights); fades in over `dur` with a 2 % pop. Stop the motion at `at` (for example `jitter: {to: at}`) |
+| `split` | {`at` 0, `gap` 0.18, `angle` 90, `jag` 0.06, `rot` 6, `label`: "text" or {`text`, `color` #c8202a}} | Crack line 1 frame before `at`; at `at` a 1-frame squash, then the jagged halves spring apart over 3 frames (outBack) and rotate ±`rot`°, with a ribbon label in the gap. `angle` 90 is a vertical cut |
+| `sticker` | `true` or {`width` 6, `color` #ffffff, `shadow` 0.25, `hover` false} | Die-cut border and soft drop shadow; `hover` bobs ±3 px every 0.8 s with a 1 px boil on twos |
+| `glow` | `true` or {`color` #fffbe6, `blur` 34, `pulse` 0.1} | Soft outer glow pulsing at 0.5 Hz: gods, relics, ghosts |
+| `blur` | px number or [{at, v}] timeline, `blurDim` 0.08 | Gaussian blur from 0.3 px up, slightly darkened by `blurDim`. Rack focus sets it on layers with an `id`; `sharp: true` opts a layer out |
+
+| `material` kind | Fields (defaults) | Look |
+| --- | --- | --- |
+| `ghost` | `alpha` 0.55, `tint` #b9c2c8, `rim` #eef3f6, `bob` 5, `wisp` true | Desaturated, tinted, see-through, pale rim, ±`bob` px at 0.5 Hz. A ghost bean loses its legs for an S-shaped wisp tail that sways at 0.8 Hz (`wisp: false` or bean `legs: true` keeps the legs) |
+| `stone` | `color` #c9bea8, `cracks` 3, `crack` #8f846f, `plinth` false, `plinthColor` #a59d8f | Grey-beige statue with seeded cracks; `plinth` adds an outlined block under the feet. Set `rock: 0` and `blink: false` on the bean |
+| `gold` | `ramp` [#6a4210, #e0a828, #fff4b0], `glints` 4 | Gold luminance ramp with twinkling glints |
+| `engrave` | `ramp` [#e2b57a, #6e4b2c, #4a3322], `alpha` 0.9 | Sepia engraving: ink lines turn light, fills dark brown, faint grain, the paper shows through. Leave one accent layer plain |
+| `ice` | `tint` #bfe8ea | Frosted look and a gloss streak, without the block |
+
+### Entrances from this toolkit (`enter`)
+
+| Value | Default `enterDur` | Motion |
+| --- | --- | --- |
+| `drop-squash` | 0.5 | Falls in 2 frames, squashes to 150/55 on impact, rebounds to 85/115, settles by about frame 15. Statistics dropped as objects, props that land |
+| `pop-tilt` | 0.22 | 0 → 1.15 → 1 with a ±5° turn. Map stickers, notes, labels |
+| `slam` | 0.12 | Scales 1.6 → 1 in about 4 frames, then shakes for 0.2 s. Verdicts, mission titles, stamps |
+
+### Colour grade (`shot.grade`)
+
+Forms: `"preset"`, or an entry {`preset`, `at` 0, `dur` (instant), `strength` 1 or [{at, v}], `out`, `outDur` (=
+`dur`), `target` frame/bg}, or a list of entries applied in order. Times are shot time. `out` fades the entry away;
+`target: "bg"` grades only the backgrounds (before the layers), `frame` (default) grades the finished shot before
+grain and vignette.
+
+| Preset | Use |
+| --- | --- |
+| `serious` | Desaturated dark teal: ambush, investigation |
+| `storm` | Grey-blue, downpour |
+| `night` | Night, bluish cold |
+| `solemn` | Dusty grey-brown: execution, loss |
+| `warm` | Warm, comedic |
+| `gold` | Golden glow, triumph |
+| `sepia` | Backstory, prophecy, "long ago" (engraving parchment with a vignette); leave through `sepia-to-color` |
+| `horror` | Dread interiors: desaturated maroon and a heavy vignette |
+| `cold` | Grief and loss: desaturated grey-blue |
+| `divine` | An apparition or a god: bright centre bloom |
+| `mono-red` | Corrupted memory: grayscale world where only strong reds stay (pixel pass) |
+| `rage` | Anger mid-shot, a red luminance ramp; ramp in with `{preset: "rage", at, dur: 0.5}` |
+| `inferno` | The dark twin of a previous shot (pink-red ramp) |
+| `golden-hour` | Departure, farewell, aftermath glory |
+| `moonlit` | Night secrets, grief |
+| `night-violet` | Night charge, dread |
+| `gaslight` | A writer at night, candle rooms |
+| `pink` | Romance, alliance, "aww": strong rose wash, magenta vignette |
+| `purple-neon` | A gamer's screen-lit room |
+| `crt-cyan` | Footage on a monitor, CCTV playback: desaturated cyan, scanlines, dark vignette |
+| `dusk-blue` | Dignified tragedy, no gags |
+| `red-flash` | A 4-6 frame impact (`at`, `out` = `at` + 0.17) or a 1 s realisation |
+| `sunset-epic` | Founding sagas, villains arriving |
+
+Presets are op lists in `T.GRADE_PRESETS` (composite fills, `vignette`, `bloom`, `pixel`); pixel ops live in
+`T.GRADE_PIXEL` (`mono-red`, `ramp3`, `scanlines`).
+
+### Film post (`style`, `shot.vignette`)
+
+| Field | Default | Effect |
+| --- | --- | --- |
+| `style.grain` | true | Film grain tile re-placed 12 times a second; `false` disables |
+| `style.vignette` | 0.28 | Warm-dark film vignette strength; `false` disables |
+| `shot.vignette` | none | {`strength` 0.8, `x` 0.5, `y` 0.5, `radius` 0.55, `color`} replaces the film vignette for one shot; `color` is the outer stop and overrides `strength` |
+
+## ④ Timing
+
+All at 30 fps. "Twos" means a new drawing every 2 frames.
+
+| Event | Frames | Field |
+| --- | --- | --- |
+| Flipbook fire, lightning, brawl, boils, mob sway | new shape every 2 | fixed |
+| `speedlines` re-seed | every 2.5 (12 per s) | fixed |
+| `flash` | 9 | `dur` 0.3 |
+| `splat` slam / `dust` spread | 5 / 24 | fixed |
+| `beam` / `godbeam` grow | 10 | fixed |
+| `explosion` / `puff` | 18 / 14 | fixed |
+| `arrows` crossing | 5 each, 5-8 apart | `every` 0.18 |
+| `glitch` | 1 look per frame, 18 in all | `dur` 0.6 |
+| `rgbsplit` slice jump | every 4 | fixed |
+| `alarm` | 5 on, 3 off | `on` 5, `period` 8 |
+| `redeyes` blink | 4 | fixed 0.12 s |
+| `wallshadow` swell / horns / eye flash | 30 / 9 / 2 | `grow` 1.0, `hornsAt`, `eyesAt` |
+| `eyelids` | 24 | `dur` 0.8 |
+| `inkburst` fly / puddle | 8 / 20 | fixed |
+| `muzzle` flash | 3 | fixed 0.09 s |
+| `shellburst` grow / gone | 6 / 18 | `every` 0.4 |
+| `blood-wipe` rise / cover | 3 / last 6 | `dur`, `cover` |
+| `blood-streaks` stroke | 2 each, 1 apart; hold about 10 then cut | fixed |
+| `blood-splash` flight / drip | 10 / 45 | fixed |
+| `mob` person rise | 8, 2 apart | `rise` 0.27 |
+| `shadow-hands` slide | 36, 3 apart | `dur` 1.2 |
+| `shock` looks / bolts | 2-3 / re-seed every 2 | `dur` 0.8 |
+| `disintegrate` drift / fall / ash | 4 / 12 / from 8 over 10 | fixed |
+| `boom` puff / mushroom / card pop | 42 / 72 / 6 | `style`, `text` |
+| `onomatopoeia` grow / fade | 12 / last 8 | `dur` 1.5 |
+| `word-shatter` pop / puff | 5 / 18 | `burstAt` 0.9 |
+| `beam-clash` opening flash | 5 | `flash` |
+| `lightpool` open | 20 | `open.dur` 0.66 |
+| `material` crossfade | 15 | `material.dur` 0.5 |
+| `freeze` | 6 | `freeze.dur` 0.2 |
+| `split` crack / squash / spring | 1 before / 1 / 3, settle 6 | `split.at` |
+| `drop-squash` / `pop-tilt` / `slam` | 15 / 7 / 4 + 6 shake | `enterDur` |
+| Grade ramp in | 15 (`dur` 0.5) for rage; 1-2 for a cut-like change | `dur`, `outDur` |
+| Trauma cycle | about 28 per grade | list with `out`/`at` |
+| Dread hold / scare / deflate | 90-150 / 45-120 / within 60-180 of the peak | shot `dur` |
+
+## ⑤ Recipes
+
+**Corrupted memory.** A bright idyllic shot (3 s), then this: a glitch, the same composition graded `mono-red`, a
+blood stand-in and a `back` view.
+```json
+{"id": "r08_corrupt", "dur": 2.6, "grade": "mono-red", "bg": {"kind": "sky"},
+ "layers": [{"type": "bean", "who": "poet", "x": 0.5, "y": 0.96, "size": 520, "view": "back"},
+            {"type": "fx", "kind": "blood", "id": "r08_blood", "x": 0.62, "y": 0.92, "w": 200},
+            {"type": "fx", "kind": "glitch", "id": "r08_glitch", "hud": true, "dur": 0.6}]}
+```
+
+**It is always watching.** Lurker silhouette fades in, red eyes at +2.6 s with one blink.
+```json
+{"id": "r08_lurker", "dur": 4.0, "grade": "horror", "vignette": {"strength": 0.85, "x": 0.6, "radius": 0.5},
+ "bg": {"kind": "interior", "wall": "#5a4a40"},
+ "layers": [{"type": "bean", "who": "poet", "x": 0.66, "y": 0.98, "size": 620, "expr": "sad", "pose": "think"},
+            {"type": "bean", "who": "poet", "id": "r08_lurk", "x": 0.28, "y": 0.9, "size": 520, "silhouette": "#0d0907",
+             "enter": "fade", "enterDur": 2.4, "blink": false},
+            {"type": "fx", "kind": "redeyes", "id": "r08_eyes", "x": 0.297, "y": 0.475, "at": 2.6, "gap": 56, "size": 16, "blink": [0.8]}]}
+```
+
+**Jump scare, then deflate.** Hard cut in, `flash-cut` out to a warm burst with a deadpan face.
+```json
+{"id": "r08_scare", "dur": 1.6, "bg": {"kind": "flat", "color": "#050404"},
+ "camera": {"zoom": [1.06, 1.1], "shake": [{"at": 0, "dur": 1.6, "amp": 4}]},
+ "layers": [{"type": "fx", "kind": "wallshadow", "id": "r08_ws", "x": 0.5, "y": 1.05, "size": 980, "grow": 0.15, "hornsAt": 0, "eyesAt": 0, "alpha": 1},
+            {"type": "fx", "kind": "redeyes", "id": "r08_big", "x": 0.5, "y": 0.42, "gap": 200, "size": 38, "bloom": 40}]}
+```
+
+**"A statue was raised in his honour."** One-frame swap to stone with a plinth and a dust puff.
+```json
+{"type": "bean", "who": "king", "id": "r08_statue", "x": 0.6, "y": 0.84, "size": 500, "pose": "hips", "rock": 0, "blink": false,
+ "swap": [{"at": 1.0, "material": {"kind": "stone", "plinth": true, "cracks": 4}}]}
+```
+
+**"He returned to haunt them."**
+```json
+{"type": "bean", "who": "king", "id": "r08_ghost", "x": 0.66, "y": 0.78, "size": 500, "pose": "point", "expr": "angry",
+ "material": {"kind": "ghost", "alpha": 0.6}, "glow": {"color": "#dff2ff", "blur": 24}, "enter": "fade", "enterDur": 0.5, "at": 0.3}
+```
+
+**"The alliance broke."**
+```json
+{"type": "prop", "kind": "heart", "id": "r08_heart", "x": 0.5, "y": 0.62, "size": 300, "split": {"at": 1.0, "gap": 0.2, "label": {"text": "BETRAYED"}}}
+```
+
+**"He was struck down."** Hide the target for the shock window, then bring it back dead.
+```json
+{"id": "r08_zap", "dur": 2.6, "bg": {"kind": "burst", "color": "#2f4f8a"},
+ "layers": [{"type": "bean", "who": "hero", "id": "r08_victim", "x": 0.5, "y": 0.96, "size": 560,
+             "swap": [{"at": 0.6, "alpha": 0}, {"at": 1.4, "alpha": 1, "pose": "scared", "expr": "dead"}]},
+            {"type": "fx", "kind": "shock", "id": "r08_shock", "target": "r08_victim", "at": 0.6, "dur": 0.8}]}
+```
+
+**"A massacre followed."** Implied: the wipe covers the frame at 2 s, cut on the red, next shot graded `solemn`.
+```json
+{"type": "fx", "kind": "blood-wipe", "id": "r08_wipe", "hud": true, "from": "both", "dur": 2.0, "cover": true}
+```
+
+**"The people revolted."**
+```json
+{"type": "fg", "kind": "mob", "id": "r08_mob", "enter": "none", "at": 0.3, "count": 8, "items": ["pitchfork", "torch", "banner", "arm"]}
+```
+
+**"Rivals, a battle of wills."** Masses behind, stare beam after the beans.
+```json
+{"id": "r08_duel", "dur": 3.0, "bg": {"kind": "flat", "color": "#2a1c30"},
+ "layers": [{"type": "fx", "kind": "duel", "id": "r08_masses", "hud": true, "eyes": false},
+            {"type": "bean", "who": "rival", "id": "r08_a", "x": 0.3, "y": 0.96, "size": 640, "pose": "fist", "expr": "angry"},
+            {"type": "bean", "who": "hero", "id": "r08_b", "x": 0.7, "y": 0.96, "size": 640, "pose": "fist", "expr": "angry", "flip": true},
+            {"type": "fx", "kind": "crackle", "id": "r08_stare", "from": "r08_a", "to": "r08_b", "hud": true, "width": 14, "glow": 26, "at": 0.3}]}
+```
+
+**"Only his torch showed the way."**
+```json
+{"id": "r08_dark", "dur": 3.0, "bg": {"kind": "interior", "wall": "#4a3a30"},
+ "layers": [{"type": "bean", "who": "hero", "id": "r08_bearer", "x": 0.4, "y": 0.96, "size": 480, "hold": "torch", "pose": "hold",
+             "walk": [[0, 3]], "move": [{"at": 0, "dur": 3, "to": [0.6, 0.96], "ease": "linear"}]},
+            {"type": "fx", "kind": "lightpool", "id": "r08_torch", "follow": "r08_bearer", "part": "hand", "r": 380, "open": {"at": 0.1, "dur": 0.66}}]}
+```
+
+**"It blew up."** Two booms 9 frames apart, a camera punch on the first.
+```json
+{"id": "r08_boom", "dur": 2.4, "bg": {"kind": "sky"}, "camera": {"punch": [{"at": 0.2, "amount": 0.12}]},
+ "layers": [{"type": "fx", "kind": "boom", "id": "r08_b1", "x": 0.4, "y": 0.6, "at": 0.2},
+            {"type": "fx", "kind": "boom", "id": "r08_b2", "x": 0.66, "y": 0.52, "size": 300, "at": 0.5}]}
+```
+
+**"He remembered the fire."**
+```json
+{"type": "fx", "kind": "memory", "id": "r08_mem", "who": "king", "pose": "think", "expr": "cry", "x": 0.72, "y": 0.86, "size": 580, "backdrop": "fire", "at": 0.4, "tail": [0.42, 0.42]}
+```
+
+**Trauma cycle.** Three grades about 28 frames each.
+```json
+{"id": "r08_trauma", "dur": 2.8, "bg": {"kind": "interior"},
+ "grade": [{"preset": "moonlit", "strength": 0.8, "out": 0.93, "outDur": 0.05},
+           {"preset": "gaslight", "at": 0.93, "dur": 0.05, "out": 1.86, "outDur": 0.05},
+           {"preset": "night-violet", "at": 1.86, "dur": 0.05}],
+ "layers": [{"type": "bean", "who": "hero", "x": 0.5, "y": 0.96, "size": 520, "pose": "clutch-head", "expr": "worried"}]}
+```
+
+**Night bombardment.** Shellbursts behind the trench lip, a firing line, a shake per burst.
+```json
+{"id": "r08_night", "dur": 3.0, "grade": "night", "bg": {"kind": "sky", "sky": "night"},
+ "camera": {"shake": [{"at": 0.4, "dur": 0.3, "amp": 8}, {"at": 0.8, "dur": 0.3, "amp": 8}, {"at": 1.2, "dur": 0.3, "amp": 8}]},
+ "layers": [{"type": "fx", "kind": "shellburst", "id": "r08_shells", "x": 0.5, "y": 0.62},
+            {"type": "fx", "kind": "muzzle", "id": "r08_line", "x": 0.5, "y": 0.7, "count": 6},
+            {"type": "fg", "kind": "rubble", "enter": "none"}]}
+```
+
+**Hellish set, clean character.** A background-only grade keeps the bean and the label untouched.
+```json
+{"id": "r08_hell", "dur": 2.4, "grade": {"preset": "inferno", "target": "bg"}, "bg": {"kind": "interior"},
+ "layers": [{"type": "bean", "who": "hero", "x": 0.5, "y": 0.96, "size": 520, "expr": "worried"},
+            {"type": "label", "text": "MEANWHILE, BELOW", "x": 0.5, "y": 0.14}]}
+```
+
+## ⑥ Limits and pitfalls
+
+- Cost per 1080p frame on the reference Mac: `glow` about 100 ms, `mono-red` 65 ms, `glitch` 50 ms, `rgbsplit` 45 ms,
+  `lineart` 30 ms; `engrave`, `gold`, `rage`, `inferno`, `crt-cyan` 20-60 ms (pixel passes); `material`, `sticker`,
+  `split`, `freeze` 5-15 ms each; `shock`, `disintegrate` and `memory` repaint one layer offscreen. Everything else is
+  under 5 ms. Keep these to a few layers per shot and render previews with `--scale 0.5`.
+- Screen kinds (`glitch`, `rgbsplit`, `alarm`, `cctv`, `darkness`, `eyelids`, `rain`) and the pixel grades work on
+  whatever is drawn before them. Put them after the layers they should affect; anything listed later is untouched.
+- `shock` and `disintegrate` repaint `target` but do not hide it: hide it yourself (`swap` alpha 0, or `out`) for the
+  same window. The target must be a layer `id` in the same shot and cannot be another `shock` or `disintegrate`; a
+  wrong id throws.
+- `crackle` with bean ids and `duel` eyes must come after the beans, or the beans cover the beam; `duel` itself goes
+  before them, so use `eyes: false` and a separate `crackle`. `lightpool.follow` must be a layer id in the shot.
+- Enum fields throw on bad values: `godbeam.from` (tl/tr/t), `mob.items`, `material` kinds, `grade.target`
+  (frame/bg). `beam.from` silently treats anything but `tr` as `tl`, and an unknown `flameshape` emblem falls back to
+  `bull`.
+- `explosion.debris` is a colour, `boom.debris` is a count. `blood` has a fixed colour; use `pool` or `spill` for a
+  custom one. `puff` is the older swap cloud; `poof` in [02_acting.md](02_acting.md) reads better.
+- `memory` ignores the layer transform and the camera: its own `x`/`y`/`size` place it. Its bean needs a `who` from
+  `cast`; shot mode needs an existing shot id (`T.subShot` nests at most 2 levels).
+- Modifier `at` (material, freeze, split) is shot time, while fx fields (`blink`, `eyesAt`, `burstAt`) are layer
+  time. Mixing them up shifts an event by the layer's `at`.
+- A `frame` grade recolours lettering too. Lower `strength`, use `target: "bg"`, or put the clean label in the next
+  shot. Grades do not touch film `overlays`.
+- `lineart` and `silhouette` work on the alpha of the whole layer: a bean holding a prop becomes one shape. Split the
+  prop into its own layer if it must stay readable.
+- Path callbacks given to `T.outlined` run twice; effects that add new shapes must draw all random values before the
+  path function (the engine already does this for the shipped kinds).
+- Never show a death on screen or use real-world extremist symbols in emblems, banners or crowds.

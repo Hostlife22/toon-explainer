@@ -1,5 +1,5 @@
 {
-  "_doc": "Backgrounds, foreground framing and props added by places*.js, fgx.js and props2.js. See references/07-places.md.",
+  "_doc": "Backgrounds, foreground framing and props added by places*.js, foreground.js and props-world.js. See references/07-places.md.",
   "bgs": [
     "trench",
     "trench-section",

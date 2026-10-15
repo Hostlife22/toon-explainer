@@ -1,7 +1,0 @@
-{
-  "_module": "lens.js + layout.js (v4 transitions, panel layouts, POV masks)",
-  "layers": ["panel"],
-  "transitions": ["cloud-wipe", "drip", "black-beat", "curtain", "explosion-wipe", "wave", "bubble-wipe", "portal",
-                  "screen-dive", "fg-pass", "spin-zoom", "glow-open", "vignette-close"],
-  "fg": ["binoculars", "spyglass", "eye-pov"]
-}

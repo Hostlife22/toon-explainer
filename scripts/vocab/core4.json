@@ -1,5 +1,0 @@
-{
-  "_doc": "core.js v4: per-layer modifiers registered in TOON.LAYER_MODS (a layer field of the same name turns one on). Modules add their own kinds under the same key.",
-  "kinds": {"layer_mod": ["blur", "silhouette", "lineart", "glow"]},
-  "registry": {"layer_mod": "TOON.LAYER_MODS"}
-}

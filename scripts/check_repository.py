@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check JavaScript/Python syntax, JSON and local documentation links for CI.
+"""Check JavaScript/Python syntax, JSON, local documentation links and vocabulary coverage of the docs for CI.
 
     python scripts/check_repository.py
 
@@ -60,12 +60,30 @@ def check(path):
     return errors
 
 
+def vocab_coverage():
+    """Every vocabulary name the validator accepts must be documented somewhere in references/."""
+    import sys
+    sys.path.insert(0, str(ROOT / 'scripts'))
+    import spec
+    docs = '\n'.join(p.read_text() for p in sorted((ROOT / 'references').rglob('*.md')))
+    groups = {name[6:].lower(): values for name, values in vars(spec).items()
+              if name.startswith('KNOWN_') and isinstance(values, set)}
+    groups.update({f'{layer} kind': kinds for layer, kinds in spec.LAYER_KINDS.items()})
+    errors = []
+    for group, values in sorted(groups.items()):
+        missing = sorted(v for v in values if not re.search(r'(?<![\w-])' + re.escape(v) + r'(?![\w-])', docs))
+        if missing:
+            errors.append(f'references/: undocumented {group}: {", ".join(missing)}')
+    return errors
+
+
 def main():
     files = sorted(p for p in ROOT.rglob('*') if p.is_file()
                    and not EXCLUDED.intersection(p.relative_to(ROOT).parts)
                    and p.suffix in {'.py', '.js', '.json', '.md'})
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         errors = [error for group in pool.map(check, files) for error in group]
+    errors += vocab_coverage()
     if errors:
         raise SystemExit('\n'.join(errors))
     print(f'Checked {len(files)} source and documentation files; no errors.')

@@ -40,7 +40,7 @@ Parallax: every layer has a `z` (default 1). At 0 the layer is pinned to the scr
 
 ## Backgrounds `bg.kind`
 - `sky`:
-  - `preset`: `sunset|day|dusk|night|storm|teal` (plus `sepia` and `overcast`, see [07-places](07-places.md));
+  - `preset`: `sunset|day|dusk|night|storm|teal` (plus `sepia` and `overcast`, see [04 Places](toolkits/04_places.md));
   - `clouds`: number or `true`;
   - `rays`: bool, `sun`: `[x,y]`;
   - `hills`: number or `false`, `horizon`: 0..1, `groundY`: 0..1;
@@ -69,11 +69,11 @@ Parallax: every layer has a `z` (default 1). At 0 the layer is pinned to the scr
 
 ## Common layer fields
 `type`, `id`, `x`, `y`, `scale`, `rot` (degrees), `alpha`, `flip`, `z`, `hud` (ignores the camera), `at`, `out`,
-`enter`, `exit` (v1: `none|fade|pop|drop|rise|slide-left|slide-right|slide-up|slide-down|spin`; more in [07-fx-and-tone](07-fx-and-tone.md) and [08-acting](08-acting.md)), `enterDur`, `exitDur`,
+`enter`, `exit` (`none|fade|pop|drop|rise|slide-left|slide-right|slide-up|slide-down|spin|drop-squash|pop-tilt|slam` and the gag kinds in [02 Acting](toolkits/02_acting.md)), `enterDur`, `exitDur`,
 `move: [{at,dur,to:[x,y],scale,rot,alpha,flip,ease}]`, `bob` (px), `bobHz`, `sway` (deg), `swayHz`, `wobble` (px),
 `shake: [{at,dur,amp}]`, `jump: [{at,dur,h}]`.
 
-v4 fields accepted by every layer:
+More fields accepted by every layer:
 
 | Field | Example | What it does |
 |---|---|---|
@@ -101,7 +101,7 @@ Default entrance:
 
 ## Layer types
 
-### `bean`: a character drawn in code (rig v2: `face.js` + `rig.js`)
+### `bean`: a character drawn in code (`characters/face.js` + `characters/rig.js`)
 ```json
 {"type":"bean","who":"caesar","size":620,"x":0.6,"y":0.96,"view":"3q",
  "expr":"smug" | [{"at":0,"v":"neutral"},{"at":1.2,"v":"shock"}],
@@ -115,15 +115,15 @@ Default entrance:
   - `front`, `side`;
   - `back`: back of the head, hair covers the head.
   - The character faces right; `flip: true` turns it left.
-- `expr` (v1): `neutral happy content sleepy smug angry rage sad worried shock scream squint cry dead`. More expressions in [07-characters](07-characters.md) and [08-chars](08-chars.md) (`menace`, `evil`, `jaw-drop`, `side-eye`, …); the full set is in `scripts/vocab/*.json` (`expr`).
+- `expr`: the base set is `neutral happy content sleepy smug angry rage sad worried shock scream squint cry dead`; [01 Characters](toolkits/01_characters.md) lists all of them (`menace`, `evil`, `jaw-drop`, `side-eye`, …) with their eye, mouth and brow kinds.
   - The eyebrows carry the emotion.
   - `rage` adds an anger vein, `worried` a sweat drop, `cry` streams of tears.
   - `dead` gives X eyes; combine with `rot: -88`, `rock: 0`, `blink: false` and `fx: blood`.
 - `talk`: the mouth switches between the expression's 3 shapes every ~3 frames (10 Hz, no repeats); the head bobs ±1.6°.
-- `pose`: `idle point point-up arms-up shrug facepalm think wave hold fist hips cross present scared hands-face thumbs-up clutch-head sword-up reach`.
+- `pose` (arms): `idle point point-up arms-up shrug facepalm think wave hold fist hips cross present scared hands-face thumbs-up clutch-head sword-up reach`.
   - Arms are two bendable tubes (shoulder → elbow → hand; some poses use IK).
   - Glove hands: `open`, `fist`, `point`, `thumb`.
-- v4 poses (46 more, `rig.js` `T.POSES`; the full set is `poses` in `scripts/vocab/rig4.json`):
+- More poses (`rig.js` `T.POSES`; the full set is `poses` in `scripts/vocab/characters-poses.json` and [01 Characters](toolkits/01_characters.md)):
   - hands: `pray steeple cheeks cover-ears shade-eyes binoculars pinch-nose clutch-chest cover-mouth eat drink phone-ear`;
   - force and power: `shove t-pose spread flex flex-one hands-up hammer throw-windup throw hold-high carry grab`;
   - pleading and offering: `beg rub-hands offer kneel kneel-pray kneel-beg kneel-offer prostrate`;
@@ -131,7 +131,7 @@ Default entrance:
   - body on the ground or in the air: `sit` (chair seat at about 0.1 × `size` above `y`), `sit-floor` (hugging knees), `sit-slump`, `lie` (pair with `expr: dead`), `crawl`, `fly`, `flail` / `flail-b` (alternate for a tumble), `hang` (from a bar).
   - A pose entry may carry a body: `{arms, body: {dy, rot, lean, legs, front, view, armScale, pivot}}`; legs are `stand kneel sit tuck splay kick squat dangle none`. Modules add poses with `T.POSES[name] = …`.
 - `antic: true` adds a 3-frame anticipation dip before every pose change and a 2-frame stretch after it; `snapTilt: 8` adds one tilted breakdown frame. Use them on big gestures (a slam on the table, a reveal), not on talking heads.
-- `look.build` (`adult brute fat thin muscle`) and `look.age` (`adult child toddler baby elder`) change proportions; `size` stays an adult's height, so a child at the same `size` is drawn about 0.65 as tall. `age` sets head/limb ratios, `build` sets widths. Overlays (belly, pecs, swaddle, wrinkles) come from the v4 characters module ([08-chars.md](08-chars.md)).
+- `look.build` (`adult brute fat thin muscle`) and `look.age` (`adult child toddler baby elder`) change proportions; `size` stays an adult's height, so a child at the same `size` is drawn about 0.65 as tall. `age` sets head/limb ratios, `build` sets widths. Overlays (belly, pecs, swaddle, wrinkles) are drawn by `characters/expressions.js` ([01 Characters](toolkits/01_characters.md)).
 - **Hold-and-snap:** a pose change takes `poseBlend` seconds (default 0.07 = 2 frames) and gives the body a ~4.5 % settle over 0.2 s. This is how the reference is animated. For a smooth gesture, set `poseBlend: 0.25`.
 - Idle:
   - the body rocks around the feet by ±`rock`° (1.6) with a 1.7 s period, the head in counter-phase;
@@ -190,18 +190,12 @@ During `talk`, the idle and talk frames alternate at 8 Hz. `blink` shows every ~
 - `caption`: `text`, `size`. A quote line; placeholders from `script2spec` are marked `"todo": true`.
 
 ### Objects and widgets
-- `prop`: `kind` = `coin moneybag scroll sword flag question exclaim bread temple skull heart book hourglass shield spear torch bulb` (v1), `size`, `text`, `color`, `spin` (coin). The torch burns with a flipbook flame; the idea bulb glows and pulses with rays. About 75 more kinds: [07-places](07-places.md) (`crate`, `barrel`, `mug`, …) and [08-props](08-props.md); full list under `props` in `scripts/vocab/*.json`.
-  - **Origin:** props are centred on (`x`, `y`) unless listed in `TOON.PROP_GROUND` (signposts, furniture, cage, door, … see [08-props](08-props.md)), which stand on `y`. A centred prop sits half its height above its bottom edge: a `crate` or `barrel` is 0.9 × `size` tall, so to stand one on a floor at `floorY` use `y = floorY − 0.45 × size / 1080`, and its top is at `y − 0.45 × size / 1080`.
+- `prop`: `kind` = `coin moneybag scroll sword flag question exclaim bread temple skull heart book hourglass shield spear torch bulb` (the base set), `size`, `text`, `color`, `spin` (coin). The torch burns with a flipbook flame; the idea bulb glows and pulses with rays. About 75 more kinds (`crate`, `barrel`, `mug`, `throne`, `signpost`, …) are in [03 Props, creatures and vehicles](toolkits/03_props_creatures_vehicles.md).
+  - **Origin:** props are centred on (`x`, `y`) unless listed in `TOON.PROP_GROUND` (signposts, furniture, cage, door, … see [03 Props](toolkits/03_props_creatures_vehicles.md)), which stand on `y`. A centred prop sits half its height above its bottom edge: a `crate` or `barrel` is 0.9 × `size` tall, so to stand one on a floor at `floorY` use `y = floorY − 0.45 × size / 1080`, and its top is at `y − 0.45 × size / 1080`.
 - `card`: `w`, `h`, `title`, `titleColor`, `lines`, `every`, `lineSize`, `color`.
 - `sign`: `text` (`\n` breaks the line), `w`.
 - `calendar`: `pages: [{head, num, headColor}]` + `every`, or `head`, `from`, `to`, `dur`, `ease` for a fast count; `size`.
-- `map`: `image` or `land: [[cx,cy,rx,ry]]`; fields `w`, `h`, `sea`, `landColor`, `coast`, `waves` (number of wave marks), `extrude` (7 px).
-  - `regions: [{pts,color,ink,at,dur,out,pulse}]`: territory slabs with a dark side edge. They appear as an expanding circle; `out` removes the territory over 0.5 s, `pulse` adds a glowing rim.
-  - `pins: [{x,y,at,label,color,size}]`.
-  - `routes: [{pts,at,dur,color}]`.
-  - `armies: [{x,y,rx,ry,count,at,dur,color}]`: an oval of dots that appear one by one.
-  - Land is raised as a slab, the coast has a light glow, the sea has wave marks.
-  - Points are normalized to the map box (by default it is 10 % larger than the frame).
+- `map`: territories, conquests, fronts, routes, armies, figures and views. The whole field reference is in [05 Maps](toolkits/05_maps.md).
 
 ### `fx`
 `kind`:
@@ -219,18 +213,18 @@ During `talk`, the idle and talk frames alternate at 8 Hz. `blink` shows every ~
 - `beam`: a diagonal light wedge from a corner, `from: "tl"|"tr"`, `width`, `strength`; grows over 10 frames and flickers;
 - `birds`: a flock of "check mark" birds, `count`, `speed`, `dir`, `size`, wings animated on twos;
 - `smoke`: a smoke band, `w`, `rise`, `color`;
-- `puff`: legacy swap cloud. prefer `poof` ([08-acting](08-acting.md)), the v4 swap cloud used with `swap`;
+- `puff`: legacy swap cloud; prefer `poof` ([02 Acting](toolkits/02_acting.md)), the swap cloud made for `swap`;
 - `explosion`: a star burst with debris, ~0.6 s;
 - `blood`: `shape: "pool"|"splat"`, `w`;
 - `lightning`: lightning bolts, rebuilt every 2 frames;
 - `arrows`: a volley of arrows across the frame, `count`, `dir`, `every`.
 
-These are the v1 kinds. Over 40 more live in [07-fx-and-tone](07-fx-and-tone.md), [08-fx](08-fx.md) and [08-acting](08-acting.md); the full set is `fx` in `scripts/vocab/*.json`.
+These are the base kinds. Over 40 more live in [08 FX and tone](toolkits/08_fx_and_tone.md) and [02 Acting](toolkits/02_acting.md).
 
 ## Shot color grade (`grade`)
 `"grade": "serious"` or `{ "preset": "serious", "at": 2.0, "dur": 0.5, "strength": 1 }` recolors the whole shot, **including labels and the HUD**. If a label must stay clean, put it in the next shot or lower `strength`. With `at`/`dur`, the grade kicks in mid-shot: this is how the rain starts in the reference at 22:43.9.
 
-v4: `grade` may also be a **list** of entries, applied in order, each `{preset, at, dur, strength, out, outDur, target}`. `out` fades the entry away again (over `outDur`, default `dur`), so a list builds grade sequences such as a trauma cycle (teal → amber → violet, each about 0.95 s) or a 1 s red flash. `strength` accepts a `[{at,v}]` timeline. `"target": "bg"` grades only the backgrounds (applied before the layers), so characters and lettering stay clean on a hellish red or a cold sepia set. More presets come from the v4 FX module ([08-fx.md](08-fx.md)).
+`grade` may also be a **list** of entries, applied in order, each `{preset, at, dur, strength, out, outDur, target}`. `out` fades the entry away again (over `outDur`, default `dur`), so a list builds grade sequences such as a trauma cycle (teal → amber → violet, each about 0.95 s) or a 1 s red flash. `strength` accepts a `[{at,v}]` timeline. `"target": "bg"` grades only the backgrounds (applied before the layers), so characters and lettering stay clean on a hellish red or a cold sepia set. All presets are listed in [08 FX and tone](toolkits/08_fx_and_tone.md).
 
 | Preset | When |
 |---|---|
@@ -242,19 +236,19 @@ v4: `grade` may also be a **list** of entries, applied in order, each `{preset, 
 | `gold` | Golden hour, triumph |
 
 ## Transitions
-v1: `cut` (0 s), `dissolve` (0.35), `fade-white` (0.4), `fade-black` (0.5), `zoom-punch` (0.3), `whip` (0.3), `iris` (0.5). Twenty more (ink blot, peephole, cloud wipe, drip, …) are in [07-fx-and-tone](07-fx-and-tone.md) and [08-lens](08-lens.md); the full set is `transitions` in `scripts/vocab/*.json`.
+Built into `core.js`: `cut` (0 s), `dissolve` (0.35), `fade-white` (0.4), `fade-black` (0.5), `zoom-punch` (0.3), `whip` (0.3), `iris` (0.5). Twenty more (ink blot, peephole, cloud wipe, drip, …) with their parameters are in [09 Transitions and lens](toolkits/09_transitions_and_lens.md).
 A transition occupies the **start** of the shot it is set on. During it, the previous shot keeps playing (its time runs past `dur`).
 
 ## Extending
-- New layer: `T.layers.<type> = (ctx, L, lt, env) => {…}` in `scripts/engine/lib/*.js`. `lt` is layer time, `env.lt` is shot time. Add the `<script>` tag to `index.html`.
+- New layer: `T.layers.<type> = (ctx, L, lt, env) => {…}` in `scripts/engine/lib/<domain>/*.js`. `lt` is layer time, `env.lt` is shot time. Add the `<script>` tag to `index.html`.
 - New entrance/exit: `T.ENTERS.<kind> = (p, st, isExit, L) => {…}` mutates the motion state `{x, y, s, r, a, sx, sy}` for progress `p`; set its default duration in `T.ENTER_DUR.<kind>` and list it under `enter` in the vocab (a test checks the two match).
 - New layer modifier: `T.LAYER_MODS.<name> = {order, apply(src, L, lt, env), under(ctx, src, L, lt, env), filter(L, lt, env)}`; it is active when the layer has a truthy `<name>` field. Declare it under `"kinds": {"layer_mod": [...]}`.
-- v4 shared helpers (`lib/shared4.js`): `T.num` (number or `[{at,v}]`), `T.drawCloud`, `T.starburst`, `T.drawThickArrow`, `T.drawGlove`, `T.subShot(id, lt, env, {t, grade})` (render another shot into a canvas for panels, TVs and paintings; nesting deeper than 2 throws).
+- Shared helpers (`lib/base/helpers.js`): `T.num` (number or `[{at,v}]`), `T.drawCloud`, `T.starburst`, `T.drawThickArrow`, `T.drawGlove`, `T.subShot(id, lt, env, {t, grade})` (render another shot into a canvas for panels, TVs and paintings; nesting deeper than 2 throws).
 - New background `T.bgs.<kind>`, prop `T.PROPS.<kind>`, fx `T.FX.<kind>`, foreground `T.FG.<kind>`, transition `T.transitions.<kind>`, headwear `T.HEADWEAR.<kind>`, pose in `POSES` (`rig.js`).
 - Declare every new name in `scripts/vocab/<module>.json` instead of editing `spec.py`. Keys: `layers`, `bgs`, `fx`, `props`, `fg`, `transitions`, `grades`, `enter`, `poses`, `expr`, `head`, `hair`, `beard`, `sky`, `views`, `color_keys`, plus `kinds` (allowed `kind` values per layer type) and `registry` (the engine registry those kinds must match, for example `"vehicle": "TOON.VEHICLES"`).
 - Tests compare the merged vocabulary with the engine (`test_python_vocabulary_matches_engine`, `test_vocab_kinds_match_engine_registries`), so a missing declaration fails CI.
-- Document new fields in the matching `references/07-*.md` guide.
+- Document new fields in the card of their domain (`references/toolkits/`, listed in [08-toolkits.md](08-toolkits.md)).
 - Do not call `rng` inside a path function for `T.outlined`: the path is built twice (fill and stroke). Derive per-item random values from a per-item seed, not from a stream whose consumption depends on time.
 - Randomness only through `T.rng(T.hash(seed))` and `T.noise`. `Math.random` is forbidden: the render must be deterministic, and `tests/test_pipeline.py` checks this.
 
-v3 features are documented in their own guides: [characters](07-characters.md), [places](07-places.md), [graphics](07-graphics.md) and [FX and tone](07-fx-and-tone.md).
+Every domain has a card with its full field reference; see [08-toolkits.md](08-toolkits.md).

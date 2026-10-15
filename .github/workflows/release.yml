@@ -55,7 +55,7 @@ jobs:
             name=$(basename "$(dirname "$spec")")
             uv run --isolated --python 3.12 --with "playwright==$PLAYWRIGHT_VERSION" python scripts/render.py "$spec" --sheet "renders/$name-sheet.jpg" --scale 0.5
           done
-          uv run --isolated --python 3.12 --with "playwright==$PLAYWRIGHT_VERSION" python scripts/render.py examples/v2_showcase/spec.json --shot v02_forest_march --scale 0.25 --out renders/forest.mp4
+          uv run --isolated --python 3.12 --with "playwright==$PLAYWRIGHT_VERSION" python scripts/render.py examples/showcase/spec.json --shot s02_forest_march --scale 0.25 --out renders/forest.mp4
 
       - name: Build release archives
         run: uv run --python 3.12 python scripts/build_release.py

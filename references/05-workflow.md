@@ -10,7 +10,7 @@ One block per shot, with these labels:
 - `- Voiceover:` or `- VO:` (the line, quotes optional);
 - `- On screen:` or `- Screen:` (what the viewer sees).
 
-Each label sits on its own line; a one-line `Shot N — Voiceover — On screen` row is not parsed. The bold, the leading `-` and the quotes are optional, lines before the first shot (title, notes) are ignored, and every shot needs a voiceover line. A complete two-shot `script.md` (see also [examples/v4_story/script.md](../examples/v4_story/script.md)):
+Each label sits on its own line; a one-line `Shot N — Voiceover — On screen` row is not parsed. The bold, the leading `-` and the quotes are optional, lines before the first shot (title, notes) are ignored, and every shot needs a voiceover line. A complete two-shot `script.md` (see also [examples/coffee_film/script.md](../examples/coffee_film/script.md)):
 
 ```markdown
 # How Coffee Conquered the World

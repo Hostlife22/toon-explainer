@@ -137,7 +137,7 @@
   // Entrances with their own measured timing (reference: drop + squash settles in ~12 frames, pop-tilt in 6, slam in 3).
   const ENTER_DUR_BY_KIND = { 'drop-squash': 0.5, 'pop-tilt': 0.22, slam: 0.12 };
   // Default entrance per layer type (measured: characters/backgrounds are already there at the cut; lettering pops).
-  T.DEFAULT_ENTER = { bean: 'none', image: 'none', map: 'none', fx: 'none', sign: 'none', timer: 'none', title: 'none', era: 'slide-left', caption: 'fade' };
+  T.DEFAULT_ENTER = { bean: 'none', image: 'none', map: 'none', fx: 'none', fg: 'none', sign: 'none', timer: 'none', title: 'none', era: 'slide-left', caption: 'fade' }; // framing is already there at the cut
   T.ENTERS = T.ENTERS || {}; // kind → fn(p, st, isExit, L): extra entrance/exit kinds registered by modules
   T.ENTER_DUR = T.ENTER_DUR || {}; // kind → default duration (s) for registered kinds
   function enterExit(kind, p, st, isExit, L) {
@@ -250,7 +250,8 @@
       return `blur(${px.toFixed(2)}px) brightness(${1 - (L.blurDim ?? 0.08)})`;
     },
   };
-  const activeMods = (L) => Object.keys(T.LAYER_MODS).filter((k) => L[k]).sort((a, b) => (T.LAYER_MODS[a].order ?? 50) - (T.LAYER_MODS[b].order ?? 50));
+  // A modifier may declare when(L) to ignore a field that a layer type uses for its own meaning.
+  const activeMods = (L) => Object.keys(T.LAYER_MODS).filter((k) => L[k] && (!T.LAYER_MODS[k].when || T.LAYER_MODS[k].when(L))).sort((a, b) => (T.LAYER_MODS[a].order ?? 50) - (T.LAYER_MODS[b].order ?? 50));
   let modDepth = 0;
   T.modLayer = (ctx, L, lt, env, paint) => {
     const mods = activeMods(L);
@@ -265,7 +266,7 @@
     let src = c;
     for (const m of mods) if (T.LAYER_MODS[m].apply) src = T.LAYER_MODS[m].apply(src, L, lt, env, modDepth) || src;
     ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0); // layer alpha (ctx.globalAlpha) applies to the composite, as in v3
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // layer alpha (ctx.globalAlpha) applies to the composite
     for (const m of mods) if (T.LAYER_MODS[m].under) T.LAYER_MODS[m].under(ctx, src, L, lt, env);
     const filters = mods.map((m) => T.LAYER_MODS[m].filter && T.LAYER_MODS[m].filter(L, lt, env)).filter(Boolean);
     if (filters.length) ctx.filter = filters.join(' ');

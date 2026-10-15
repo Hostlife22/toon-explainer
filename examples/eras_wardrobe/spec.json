@@ -1,0 +1,1353 @@
+{
+ "title": "Eras and wardrobe: headwear by era, outfits, flag heads, masks, creatures, the reaper",
+ "fps": 30,
+ "seed": 303,
+ "style": {
+  "grain": true,
+  "vignette": 0.25
+ },
+ "cast": {
+  "h_crown": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "crown"
+  },
+  "h_laurel": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "laurel"
+  },
+  "h_helmet": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "helmet"
+  },
+  "h_hood": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "hood"
+  },
+  "h_pontifex": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "pontifex"
+  },
+  "h_headband": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "headband"
+  },
+  "h_hat": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "hat"
+  },
+  "h_great-helm": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "great-helm"
+  },
+  "h_nasal-helm": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "nasal-helm"
+  },
+  "h_turban": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "turban",
+   "veil": true,
+   "headColor2": "#2f6db8",
+   "beard": "full"
+  },
+  "h_jester": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "jester"
+  },
+  "h_graduation": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "graduation"
+  },
+  "h_tophat": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "tophat"
+  },
+  "h_bowler": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "bowler"
+  },
+  "h_fedora": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "fedora"
+  },
+  "h_beret": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "beret"
+  },
+  "h_safari": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "safari"
+  },
+  "h_newsboy-cap": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "newsboy-cap"
+  },
+  "h_kepi": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "kepi"
+  },
+  "h_fez": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "fez"
+  },
+  "h_pickelhaube": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "pickelhaube"
+  },
+  "h_brodie": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "brodie"
+  },
+  "h_adrian": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "adrian"
+  },
+  "h_dome": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "dome"
+  },
+  "h_officer-cap": {
+   "robe": "#2f3554",
+   "hair": "bald",
+   "hairColor": "#4a3022",
+   "head": "officer-cap",
+   "outfit": "tunic",
+   "medals": 4,
+   "beard": "walrus"
+  },
+  "h_ushanka": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "ushanka",
+   "outfit": "greatcoat"
+  },
+  "h_straw-cone": {
+   "robe": "#8a6a40",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "straw-cone"
+  },
+  "h_official-cap": {
+   "robe": "#7a8a9a",
+   "hair": "short",
+   "hairColor": "#4a3022",
+   "head": "official-cap",
+   "fringe": true,
+   "outfit": "hanfu"
+  },
+  "h_qing-hat": {
+   "robe": "#2f3554",
+   "hair": "queue",
+   "hairColor": "#4a3022",
+   "head": "qing-hat",
+   "outfit": "hanfu"
+  },
+  "suit": {
+   "outfit": "suit",
+   "hair": "short",
+   "hairColor": "#2e2018",
+   "tie": "#2f6db8"
+  },
+  "statesman": {
+   "outfit": "suit",
+   "bowtie": true,
+   "head": "tophat",
+   "hair": "bald-sides",
+   "hairColor": "#8a8a8a",
+   "beard": "walrus",
+   "mustacheColor": "#8a8a8a"
+  },
+  "tommy": {
+   "outfit": "tunic",
+   "robe": "#a48a5a",
+   "head": "brodie",
+   "puttees": true,
+   "hair": "short",
+   "hold": "spear"
+  },
+  "frenchie": {
+   "outfit": "tunic",
+   "robe": "#6d84a8",
+   "head": "adrian",
+   "legColor": "#b5202a",
+   "hair": "short"
+  },
+  "russian": {
+   "outfit": "greatcoat",
+   "head": "ushanka",
+   "beard": "full",
+   "beardColor": "#6a4a30"
+  },
+  "scholar": {
+   "outfit": "hanfu",
+   "head": "official-cap",
+   "hair": "bun",
+   "beard": "long",
+   "robe": "#7a3a7a"
+  },
+  "geisha": {
+   "outfit": "kimono",
+   "hair": "bun",
+   "hairColor": "#1e1c1e",
+   "robe": "#a83a4a"
+  },
+  "samurai": {
+   "outfit": "lamellar",
+   "head": "nasal-helm",
+   "hair": "bun",
+   "hairColor": "#1e1c1e",
+   "holdL": "shield"
+  },
+  "knight": {
+   "outfit": "surcoat",
+   "head": "great-helm",
+   "crossColor": "#c8323a",
+   "hold": "sword",
+   "holdL": "shield"
+  },
+  "warden": {
+   "outfit": "hivis",
+   "head": "newsboy-cap",
+   "hair": "short"
+  },
+  "general": {
+   "outfit": "tunic",
+   "robe": "#2f3554",
+   "head": "officer-cap",
+   "headColor2": "#d9b14a",
+   "medals": 6,
+   "beard": "walrus",
+   "hair": "bald",
+   "sash": "#c8323a"
+  },
+  "court": {
+   "robe": "#efe6d4",
+   "skirt": "tiered",
+   "hair": "curly",
+   "hairColor": "#2a1c15",
+   "apron": "#3b62a8"
+  },
+  "fb_fr": {
+   "flag": {
+    "pattern": "v3",
+    "colors": [
+     "#2f4fa8",
+     "#f4f2ea",
+     "#d42a2a"
+    ]
+   },
+   "hair": "bald",
+   "robe": "#2f4fa8",
+   "head": "beret"
+  },
+  "fb_de": {
+   "flag": {
+    "pattern": "h3",
+    "colors": [
+     "#1e1c1e",
+     "#d42a2a",
+     "#f2c230"
+    ]
+   },
+   "hair": "bald",
+   "robe": "#6a6a52",
+   "head": "pickelhaube"
+  },
+  "fb_jp": {
+   "flag": {
+    "pattern": "disc",
+    "colors": [
+     "#f4f2ea",
+     "#c8102e"
+    ]
+   },
+   "hair": "bald",
+   "robe": "#f4f2ea"
+  },
+  "fb_ch": {
+   "flag": {
+    "pattern": "cross",
+    "colors": [
+     "#d42a2a",
+     "#f4f2ea"
+    ]
+   },
+   "hair": "bald",
+   "robe": "#d42a2a"
+  },
+  "fb_se": {
+   "flag": {
+    "pattern": "nordic",
+    "colors": [
+     "#2f6db8",
+     "#f2c230"
+    ]
+   },
+   "hair": "bald",
+   "robe": "#2f6db8"
+  },
+  "fb_tr": {
+   "flag": {
+    "pattern": "crescent",
+    "colors": [
+     "#d42a2a",
+     "#f4f2ea"
+    ]
+   },
+   "hair": "bald",
+   "robe": "#d42a2a",
+   "head": "fez"
+  },
+  "fb_us": {
+   "flag": {
+    "pattern": "stripes",
+    "colors": [
+     "#c8102e",
+     "#f4f2ea"
+    ]
+   },
+   "hair": "bald",
+   "robe": "#2f3a8a",
+   "head": "tophat"
+  },
+  "fb_cracked": {
+   "flag": {
+    "pattern": "h3",
+    "colors": [
+     "#f4f2ea",
+     "#2f6db8",
+     "#d42a2a"
+    ]
+   },
+   "flagCrack": true,
+   "hair": "bald",
+   "robe": "#8a8a8a"
+  },
+  "soldier": {
+   "outfit": "tunic",
+   "robe": "#77735e",
+   "head": "pickelhaube",
+   "mask": "gas",
+   "puttees": true
+  },
+  "gassed": {
+   "outfit": "tunic",
+   "robe": "#a48a5a",
+   "head": "brodie",
+   "tint": "#7fae4a",
+   "tintAt": 0.5
+  },
+  "citizen": {
+   "robe": "#e9e2d2",
+   "sash": "#6a8fbf",
+   "hair": "curly",
+   "hairColor": "#5a3a26"
+  },
+  "minotaur": {
+   "headShape": "bull",
+   "robe": "#6a6a52",
+   "armor": "#7a7a72",
+   "skin": "#7d8077",
+   "sleeve": "#7d8077",
+   "legColor": "#7d8077"
+  },
+  "rider": {
+   "outfit": "surcoat",
+   "head": "great-helm",
+   "crossColor": "#c8323a"
+  },
+  "spearman": {
+   "robe": "#8a6a40",
+   "head": "nasal-helm",
+   "hold": "spear",
+   "holdL": "shield"
+  },
+  "poet": {
+   "outfit": "suit",
+   "hair": "short",
+   "hairColor": "#1e1c1e",
+   "mustache": true,
+   "tie": "#1e1c1e",
+   "bowtie": true
+  }
+ },
+ "shots": [
+  {
+   "id": "headwear_ancient",
+   "dur": 1.5,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "h_crown",
+     "x": 0.09,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_laurel",
+     "x": 0.254,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_helmet",
+     "x": 0.418,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_hood",
+     "x": 0.582,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_pontifex",
+     "x": 0.746,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_headband",
+     "x": 0.91,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_hat",
+     "x": 0.09,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_great-helm",
+     "x": 0.254,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_nasal-helm",
+     "x": 0.418,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_turban",
+     "x": 0.582,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_jester",
+     "x": 0.746,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_graduation",
+     "x": 0.91,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "title",
+     "text": "ANCIENT & MEDIEVAL",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 56,
+     "color": "#c8323a"
+    }
+   ]
+  },
+  {
+   "id": "headwear_modern",
+   "dur": 1.5,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "h_tophat",
+     "x": 0.09,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_bowler",
+     "x": 0.254,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_fedora",
+     "x": 0.418,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_beret",
+     "x": 0.582,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_safari",
+     "x": 0.746,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_newsboy-cap",
+     "x": 0.91,
+     "y": 0.48,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_kepi",
+     "x": 0.09,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_fez",
+     "x": 0.254,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_pickelhaube",
+     "x": 0.418,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_brodie",
+     "x": 0.582,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_adrian",
+     "x": 0.746,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_dome",
+     "x": 0.91,
+     "y": 0.96,
+     "size": 260,
+     "blink": false
+    },
+    {
+     "type": "title",
+     "text": "1800s TO WWII",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 56,
+     "color": "#c8323a"
+    }
+   ]
+  },
+  {
+   "id": "outfits",
+   "dur": 1.5,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "suit",
+     "x": 0.09,
+     "y": 0.48,
+     "size": 270,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "statesman",
+     "x": 0.254,
+     "y": 0.48,
+     "size": 270,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "tommy",
+     "x": 0.418,
+     "y": 0.48,
+     "size": 270,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "frenchie",
+     "x": 0.582,
+     "y": 0.48,
+     "size": 270,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "russian",
+     "x": 0.746,
+     "y": 0.48,
+     "size": 270,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "general",
+     "x": 0.91,
+     "y": 0.48,
+     "size": 270,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "scholar",
+     "x": 0.09,
+     "y": 0.96,
+     "size": 270,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "geisha",
+     "x": 0.254,
+     "y": 0.96,
+     "size": 270,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "samurai",
+     "x": 0.418,
+     "y": 0.96,
+     "size": 270,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "knight",
+     "x": 0.582,
+     "y": 0.96,
+     "size": 270,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "warden",
+     "x": 0.746,
+     "y": 0.96,
+     "size": 270,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "court",
+     "x": 0.91,
+     "y": 0.96,
+     "size": 270,
+     "blink": false
+    }
+   ]
+  },
+  {
+   "id": "east_and_officers",
+   "dur": 1.5,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "h_officer-cap",
+     "x": 0.09,
+     "y": 0.9,
+     "size": 330,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_ushanka",
+     "x": 0.295,
+     "y": 0.9,
+     "size": 330,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_straw-cone",
+     "x": 0.5,
+     "y": 0.9,
+     "size": 330,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_official-cap",
+     "x": 0.705,
+     "y": 0.9,
+     "size": 330,
+     "blink": false
+    },
+    {
+     "type": "bean",
+     "who": "h_qing-hat",
+     "x": 0.91,
+     "y": 0.9,
+     "size": 330,
+     "blink": false
+    }
+   ]
+  },
+  {
+   "id": "countryballs",
+   "dur": 2.0,
+   "bg": {
+    "kind": "burst",
+    "color": "#2f8f8a"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "fb_fr",
+     "x": 0.09,
+     "y": 0.5,
+     "size": 320,
+     "blink": false,
+     "expr": "smug"
+    },
+    {
+     "type": "bean",
+     "who": "fb_de",
+     "x": 0.363,
+     "y": 0.5,
+     "size": 320,
+     "blink": false,
+     "expr": "angry"
+    },
+    {
+     "type": "bean",
+     "who": "fb_jp",
+     "x": 0.637,
+     "y": 0.5,
+     "size": 320,
+     "blink": false,
+     "expr": "neutral"
+    },
+    {
+     "type": "bean",
+     "who": "fb_ch",
+     "x": 0.91,
+     "y": 0.5,
+     "size": 320,
+     "blink": false,
+     "expr": "happy"
+    },
+    {
+     "type": "bean",
+     "who": "fb_se",
+     "x": 0.09,
+     "y": 0.97,
+     "size": 320,
+     "blink": false,
+     "expr": "content"
+    },
+    {
+     "type": "bean",
+     "who": "fb_tr",
+     "x": 0.363,
+     "y": 0.97,
+     "size": 320,
+     "blink": false,
+     "expr": "worried"
+    },
+    {
+     "type": "bean",
+     "who": "fb_us",
+     "x": 0.637,
+     "y": 0.97,
+     "size": 320,
+     "blink": false,
+     "expr": "happy"
+    },
+    {
+     "type": "bean",
+     "who": "fb_cracked",
+     "x": 0.91,
+     "y": 0.97,
+     "size": 320,
+     "blink": false,
+     "expr": "sad"
+    }
+   ]
+  },
+  {
+   "id": "faces_and_masks",
+   "dur": 2.0,
+   "bg": {
+    "kind": "flat",
+    "color": "#e8e4dc"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "citizen",
+     "x": 0.09,
+     "y": 0.9,
+     "size": 420,
+     "blink": false,
+     "expr": "mad"
+    },
+    {
+     "type": "bean",
+     "who": "citizen",
+     "x": 0.254,
+     "y": 0.9,
+     "size": 420,
+     "blink": false,
+     "expr": "evil"
+    },
+    {
+     "type": "bean",
+     "who": "citizen",
+     "x": 0.418,
+     "y": 0.9,
+     "size": 420,
+     "blink": false,
+     "expr": "sick"
+    },
+    {
+     "type": "bean",
+     "who": "soldier",
+     "x": 0.582,
+     "y": 0.9,
+     "size": 420,
+     "blink": false,
+     "pose": "hold"
+    },
+    {
+     "type": "bean",
+     "who": "gassed",
+     "x": 0.746,
+     "y": 0.9,
+     "size": 420,
+     "blink": false,
+     "expr": "worried"
+    },
+    {
+     "type": "bean",
+     "who": "poet",
+     "x": 0.91,
+     "y": 0.9,
+     "size": 420,
+     "blink": false,
+     "expr": "sad",
+     "talk": [
+      [
+       0,
+       2
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "herd",
+   "dur": 3.0,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.02
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "kind": "horse",
+     "x": 0.14,
+     "y": 0.62,
+     "size": 260,
+     "walk": [
+      [
+       0,
+       3
+      ]
+     ]
+    },
+    {
+     "type": "creature",
+     "kind": "bull",
+     "x": 0.42,
+     "y": 0.62,
+     "size": 280,
+     "glow": true,
+     "tear": true
+    },
+    {
+     "type": "creature",
+     "kind": "cow",
+     "x": 0.72,
+     "y": 0.62,
+     "size": 250,
+     "walk": [
+      [
+       0,
+       3
+      ]
+     ]
+    },
+    {
+     "type": "creature",
+     "kind": "camel",
+     "x": 0.2,
+     "y": 0.96,
+     "size": 300,
+     "walk": [
+      [
+       0,
+       3
+      ]
+     ],
+     "flip": true
+    },
+    {
+     "type": "creature",
+     "kind": "sheep",
+     "x": 0.55,
+     "y": 0.96,
+     "size": 200,
+     "walk": [
+      [
+       0,
+       3
+      ]
+     ]
+    },
+    {
+     "type": "creature",
+     "kind": "horse",
+     "x": 0.82,
+     "y": 0.96,
+     "size": 280,
+     "rider": "knight",
+     "riderHold": "spear",
+     "run": [
+      [
+       0,
+       3
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cavalry_charge",
+   "dur": 3.0,
+   "bg": {
+    "kind": "sky",
+    "preset": "sunset",
+    "clouds": 5
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1
+    ],
+    "pan": [
+     [
+      0,
+      0
+     ],
+     [
+      600,
+      0
+     ]
+    ]
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "creature": "horse",
+     "who": "rider",
+     "gallop": true,
+     "x": 0.45,
+     "y": 0.95,
+     "count": 5,
+     "rows": 2,
+     "spread": 1400,
+     "size": 300,
+     "hold": "spear",
+     "move": [
+      {
+       "at": 0,
+       "dur": 3,
+       "to": [
+        0.75,
+        0.95
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "z": 1.5,
+     "count": 24,
+     "h": 140
+    }
+   ]
+  },
+  {
+   "id": "reaper_lurks",
+   "dur": 4.0,
+   "bg": {
+    "kind": "interior",
+    "wall": "#4a3f34",
+    "floor": "#1e1a16",
+    "trim": "#1a1410",
+    "dado": "#1a1410",
+    "window": [
+     0.62,
+     0.16,
+     0.18,
+     0.3
+    ],
+    "windowSky": "night",
+    "light": false
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.06
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "kind": "reaper",
+     "x": 0.68,
+     "y": 0.86,
+     "size": 420,
+     "enter": "fade",
+     "enterDur": 2.5,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 2.8,
+       "v": "smile"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 2.8,
+       "v": "sign"
+      }
+     ],
+     "alpha": 0.9
+    },
+    {
+     "type": "bean",
+     "who": "poet",
+     "x": 0.36,
+     "y": 0.98,
+     "size": 560,
+     "expr": "sad",
+     "pose": "think"
+    },
+    {
+     "type": "creature",
+     "kind": "raven",
+     "x": 0.12,
+     "y": 0.4,
+     "size": 140,
+     "headTurn": true
+    },
+    {
+     "type": "fx",
+     "kind": "spotlight",
+     "x": 0.4,
+     "y": 0.55,
+     "radius": 520,
+     "strength": 0.45
+    }
+   ]
+  },
+  {
+   "id": "jump_scare",
+   "dur": 2.0,
+   "bg": {
+    "kind": "flat",
+    "color": "#0a0908"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.04
+    ],
+    "shake": [
+     {
+      "at": 0,
+      "dur": 0.6,
+      "amp": 6
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "kind": "reaper",
+     "x": 0.5,
+     "y": 1.5,
+     "size": 1500,
+     "pose": "reach",
+     "expr": "menace",
+     "enter": "none"
+    }
+   ]
+  },
+  {
+   "id": "myth_and_bones",
+   "dur": 3.0,
+   "bg": {
+    "kind": "burst",
+    "color": "#5a2a2a",
+    "center": "#e0a080",
+    "edge": "#1a0808"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "minotaur",
+     "x": 0.3,
+     "y": 0.98,
+     "size": 680,
+     "pose": "scared",
+     "expr": "angry"
+    },
+    {
+     "type": "creature",
+     "kind": "skeleton",
+     "x": 0.68,
+     "y": 0.96,
+     "size": 480,
+     "pose": "wave",
+     "talk": [
+      [
+       0.5,
+       2.5
+      ]
+     ]
+    },
+    {
+     "type": "creature",
+     "kind": "dove",
+     "x": 0.85,
+     "y": 0.3,
+     "size": 140,
+     "move": [
+      {
+       "at": 0,
+       "dur": 3,
+       "to": [
+        0.6,
+        0.18
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "lineup",
+   "dur": 2.0,
+   "bg": {
+    "kind": "burst",
+    "color": "#2f5a8a"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "mode": "lineup",
+     "who": [
+      "tommy",
+      "frenchie",
+      "russian",
+      "spearman"
+     ],
+     "x": 0.78,
+     "y": 1.25,
+     "count": 6,
+     "size": 720,
+     "expr": "worried"
+    }
+   ]
+  }
+ ]
+}

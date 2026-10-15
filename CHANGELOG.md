@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.1.0 · 2026-10-15
+
+The skill no longer carries version labels in its names. Files, folders, examples and guides are named by what they contain, and the guides follow one numbered sequence plus a folder of toolkit cards.
+
+### Structure
+
+- `references/` now holds the numbered guides 01–08 and `references/toolkits/` with nine cards (characters, acting, props/creatures/vehicles, places, maps, paper and lettering, game UI, FX and tone, transitions and lens). Each card uses one template: when to use it, look and staging, a full field reference checked against the engine, measured timing, recipes, and limits. The former `07-*` and `08-*` guides are merged into the cards; `09-story-craft.md` is now `07-story-craft.md`, and the new `08-toolkits.md` is the catalog.
+- The engine's `lib/` is split into domain folders (`base`, `characters`, `acting`, `creatures`, `props`, `places`, `maps`, `paper`, `game`, `fx`, `lens`) with descriptive file names, and the vocabulary files follow the same names.
+- Examples are renamed by content (`showcase`, `eras_wardrobe`, `living_maps`, `coffee_film`, …), and the showcase shot ids are now `s01_…`.
+
+### Checks and fixes
+
+- `check_repository.py` fails when a vocabulary name is documented nowhere in `references/`.
+- The validator now checks `fx` `target` ids, nameplate `arrowTo`, `who` inside doc objects, map `conquer.by` and `crosses.region`, the nested `obj` prop, vehicle and `arms.hold`, `load.prop`, and the sky `preset` of every sky-backed background.
+- Foreground `fg` layers no longer pop in on their first frame; framing is there from the cut.
+- A crowd with `silhouette: true` keeps its depth-tinted rows; wing `flap` works on the layer; `tears: "bead"` uses `tearColor`; animals map more expression names; `window-cycle` crossfades correctly for any `period`; region labels are 64 px everywhere; `hangsign` and `graffiti` placeholders are neutral.
+
 ## 3.0.0 · 2026-10-15
 
 A second, much denser study of the same eight reference videos: about 12,500 frames at 1 fps, more than 300 high-fps motion strips and the full transcripts, compared feature by feature with v3. The 115 missing techniques found became nine new engine modules, a set of core hooks and a story-craft guide, so an agent can stage most beats of any topic with dedicated tools.

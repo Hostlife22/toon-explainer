@@ -1,5 +1,5 @@
 {
-  "_doc": "creatures.js + spirits.js: layer type `creature` and its kinds.",
+  "_doc": "quadrupeds.js + spirits.js: layer type `creature` and its kinds.",
   "layers": ["creature"],
   "kinds": {"creature": ["horse", "bull", "cow", "camel", "sheep", "reaper", "raven", "dove", "skeleton"]},
   "registry": {"creature": "TOON.CREATURES"}

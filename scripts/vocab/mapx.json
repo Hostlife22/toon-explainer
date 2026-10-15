@@ -1,7 +1,0 @@
-{
-  "_about": "mapx.js + mapx2.js: map v3 (no new layer types; map icons are listed for documentation and tests)",
-  "kinds": {
-    "map_icon": ["ship", "train", "helmet", "tank", "mug", "pawn", "castle", "dome", "pagoda", "house", "cross", "flag", "army"]
-  },
-  "registry": { "map_icon": "TOON.MAP_ICONS" }
-}

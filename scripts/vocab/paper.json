@@ -1,0 +1,9 @@
+{
+  "_about": "paper.js + signs-bubbles.js + timeline-subtitles.js: paper/UI graphics, timeline HUD, karaoke subtitle",
+  "layers": ["doc", "timeline", "subtitle"],
+  "kinds": {
+    "doc": ["newspaper", "document", "checklist", "stamp", "chart", "idcard", "poster", "quote", "stat",
+            "bubble", "tv", "yearsign", "hangsign", "nametag", "ribbon", "lowerthird", "mission"]
+  },
+  "registry": { "doc": "TOON.DOCS" }
+}
