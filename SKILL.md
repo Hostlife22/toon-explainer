@@ -63,9 +63,10 @@ Films that show a whole story:
 - `examples/money_film/` — "Why Printing Money Raises Prices", 38 s, 16:9 economics film built as an escalation ladder: a price counter that persists across cuts, cause and effect in one frame, the palace and the bakery reused in changed states;
 - `examples/calendar_445/` — 25 s on "The year that lasted 445 days";
 - `examples/showcase/` — a balcony with birds, a forest march as rain begins, a fear close-up, an over-the-shoulder palace shot, a slab map with an army, a cheering city, a fire, a chase, the aftermath of a battle;
-- `examples/grammar/` — recipe catalog: reveal, map, villain, episode, finale.
+- `examples/grammar/` — recipe catalog: reveal, map, villain, episode, finale;
+- `examples/story_*` — twelve 22 s story films on non-historical topics, each with a hook, a turn and a payoff and dense feature use: `story_moon_race` (rivals, countdown), `story_vaccine` (an inside-the-body explainer), `story_museum_heist` (a plan, CCTV, a double-cross), `story_banana_caper` (a slapstick investigation), `story_startup` (rise and fall told with UI), `story_simulation` (glitches, grid, pull-back reveal), `story_border` (a living-map dispute), `story_emu_war` (comedy history with image cutouts), `story_lighthouse` (slow-burn horror), `story_volcano` (a science disaster), and two 9:16 shorts, `story_cat_physics` and `story_honey`.
 
-Toolkit catalogs (one shot per feature; render one with `--sheet` before using its card for the first time): `character_sheet`, `eras_wardrobe`, `expressions_wardrobe`, `acting_gags`, `props_creatures`, `places_tour`, `sets_rooms`, `living_maps`, `paper_and_maps`, `paper_cards`, `game_ui`, `tone_and_horror`, `action_fx`, `transitions_lens`. `references/08-toolkits.md` says which card each one belongs to. Example storyboards: `assets/demo_*.jpg`.
+Toolkit catalogs (one shot per feature; render one with `--sheet` before using its card for the first time): `character_sheet`, `eras_wardrobe`, `expressions_wardrobe`, `acting_gags`, `props_creatures`, `places_tour`, `sets_rooms`, `living_maps`, `paper_and_maps`, `paper_cards`, `game_ui`, `tone_and_horror`, `action_fx`, `transitions_lens`. `references/08-toolkits.md` says which card each one belongs to. Contact sheets of every example: `assets/sheets/<example>.jpg`.
 
 ## Production rules
 

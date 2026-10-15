@@ -1,0 +1,1692 @@
+{
+ "title": "Why Volcanoes Erupt",
+ "seed": 1925,
+ "fps": 30,
+ "cast": {
+  "farmer": {
+   "outfit": "overalls",
+   "bibColor": "#3a6a9a",
+   "stripeColor": "#f2efe8",
+   "hair": "short",
+   "hairColor": "#5a3a22",
+   "beard": "stubble",
+   "head": "straw-cone",
+   "headColor": "#d9b45a"
+  },
+  "granny": {
+   "age": "elder",
+   "outfit": "dress",
+   "robe": "#8a4a6a",
+   "hair": "bun",
+   "hairColor": "#d8d4cc"
+  },
+  "kid": {
+   "age": "child",
+   "robe": "#e0802a",
+   "hair": "curly",
+   "hairColor": "#2a1c15"
+  }
+ },
+ "shots": [
+  {
+   "id": "vo01",
+   "dur": 2.4,
+   "vo": "The village of Ashfield has slept under its mountain for six hundred years.",
+   "screen": "Learns: a calm village lives under a sleeping volcano. Happens: the mountain snores a wisp of smoke, cows graze, a farmer naps. Changes: nothing yet; this is the state the film will break.",
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4,
+    "hills": false,
+    "ground": false,
+    "horizon": 0.74
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "focus": [
+     0.5,
+     0.5
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "v1_cone",
+     "x": 0.5,
+     "y": 0.4622222222222222,
+     "size": 1000,
+     "pts": [
+      [
+       -0.5,
+       0.3
+      ],
+      [
+       -0.17,
+       -0.22
+      ],
+      [
+       -0.075,
+       -0.3
+      ],
+      [
+       0.075,
+       -0.3
+      ],
+      [
+       0.17,
+       -0.22
+      ],
+      [
+       0.5,
+       0.3
+      ]
+     ],
+     "rough": 0.35,
+     "seed": "ember",
+     "color": "#7a5a44",
+     "z": 0.7,
+     "enter": "none",
+     "face": {
+      "mood": "sleepy",
+      "scale": 0.34
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "smoke",
+     "id": "wisp1",
+     "x": 0.5,
+     "y": 0.1844444444444444,
+     "w": 120,
+     "count": 4,
+     "rise": 160,
+     "color": "#d8d4cc",
+     "z": 0.7
+    },
+    {
+     "type": "fx",
+     "kind": "birds",
+     "id": "birds1",
+     "x": 0.2,
+     "y": 0.22,
+     "count": 4,
+     "speed": 60
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "v1_hill",
+     "x": 0.5,
+     "y": 0.9,
+     "size": 2300,
+     "pts": [
+      [
+       -0.5,
+       -0.07
+      ],
+      [
+       -0.25,
+       -0.085
+      ],
+      [
+       0.0,
+       -0.07
+      ],
+      [
+       0.25,
+       -0.09
+      ],
+      [
+       0.5,
+       -0.07
+      ],
+      [
+       0.5,
+       0.2
+      ],
+      [
+       -0.5,
+       0.2
+      ]
+     ],
+     "rough": 0.25,
+     "seed": "hill",
+     "color": "#6f9a46",
+     "z": 1.0,
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "signpost",
+     "id": "sign1",
+     "x": 0.86,
+     "y": 0.92,
+     "size": 330,
+     "text": "ASHFIELD\nPOP. 212",
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "cow",
+     "id": "cow1",
+     "x": 0.62,
+     "y": 0.86,
+     "size": 210,
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "sheep",
+     "id": "sheep1",
+     "x": 0.72,
+     "y": 0.9,
+     "size": 150,
+     "flip": true,
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "deckchair",
+     "id": "chair1",
+     "x": 0.24,
+     "y": 0.95,
+     "size": 380,
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "farmer1",
+     "who": "farmer",
+     "x": 0.24,
+     "y": 0.91,
+     "size": 380,
+     "pose": "sit",
+     "expr": "sleep-drool",
+     "rock": 0.6
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "zzz1",
+     "target": "farmer1",
+     "mark": "zzz"
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "id": "grass1"
+    },
+    {
+     "type": "label",
+     "tag": "ASHFIELD",
+     "text": "600 YEARS ASLEEP",
+     "x": 0.24,
+     "y": 0.18,
+     "size": 68,
+     "at": 0.9
+    }
+   ]
+  },
+  {
+   "id": "vo02",
+   "dur": 2.5,
+   "transition": {
+    "kind": "whip",
+    "dir": "up",
+    "dur": 0.3
+   },
+   "vo": "But deep below, rock melts into magma, full of trapped gas.",
+   "screen": "Learns: the hidden mechanism. Happens: a blueprint draws the cone, the pipe and the magma chamber; the board wipes and redraws the chamber with gas bubbles and an arrow up. Changes: the viewer can see inside the mountain.",
+   "bg": {
+    "kind": "blueprint",
+    "stamp": "SECTION A-A",
+    "tilt": -1.2,
+    "sketch": [
+     {
+      "line": [
+       [
+        0.06,
+        0.42
+       ],
+       [
+        0.36,
+        0.42
+       ],
+       [
+        0.46,
+        0.14
+       ],
+       [
+        0.54,
+        0.14
+       ],
+       [
+        0.64,
+        0.42
+       ],
+       [
+        0.94,
+        0.42
+       ]
+      ],
+      "at": 0.0,
+      "dur": 0.5
+     },
+     {
+      "line": [
+       [
+        0.5,
+        0.15
+       ],
+       [
+        0.5,
+        0.62
+       ]
+      ],
+      "at": 0.45,
+      "dur": 0.3
+     },
+     {
+      "circle": [
+       0.5,
+       0.76,
+       0.12
+      ],
+      "at": 0.7,
+      "dur": 0.4
+     },
+     {
+      "text": "MAGMA",
+      "x": 0.5,
+      "y": 0.78,
+      "size": 58,
+      "at": 1.0,
+      "dur": 0.2
+     },
+     {
+      "text": "GROUND",
+      "x": 0.16,
+      "y": 0.36,
+      "size": 40,
+      "at": 0.4,
+      "dur": 0.2
+     },
+     {
+      "circle": [
+       0.45,
+       0.72,
+       0.025
+      ],
+      "at": 1.65,
+      "dur": 0.15
+     },
+     {
+      "circle": [
+       0.54,
+       0.78,
+       0.03
+      ],
+      "at": 1.75,
+      "dur": 0.15
+     },
+     {
+      "circle": [
+       0.49,
+       0.83,
+       0.02
+      ],
+      "at": 1.85,
+      "dur": 0.15
+     },
+     {
+      "line": [
+       [
+        0.5,
+        0.62
+       ],
+       [
+        0.5,
+        0.22
+       ],
+       [
+        0.47,
+        0.27
+       ],
+       [
+        0.5,
+        0.22
+       ],
+       [
+        0.53,
+        0.27
+       ]
+      ],
+      "at": 1.95,
+      "dur": 0.3
+     },
+     {
+      "text": "GAS",
+      "x": 0.66,
+      "y": 0.76,
+      "size": 58,
+      "at": 2.0,
+      "dur": 0.2
+     }
+    ],
+    "clear": [
+     1.55
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "focus": [
+     0.5,
+     0.55
+    ]
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "3 KM DOWN",
+     "tag": "INSIDE",
+     "x": 0.16,
+     "y": 0.72,
+     "size": 60,
+     "at": 1.0,
+     "arrow": "right"
+    }
+   ]
+  },
+  {
+   "id": "vo03",
+   "dur": 2.4,
+   "vo": "The gas pushes harder and harder, and the pressure climbs.",
+   "screen": "Learns: pressure builds with nowhere to go. Happens: the mountain strains and trembles, sweat flies, the PRESSURE meter climbs into the red. Changes: calm becomes danger.",
+   "bg": {
+    "kind": "sky",
+    "preset": "dusk",
+    "clouds": 3,
+    "hills": false,
+    "ground": false,
+    "horizon": 0.9
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "focus": [
+     0.5,
+     0.4
+    ],
+    "shake": [
+     {
+      "at": 1.4,
+      "dur": 1.0,
+      "amp": 5
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "v3_cone",
+     "x": 0.5,
+     "y": 0.6033333333333333,
+     "size": 1500,
+     "pts": [
+      [
+       -0.5,
+       0.3
+      ],
+      [
+       -0.17,
+       -0.22
+      ],
+      [
+       -0.075,
+       -0.3
+      ],
+      [
+       0.075,
+       -0.3
+      ],
+      [
+       0.17,
+       -0.22
+      ],
+      [
+       0.5,
+       0.3
+      ]
+     ],
+     "rough": 0.35,
+     "seed": "ember",
+     "color": "#7a5a44",
+     "z": 0.7,
+     "enter": "none",
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "worried"
+       },
+       {
+        "at": 1.3,
+        "v": "strain"
+       }
+      ],
+      "scale": 0.3
+     },
+     "jitter": {
+      "amp": 4,
+      "on": 2,
+      "from": 1.3
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "smoke",
+     "id": "puff3",
+     "x": 0.5,
+     "y": 0.20666666666666658,
+     "w": 220,
+     "count": 6,
+     "rise": 200,
+     "color": "#9a948c",
+     "at": 0.6
+    },
+    {
+     "type": "fx",
+     "kind": "sweat",
+     "id": "sweat3",
+     "x": 0.64,
+     "y": 0.42,
+     "count": 3,
+     "speed": 1.6,
+     "at": 1.3,
+     "scale": 1.6
+    },
+    {
+     "type": "hud",
+     "kind": "meter",
+     "id": "meter3",
+     "orient": "vertical",
+     "label": "PRESSURE",
+     "labelSize": 44,
+     "h": 600,
+     "w": 54,
+     "x": 0.08,
+     "y": 0.22,
+     "warnAt": 0.85,
+     "value": [
+      {
+       "at": 0,
+       "v": 0.2
+      },
+      {
+       "at": 0.6,
+       "v": 0.38
+      },
+      {
+       "at": 1.1,
+       "v": 0.6
+      },
+      {
+       "at": 1.6,
+       "v": 0.86
+      },
+      {
+       "at": 2.0,
+       "v": 1.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "vo04",
+   "dur": 2.4,
+   "vo": "For weeks the ground shook, and the birds left first.",
+   "screen": "Learns: warning signs come before an eruption. Happens: days race past in an accelerating time-lapse, flocks flee, the ground jolts, granny shades her eyes. Changes: the village notices.",
+   "bg": {
+    "kind": "sky",
+    "hills": false,
+    "ground": false,
+    "clouds": 0,
+    "horizon": 0.74,
+    "timelapse": {
+     "accel": {
+      "from": 2.4,
+      "to": 0.5,
+      "over": 2.2
+     },
+     "phase": 0.1
+    }
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ],
+    "shake": [
+     {
+      "at": 0.7,
+      "dur": 0.25,
+      "amp": 7
+     },
+     {
+      "at": 1.5,
+      "dur": 0.25,
+      "amp": 9
+     },
+     {
+      "at": 2.1,
+      "dur": 0.3,
+      "amp": 12
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "v4_cone",
+     "x": 0.5,
+     "y": 0.4344444444444444,
+     "size": 1100,
+     "pts": [
+      [
+       -0.5,
+       0.3
+      ],
+      [
+       -0.17,
+       -0.22
+      ],
+      [
+       -0.075,
+       -0.3
+      ],
+      [
+       0.075,
+       -0.3
+      ],
+      [
+       0.17,
+       -0.22
+      ],
+      [
+       0.5,
+       0.3
+      ]
+     ],
+     "rough": 0.35,
+     "seed": "ember",
+     "color": "#7a5a44",
+     "z": 0.7,
+     "enter": "none",
+     "face": {
+      "mood": "worried",
+      "scale": 0.34
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "smoke",
+     "id": "wisp4",
+     "x": 0.5,
+     "y": 0.12888888888888883,
+     "w": 180,
+     "count": 6,
+     "rise": 220,
+     "color": "#8a8580",
+     "z": 0.7
+    },
+    {
+     "type": "fx",
+     "kind": "birds",
+     "id": "birds4a",
+     "x": 0.6,
+     "y": 0.18,
+     "count": 7,
+     "speed": 260,
+     "dir": -1,
+     "size": 30
+    },
+    {
+     "type": "fx",
+     "kind": "birds",
+     "id": "birds4b",
+     "x": 0.8,
+     "y": 0.3,
+     "count": 5,
+     "speed": 300,
+     "dir": -1,
+     "size": 26,
+     "at": 0.8
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "v4_hill",
+     "x": 0.5,
+     "y": 0.9,
+     "size": 2300,
+     "pts": [
+      [
+       -0.5,
+       -0.07
+      ],
+      [
+       -0.25,
+       -0.085
+      ],
+      [
+       0.0,
+       -0.07
+      ],
+      [
+       0.25,
+       -0.09
+      ],
+      [
+       0.5,
+       -0.07
+      ],
+      [
+       0.5,
+       0.2
+      ],
+      [
+       -0.5,
+       0.2
+      ]
+     ],
+     "rough": 0.25,
+     "seed": "hill",
+     "color": "#6f9a46",
+     "z": 1.0,
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "granny4",
+     "who": "granny",
+     "x": 0.64,
+     "y": 0.96,
+     "size": 440,
+     "pose": "shade-eyes",
+     "expr": "worried",
+     "flip": true,
+     "tremble": [
+      [
+       0.7,
+       1.0
+      ],
+      [
+       1.5,
+       1.8
+      ],
+      [
+       2.1,
+       2.6
+      ]
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "kid4",
+     "who": "kid",
+     "x": 0.83,
+     "y": 0.97,
+     "size": 440,
+     "pose": "point-up",
+     "expr": "shock",
+     "flip": true
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "id": "grass4"
+    },
+    {
+     "type": "label",
+     "text": "WEEKS OF TREMORS",
+     "x": 0.28,
+     "y": 0.84,
+     "size": 68,
+     "at": 0.5,
+     "color": "#ffd24a"
+    }
+   ]
+  },
+  {
+   "id": "vo05",
+   "dur": 2.4,
+   "vo": "Then, all at once, the mountain blew its top.",
+   "screen": "Learns: the pressure releases in one blast. Happens: a held beat, then a mushroom cloud, fire and rays burst from the crater on 'blew'; red flash, punch and shake. Changes: the mountain is now a weapon.",
+   "bg": {
+    "kind": "sky",
+    "preset": "sunset",
+    "clouds": 3,
+    "hills": false,
+    "ground": false,
+    "horizon": 0.74
+   },
+   "grade": [
+    {
+     "preset": "red-flash",
+     "at": 0.75,
+     "out": 0.95,
+     "outDur": 0.05
+    },
+    {
+     "preset": "inferno",
+     "at": 0.95,
+     "dur": 0.2,
+     "strength": 0.6,
+     "target": "bg"
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.0,
+     1.03
+    ],
+    "punch": [
+     {
+      "at": 0.75,
+      "amount": 0.16
+     }
+    ],
+    "shake": [
+     {
+      "at": 0.75,
+      "dur": 1.4,
+      "amp": 20
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "rays",
+     "id": "rays5",
+     "x": 0.5,
+     "y": 0.32444444444444454,
+     "at": 0.75,
+     "color": "rgba(255,170,60,0.35)",
+     "count": 14,
+     "spin": 0.2
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "v5_cone",
+     "x": 0.5,
+     "y": 0.5522222222222223,
+     "size": 820,
+     "pts": [
+      [
+       -0.5,
+       0.3
+      ],
+      [
+       -0.17,
+       -0.22
+      ],
+      [
+       -0.075,
+       -0.3
+      ],
+      [
+       0.075,
+       -0.3
+      ],
+      [
+       0.17,
+       -0.22
+      ],
+      [
+       0.5,
+       0.3
+      ]
+     ],
+     "rough": 0.35,
+     "seed": "ember",
+     "color": "#7a5a44",
+     "z": 0.7,
+     "enter": "none",
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "strain"
+       },
+       {
+        "at": 0.75,
+        "v": "angry"
+       }
+      ],
+      "scale": 0.34
+     },
+     "jitter": {
+      "amp": 5,
+      "on": 2,
+      "to": 0.75
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "boom",
+     "id": "boom5",
+     "x": 0.5,
+     "y": 0.3044444444444445,
+     "style": "mushroom",
+     "size": 760,
+     "at": 0.75
+    },
+    {
+     "type": "fx",
+     "kind": "explosion",
+     "id": "ex5",
+     "x": 0.5,
+     "y": 0.32444444444444454,
+     "size": 420,
+     "at": 0.75
+    },
+    {
+     "type": "fx",
+     "kind": "fire",
+     "id": "fire5",
+     "x": 0.5,
+     "y": 0.3644444444444445,
+     "w": 300,
+     "count": 4,
+     "size": 200,
+     "step": 3,
+     "at": 0.8
+    },
+    {
+     "type": "fx",
+     "kind": "smoke",
+     "id": "smoke5",
+     "x": 0.5,
+     "y": 0.27444444444444455,
+     "w": 900,
+     "count": 14,
+     "rise": 300,
+     "color": "#4a4440",
+     "at": 1.0
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "v5_hill",
+     "x": 0.5,
+     "y": 0.9,
+     "size": 2300,
+     "pts": [
+      [
+       -0.5,
+       -0.07
+      ],
+      [
+       -0.25,
+       -0.085
+      ],
+      [
+       0.0,
+       -0.07
+      ],
+      [
+       0.25,
+       -0.09
+      ],
+      [
+       0.5,
+       -0.07
+      ],
+      [
+       0.5,
+       0.2
+      ],
+      [
+       -0.5,
+       0.2
+      ]
+     ],
+     "rough": 0.25,
+     "seed": "hill",
+     "color": "#6f9a46",
+     "z": 1.0,
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "farmer5",
+     "who": "farmer",
+     "x": 0.18,
+     "y": 0.98,
+     "size": 460,
+     "view": "back",
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 0.8,
+       "v": "hands-up"
+      }
+     ],
+     "expr": "shock"
+    },
+    {
+     "type": "fx",
+     "kind": "flash",
+     "id": "flash5",
+     "at": 0.75,
+     "dur": 0.2,
+     "strength": 0.8,
+     "hud": true
+    },
+    {
+     "type": "fx",
+     "kind": "onomatopoeia",
+     "id": "kaboom5",
+     "x": 0.8,
+     "y": 0.62,
+     "text": "KA-BOOM",
+     "size": 300,
+     "at": 0.85,
+     "dur": 1.4
+    }
+   ]
+  },
+  {
+   "id": "vo06",
+   "dur": 2.4,
+   "vo": "Ash rained down, and everyone ran.",
+   "screen": "Learns: the human stakes. Happens: under a burning sky and falling ash, villagers sprint across the frame, sheep bolt, a crowd flees behind them. Changes: the village empties.",
+   "bg": {
+    "kind": "burning",
+    "variant": "plain",
+    "night": false,
+    "smoke": 0.3
+   },
+   "grade": {
+    "preset": "solemn",
+    "strength": 0.55
+   },
+   "camera": {
+    "zoom": [
+     1.02,
+     1.06
+    ],
+    "pan": [
+     [
+      0,
+      0
+     ],
+     [
+      -60,
+      0
+     ]
+    ],
+    "shake": [
+     {
+      "at": 0,
+      "dur": 2.4,
+      "amp": 4
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "id": "crowd6",
+     "who": [
+      "farmer",
+      "granny",
+      "kid"
+     ],
+     "x": 0.75,
+     "y": 0.8,
+     "count": 7,
+     "rows": 2,
+     "spread": 900,
+     "size": 250,
+     "march": true,
+     "gaitRate": 2.4,
+     "expr": "scream",
+     "flip": true,
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.4,
+       "to": [
+        0.25,
+        0.8
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "creature",
+     "kind": "sheep",
+     "id": "sheep6",
+     "x": 0.7,
+     "y": 0.9,
+     "size": 170,
+     "flip": true,
+     "run": [
+      [
+       0,
+       2.4
+      ]
+     ],
+     "enter": "none",
+     "move": [
+      {
+       "at": 0,
+       "dur": 1.6,
+       "to": [
+        -0.1,
+        0.9
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "run6_0",
+     "who": "farmer",
+     "x": 0.8,
+     "y": 0.97,
+     "size": 470,
+     "flip": true,
+     "expr": "scream",
+     "run": [
+      [
+       0,
+       2.6
+      ]
+     ],
+     "gaitRate": 1.3,
+     "move": [
+      {
+       "at": 0.0,
+       "dur": 2.4,
+       "to": [
+        -0.1499999999999999,
+        0.97
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "run6_1",
+     "who": "kid",
+     "x": 1.02,
+     "y": 0.97,
+     "size": 450,
+     "flip": true,
+     "expr": "scream",
+     "run": [
+      [
+       0,
+       2.6
+      ]
+     ],
+     "gaitRate": 1.3,
+     "move": [
+      {
+       "at": 0.3,
+       "dur": 2.4,
+       "to": [
+        0.07000000000000006,
+        0.97
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "run6_2",
+     "who": "granny",
+     "x": 1.24,
+     "y": 0.97,
+     "size": 430,
+     "flip": true,
+     "expr": "scream",
+     "run": [
+      [
+       0,
+       2.6
+      ]
+     ],
+     "gaitRate": 1.3,
+     "move": [
+      {
+       "at": 0.6,
+       "dur": 2.4,
+       "to": [
+        0.29000000000000004,
+        0.97
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "rain",
+     "id": "ash6",
+     "hud": true,
+     "density": 60,
+     "angle": 18
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "id": "dust6",
+     "x": 0.5,
+     "y": 0.97,
+     "count": 9,
+     "at": 0.4
+    },
+    {
+     "type": "label",
+     "text": "RUN!",
+     "x": 0.5,
+     "y": 0.2,
+     "size": 120,
+     "color": "#ffd24a",
+     "at": 0.3,
+     "enter": "slam"
+    }
+   ]
+  },
+  {
+   "id": "vo07",
+   "dur": 2.4,
+   "transition": {
+    "kind": "zoom-punch",
+    "dur": 0.3
+   },
+   "vo": "The ash cloud spread a hundred kilometres, burying the valley.",
+   "screen": "Learns: the scale of the disaster. Happens: on the map a grey ash blot spreads from the volcano over the valley, escape routes draw out, villages burn. Changes: the whole region is grey.",
+   "bg": {
+    "kind": "flat",
+    "color": "#8fa8d8"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "focus": [
+     0.45,
+     0.5
+    ]
+   },
+   "layers": [
+    {
+     "type": "map",
+     "id": "valleymap",
+     "w": 1.1,
+     "h": 1.1,
+     "land": [
+      [
+       0.5,
+       0.52,
+       0.42,
+       0.36
+      ]
+     ],
+     "regions": [
+      {
+       "id": "valley",
+       "blob": [
+        0.46,
+        0.55,
+        0.28,
+        0.22
+       ],
+       "color": "#7cbf4a",
+       "dur": 0.001,
+       "label": {
+        "text": "THE VALLEY",
+        "at": 0,
+        "size": 54,
+        "dy": 120
+       }
+      },
+      {
+       "id": "ash",
+       "blob": [
+        0.44,
+        0.5,
+        0.3,
+        0.25
+       ],
+       "color": "#8a8580",
+       "at": 0.4,
+       "dur": 1.6,
+       "from": [
+        0.4,
+        0.42
+       ],
+       "face": {
+        "mood": "sad",
+        "at": 1.6,
+        "scale": 0.2
+       }
+      }
+     ],
+     "cities": [
+      {
+       "x": 0.4,
+       "y": 0.42,
+       "icon": "blast",
+       "at": 0.1,
+       "size": 110,
+       "label": "MT. EMBER"
+      },
+      {
+       "x": 0.56,
+       "y": 0.6,
+       "icon": "castle",
+       "at": 0.2,
+       "size": 80,
+       "label": "ASHFIELD",
+       "burning": 0.9
+      },
+      {
+       "x": 0.3,
+       "y": 0.66,
+       "icon": "castle",
+       "at": 0.25,
+       "size": 70,
+       "burning": 1.3
+      }
+     ],
+     "routes": [
+      {
+       "pts": [
+        [
+         0.56,
+         0.6
+        ],
+        [
+         0.7,
+         0.66
+        ],
+        [
+         0.84,
+         0.7
+        ]
+       ],
+       "at": 0.8,
+       "dur": 1.0,
+       "color": "#d0302a"
+      },
+      {
+       "pts": [
+        [
+         0.3,
+         0.66
+        ],
+        [
+         0.2,
+         0.76
+        ],
+        [
+         0.12,
+         0.84
+        ]
+       ],
+       "at": 1.0,
+       "dur": 1.0,
+       "color": "#d0302a"
+      }
+     ],
+     "yearLabel": {
+      "text": "1925",
+      "at": 0.2,
+      "x": 0.8,
+      "y": 0.16,
+      "size": 110
+     }
+    },
+    {
+     "type": "label",
+     "text": "100 KM OF ASH",
+     "x": 0.3,
+     "y": 0.16,
+     "size": 72,
+     "at": 1.4,
+     "color": "#f2efe8"
+    }
+   ]
+  },
+  {
+   "id": "vo08",
+   "dur": 2.6,
+   "transition": {
+    "kind": "black-beat",
+    "dur": 1.0,
+    "title": "50 YEARS LATER",
+    "size": 96
+   },
+   "vo": "Fifty years later, that ash had become the richest soil in the land.",
+   "screen": "Learns: volcanic ash becomes fertile soil. Happens: the same view as shot 1, but the mountain is green and smiling, rice terraces shine, flowers pop up, birds return. Changes: destruction has turned into abundance.",
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4,
+    "hills": false,
+    "ground": "paddy",
+    "groundY": 0.8,
+    "horizon": 0.74,
+    "rays": true,
+    "sun": [
+     0.82,
+     0.18
+    ]
+   },
+   "grade": {
+    "preset": "golden-hour",
+    "strength": 0.6
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "focus": [
+     0.5,
+     0.5
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "v8_cone",
+     "x": 0.5,
+     "y": 0.4344444444444444,
+     "size": 1100,
+     "pts": [
+      [
+       -0.5,
+       0.3
+      ],
+      [
+       -0.17,
+       -0.22
+      ],
+      [
+       -0.075,
+       -0.3
+      ],
+      [
+       0.075,
+       -0.3
+      ],
+      [
+       0.17,
+       -0.22
+      ],
+      [
+       0.5,
+       0.3
+      ]
+     ],
+     "rough": 0.35,
+     "seed": "ember",
+     "color": "#5f8a3e",
+     "z": 0.7,
+     "enter": "none",
+     "face": {
+      "mood": "happy",
+      "scale": 0.34
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "birds",
+     "id": "birds8",
+     "x": 0.1,
+     "y": 0.2,
+     "count": 5,
+     "speed": 90,
+     "at": 1.0
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "v8_hill",
+     "x": 0.5,
+     "y": 0.93,
+     "size": 2300,
+     "pts": [
+      [
+       -0.5,
+       -0.07
+      ],
+      [
+       -0.25,
+       -0.085
+      ],
+      [
+       0.0,
+       -0.07
+      ],
+      [
+       0.25,
+       -0.09
+      ],
+      [
+       0.5,
+       -0.07
+      ],
+      [
+       0.5,
+       0.2
+      ],
+      [
+       -0.5,
+       0.2
+      ]
+     ],
+     "rough": 0.25,
+     "seed": "hill",
+     "color": "#78b04a",
+     "z": 1.0,
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "fl8_0",
+     "x": 0.08,
+     "y": 0.86,
+     "size": 110,
+     "rough": 1.0,
+     "seed": "fl0",
+     "color": "#f28ab0",
+     "at": 1.4,
+     "enter": "pop"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "fl8_1",
+     "x": 0.15,
+     "y": 0.93,
+     "size": 90,
+     "rough": 1.0,
+     "seed": "fl1",
+     "color": "#ffd24a",
+     "at": 1.52,
+     "enter": "pop"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "fl8_2",
+     "x": 0.4,
+     "y": 0.9,
+     "size": 80,
+     "rough": 1.0,
+     "seed": "fl2",
+     "color": "#f2efe8",
+     "at": 1.64,
+     "enter": "pop"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "fl8_3",
+     "x": 0.55,
+     "y": 0.95,
+     "size": 100,
+     "rough": 1.0,
+     "seed": "fl3",
+     "color": "#f28ab0",
+     "at": 1.7599999999999998,
+     "enter": "pop"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "fl8_4",
+     "x": 0.66,
+     "y": 0.88,
+     "size": 80,
+     "rough": 1.0,
+     "seed": "fl4",
+     "color": "#c86ad8",
+     "at": 1.88,
+     "enter": "pop"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "fl8_5",
+     "x": 0.94,
+     "y": 0.9,
+     "size": 110,
+     "rough": 1.0,
+     "seed": "fl5",
+     "color": "#ffd24a",
+     "at": 2.0,
+     "enter": "pop"
+    },
+    {
+     "type": "bean",
+     "id": "kid8",
+     "who": "kid",
+     "x": 0.3,
+     "y": 0.97,
+     "size": 430,
+     "pose": "arms-up",
+     "expr": "happy",
+     "at": 1.0
+    },
+    {
+     "type": "bean",
+     "id": "granny8",
+     "who": "farmer",
+     "x": 0.76,
+     "y": 0.97,
+     "size": 470,
+     "pose": "hold",
+     "hold": "pitchfork",
+     "expr": "content",
+     "flip": true,
+     "at": 1.0
+    },
+    {
+     "type": "fx",
+     "kind": "sparkle",
+     "id": "spark8",
+     "x": 0.5,
+     "y": 0.86,
+     "radius": 420,
+     "count": 8,
+     "at": 1.5
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "id": "grass8",
+     "hi": "#ffe27a"
+    }
+   ]
+  },
+  {
+   "id": "vo09",
+   "dur": 2.4,
+   "vo": "The mountain that buried the valley is also what feeds it.",
+   "screen": "Payoff: Learns: destroyer and gardener are the same mountain. Happens: the eruption frame and the green frame slide in side by side on a jagged seam; DESTROYS / FEEDS labels pop. Changes: one image answers the question.",
+   "bg": {
+    "kind": "flat",
+    "color": "#0b0806"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "panel",
+     "id": "split9",
+     "hud": true,
+     "layout": "split",
+     "seam": "jagged",
+     "labels": false,
+     "cells": [
+      {
+       "shot": "vo05",
+       "t": 1.6,
+       "label": "1925: IT DESTROYS"
+      },
+      {
+       "shot": "vo08",
+       "t": 2.6,
+       "label": "1975: IT FEEDS"
+      }
+     ]
+    },
+    {
+     "type": "title",
+     "text": "WHY VOLCANOES ERUPT",
+     "x": 0.5,
+     "y": 0.1,
+     "size": 84,
+     "color": "#ffd24a",
+     "at": 0.9
+    }
+   ]
+  }
+ ]
+}

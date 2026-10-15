@@ -801,6 +801,84 @@
       ],
       "transition": "flash-cut",
       "vo": "Three new entrances."
+    },
+    {
+      "id": "camcorder",
+      "dur": 3.2,
+      "bg": {
+        "kind": "room",
+        "variant": "living"
+      },
+      "grade": "warm",
+      "layers": [
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.42,
+          "y": 0.95,
+          "size": 420,
+          "pose": [
+            {
+              "at": 0,
+              "v": "wave"
+            },
+            {
+              "at": 1.6,
+              "v": "arms-up"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "happy"
+            },
+            {
+              "at": 1.6,
+              "v": "star-eyes"
+            }
+          ],
+          "talk": [
+            [
+              0.2,
+              1.4
+            ]
+          ]
+        },
+        {
+          "type": "bean",
+          "who": "seer",
+          "x": 0.66,
+          "y": 0.95,
+          "size": 420,
+          "flip": true,
+          "pose": "present",
+          "expr": "content",
+          "hold": "bread"
+        },
+        {
+          "type": "fx",
+          "kind": "cctv",
+          "variant": "camcorder",
+          "hud": true,
+          "start": 3725,
+          "battery": 0.34
+        }
+      ],
+      "camera": {
+        "zoom": [
+          1.05,
+          1.12
+        ],
+        "shake": [
+          {
+            "at": 0,
+            "dur": 3.2,
+            "amp": 4
+          }
+        ]
+      },
+      "transition": "flash-cut",
+      "vo": "On the home video, everything still looked fine."
     }
   ]
 }

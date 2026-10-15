@@ -1,0 +1,1149 @@
+{
+ "title": "What If We Live in a Simulation?",
+ "fps": 30,
+ "seed": 77,
+ "style": {
+  "grain": true,
+  "vignette": 0.28
+ },
+ "cast": {
+  "mia": {
+   "robe": "#e07a3a",
+   "sleeve": "#e07a3a",
+   "hair": "ponytail",
+   "hairColor": "#3a2418",
+   "headColor3": "#2fae6a",
+   "legColor": "#2f3a5a",
+   "shoes": "#f2efe6",
+   "skin": "#e8c8a8"
+  },
+  "neighbor": {
+   "outfit": "suit",
+   "robe": "#5a6a7a",
+   "tie": "#c8a030",
+   "head": "fedora",
+   "headColor": "#4a3a30",
+   "headColor2": "#2a1c15",
+   "mustache": true,
+   "mustacheColor": "#3a2a20",
+   "hair": "short",
+   "hairColor": "#3a2a20"
+  },
+  "player": {
+   "robe": "#3a3a48",
+   "sleeve": "#3a3a48",
+   "hair": "short",
+   "hairColor": "#1e1410",
+   "glasses": "round",
+   "beard": "stubble",
+   "beardColor": "#1e1410",
+   "skin": "#c08a62"
+  }
+ },
+ "shots": [
+  {
+   "id": "m01_sameday",
+   "dur": 2.2,
+   "vo": "Every day: the same sun, the same walk, the same coffee.",
+   "screen": "time-lapse sky, the days speed up; Mia walks with her mug; the day counter spins.",
+   "bg": {
+    "kind": "sky",
+    "hills": 3,
+    "clouds": 3,
+    "ground": "grass",
+    "trees": [
+     [
+      0.1,
+      0.8,
+      0.42
+     ],
+     [
+      0.86,
+      0.79,
+      0.36
+     ]
+    ],
+    "timelapse": {
+     "dayDur": [
+      {
+       "at": 0,
+       "v": 1.6
+      },
+      {
+       "at": 0.8,
+       "v": 0.7
+      },
+      {
+       "at": 2.2,
+       "v": 0.22
+      }
+     ],
+     "phase": 0.12,
+     "shades": true
+    }
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "pan": [
+     [
+      0,
+      0
+     ],
+     [
+      -60,
+      0
+     ]
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "mia",
+     "who": "mia",
+     "x": 0.32,
+     "y": 0.95,
+     "size": 480,
+     "hold": "mug",
+     "walk": [
+      [
+       0,
+       2.2
+      ]
+     ],
+     "keepArms": true,
+     "pose": "drink",
+     "expr": "sleepy",
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.2,
+       "to": [
+        0.5,
+        0.95
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "counter",
+     "from": 1197,
+     "to": 1204,
+     "dur": 1.8,
+     "delay": 0.1,
+     "ease": "linear",
+     "sep": ",",
+     "prefix": "DAY ",
+     "x": 0.24,
+     "y": 0.16,
+     "size": 110,
+     "color": "#ffe066"
+    },
+    {
+     "type": "fx",
+     "kind": "birds",
+     "id": "b1",
+     "count": 5,
+     "x": 0.62,
+     "y": 0.3
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "id": "gr",
+     "z": 1.4,
+     "count": 26
+    }
+   ]
+  },
+  {
+   "id": "m02_twice",
+   "dur": 2.2,
+   "vo": "Then the small things start. The same man walks past. Twice.",
+   "screen": "town square; the neighbor walks past, a glitch, and the same neighbor walks past again; Mia side-eyes.",
+   "bg": {
+    "kind": "city",
+    "preset": "day",
+    "clouds": 3
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "shake": [
+     {
+      "at": 1.1,
+      "dur": 0.2,
+      "amp": 6
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "n1",
+     "who": "neighbor",
+     "x": 1.05,
+     "y": 0.95,
+     "size": 440,
+     "flip": true,
+     "walk": [
+      [
+       0,
+       1.1
+      ]
+     ],
+     "expr": "content",
+     "out": 1.1,
+     "exit": "none",
+     "exitDur": 0,
+     "move": [
+      {
+       "at": 0,
+       "dur": 1.1,
+       "to": [
+        0.6,
+        0.95
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "n2",
+     "who": "neighbor",
+     "x": 1.05,
+     "y": 0.95,
+     "size": 440,
+     "flip": true,
+     "walk": [
+      [
+       0,
+       1.1
+      ]
+     ],
+     "expr": "content",
+     "at": 1.1,
+     "enter": "none",
+     "move": [
+      {
+       "at": 1.1,
+       "dur": 1.1,
+       "to": [
+        0.6,
+        0.95
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "mia",
+     "who": "mia",
+     "x": 0.24,
+     "y": 0.97,
+     "size": 520,
+     "hold": "mug",
+     "pose": [
+      {
+       "at": 0,
+       "v": "drink"
+      },
+      {
+       "at": 1.35,
+       "v": "hold"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "content"
+      },
+      {
+       "at": 1.35,
+       "v": "side-eye"
+      }
+     ],
+     "look": {
+      "sideGaze": 1
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "q",
+     "mark": "question",
+     "target": "mia",
+     "at": 1.45
+    },
+    {
+     "type": "label",
+     "text": "TWICE?",
+     "x": 0.62,
+     "y": 0.26,
+     "size": 90,
+     "at": 1.45,
+     "enter": "slam",
+     "color": "#ffe066"
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "side": "left",
+     "z": 1.3
+    },
+    {
+     "type": "fx",
+     "kind": "rgbsplit",
+     "id": "rgb",
+     "at": 1.05,
+     "dur": 0.35,
+     "offset": 10,
+     "hud": true
+    },
+    {
+     "type": "fx",
+     "kind": "glitch",
+     "id": "gl",
+     "at": 1.05,
+     "dur": 0.2,
+     "hud": true
+    }
+   ]
+  },
+  {
+   "id": "m03_pov",
+   "dur": 2.0,
+   "vo": "She blinks. The dog is back where it started.",
+   "screen": "Mia's point of view through her eyelids; a dog trots across the park; a blink; the dog is back at the start.",
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "hills": 2,
+    "clouds": 2,
+    "ground": "grass",
+    "trees": [
+     [
+      0.2,
+      0.8,
+      0.4
+     ],
+     [
+      0.78,
+      0.8,
+      0.34
+     ]
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.05,
+     1.08
+    ],
+    "pan": [
+     [
+      -40,
+      0
+     ],
+     [
+      40,
+      0
+     ]
+    ],
+    "ease": "inOut"
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "id": "d1",
+     "kind": "dog",
+     "x": 0.3,
+     "y": 0.86,
+     "size": 300,
+     "expr": "happy",
+     "walk": [
+      [
+       0,
+       1.0
+      ]
+     ],
+     "out": 1.0,
+     "exit": "none",
+     "exitDur": 0,
+     "enter": "none",
+     "move": [
+      {
+       "at": 0,
+       "dur": 1.0,
+       "to": [
+        0.62,
+        0.86
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "creature",
+     "id": "d2",
+     "kind": "dog",
+     "x": 0.3,
+     "y": 0.86,
+     "size": 300,
+     "expr": "happy",
+     "at": 1.0,
+     "enter": "none",
+     "walk": [
+      [
+       0.1,
+       1.0
+      ]
+     ],
+     "move": [
+      {
+       "at": 1.1,
+       "dur": 0.9,
+       "to": [
+        0.5,
+        0.86
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "label",
+     "text": "RESET?",
+     "tag": "WAIT...",
+     "x": 0.42,
+     "y": 0.5,
+     "size": 88,
+     "at": 1.15,
+     "arrow": "down-left",
+     "color": "#ffe066"
+    },
+    {
+     "type": "fg",
+     "kind": "eye-pov",
+     "id": "eye",
+     "hud": true,
+     "enter": "none",
+     "blink": [
+      0.92
+     ],
+     "wake": 0.05,
+     "lag": 0.2
+    }
+   ]
+  },
+  {
+   "id": "m04_magnify",
+   "dur": 2.2,
+   "transition": {
+    "kind": "peephole",
+    "dur": 0.6,
+    "at": [
+     0.62,
+     0.45
+    ]
+   },
+   "vo": "Look closer, and the neighbor is just a placeholder.",
+   "screen": "peephole in; Mia holds a magnifier over the neighbor; under the lens he is a blue x-ray dummy tagged NPC #12.",
+   "bg": {
+    "kind": "city",
+    "preset": "day",
+    "clouds": 2,
+    "temple": false
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.1
+    ],
+    "focus": [
+     0.6,
+     0.5
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "nb",
+     "who": "neighbor",
+     "x": 0.64,
+     "y": 0.97,
+     "size": 600,
+     "flip": true,
+     "expr": "neutral",
+     "pose": "idle",
+     "rock": 0.4
+    },
+    {
+     "type": "bean",
+     "id": "mia",
+     "who": "mia",
+     "x": 0.2,
+     "y": 1.0,
+     "size": 600,
+     "pose": [
+      {
+       "at": 0,
+       "v": "reach"
+      },
+      {
+       "at": 1.5,
+       "v": "scared"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "squint"
+      },
+      {
+       "at": 1.5,
+       "v": "shock"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "magnifier",
+     "id": "lens",
+     "x": 0.84,
+     "y": 0.3,
+     "size": 360,
+     "enter": "none",
+     "move": [
+      {
+       "at": 0.5,
+       "to": [
+        0.65,
+        0.5
+       ],
+       "dur": 0.7,
+       "ease": "inOut"
+      }
+     ],
+     "reveal": {
+      "at": 1.1,
+      "layers": [
+       {
+        "type": "bean",
+        "who": "neighbor",
+        "x": 0.64,
+        "y": 0.97,
+        "size": 600,
+        "flip": true,
+        "rock": 0.4,
+        "xray": {
+         "at": 0,
+         "dur": 0.01
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "doc",
+     "kind": "nameplate",
+     "style": "rank",
+     "rank": "NON-PLAYER CHARACTER",
+     "name": "NPC #12",
+     "x": 0.34,
+     "y": 0.2,
+     "size": 76,
+     "at": 1.5,
+     "in": "pop"
+    }
+   ]
+  },
+  {
+   "id": "m05_collapse",
+   "dur": 1.8,
+   "vo": "Then the world simply stops rendering.",
+   "screen": "the town square washes out pink, a cross-hatch net closes over everything; Mia trembles.",
+   "bg": {
+    "kind": "city",
+    "preset": "day",
+    "clouds": 3
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "shake": [
+     {
+      "at": 1.0,
+      "dur": 0.8,
+      "amp": 6
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "mia",
+     "who": "mia",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 560,
+     "hold": "mug",
+     "pose": [
+      {
+       "at": 0,
+       "v": "hold"
+      },
+      {
+       "at": 0.5,
+       "v": "scared"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "worried"
+      },
+      {
+       "at": 0.5,
+       "v": "scream"
+      }
+     ],
+     "tremble": [
+      [
+       0.5,
+       1.8
+      ]
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "hatch",
+     "id": "net",
+     "hud": true,
+     "at": 0.2,
+     "wash": "#f4d6e0",
+     "washAt": 0.6,
+     "dur": 0.6,
+     "from": "left",
+     "spacing": 30
+    }
+   ]
+  },
+  {
+   "id": "m06_grid",
+   "dur": 2.0,
+   "vo": "Behind the scenery there is nothing. Just a grid.",
+   "screen": "out-of-bounds void: a white grid floor rushes under Mia as she runs; wireframe neighbors stand frozen.",
+   "bg": {
+    "kind": "grid",
+    "accent": "#d03030",
+    "speed": 1.6,
+    "horizon": 0.42
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "OUT OF BOUNDS",
+     "x": 0.5,
+     "y": 0.17,
+     "size": 120,
+     "arc": 10,
+     "at": 0.15
+    },
+    {
+     "type": "bean",
+     "id": "w1",
+     "who": "neighbor",
+     "x": 0.2,
+     "y": 0.8,
+     "size": 380,
+     "rock": 0,
+     "blink": false,
+     "lineart": {
+      "color": "#2f6fd0",
+      "width": 4
+     }
+    },
+    {
+     "type": "bean",
+     "id": "w2",
+     "who": "neighbor",
+     "x": 0.82,
+     "y": 0.78,
+     "size": 340,
+     "rock": 0,
+     "flip": true,
+     "blink": false,
+     "lineart": {
+      "color": "#2f6fd0",
+      "width": 4
+     }
+    },
+    {
+     "type": "bean",
+     "id": "mia",
+     "who": "mia",
+     "x": 0.5,
+     "y": 0.98,
+     "size": 520,
+     "run": [
+      [
+       0,
+       2.0
+      ]
+     ],
+     "expr": "scream",
+     "view": "front"
+    },
+    {
+     "type": "fx",
+     "kind": "speedlines",
+     "id": "sl",
+     "x": 0.5,
+     "y": 0.42,
+     "inner": 520,
+     "count": 50,
+     "color": "rgba(42,28,21,0.35)"
+    }
+   ]
+  },
+  {
+   "id": "m07_cursor",
+   "dur": 2.2,
+   "vo": "And someone is editing it.",
+   "screen": "a giant cursor drag-selects a wireframe neighbor and deletes him; then it hovers over Mia, marked P1.",
+   "bg": {
+    "kind": "grid",
+    "accent": "#d03030",
+    "speed": 1.6,
+    "horizon": 0.42
+   },
+   "camera": {
+    "zoom": [
+     1.02,
+     1.06
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "w1",
+     "who": "neighbor",
+     "x": 0.3,
+     "y": 0.86,
+     "size": 400,
+     "rock": 0,
+     "blink": false,
+     "lineart": {
+      "color": "#2f6fd0",
+      "width": 4
+     },
+     "out": 1.35,
+     "exit": "pop",
+     "exitDur": 0.07
+    },
+    {
+     "type": "bean",
+     "id": "mia",
+     "who": "mia",
+     "x": 0.68,
+     "y": 0.93,
+     "size": 500,
+     "flip": true,
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 1.4,
+       "v": "hands-face"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "worried"
+      },
+      {
+       "at": 1.4,
+       "v": "shock"
+      }
+     ]
+    },
+    {
+     "type": "hud",
+     "kind": "marker",
+     "follow": "mia",
+     "text": "P1",
+     "delay": 1.6,
+     "size": 1.3
+    },
+    {
+     "type": "cursor",
+     "size": 64,
+     "then": "delete",
+     "path": [
+      [
+       0.95,
+       0.08,
+       0
+      ],
+      [
+       0.18,
+       0.3,
+       0.45
+      ],
+      [
+       0.42,
+       0.9,
+       0.95
+      ],
+      [
+       0.6,
+       0.45,
+       1.8
+      ],
+      [
+       0.66,
+       0.36,
+       2.2
+      ]
+     ],
+     "drag": {
+      "from": [
+       0.18,
+       0.3
+      ],
+      "to": [
+       0.42,
+       0.9
+      ],
+      "at": 0.5,
+      "dur": 0.4
+     }
+    },
+    {
+     "type": "label",
+     "text": "DELETED",
+     "x": 0.3,
+     "y": 0.55,
+     "size": 80,
+     "at": 1.38,
+     "enter": "slam",
+     "color": "#e0302a",
+     "tilt": -6
+    }
+   ]
+  },
+  {
+   "id": "m08_player",
+   "dur": 2.2,
+   "vo": "Somewhere, a player sits at a screen.",
+   "screen": "the camera pulls back out of a CRT showing the grid; a player in a neon gamer room grins at it.",
+   "grade": {
+    "preset": "purple-neon",
+    "strength": 0.7,
+    "target": "bg"
+   },
+   "bg": {
+    "kind": "room",
+    "variant": "gamer",
+    "tv": false,
+    "neon": false
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "crt",
+     "id": "screen",
+     "x": 0.42,
+     "y": 0.44,
+     "size": 640,
+     "screen": "m07_cursor",
+     "screenTime": 1.9,
+     "pullback": {
+      "at": 0.0,
+      "dur": 0.66
+     },
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "pl",
+     "who": "player",
+     "x": 0.82,
+     "y": 1.06,
+     "size": 760,
+     "flip": true,
+     "hold": "remote",
+     "pose": [
+      {
+       "at": 0,
+       "v": "hold"
+      },
+      {
+       "at": 1.3,
+       "v": "point"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 1.3,
+       "v": "smug"
+      }
+     ],
+     "talk": [
+      [
+       1.3,
+       2.0
+      ]
+     ]
+    },
+    {
+     "type": "label",
+     "text": "THE PLAYER",
+     "x": 0.82,
+     "y": 0.18,
+     "size": 80,
+     "at": 1.0,
+     "arrow": "down"
+    }
+   ]
+  },
+  {
+   "id": "m09_watched",
+   "dur": 2.0,
+   "vo": "Until his own world glitches too.",
+   "screen": "the player smiles; RGB split and a corrupt glitch tear his room; a huge silhouette of Mia rises on his wall; an NPC tag lands on him.",
+   "grade": {
+    "preset": "purple-neon",
+    "strength": 0.7,
+    "target": "bg"
+   },
+   "bg": {
+    "kind": "room",
+    "variant": "gamer",
+    "tv": false
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.1
+    ],
+    "focus": [
+     0.45,
+     0.5
+    ],
+    "rot": [
+     {
+      "at": 0,
+      "v": 0
+     },
+     {
+      "at": 1.0,
+      "v": -5
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "ghost",
+     "who": "mia",
+     "x": 0.3,
+     "y": 1.1,
+     "size": 1050,
+     "silhouette": "#120a1a",
+     "alpha": 0.85,
+     "at": 0.6,
+     "enter": "fade",
+     "enterDur": 0.6,
+     "view": "front",
+     "blink": false
+    },
+    {
+     "type": "fx",
+     "kind": "redeyes",
+     "id": "eyes",
+     "x": 0.3,
+     "y": 0.43,
+     "gap": 110,
+     "size": 30,
+     "at": 1.15
+    },
+    {
+     "type": "bean",
+     "id": "pl",
+     "who": "player",
+     "x": 0.62,
+     "y": 1.02,
+     "size": 640,
+     "hold": "remote",
+     "pose": [
+      {
+       "at": 0,
+       "v": "hold"
+      },
+      {
+       "at": 1.0,
+       "v": "scared"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "smug"
+      },
+      {
+       "at": 1.0,
+       "v": "jaw-drop"
+      }
+     ]
+    },
+    {
+     "type": "hud",
+     "kind": "marker",
+     "follow": "pl",
+     "text": "NPC",
+     "color": "#2f6fd0",
+     "delay": 1.3,
+     "size": 1.3
+    },
+    {
+     "type": "fx",
+     "kind": "rgbsplit",
+     "id": "rgb",
+     "at": 0.9,
+     "dur": 1.1,
+     "offset": 9,
+     "hud": true
+    },
+    {
+     "type": "fx",
+     "kind": "glitch",
+     "id": "gl",
+     "at": 0.9,
+     "dur": 0.3,
+     "style": "corrupt",
+     "hud": true
+    }
+   ]
+  },
+  {
+   "id": "m10_loop",
+   "dur": 2.8,
+   "transition": {
+    "kind": "pixelate",
+    "dur": 0.4
+   },
+   "vo": "So who is playing whom?",
+   "screen": "pull back out of another screen: the player's world is Mia's monitor; Mia sips her coffee and smirks.",
+   "bg": {
+    "kind": "room",
+    "variant": "living",
+    "tv": false,
+    "window": "night"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "monitor",
+     "id": "mon",
+     "x": 0.6,
+     "y": 0.46,
+     "size": 600,
+     "screen": "m09_watched",
+     "screenTime": 1.9,
+     "pullback": {
+      "at": 0.0,
+      "dur": 0.7
+     },
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "mia",
+     "who": "mia",
+     "x": 0.22,
+     "y": 1.02,
+     "size": 720,
+     "hold": "mug",
+     "pose": [
+      {
+       "at": 0,
+       "v": "hold"
+      },
+      {
+       "at": 1.1,
+       "v": "drink"
+      },
+      {
+       "at": 1.8,
+       "v": "hold"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 1.1,
+       "v": "content"
+      },
+      {
+       "at": 1.8,
+       "v": "smug-closed"
+      }
+     ],
+     "headTilt": 6
+    },
+    {
+     "type": "fg",
+     "kind": "bg-front"
+    },
+    {
+     "type": "title",
+     "text": "WHO IS PLAYING WHOM?",
+     "x": 0.5,
+     "y": 0.18,
+     "size": 92,
+     "at": 1.4,
+     "arc": -6,
+     "color": "#ffe066"
+    }
+   ]
+  }
+ ]
+}

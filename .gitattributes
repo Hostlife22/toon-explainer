@@ -1,0 +1,2 @@
+# README pictures are rebuilt by scripts/make_media.py; keep them out of the release archives
+assets/ export-ignore

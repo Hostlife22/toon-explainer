@@ -1378,6 +1378,229 @@
    ],
    "vo": "Few came back.",
    "grade": "solemn"
+  },
+  {
+   "id": "grid_void",
+   "dur": 3,
+   "bg": {
+    "kind": "grid",
+    "accent": "#d03030",
+    "speed": 3
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "host",
+     "x": 0.4,
+     "y": 0.86,
+     "size": 400,
+     "run": [
+      [
+       0,
+       3
+      ]
+     ],
+     "expr": "scream",
+     "pose": "flail"
+    },
+    {
+     "type": "bean",
+     "who": "scholar",
+     "x": 0.64,
+     "y": 0.8,
+     "size": 330,
+     "run": [
+      [
+       0,
+       3
+      ]
+     ],
+     "expr": "shock"
+    },
+    {
+     "type": "label",
+     "text": "THE GRID",
+     "x": 0.5,
+     "y": 0.16,
+     "at": 0.3,
+     "size": 80,
+     "tag": "OUT OF BOUNDS"
+    }
+   ],
+   "vo": "They fell out of the world and kept running."
+  },
+  {
+   "id": "blueprint_erase",
+   "dur": 4,
+   "bg": {
+    "kind": "blueprint",
+    "stamp": "REVISION 2",
+    "sketch": [
+     {
+      "line": [
+       [
+        0.1,
+        0.7
+       ],
+       [
+        0.5,
+        0.62
+       ],
+       [
+        0.9,
+        0.68
+       ]
+      ],
+      "at": 0,
+      "dur": 0.7
+     },
+     {
+      "text": "PLAN A",
+      "x": 0.3,
+      "y": 0.3,
+      "at": 0.3,
+      "size": 80
+     },
+     {
+      "circle": [
+       0.62,
+       0.5,
+       0.05
+      ],
+      "at": 0.6,
+      "dur": 0.5
+     },
+     {
+      "text": "X",
+      "x": 0.62,
+      "y": 0.52,
+      "at": 0.9,
+      "size": 80,
+      "out": 1.5
+     },
+     {
+      "line": [
+       [
+        0.2,
+        0.45
+       ],
+       [
+        0.8,
+        0.35
+       ]
+      ],
+      "at": 2.3,
+      "dur": 0.7
+     },
+     {
+      "text": "PLAN B",
+      "x": 0.3,
+      "y": 0.3,
+      "at": 2.6,
+      "size": 80
+     },
+     {
+      "circle": [
+       0.8,
+       0.35,
+       0.04
+      ],
+      "at": 3.0,
+      "dur": 0.5
+     }
+    ],
+    "clear": [
+     2.0
+    ]
+   },
+   "layers": [],
+   "vo": "One mark was rubbed out. Then the whole plan was wiped."
+  },
+  {
+   "id": "timelapse_keys",
+   "dur": 4,
+   "bg": {
+    "kind": "sky",
+    "hills": 2,
+    "clouds": 0,
+    "timelapse": {
+     "dayDur": [
+      {
+       "at": 0,
+       "v": 5
+      },
+      {
+       "at": 1.4,
+       "v": 5
+      },
+      {
+       "at": 1.45,
+       "v": 0.9
+      }
+     ],
+     "phase": 0.05
+    }
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "monk",
+     "x": 0.3,
+     "y": 0.86,
+     "size": 360,
+     "pose": "sit-floor",
+     "expr": "sleepy"
+    },
+    {
+     "type": "label",
+     "text": "TIME-LAPSE",
+     "x": 0.72,
+     "y": 0.86,
+     "at": 0.3,
+     "size": 72,
+     "tag": "DAYDUR KEYS: SLOW, THEN FAST"
+    }
+   ],
+   "vo": "The first day crawled. The rest flew by."
+  },
+  {
+   "id": "timelapse_accel",
+   "dur": 4,
+   "bg": {
+    "kind": "sky",
+    "hills": 2,
+    "clouds": 0,
+    "timelapse": {
+     "accel": {
+      "from": 4,
+      "to": 0.5,
+      "over": 3.5
+     },
+     "shades": true,
+     "phase": 0.1
+    }
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "who": "tommy",
+     "x": 0.5,
+     "y": 0.84,
+     "count": 6,
+     "spread": 800,
+     "size": 150
+    },
+    {
+     "type": "label",
+     "text": "TIME-LAPSE",
+     "x": 0.5,
+     "y": 0.94,
+     "at": 0.3,
+     "size": 64,
+     "tag": "ACCEL RAMP"
+    }
+   ],
+   "vo": "Days blurred into weeks."
   }
  ]
 }

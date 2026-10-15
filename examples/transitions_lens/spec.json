@@ -755,6 +755,554 @@
     }
    ],
    "vo": "Only the torch showed the way."
+  },
+  {
+   "id": "banner",
+   "dur": 2.6,
+   "bg": {
+    "kind": "palace"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 520,
+     "pose": "arms-up",
+     "expr": "happy"
+    },
+    {
+     "type": "label",
+     "text": "LONG LIVE THE KING!",
+     "x": 0.5,
+     "y": 0.16,
+     "at": 0.3,
+     "enter": "pop-tilt"
+    }
+   ],
+   "vo": "The palace celebrated its king."
+  },
+  {
+   "id": "burned",
+   "dur": 3.0,
+   "transition": {
+    "kind": "burn",
+    "dur": 1.2,
+    "from": "bottom"
+   },
+   "bg": {
+    "kind": "burning"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 520,
+     "pose": "clutch-head",
+     "expr": "shock"
+    },
+    {
+     "type": "label",
+     "tag": "TRANSITION",
+     "text": "BURN",
+     "x": 0.5,
+     "y": 0.16,
+     "at": 1.3,
+     "enter": "pop-tilt"
+    }
+   ],
+   "vo": "Then it all burned down."
+  },
+  {
+   "id": "night_fell",
+   "dur": 3.0,
+   "transition": {
+    "kind": "swarm",
+    "dur": 1.4,
+    "creature": "bat"
+   },
+   "bg": {
+    "kind": "graveyard"
+   },
+   "grade": "night",
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 500,
+     "pose": "scared",
+     "expr": "worried"
+    },
+    {
+     "type": "label",
+     "tag": "TRANSITION",
+     "text": "SWARM",
+     "x": 0.5,
+     "y": 0.16,
+     "at": 1.4,
+     "enter": "pop-tilt"
+    }
+   ],
+   "vo": "Night fell on the ruins."
+  },
+  {
+   "id": "spun_away",
+   "dur": 3.0,
+   "transition": {
+    "kind": "swirl",
+    "dur": 0.6,
+    "at": [
+     0.5,
+     0.62
+    ]
+   },
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 500,
+     "pose": "arms-up",
+     "expr": "happy"
+    },
+    {
+     "type": "label",
+     "tag": "TRANSITION",
+     "text": "SWIRL",
+     "x": 0.5,
+     "y": 0.16,
+     "at": 0.7,
+     "enter": "pop-tilt"
+    }
+   ],
+   "vo": "And just like that, it was morning."
+  },
+  {
+   "id": "game_reset",
+   "dur": 3.0,
+   "transition": {
+    "kind": "pixelate",
+    "dur": 0.7
+   },
+   "bg": {
+    "kind": "grid"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 500,
+     "pose": "shrug",
+     "expr": "side-eye"
+    },
+    {
+     "type": "label",
+     "tag": "TRANSITION",
+     "text": "PIXELATE",
+     "x": 0.5,
+     "y": 0.16,
+     "at": 0.8,
+     "enter": "pop-tilt"
+    }
+   ],
+   "vo": "Game over. Reset."
+  },
+  {
+   "id": "below",
+   "dur": 3.0,
+   "transition": {
+    "kind": "whip",
+    "dur": 0.4,
+    "dir": "up"
+   },
+   "bg": {
+    "kind": "underwater"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "anchor",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 500,
+     "pose": "wave",
+     "expr": "happy"
+    },
+    {
+     "type": "label",
+     "tag": "WHIP UP",
+     "text": "MEANWHILE, BELOW",
+     "x": 0.5,
+     "y": 0.16,
+     "at": 0.5,
+     "enter": "pop-tilt"
+    }
+   ],
+   "vo": "Meanwhile, far below."
+  },
+  {
+   "id": "corrupt_tape",
+   "dur": 3.0,
+   "bg": {
+    "kind": "studio"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "anchor",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 500,
+     "pose": "present",
+     "expr": "happy",
+     "talk": [
+      [
+       0.2,
+       1.2
+      ]
+     ]
+    },
+    {
+     "type": "label",
+     "tag": "GLITCH",
+     "text": "STYLE: CORRUPT",
+     "x": 0.5,
+     "y": 0.16,
+     "at": 0.2,
+     "enter": "pop-tilt"
+    },
+    {
+     "type": "fx",
+     "kind": "glitch",
+     "id": "corrupt_tape_glitch",
+     "style": "corrupt",
+     "at": 1.3,
+     "dur": 1.2
+    }
+   ],
+   "vo": "The tape was damaged."
+  },
+  {
+   "id": "disc_swap",
+   "dur": 3.0,
+   "bg": {
+    "kind": "studio"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 500,
+     "pose": "think",
+     "expr": "smug",
+     "out": 1.4,
+     "exitDur": 0
+    },
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 500,
+     "pose": "thumbs-up",
+     "expr": "happy",
+     "at": 1.7,
+     "enter": "none"
+    },
+    {
+     "type": "label",
+     "tag": "GLITCH",
+     "text": "STYLE: STEPPED",
+     "x": 0.5,
+     "y": 0.16,
+     "at": 0.2,
+     "enter": "pop-tilt"
+    },
+    {
+     "type": "fx",
+     "kind": "glitch",
+     "id": "disc_swap_glitch",
+     "style": "stepped",
+     "at": 1.4,
+     "dur": 0.3
+    }
+   ],
+   "vo": "Please insert disc two."
+  },
+  {
+   "id": "barrel_view",
+   "dur": 3.0,
+   "bg": {
+    "kind": "city"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.3,
+     "y": 0.95,
+     "size": 460,
+     "pose": "shade-eyes",
+     "expr": "side-eye",
+     "move": [
+      {
+       "at": 0.3,
+       "dur": 2.4,
+       "to": [
+        0.66,
+        0.97
+       ]
+      }
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "aperture",
+     "hole": [
+      0.18,
+      0.08,
+      0.64,
+      0.74
+     ],
+     "radius": 30,
+     "bars": 3
+    },
+    {
+     "type": "label",
+     "tag": "FG",
+     "text": "APERTURE",
+     "x": 0.5,
+     "y": 0.92,
+     "at": 0.4,
+     "enter": "pop-tilt",
+     "hud": true,
+     "size": 72
+    }
+   ],
+   "vo": "From inside the cell, he watched."
+  },
+  {
+   "id": "rise_up",
+   "dur": 3.0,
+   "transition": {
+    "kind": "fg-pass",
+    "dur": 1.0,
+    "axis": "vertical",
+    "who": "rival",
+    "view": "front"
+   },
+   "bg": {
+    "kind": "palace"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 500,
+     "pose": "hips",
+     "expr": "smug"
+    },
+    {
+     "type": "label",
+     "tag": "FG-PASS",
+     "text": "AXIS: VERTICAL",
+     "x": 0.5,
+     "y": 0.16,
+     "at": 1.1,
+     "enter": "pop-tilt"
+    }
+   ],
+   "vo": "Somebody rose to power."
+  },
+  {
+   "id": "arc_title",
+   "dur": 3.0,
+   "bg": {
+    "kind": "burst"
+   },
+   "layers": [
+    {
+     "type": "title",
+     "text": "CHAMPION",
+     "x": 0.5,
+     "y": 0.3,
+     "size": 150,
+     "arc": [
+      {
+       "at": 0,
+       "v": 0
+      },
+      {
+       "at": 1.0,
+       "v": 0
+      },
+      {
+       "at": 1.6,
+       "v": 50
+      }
+     ],
+     "sub": "TITLE ARC",
+     "at": 0.1
+    },
+    {
+     "type": "bean",
+     "who": "hero",
+     "x": 0.5,
+     "y": 1.02,
+     "size": 460,
+     "pose": "flex",
+     "expr": "happy"
+    }
+   ],
+   "vo": "A champion was crowned."
+  },
+  {
+   "id": "old_photo",
+   "dur": 3.0,
+   "bg": {
+    "kind": "interior"
+   },
+   "grade": "mono",
+   "layers": [
+    {
+     "type": "panel",
+     "id": "photo",
+     "layout": "frame",
+     "frame": "photo",
+     "caption": "THE OLD DAYS",
+     "cells": [
+      {
+       "shot": "banner",
+       "t": 1.6,
+       "rect": [
+        0.33,
+        0.1,
+        0.34,
+        0.6,
+        -4
+       ]
+      }
+     ],
+     "labels": false
+    },
+    {
+     "type": "bean",
+     "who": "anchor",
+     "x": 0.17,
+     "y": 0.97,
+     "size": 440,
+     "pose": "point",
+     "expr": "sad"
+    },
+    {
+     "type": "label",
+     "tag": "PANEL PHOTO",
+     "text": "GRADE: MONO",
+     "x": 0.85,
+     "y": 0.3,
+     "at": 0.4,
+     "enter": "pop-tilt",
+     "size": 76
+    }
+   ],
+   "vo": "That is all history now."
+  },
+  {
+   "id": "locator",
+   "dur": 3.0,
+   "bg": {
+    "kind": "forest"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.4,
+     "y": 0.97,
+     "size": 500,
+     "pose": "point",
+     "expr": "happy"
+    },
+    {
+     "type": "panel",
+     "id": "badge",
+     "layout": "frame",
+     "frame": "circle",
+     "at": 0.3,
+     "cells": [
+      {
+       "shot": "spun_away",
+       "t": 2.5,
+       "rect": [
+        0.74,
+        0.08,
+        0.2,
+        0.355
+       ]
+      }
+     ],
+     "labels": false
+    },
+    {
+     "type": "label",
+     "tag": "PANEL",
+     "text": "FRAME: CIRCLE",
+     "x": 0.3,
+     "y": 0.16,
+     "at": 0.5,
+     "enter": "pop-tilt"
+    }
+   ],
+   "vo": "Back home, everyone knew where he was."
+  },
+  {
+   "id": "what_if",
+   "dur": 2.0,
+   "transition": "flash-cut",
+   "bg": {
+    "kind": "sky",
+    "preset": "sunset"
+   },
+   "grade": "negative",
+   "layers": [
+    {
+     "type": "bean",
+     "who": "rival",
+     "x": 0.5,
+     "y": 0.97,
+     "size": 520,
+     "pose": "sword-up",
+     "expr": "evil",
+     "hold": "sword"
+    },
+    {
+     "type": "label",
+     "tag": "GRADE: NEGATIVE",
+     "text": "WHAT IF?",
+     "x": 0.5,
+     "y": 0.16,
+     "at": 0.1,
+     "enter": "pop-tilt"
+    }
+   ],
+   "vo": "But what if the rival had won?"
   }
  ]
 }

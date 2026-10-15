@@ -1,0 +1,1174 @@
+{
+ "title": "Why Cats Knock Things Off Tables",
+ "format": "vertical",
+ "seed": 41,
+ "fps": 30,
+ "style": {
+  "vignette": 0.25
+ },
+ "cast": {
+  "cat": {
+   "skin": "#f3b36a",
+   "robe": "#ee9a46",
+   "legColor": "#ee9a46",
+   "sandal": "#ee9a46",
+   "sleeve": "#ee9a46",
+   "hair": "bald",
+   "horns": "devil",
+   "tail": "devil",
+   "devilColor": "#e0893a",
+   "blush": true
+  },
+  "wildcat": {
+   "skin": "#d8b07a",
+   "robe": "#b98a52",
+   "outfit": "stripes",
+   "stripeColor": "#5a3a1e",
+   "legColor": "#b98a52",
+   "sandal": "#b98a52",
+   "sleeve": "#b98a52",
+   "hair": "bald",
+   "horns": "devil",
+   "tail": "devil",
+   "devilColor": "#8a5a2e"
+  },
+  "owner": {
+   "robe": "#3f8f8a",
+   "hair": "bun",
+   "hairColor": "#5a3420",
+   "legColor": "#2f4a5a",
+   "shoes": "#3a2a22"
+  }
+ },
+ "shots": [
+  {
+   "id": "c01_stare",
+   "dur": 2.4,
+   "vo": "Your cat is staring at your cup.",
+   "screen": "the cat stands on the dinner table next to a teacup; slow push-in toward the cup; the cat's eyes slide sideways",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "window": "sunset"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.16
+    ],
+    "focus": [
+     0.55,
+     0.56
+    ],
+    "ease": "inOut",
+    "punch": [
+     {
+      "at": -0.08,
+      "amount": 0.08
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "id": "table1",
+     "kind": "dinner-table",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 620,
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "cat1",
+     "who": "cat",
+     "x": 0.43,
+     "y": 0.66,
+     "size": 380,
+     "expr": [
+      {
+       "at": 0,
+       "v": "cute"
+      },
+      {
+       "at": 1.0,
+       "v": "side-eye"
+      }
+     ],
+     "look": {
+      "sideGaze": 1
+     }
+    },
+    {
+     "type": "prop",
+     "id": "cup1",
+     "kind": "teacup",
+     "x": 0.59,
+     "y": 0.6,
+     "size": 120,
+     "enter": "none"
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "c01_notice",
+     "mark": "notice",
+     "target": "cat1",
+     "at": 1.0
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "text": "WHY DO CATS",
+     "x": 0.5,
+     "y": 0.1,
+     "size": 66,
+     "at": 0.05
+    },
+    {
+     "type": "label",
+     "text": "DO THIS?",
+     "x": 0.5,
+     "y": 0.17,
+     "size": 66,
+     "color": "#ffe066",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "id": "c02_tap",
+   "dur": 2.0,
+   "vo": "Tap. Tap. Push.",
+   "screen": "letterboxed extreme close-up: the paw reaches the cup twice, the cup jolts, the camera jumps in and tilts on PUSH",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "window": "sunset"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.02
+    ],
+    "letterbox": {
+     "h": 0.1,
+     "at": 0,
+     "dur": 0.15
+    },
+    "jump": [
+     {
+      "at": 0.55,
+      "zoom": 1.12,
+      "focus": [
+       0.56,
+       0.5
+      ]
+     },
+     {
+      "at": 1.15,
+      "zoom": 1.12,
+      "focus": [
+       0.58,
+       0.5
+      ]
+     }
+    ],
+    "rot": [
+     {
+      "at": 0,
+      "v": 0
+     },
+     {
+      "at": 1.15,
+      "v": -6
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "dinner-table",
+     "x": 0.5,
+     "y": 1.6,
+     "size": 1500,
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "cat2",
+     "who": "cat",
+     "x": 0.38,
+     "y": 1.0,
+     "size": 760,
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 0.45,
+       "v": "reach"
+      },
+      {
+       "at": 0.75,
+       "v": "idle"
+      },
+      {
+       "at": 1.05,
+       "v": "reach"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "side-eye"
+      },
+      {
+       "at": 1.05,
+       "v": "menace"
+      }
+     ],
+     "look": {
+      "sideGaze": 1
+     }
+    },
+    {
+     "type": "prop",
+     "id": "cup2",
+     "kind": "teacup",
+     "x": 0.57,
+     "y": 0.74,
+     "size": 230,
+     "enter": "none",
+     "shake": [
+      {
+       "at": 0.5,
+       "dur": 0.2,
+       "amp": 8
+      }
+     ],
+     "move": [
+      {
+       "at": 1.1,
+       "dur": 0.2,
+       "to": [
+        0.61,
+        0.74
+       ],
+       "rot": 10,
+       "ease": "out"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "c02_tick1",
+     "mark": "ticks",
+     "variant": "press",
+     "x": 0.57,
+     "y": 0.72,
+     "at": 0.5
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "c02_tick2",
+     "mark": "whoosh",
+     "target": "cat2",
+     "at": 1.05
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "text": "TAP.",
+     "x": 0.4,
+     "y": 0.2,
+     "size": 70,
+     "at": 0.5,
+     "out": 1.0
+    },
+    {
+     "type": "label",
+     "text": "TAP.",
+     "x": 0.6,
+     "y": 0.26,
+     "size": 70,
+     "at": 0.75,
+     "out": 1.0
+    },
+    {
+     "type": "label",
+     "text": "PUSH.",
+     "x": 0.5,
+     "y": 0.2,
+     "size": 96,
+     "color": "#ff7a5a",
+     "at": 1.1,
+     "enter": "slam"
+    }
+   ]
+  },
+  {
+   "id": "c03_ancestor",
+   "dur": 3.0,
+   "transition": {
+    "kind": "swirl",
+    "at": [
+     0.5,
+     0.5
+    ]
+   },
+   "vo": "Blame its wild ancestors: hunters poke things to see if they run.",
+   "screen": "sepia flashback: a striped wild cat crouches in tall grass, a rabbit nibbles, the cat pounces and the rabbit zips away",
+   "bg": {
+    "kind": "forest"
+   },
+   "grade": "sepia",
+   "frame": [
+    {
+     "at": 0,
+     "v": 0.46
+    },
+    {
+     "at": 1.4,
+     "v": 0.46
+    },
+    {
+     "at": 1.8,
+     "v": 0.56,
+     "ease": "inOut"
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "id": "rabbit",
+     "kind": "rabbit",
+     "x": 0.575,
+     "y": 0.9,
+     "size": 220,
+     "expr": [
+      {
+       "at": 0,
+       "v": "happy"
+      },
+      {
+       "at": 1.45,
+       "v": "shock"
+      }
+     ],
+     "out": 1.55,
+     "exit": "zip",
+     "exitDur": 0.8
+    },
+    {
+     "type": "bean",
+     "id": "wild",
+     "who": "wildcat",
+     "x": 0.44,
+     "y": 0.92,
+     "size": 420,
+     "pose": [
+      {
+       "at": 0,
+       "v": "crawl"
+      },
+      {
+       "at": 1.4,
+       "v": "arms-up"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "menace"
+      },
+      {
+       "at": 1.4,
+       "v": "roar"
+      }
+     ],
+     "move": [
+      {
+       "at": 1.4,
+       "dur": 0.35,
+       "to": [
+        0.56,
+        0.9
+       ],
+       "ease": "out"
+      }
+     ],
+     "jump": [
+      {
+       "at": 1.4,
+       "dur": 0.4,
+       "h": 160
+      }
+     ],
+     "antic": true
+    },
+    {
+     "type": "fx",
+     "kind": "speedlines",
+     "id": "c03_speed",
+     "x": 0.55,
+     "y": 0.6,
+     "at": 1.4,
+     "out": 1.9
+    },
+    {
+     "type": "fg",
+     "id": "c03_grass",
+     "kind": "grass",
+     "count": 30,
+     "h": 200
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "tag": "10,000 YEARS AGO",
+     "text": "WILD CAT",
+     "x": 0.5,
+     "y": 0.16,
+     "size": 72,
+     "at": 0.4
+    },
+    {
+     "type": "label",
+     "text": "POKE = TEST",
+     "x": 0.5,
+     "y": 0.32,
+     "size": 58,
+     "color": "#ffe066",
+     "at": 2.0
+    }
+   ]
+  },
+  {
+   "id": "c04_diagram",
+   "dur": 2.9,
+   "transition": {
+    "kind": "torn-split",
+    "from": "right"
+   },
+   "vo": "Does it move? Does it fall? Every push is an experiment.",
+   "screen": "blueprint: a table edge, a cup, a PUSH arrow and a dashed fall arc draw in; the board wipes and FALL? becomes DATA!",
+   "bg": {
+    "kind": "blueprint",
+    "tilt": -1,
+    "sketch": [
+     {
+      "line": [
+       [
+        0.34,
+        0.6
+       ],
+       [
+        0.59,
+        0.6
+       ],
+       [
+        0.59,
+        0.98
+       ]
+      ],
+      "at": 0.3,
+      "dur": 0.5
+     },
+     {
+      "circle": [
+       0.54,
+       0.53,
+       0.04
+      ],
+      "at": 0.6,
+      "dur": 0.4
+     },
+     {
+      "line": [
+       [
+        0.39,
+        0.53
+       ],
+       [
+        0.48,
+        0.53
+       ],
+       [
+        0.45,
+        0.5
+       ],
+       [
+        0.48,
+        0.53
+       ],
+       [
+        0.45,
+        0.56
+       ]
+      ],
+      "at": 0.9,
+      "dur": 0.4
+     },
+     {
+      "text": "PUSH",
+      "x": 0.43,
+      "y": 0.47,
+      "size": 50,
+      "at": 1.0,
+      "dur": 0.2
+     },
+     {
+      "line": [
+       [
+        0.58,
+        0.53
+       ],
+       [
+        0.63,
+        0.56
+       ],
+       [
+        0.66,
+        0.64
+       ],
+       [
+        0.675,
+        0.75
+       ],
+       [
+        0.68,
+        0.9
+       ]
+      ],
+      "at": 1.3,
+      "dur": 0.6
+     },
+     {
+      "text": "FALL?",
+      "x": 0.5,
+      "y": 0.3,
+      "size": 70,
+      "at": 1.6,
+      "dur": 0.2
+     },
+     {
+      "text": "DATA!",
+      "x": 0.5,
+      "y": 0.3,
+      "size": 90,
+      "at": 2.3,
+      "dur": 0.15
+     }
+    ],
+    "clear": [
+     2.15
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "punch": [
+     {
+      "at": 2.35,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [],
+   "pinned": [
+    {
+     "type": "title",
+     "text": "PHYSICS",
+     "x": 0.5,
+     "y": 0.08,
+     "size": 90,
+     "color": "#ffffff",
+     "at": 0.2
+    }
+   ]
+  },
+  {
+   "id": "c05_slowmo",
+   "dur": 2.7,
+   "vo": "And gravity never fails. Slowly...",
+   "screen": "slow motion: the cup tips off the table edge and turns as it sinks toward the floor; an LCD reads slow time, a height counter drops",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "window": "sunset"
+   },
+   "grade": {
+    "preset": "dusk-blue",
+    "strength": 0.45
+   },
+   "camera": {
+    "zoom": [
+     1.05,
+     1.1
+    ],
+    "pan": [
+     [
+      0,
+      -60
+     ],
+     [
+      0,
+      60
+     ]
+    ],
+    "ease": "inOut"
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "dinner-table",
+     "x": 0.42,
+     "y": 0.98,
+     "size": 900,
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "cat5",
+     "who": "cat",
+     "x": 0.45,
+     "y": 0.53,
+     "size": 360,
+     "expr": "smug-closed",
+     "look": {
+      "sideGaze": 1
+     },
+     "headTilt": 8
+    },
+    {
+     "type": "prop",
+     "id": "cup5",
+     "kind": "teacup",
+     "x": 0.58,
+     "y": 0.45,
+     "size": 170,
+     "enter": "none",
+     "move": [
+      {
+       "at": 0.1,
+       "dur": 2.5,
+       "to": [
+        0.6,
+        0.93
+       ],
+       "rot": 220,
+       "ease": "inOut"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "c05_whoosh",
+     "mark": "whoosh",
+     "x": 0.6,
+     "y": 0.65,
+     "at": 0.6,
+     "dur": 1.5
+    },
+    {
+     "type": "fx",
+     "kind": "sparkle",
+     "id": "c05_sparkle",
+     "x": 0.62,
+     "y": 0.75,
+     "radius": 120,
+     "count": 4,
+     "at": 0.4
+    }
+   ],
+   "pinned": [
+    {
+     "type": "label",
+     "text": "SLOW MO",
+     "x": 0.5,
+     "y": 0.19,
+     "size": 58,
+     "color": "#bfe8ff",
+     "at": 0.1
+    },
+    {
+     "type": "timer",
+     "x": 0.5,
+     "y": 0.1,
+     "scale": 0.8,
+     "rate": 0.12,
+     "at": 0.1
+    },
+    {
+     "type": "counter",
+     "from": 80,
+     "to": 0,
+     "dur": 2.4,
+     "delay": 0.1,
+     "ease": "inOut",
+     "suffix": " CM",
+     "x": 0.5,
+     "y": 0.88,
+     "size": 70,
+     "color": "#ffe066",
+     "at": 0.1
+    }
+   ],
+   "frame": 0.54
+  },
+  {
+   "id": "c06_crash",
+   "dur": 1.5,
+   "vo": "CRASH.",
+   "screen": "the cup hits the floor and splits in two under a CRASH star; flash and shake",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "window": "sunset"
+   },
+   "camera": {
+    "zoom": [
+     1.1,
+     1.12
+    ],
+    "focus": [
+     0.5,
+     0.75
+    ],
+    "shake": [
+     {
+      "at": 0.05,
+      "dur": 0.5,
+      "amp": 20
+     }
+    ],
+    "punch": [
+     {
+      "at": 0.0,
+      "amount": 0.14
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "id": "cup6",
+     "kind": "teacup",
+     "x": 0.5,
+     "y": 0.82,
+     "size": 240,
+     "enter": "none",
+     "rot": 15,
+     "split": {
+      "at": 0.05,
+      "gap": 0.3,
+      "angle": 80,
+      "rot": 14,
+      "label": {
+       "text": "OOPS",
+       "color": "#c8202a"
+      }
+     }
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "id": "c06_dust",
+     "x": 0.5,
+     "y": 0.86,
+     "count": 10
+    },
+    {
+     "type": "fx",
+     "kind": "onomatopoeia",
+     "id": "c06_crash",
+     "text": "CRASH!",
+     "x": 0.5,
+     "y": 0.45,
+     "size": 330,
+     "dur": 1.4
+    },
+    {
+     "type": "fx",
+     "kind": "flash",
+     "id": "c06_flash",
+     "dur": 0.2,
+     "strength": 0.7
+    }
+   ]
+  },
+  {
+   "id": "c07_owner",
+   "dur": 2.4,
+   "vo": "Then someone comes running.",
+   "screen": "the owner bursts in: jaw drops, then rage; her hair smears on the snap and a shout bubble yells MY CUP",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "window": "sunset"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 1.1,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "own7",
+     "who": "owner",
+     "x": 0.46,
+     "y": 1.32,
+     "size": 1050,
+     "enter": "peek",
+     "peek": {
+      "side": "left",
+      "tilt": 14
+     },
+     "enterDur": 0.25,
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 0.4,
+       "v": "hands-face"
+      },
+      {
+       "at": 1.1,
+       "v": "clutch-head"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.4,
+       "v": "jaw-drop"
+      },
+      {
+       "at": 1.1,
+       "v": "rage"
+      }
+     ],
+     "smear": [
+      {
+       "at": 1.1,
+       "dir": 1
+      }
+     ],
+     "snapTilt": 8,
+     "tremble": [
+      [
+       1.1,
+       2.4
+      ]
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "c07_jag",
+     "mark": "shout-jag",
+     "target": "own7",
+     "at": 1.1,
+     "dur": 0.8
+    }
+   ],
+   "pinned": [
+    {
+     "type": "doc",
+     "kind": "pictobubble",
+     "style": "shout",
+     "text": "MY CUP!!",
+     "x": 0.5,
+     "y": 0.18,
+     "w": 520,
+     "h": 220,
+     "tail": false,
+     "at": 1.15
+    }
+   ]
+  },
+  {
+   "id": "c08_news",
+   "dur": 2.4,
+   "transition": {
+    "kind": "whip",
+    "dir": "left"
+   },
+   "vo": "Experts have a theory: it's not physics. It's attention.",
+   "screen": "a newspaper slams into the lens on a blue swirl: CATS WANT ATTENTION, with the cat's photo",
+   "bg": {
+    "kind": "mood",
+    "variant": "swirl"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 0.3,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "newspaper",
+     "id": "c08_paper",
+     "masthead": "THE DAILY PURR",
+     "date": "TODAY",
+     "headline": "IT'S FOR ATTENTION",
+     "subhead": "Experts: the cup was never the target",
+     "photo": {
+      "who": "cat"
+     },
+     "x": 0.5,
+     "y": 0.52,
+     "scale": 0.68,
+     "rot": -4,
+     "at": 0.15
+    }
+   ]
+  },
+  {
+   "id": "c09_trained",
+   "dur": 3.0,
+   "vo": "Because every time it falls, you come running. Who trained whom?",
+   "screen": "the owner kneels and sweeps up the pieces; on the table above, a crown drops on the cat; a HUMAN TRAINED meter fills",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "window": "sunset"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "dinner-table",
+     "x": 0.5,
+     "y": 0.86,
+     "size": 560,
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "cat9",
+     "who": "cat",
+     "x": 0.48,
+     "y": 0.6,
+     "size": 330,
+     "expr": [
+      {
+       "at": 0,
+       "v": "smug-closed"
+      },
+      {
+       "at": 1.4,
+       "v": "star-eyes"
+      }
+     ],
+     "headTilt": 6
+    },
+    {
+     "type": "fx",
+     "kind": "hat",
+     "id": "c09_crown",
+     "target": "cat9",
+     "head": "crown",
+     "mode": "drop",
+     "at": 1.3,
+     "bonk": true
+    },
+    {
+     "type": "bean",
+     "id": "own9",
+     "who": "owner",
+     "x": 0.5,
+     "y": 1.1,
+     "size": 560,
+     "view": "back",
+     "pose": "kneel",
+     "flip": true,
+     "jitter": {
+      "amp": 3,
+      "on": 2
+     }
+    },
+    {
+     "type": "prop",
+     "kind": "broom",
+     "x": 0.6,
+     "y": 0.92,
+     "size": 260,
+     "sweep": {
+      "at": 0.2,
+      "dur": 2.6
+     },
+     "enter": "none"
+    }
+   ],
+   "pinned": [
+    {
+     "type": "hud",
+     "kind": "meter",
+     "label": "HUMAN TRAINED",
+     "labelSize": 44,
+     "value": [
+      {
+       "at": 0,
+       "v": 0.3
+      },
+      {
+       "at": 0.6,
+       "v": 0.6
+      },
+      {
+       "at": 1.3,
+       "v": 1.0
+      }
+     ],
+     "w": 500,
+     "h": 44,
+     "x": 0.37,
+     "y": 0.12,
+     "style": "solid",
+     "color": "#5ad84a"
+    },
+    {
+     "type": "label",
+     "text": "WHO'S THE PET?",
+     "x": 0.5,
+     "y": 0.22,
+     "size": 64,
+     "color": "#ffe066",
+     "at": 1.9
+    }
+   ]
+  },
+  {
+   "id": "c10_again",
+   "dur": 1.8,
+   "transition": {
+    "kind": "swirl",
+    "at": [
+     0.55,
+     0.55
+    ],
+    "dir": -1
+   },
+   "vo": "Anyway. New cup.",
+   "screen": "callback to the first frame: a fresh cup drops onto the table, the cat's eyes narrow to menace; hard stop",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "window": "sunset"
+   },
+   "camera": {
+    "zoom": [
+     1.1,
+     1.18
+    ],
+    "focus": [
+     0.55,
+     0.56
+    ],
+    "punch": [
+     {
+      "at": 1.2,
+      "amount": 0.12
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "dinner-table",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 620,
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "cat10",
+     "who": "cat",
+     "x": 0.43,
+     "y": 0.66,
+     "size": 380,
+     "look": {
+      "sideGaze": 1,
+      "head": "crown"
+     },
+     "expr": [
+      {
+       "at": 0,
+       "v": "cute"
+      },
+      {
+       "at": 1.2,
+       "v": "evil"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "id": "cup10",
+     "kind": "teacup",
+     "x": 0.59,
+     "y": 0.6,
+     "size": 120,
+     "enter": "drop-squash",
+     "at": 0.45,
+     "dropShadow": 0.25
+    }
+   ],
+   "pinned": [
+    {
+     "type": "title",
+     "text": "AGAIN.",
+     "x": 0.5,
+     "y": 0.15,
+     "size": 110,
+     "color": "#ff7a5a",
+     "at": 1.2
+    }
+   ]
+  }
+ ]
+}

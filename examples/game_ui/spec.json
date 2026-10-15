@@ -1208,6 +1208,184 @@
           ]
         }
       ]
+    },
+    {
+      "id": "g27_ecg",
+      "dur": 4.0,
+      "vo": "The old empire's heart beat faster and faster, and then it stopped.",
+      "bg": {
+        "kind": "hospital"
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "patient",
+          "who": "king",
+          "x": 0.3,
+          "y": 0.95,
+          "size": 520,
+          "pose": "sit-slump",
+          "expr": [
+            {
+              "at": 0,
+              "v": "sick"
+            },
+            {
+              "at": 2.0,
+              "v": "worried"
+            },
+            {
+              "at": 3.2,
+              "v": "dead"
+            }
+          ]
+        },
+        {
+          "type": "hud",
+          "kind": "ecg",
+          "x": 0.68,
+          "y": 0.4,
+          "scale": 1.3,
+          "bpm": [
+            {
+              "at": 0,
+              "v": 70
+            },
+            {
+              "at": 2.0,
+              "v": 130
+            }
+          ],
+          "flatAt": 3.2
+        }
+      ]
+    },
+    {
+      "id": "g28_meter_vertical",
+      "dur": 3.4,
+      "vo": "And with every harvest, the farmers' patience drained away.",
+      "bg": {
+        "kind": "sky",
+        "preset": "dusk",
+        "clouds": 3
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "id": "fa",
+          "who": "farmer",
+          "x": 0.5,
+          "y": 0.95,
+          "size": 540,
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 1.2,
+              "v": "fist"
+            },
+            {
+              "at": 2.2,
+              "v": "clutch-head"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "content"
+            },
+            {
+              "at": 1.2,
+              "v": "angry"
+            },
+            {
+              "at": 2.2,
+              "v": "rage"
+            }
+          ]
+        },
+        {
+          "type": "hud",
+          "kind": "meter",
+          "orient": "vertical",
+          "x": 0.12,
+          "y": 0.16,
+          "label": "PATIENCE",
+          "style": "solid",
+          "color": "#5ad84a",
+          "value": [
+            {
+              "at": 0,
+              "v": 0.95
+            },
+            {
+              "at": 0.8,
+              "v": 0.7
+            },
+            {
+              "at": 1.5,
+              "v": 0.4
+            },
+            {
+              "at": 2.2,
+              "v": 0.12
+            }
+          ],
+          "warnAt": 2,
+          "h": 640,
+          "w": 56
+        }
+      ]
+    },
+    {
+      "id": "g29_carousel_snap",
+      "dur": 3.2,
+      "vo": "Choose your weapon. Quickly.",
+      "bg": {
+        "kind": "flat",
+        "color": "#2d3340"
+      },
+      "layers": [
+        {
+          "type": "doc",
+          "kind": "carousel",
+          "snap": true,
+          "items": [
+            {
+              "prop": "sword",
+              "label": "SWORD"
+            },
+            {
+              "prop": "spear",
+              "label": "SPEAR"
+            },
+            {
+              "prop": "pitchfork",
+              "label": "PITCHFORK"
+            },
+            {
+              "prop": "bread",
+              "label": "BREAD"
+            }
+          ],
+          "select": [
+            {
+              "at": 0.6,
+              "i": 1
+            },
+            {
+              "at": 1.2,
+              "i": 2
+            },
+            {
+              "at": 1.8,
+              "i": 3
+            }
+          ]
+        }
+      ]
     }
   ],
   "overlays": [

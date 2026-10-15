@@ -1,0 +1,1515 @@
+{
+ "title": "The Island Nobody Wanted",
+ "fps": 30,
+ "seed": 77,
+ "style": {
+  "grain": true,
+  "vignette": 0.26
+ },
+ "cast": {
+  "grum": {
+   "hair": "bald",
+   "flag": {
+    "pattern": "h3",
+    "colors": [
+     "#f08a2c",
+     "#2fae9a",
+     "#f08a2c"
+    ]
+   },
+   "head": "crown",
+   "outfit": "robe-royal",
+   "robe": "#f08a2c",
+   "trim": "#e2b23c",
+   "build": "fat"
+  },
+  "plonk": {
+   "hair": "bald",
+   "flag": {
+    "pattern": "disc",
+    "colors": [
+     "#7a4fc2",
+     "#c8e04a"
+    ]
+   },
+   "head": "crown",
+   "outfit": "robe-royal",
+   "robe": "#7a4fc2",
+   "trim": "#e2b23c",
+   "build": "thin"
+  }
+ },
+ "shots": [
+  {
+   "id": "b01_globe",
+   "dur": 2.2,
+   "vo": "Between two kingdoms lies one tiny island.",
+   "screen": "a spinning globe; orange Grumbria and purple Plonkia face each other across the sea; a pin drops on the speck between them: THE ISLAND.",
+   "transition": "cut",
+   "bg": {
+    "kind": "flat",
+    "color": "#0e1430"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.08
+    ],
+    "focus": [
+     0.5,
+     0.55
+    ]
+   },
+   "layers": [
+    {
+     "type": "map",
+     "id": "world",
+     "style": "atlas",
+     "view": "globe",
+     "globe": {
+      "full": true,
+      "r": 0.42,
+      "dy": 0.04,
+      "spin": 0.012,
+      "stars": 90
+     },
+     "regions": [
+      {
+       "id": "grum",
+       "blob": [
+        0.22,
+        0.5,
+        0.17,
+        0.32
+       ],
+       "color": "#f08a2c",
+       "dur": 0.001,
+       "face": {
+        "mood": "smug",
+        "scale": 0.28
+       }
+      },
+      {
+       "id": "plonk",
+       "blob": [
+        0.78,
+        0.5,
+        0.17,
+        0.32
+       ],
+       "color": "#7a4fc2",
+       "dur": 0.001,
+       "face": {
+        "mood": "smug",
+        "scale": 0.28
+       }
+      },
+      {
+       "id": "isle",
+       "blob": [
+        0.5,
+        0.5,
+        0.05,
+        0.04
+       ],
+       "color": "#d9b877",
+       "dur": 0.001
+      }
+     ],
+     "pins": [
+      {
+       "x": 0.5,
+       "y": 0.47,
+       "at": 0.8,
+       "style": "drop",
+       "label": "THE ISLAND",
+       "size": 56,
+       "color": "#ffd23a"
+      }
+     ]
+    },
+    {
+     "type": "title",
+     "text": "THE ISLAND NOBODY WANTED",
+     "x": 0.5,
+     "y": 0.15,
+     "size": 76,
+     "at": 0.9,
+     "stagger": 0.025,
+     "color": "#ffd23a"
+    }
+   ]
+  },
+  {
+   "id": "b02_rock",
+   "dur": 2.0,
+   "vo": "Nothing grows there. Nobody lives there.",
+   "screen": "the locator badge grows into the island itself: a sandy lump asleep in a turquoise sea; a gull circles; POPULATION: 0.",
+   "transition": {
+    "kind": "carry",
+    "from": [
+     0.4,
+     0.33,
+     0.2,
+     0.26
+    ],
+    "to": [
+     0.28,
+     0.42,
+     0.44,
+     0.3
+    ],
+    "round": true,
+    "dur": 0.5
+   },
+   "bg": {
+    "kind": "sea",
+    "preset": "turquoise",
+    "horizon": 0.5
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "rock",
+     "x": 0.5,
+     "y": 0.66,
+     "size": 640,
+     "pts": [
+      [
+       -0.5,
+       0.04
+      ],
+      [
+       -0.36,
+       -0.12
+      ],
+      [
+       -0.12,
+       -0.17
+      ],
+      [
+       0.14,
+       -0.15
+      ],
+      [
+       0.38,
+       -0.1
+      ],
+      [
+       0.5,
+       0.03
+      ],
+      [
+       0.32,
+       0.15
+      ],
+      [
+       0.02,
+       0.17
+      ],
+      [
+       -0.3,
+       0.14
+      ]
+     ],
+     "color": "#d9b877",
+     "face": {
+      "mood": "sleepy",
+      "scale": 0.9
+     },
+     "enter": "none",
+     "bob": 4,
+     "bobHz": 0.5
+    },
+    {
+     "type": "creature",
+     "kind": "dove",
+     "x": 0.2,
+     "y": 0.3,
+     "size": 120,
+     "fly": true,
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.0,
+       "to": [
+        0.4,
+        0.22
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "birds",
+     "id": "gb",
+     "count": 3,
+     "x": 0.75,
+     "y": 0.18,
+     "size": 22
+    },
+    {
+     "type": "label",
+     "text": "POPULATION: 0",
+     "tag": "CENSUS",
+     "x": 0.5,
+     "y": 0.3,
+     "size": 96,
+     "at": 0.9,
+     "enter": "slam"
+    },
+    {
+     "type": "fg",
+     "kind": "foam",
+     "id": "fm2"
+    }
+   ]
+  },
+  {
+   "id": "b03_mine",
+   "dur": 2.6,
+   "vo": "So naturally, both kingdoms want it.",
+   "screen": "a tilted map board: the two kings pop up on their lands; two block arrows slam into the island, MINE! and MINE!; the island's face goes worried.",
+   "transition": "cut",
+   "bg": {
+    "kind": "flat",
+    "color": "#5b72d6"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 1.3,
+      "amount": 0.06
+     },
+     {
+      "at": 1.8,
+      "amount": 0.06
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "map",
+     "id": "board",
+     "style": "atlas",
+     "view": "tilt",
+     "w": 1.0,
+     "h": 1.05,
+     "tilt": {
+      "deg": 38,
+      "vp": 0.14,
+      "depth": 14,
+      "pan": [
+       [
+        0,
+        0.02
+       ],
+       [
+        0,
+        -0.02
+       ]
+      ]
+     },
+     "regions": [
+      {
+       "id": "grum",
+       "blob": [
+        0.22,
+        0.5,
+        0.17,
+        0.32
+       ],
+       "color": "#f08a2c",
+       "dur": 0.001,
+       "face": {
+        "mood": "angry",
+        "scale": 0.28
+       }
+      },
+      {
+       "id": "plonk",
+       "blob": [
+        0.78,
+        0.5,
+        0.17,
+        0.32
+       ],
+       "color": "#7a4fc2",
+       "dur": 0.001,
+       "face": {
+        "mood": "angry",
+        "scale": 0.28
+       }
+      },
+      {
+       "id": "isle",
+       "blob": [
+        0.5,
+        0.5,
+        0.06,
+        0.05
+       ],
+       "color": "#d9b877",
+       "dur": 0.001,
+       "face": {
+        "mood": [
+         {
+          "at": 0,
+          "v": "neutral"
+         },
+         {
+          "at": 1.3,
+          "v": "worried"
+         }
+        ],
+        "scale": 0.8
+       }
+      }
+     ],
+     "words": [
+      {
+       "text": "GRUMBRIA",
+       "x": 0.24,
+       "y": 0.8,
+       "style": "toon",
+       "size": 90,
+       "rot": -4,
+       "at": 0.15
+      },
+      {
+       "text": "PLONKIA",
+       "x": 0.76,
+       "y": 0.8,
+       "style": "toon",
+       "size": 90,
+       "rot": 4,
+       "at": 0.3
+      }
+     ],
+     "figures": [
+      {
+       "who": "grum",
+       "x": 0.2,
+       "y": 0.5,
+       "at": 0.4,
+       "pose": "point",
+       "expr": "angry",
+       "scale": 0.34
+      },
+      {
+       "who": "plonk",
+       "x": 0.8,
+       "y": 0.5,
+       "at": 0.6,
+       "pose": "point",
+       "expr": "angry",
+       "scale": 0.34,
+       "flip": true
+      }
+     ],
+     "arrows": [
+      {
+       "from": "grum",
+       "to": "isle",
+       "at": 1.3,
+       "style": "block",
+       "label": "MINE!",
+       "bend": -0.12
+      },
+      {
+       "from": "plonk",
+       "to": "isle",
+       "at": 1.8,
+       "style": "block",
+       "label": "MINE!",
+       "bend": 0.12,
+       "color": "#8a3ad0"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b04_war",
+   "dur": 3.0,
+   "vo": "They fight over it. Again. And again.",
+   "screen": "the flat map: fleets sail from both coasts; a brawl cloud of orange and purple helmets rolls across the island and back, dropping blasts that turn to smoke; both kingdoms end up bruised.",
+   "transition": {
+    "kind": "slash",
+    "dur": 0.35
+   },
+   "bg": {
+    "kind": "flat",
+    "color": "#5b72d6"
+   },
+   "camera": {
+    "zoom": [
+     1.02,
+     1.08
+    ],
+    "shake": [
+     {
+      "at": 1.0,
+      "dur": 0.3,
+      "amp": 8
+     },
+     {
+      "at": 2.1,
+      "dur": 0.3,
+      "amp": 8
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "map",
+     "id": "flat",
+     "style": "atlas",
+     "regions": [
+      {
+       "id": "grum",
+       "blob": [
+        0.22,
+        0.5,
+        0.17,
+        0.32
+       ],
+       "color": "#f08a2c",
+       "dur": 0.001,
+       "face": {
+        "mood": "angry",
+        "scale": 0.28
+       },
+       "damage": {
+        "at": 2.1,
+        "kind": "black-eye"
+       }
+      },
+      {
+       "id": "plonk",
+       "blob": [
+        0.78,
+        0.5,
+        0.17,
+        0.32
+       ],
+       "color": "#7a4fc2",
+       "dur": 0.001,
+       "face": {
+        "mood": "angry",
+        "scale": 0.28
+       },
+       "damage": {
+        "at": 2.4,
+        "kind": "bandage"
+       }
+      },
+      {
+       "id": "isle",
+       "blob": [
+        0.5,
+        0.5,
+        0.05,
+        0.04
+       ],
+       "color": "#d9b877",
+       "dur": 0.001
+      }
+     ],
+     "tokens": [
+      {
+       "icon": "ship",
+       "pts": [
+        [
+         0.36,
+         0.28
+        ],
+        [
+         0.46,
+         0.44
+        ]
+       ],
+       "at": 0.2,
+       "dur": 1.0,
+       "count": 3,
+       "every": 0.25,
+       "size": 64
+      },
+      {
+       "icon": "ship",
+       "pts": [
+        [
+         0.64,
+         0.72
+        ],
+        [
+         0.54,
+         0.56
+        ]
+       ],
+       "at": 0.4,
+       "dur": 1.0,
+       "count": 3,
+       "every": 0.25,
+       "size": 64
+      }
+     ],
+     "fights": [
+      {
+       "id": "brawl",
+       "path": [
+        [
+         0.36,
+         0.6
+        ],
+        [
+         0.5,
+         0.5
+        ],
+        [
+         0.64,
+         0.42
+        ],
+        [
+         0.56,
+         0.62
+        ],
+        [
+         0.4,
+         0.48
+        ]
+       ],
+       "at": 0.7,
+       "dur": 2.0,
+       "ease": "inOut",
+       "size": 170,
+       "count": 3,
+       "heads": 8,
+       "skins": [
+        "#f08a2c",
+        "#7a4fc2"
+       ],
+       "trail": {
+        "color": "#2a1c15",
+        "width": 6,
+        "dash": true
+       },
+       "drops": {
+        "every": 0.3,
+        "icon": "blast",
+        "size": 60,
+        "life": 0.6,
+        "after": "smoke"
+       },
+       "out": 2.7
+      }
+     ]
+    },
+    {
+     "type": "label",
+     "text": "AGAIN",
+     "x": 0.5,
+     "y": 0.13,
+     "size": 90,
+     "at": 1.0,
+     "enter": "slam"
+    },
+    {
+     "type": "label",
+     "text": "AND AGAIN",
+     "x": 0.5,
+     "y": 0.87,
+     "size": 90,
+     "at": 2.1,
+     "enter": "slam"
+    }
+   ]
+  },
+  {
+   "id": "b05_years",
+   "dur": 2.4,
+   "vo": "A hundred years of arguing.",
+   "screen": "time-lapse over the island: days flash by faster and faster; the flag on it flips orange, purple, orange; the year counter races to 100.",
+   "transition": {
+    "kind": "cloud-wipe",
+    "dur": 0.6
+   },
+   "bg": {
+    "kind": "sky",
+    "hills": false,
+    "clouds": 0,
+    "horizon": 0.6,
+    "ground": false,
+    "water": {
+     "y": 0.6,
+     "color": "#3f9ac0"
+    },
+    "timelapse": {
+     "dayDur": [
+      {
+       "at": 0,
+       "v": 1.6
+      },
+      {
+       "at": 0.6,
+       "v": 1.6
+      },
+      {
+       "at": 1.6,
+       "v": 0.35
+      }
+     ],
+     "shades": true,
+     "phase": 0.1
+    }
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "rock5",
+     "x": 0.5,
+     "y": 0.72,
+     "size": 560,
+     "pts": [
+      [
+       -0.5,
+       0.04
+      ],
+      [
+       -0.36,
+       -0.12
+      ],
+      [
+       -0.12,
+       -0.17
+      ],
+      [
+       0.14,
+       -0.15
+      ],
+      [
+       0.38,
+       -0.1
+      ],
+      [
+       0.5,
+       0.03
+      ],
+      [
+       0.32,
+       0.15
+      ],
+      [
+       0.02,
+       0.17
+      ],
+      [
+       -0.3,
+       0.14
+      ]
+     ],
+     "color": "#d9b877",
+     "face": {
+      "mood": "sleepy",
+      "scale": 0.8
+     },
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "flag",
+     "id": "fl",
+     "x": 0.56,
+     "y": 0.69,
+     "size": 200,
+     "color": "#f08a2c",
+     "text": "G",
+     "enter": "none",
+     "swap": [
+      {
+       "at": 0.5,
+       "color": "#7a4fc2",
+       "text": "P"
+      },
+      {
+       "at": 0.8,
+       "color": "#f08a2c",
+       "text": "G"
+      },
+      {
+       "at": 1.05,
+       "color": "#7a4fc2",
+       "text": "P"
+      },
+      {
+       "at": 1.25,
+       "color": "#f08a2c",
+       "text": "G"
+      },
+      {
+       "at": 1.42,
+       "color": "#7a4fc2",
+       "text": "P"
+      },
+      {
+       "at": 1.56,
+       "color": "#f08a2c",
+       "text": "G"
+      },
+      {
+       "at": 1.68,
+       "color": "#7a4fc2",
+       "text": "P"
+      },
+      {
+       "at": 1.78,
+       "color": "#f08a2c",
+       "text": "G"
+      },
+      {
+       "at": 1.87,
+       "color": "#7a4fc2",
+       "text": "P"
+      },
+      {
+       "at": 1.95,
+       "color": "#f08a2c",
+       "text": "G"
+      },
+      {
+       "at": 2.02,
+       "color": "#7a4fc2",
+       "text": "P"
+      }
+     ]
+    },
+    {
+     "type": "counter",
+     "x": 0.5,
+     "y": 0.2,
+     "from": 1,
+     "to": 100,
+     "dur": 2.0,
+     "delay": 0.2,
+     "ease": "inQuad",
+     "size": 150,
+     "color": "#ffe066",
+     "suffix": " YEARS"
+    }
+   ]
+  },
+  {
+   "id": "b06_treaty",
+   "dur": 2.4,
+   "vo": "Finally, a treaty. Half each.",
+   "screen": "a palace hall; the treaty slaps down between the two kings, HALF EACH; two stamps slam, SIGNED and AGREED; thumbs up.",
+   "transition": "cut",
+   "bg": {
+    "kind": "palace",
+    "variant": "ochre",
+    "throne": false,
+    "shafts": true
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 1.1,
+      "amount": 0.05
+     },
+     {
+      "at": 1.55,
+      "amount": 0.05
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "grum",
+     "x": 0.15,
+     "y": 0.98,
+     "size": 560,
+     "pose": [
+      {
+       "at": 0,
+       "v": "hips"
+      },
+      {
+       "at": 1.7,
+       "v": "thumbs-up"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "side-eye"
+      },
+      {
+       "at": 1.7,
+       "v": "happy"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "plonk",
+     "x": 0.85,
+     "y": 0.98,
+     "size": 560,
+     "flip": true,
+     "pose": [
+      {
+       "at": 0,
+       "v": "cross"
+      },
+      {
+       "at": 1.8,
+       "v": "thumbs-up"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "side-eye"
+      },
+      {
+       "at": 1.8,
+       "v": "happy"
+      }
+     ]
+    },
+    {
+     "type": "doc",
+     "kind": "document",
+     "id": "treaty",
+     "x": 0.5,
+     "y": 0.42,
+     "scale": 1.0,
+     "at": 0.15,
+     "paper": "scroll",
+     "title": "TREATY OF THE ISLAND",
+     "lines": [
+      "1. NO MORE FIGHTING",
+      "2. HALF EACH",
+      "3. NO TAKE-BACKS"
+     ],
+     "every": 0.15,
+     "stamp": {
+      "text": "SIGNED",
+      "at": 1.1,
+      "color": "#d0602a",
+      "tilt": -14
+     }
+    },
+    {
+     "type": "doc",
+     "kind": "stamp",
+     "id": "st2",
+     "x": 0.6,
+     "y": 0.8,
+     "text": "AGREED",
+     "color": "#7a4fc2",
+     "size": 80,
+     "tilt": 10,
+     "at": 1.55
+    }
+   ]
+  },
+  {
+   "id": "b07_split",
+   "dur": 1.8,
+   "vo": "The island is cut in two. Peace!",
+   "screen": "close on the island on the map: it cracks down the middle, the halves turn orange and purple and drift apart, both smiling; a flag on each half.",
+   "transition": {
+    "kind": "zoom-punch",
+    "dur": 0.3
+   },
+   "bg": {
+    "kind": "flat",
+    "color": "#5b72d6"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "map",
+     "id": "close",
+     "style": "atlas",
+     "regions": [
+      {
+       "id": "big",
+       "pts": [
+        [
+         0.25,
+         0.5
+        ],
+        [
+         0.32,
+         0.36
+        ],
+        [
+         0.45,
+         0.3
+        ],
+        [
+         0.6,
+         0.32
+        ],
+        [
+         0.72,
+         0.38
+        ],
+        [
+         0.76,
+         0.52
+        ],
+        [
+         0.68,
+         0.64
+        ],
+        [
+         0.52,
+         0.68
+        ],
+        [
+         0.36,
+         0.65
+        ]
+       ],
+       "color": "#d9b877",
+       "dur": 0.001,
+       "face": {
+        "mood": "worried",
+        "scale": 0.3
+       },
+       "split": {
+        "at": 0.35,
+        "colors": [
+         "#7a4fc2",
+         "#f08a2c"
+        ],
+        "line": [
+         [
+          0.5,
+          0.25
+         ],
+         [
+          0.52,
+          0.42
+         ],
+         [
+          0.48,
+          0.56
+         ],
+         [
+          0.5,
+          0.72
+         ]
+        ],
+        "gap": 40,
+        "faces": [
+         "happy",
+         "happy"
+        ]
+       }
+      }
+     ],
+     "flags": [
+      {
+       "x": 0.36,
+       "y": 0.42,
+       "at": 0.8,
+       "h": 200,
+       "color": "#f08a2c",
+       "color2": "#2fae9a",
+       "pattern": "band",
+       "letter": "G"
+      },
+      {
+       "x": 0.64,
+       "y": 0.42,
+       "at": 1.0,
+       "h": 200,
+       "color": "#7a4fc2",
+       "color2": "#c8e04a",
+       "pattern": "disc"
+      }
+     ]
+    },
+    {
+     "type": "label",
+     "text": "PEACE!",
+     "x": 0.5,
+     "y": 0.86,
+     "size": 110,
+     "at": 1.1,
+     "enter": "slam",
+     "color": "#ffe066"
+    }
+   ]
+  },
+  {
+   "id": "b08_turtle",
+   "dur": 3.2,
+   "vo": "Then the island woke up.",
+   "screen": "the same sea as before; the island trembles, RUMBLE, its eyes snap open; a giant turtle rises underneath it, grins and swims off with both flags on its back: PLOT TWIST.",
+   "transition": {
+    "kind": "wave",
+    "dur": 0.6
+   },
+   "bg": {
+    "kind": "sea",
+    "preset": "turquoise",
+    "horizon": 0.5
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "shake": [
+     {
+      "at": 0.6,
+      "dur": 0.9,
+      "amp": 9
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "kind": "turtle",
+     "id": "turtle",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 620,
+     "at": 1.35,
+     "enter": "rise",
+     "enterDur": 0.35,
+     "expr": [
+      {
+       "at": 0,
+       "v": "happy"
+      }
+     ],
+     "walk": [
+      [
+       0.9,
+       1.85
+      ]
+     ],
+     "move": [
+      {
+       "at": 2.25,
+       "dur": 0.95,
+       "to": [
+        1.25,
+        0.96
+       ],
+       "ease": "in"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "rock8",
+     "x": 0.5,
+     "y": 0.66,
+     "size": 640,
+     "pts": [
+      [
+       -0.5,
+       0.04
+      ],
+      [
+       -0.36,
+       -0.12
+      ],
+      [
+       -0.12,
+       -0.17
+      ],
+      [
+       0.14,
+       -0.15
+      ],
+      [
+       0.38,
+       -0.1
+      ],
+      [
+       0.5,
+       0.03
+      ],
+      [
+       0.32,
+       0.15
+      ],
+      [
+       0.02,
+       0.17
+      ],
+      [
+       -0.3,
+       0.14
+      ]
+     ],
+     "color": "#d9b877",
+     "enter": "none",
+     "face": {
+      "mood": [
+       {
+        "at": 0,
+        "v": "sleepy"
+       },
+       {
+        "at": 1.2,
+        "v": "shock"
+       },
+       {
+        "at": 1.8,
+        "v": "happy"
+       }
+      ],
+      "scale": 0.8
+     },
+     "jitter": {
+      "amp": 4,
+      "on": 2,
+      "from": 0.6,
+      "to": 1.5
+     },
+     "move": [
+      {
+       "at": 1.35,
+       "dur": 0.3,
+       "to": [
+        0.5,
+        0.55
+       ],
+       "ease": "outBack"
+      },
+      {
+       "at": 2.25,
+       "dur": 0.95,
+       "to": [
+        1.25,
+        0.55
+       ],
+       "ease": "in"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "flag",
+     "x": 0.43,
+     "y": 0.6,
+     "size": 180,
+     "color": "#f08a2c",
+     "text": "G",
+     "enter": "none",
+     "move": [
+      {
+       "at": 1.35,
+       "dur": 0.3,
+       "to": [
+        0.43,
+        0.49
+       ],
+       "ease": "outBack"
+      },
+      {
+       "at": 2.25,
+       "dur": 0.95,
+       "to": [
+        1.18,
+        0.49
+       ],
+       "ease": "in"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "flag",
+     "x": 0.58,
+     "y": 0.6,
+     "size": 180,
+     "color": "#7a4fc2",
+     "text": "P",
+     "enter": "none",
+     "move": [
+      {
+       "at": 1.35,
+       "dur": 0.3,
+       "to": [
+        0.58,
+        0.49
+       ],
+       "ease": "outBack"
+      },
+      {
+       "at": 2.25,
+       "dur": 0.95,
+       "to": [
+        1.33,
+        0.49
+       ],
+       "ease": "in"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "onomatopoeia",
+     "id": "rum",
+     "text": "RUMBLE",
+     "x": 0.24,
+     "y": 0.26,
+     "size": 300,
+     "at": 0.65,
+     "dur": 0.9
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "id": "spl",
+     "x": 0.5,
+     "y": 0.8,
+     "at": 1.4,
+     "count": 10,
+     "color": "#eaf6ff"
+    },
+    {
+     "type": "fg",
+     "kind": "foam",
+     "id": "fm8"
+    },
+    {
+     "type": "label",
+     "text": "A TURTLE",
+     "tag": "PLOT TWIST",
+     "x": 0.5,
+     "y": 0.18,
+     "size": 100,
+     "at": 1.75,
+     "enter": "slam",
+     "color": "#ffe066"
+    }
+   ]
+  },
+  {
+   "id": "b09_gone",
+   "dur": 2.4,
+   "vo": "It swam away. And nobody got the island.",
+   "screen": "back on the flat map, both kingdoms still bruised: the two island halves drift off the edge; the kingdoms gasp; two hook arrows reach after it: COME BACK!",
+   "transition": "cut",
+   "bg": {
+    "kind": "flat",
+    "color": "#5b72d6"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "map",
+     "id": "flat",
+     "style": "atlas",
+     "regions": [
+      {
+       "id": "grum",
+       "blob": [
+        0.22,
+        0.5,
+        0.17,
+        0.32
+       ],
+       "color": "#f08a2c",
+       "dur": 0.001,
+       "face": {
+        "mood": [
+         {
+          "at": 0,
+          "v": "happy"
+         },
+         {
+          "at": 0.7,
+          "v": "shock"
+         }
+        ],
+        "scale": 0.28
+       },
+       "damage": {
+        "at": 0,
+        "kind": "black-eye"
+       }
+      },
+      {
+       "id": "plonk",
+       "blob": [
+        0.78,
+        0.5,
+        0.17,
+        0.32
+       ],
+       "color": "#7a4fc2",
+       "dur": 0.001,
+       "face": {
+        "mood": [
+         {
+          "at": 0,
+          "v": "happy"
+         },
+         {
+          "at": 0.7,
+          "v": "shock"
+         }
+        ],
+        "scale": 0.28
+       },
+       "damage": {
+        "at": 0,
+        "kind": "bandage"
+       }
+      },
+      {
+       "id": "halfg",
+       "pts": [
+        [
+         0.45,
+         0.48
+        ],
+        [
+         0.49,
+         0.46
+        ],
+        [
+         0.5,
+         0.5
+        ],
+        [
+         0.49,
+         0.54
+        ],
+        [
+         0.45,
+         0.52
+        ]
+       ],
+       "color": "#f08a2c",
+       "dur": 0.001,
+       "drift": {
+        "dx": 0.12,
+        "dy": -0.42,
+        "at": 0.25,
+        "dur": 1.3,
+        "to": null
+       }
+      },
+      {
+       "id": "halfp",
+       "pts": [
+        [
+         0.51,
+         0.46
+        ],
+        [
+         0.55,
+         0.48
+        ],
+        [
+         0.555,
+         0.52
+        ],
+        [
+         0.51,
+         0.54
+        ],
+        [
+         0.5,
+         0.5
+        ]
+       ],
+       "color": "#7a4fc2",
+       "dur": 0.001,
+       "drift": {
+        "dx": 0.14,
+        "dy": -0.42,
+        "at": 0.25,
+        "dur": 1.3,
+        "to": null
+       }
+      }
+     ],
+     "arrows": [
+      {
+       "from": "grum",
+       "to": [
+        0.6,
+        0.14
+       ],
+       "at": 1.0,
+       "style": "hook",
+       "label": "COME BACK!",
+       "bend": 0.15
+      },
+      {
+       "from": "plonk",
+       "to": [
+        0.64,
+        0.14
+       ],
+       "at": 1.2,
+       "style": "hook",
+       "bend": -0.15
+      }
+     ]
+    },
+    {
+     "type": "title",
+     "text": "NOBODY GOT THE ISLAND",
+     "x": 0.5,
+     "y": 0.88,
+     "size": 90,
+     "at": 1.4,
+     "arc": -8,
+     "stagger": 0.025,
+     "color": "#ffd23a"
+    }
+   ]
+  }
+ ]
+}

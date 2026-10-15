@@ -1,0 +1,1371 @@
+{
+ "title": "The Last Lighthouse Keeper",
+ "seed": 1894,
+ "fps": 30,
+ "cast": {
+  "silas": {
+   "outfit": "greatcoat",
+   "robe": "#34404c",
+   "beard": "full",
+   "beardColor": "#e6e0d4",
+   "hairColor": "#e6e0d4",
+   "age": "elder",
+   "head": "bucket-hat",
+   "headColor": "#e2b42a",
+   "headColor2": "#a8801a"
+  },
+  "relief": {
+   "outfit": "greatcoat",
+   "robe": "#6a3a2a",
+   "hair": "short",
+   "hairColor": "#3a2414",
+   "head": "newsboy-cap",
+   "headColor": "#4a4a52"
+  }
+ },
+ "shots": [
+  {
+   "id": "lh01",
+   "dur": 2.6,
+   "vo": "For a hundred years, the light on Black Rock has never missed a night.",
+   "screen": "Learns: a lonely lighthouse in a storm. Happens: the beam sweeps across the sea and catches a tossing steamer; lightning on 'night'. Changes: the storm is established, the light is the hero.",
+   "bg": {
+    "kind": "sea",
+    "preset": "storm",
+    "horizon": 0.62,
+    "cliffs": "left"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "focus": [
+     0.6,
+     0.45
+    ],
+    "shake": [
+     {
+      "at": 1.5,
+      "dur": 0.4,
+      "amp": 6
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "steamer",
+     "id": "ship",
+     "x": 0.16,
+     "y": 0.66,
+     "size": 300,
+     "enter": "none",
+     "sway": 4,
+     "swayHz": 0.6,
+     "bob": 6,
+     "bobHz": 0.7,
+     "move": [
+      {
+       "at": 0,
+       "dur": 3.0,
+       "to": [
+        0.24,
+        0.66
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "whirlpool",
+     "id": "pool1",
+     "x": 0.3,
+     "y": 0.86,
+     "size": 300,
+     "alpha": 0.8
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh1_rock",
+     "x": 0.7,
+     "y": 0.8848148148148147,
+     "size": 640.0,
+     "pts": [
+      [
+       -0.5,
+       0.14
+      ],
+      [
+       -0.34,
+       -0.06
+      ],
+      [
+       -0.1,
+       -0.14
+      ],
+      [
+       0.14,
+       -0.12
+      ],
+      [
+       0.36,
+       -0.05
+      ],
+      [
+       0.5,
+       0.14
+      ]
+     ],
+     "rough": 0.9,
+     "color": "#4b4752",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh1_beam",
+     "x": 0.7,
+     "y": 0.2607407407407407,
+     "size": 1500,
+     "at": 0,
+     "pts": [
+      [
+       0,
+       -0.012
+      ],
+      [
+       -0.5,
+       -0.085
+      ],
+      [
+       -0.5,
+       0.085
+      ],
+      [
+       0,
+       0.012
+      ]
+     ],
+     "rough": 0,
+     "outline": false,
+     "shade": false,
+     "color": "#fff3b8",
+     "alpha": 0.55,
+     "glow": {
+      "color": "#fff6c8",
+      "blur": 30,
+      "pulse": 0.1
+     },
+     "rot": 8,
+     "enter": "fade",
+     "enterDur": 0.3,
+     "move": [
+      {
+       "at": 0.0,
+       "dur": 2.6,
+       "rot": -9,
+       "ease": "inOut"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh1_tower",
+     "x": 0.7,
+     "y": 0.5607407407407408,
+     "size": 560,
+     "pts": [
+      [
+       -0.16,
+       0.5
+      ],
+      [
+       -0.1,
+       -0.5
+      ],
+      [
+       0.1,
+       -0.5
+      ],
+      [
+       0.16,
+       0.5
+      ]
+     ],
+     "rough": 0,
+     "color": "#ece4d4",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh1_band0",
+     "x": 0.7,
+     "y": 0.5607407407407408,
+     "size": 560,
+     "pts": [
+      [
+       -0.1192,
+       -0.18
+      ],
+      [
+       -0.11080000000000001,
+       -0.32
+      ],
+      [
+       0.11080000000000001,
+       -0.32
+      ],
+      [
+       0.1192,
+       -0.18
+      ]
+     ],
+     "rough": 0,
+     "color": "#c8323a",
+     "shade": false,
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh1_band1",
+     "x": 0.7,
+     "y": 0.5607407407407408,
+     "size": 560,
+     "pts": [
+      [
+       -0.1414,
+       0.18999999999999995
+      ],
+      [
+       -0.133,
+       0.050000000000000044
+      ],
+      [
+       0.133,
+       0.050000000000000044
+      ],
+      [
+       0.1414,
+       0.18999999999999995
+      ]
+     ],
+     "rough": 0,
+     "color": "#c8323a",
+     "shade": false,
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh1_rail",
+     "x": 0.7,
+     "y": 0.29777777777777775,
+     "size": 190.0,
+     "pts": [
+      [
+       -0.5,
+       0.06
+      ],
+      [
+       -0.5,
+       -0.06
+      ],
+      [
+       0.5,
+       -0.06
+      ],
+      [
+       0.5,
+       0.06
+      ]
+     ],
+     "rough": 0,
+     "color": "#2e2a30",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh1_lamp",
+     "x": 0.7,
+     "y": 0.2607407407407407,
+     "size": 130.0,
+     "pts": [
+      [
+       -0.42,
+       0.34
+      ],
+      [
+       -0.42,
+       -0.34
+      ],
+      [
+       0.42,
+       -0.34
+      ],
+      [
+       0.42,
+       0.34
+      ]
+     ],
+     "rough": 0,
+     "color": "#ffe27a",
+     "enter": "none",
+     "glow": {
+      "color": "#fff1a8",
+      "blur": 40,
+      "pulse": 0.25
+     }
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh1_cap",
+     "x": 0.7,
+     "y": 0.19222222222222218,
+     "size": 170.0,
+     "pts": [
+      [
+       -0.5,
+       0.24
+      ],
+      [
+       0,
+       -0.26
+      ],
+      [
+       0.5,
+       0.24
+      ]
+     ],
+     "rough": 0,
+     "color": "#c8323a",
+     "enter": "none"
+    },
+    {
+     "type": "fx",
+     "kind": "lightning",
+     "id": "bolt1",
+     "x": 0.42,
+     "y": 0.2,
+     "h": 420,
+     "count": 2,
+     "at": 1.5,
+     "out": 1.75
+    },
+    {
+     "type": "fx",
+     "kind": "flash",
+     "id": "flash1",
+     "at": 1.5,
+     "dur": 0.25,
+     "strength": 0.6,
+     "hud": true
+    },
+    {
+     "type": "fx",
+     "kind": "rain",
+     "id": "rain1",
+     "hud": true,
+     "density": 110,
+     "angle": 10
+    },
+    {
+     "type": "title",
+     "text": "THE LAST KEEPER",
+     "x": 0.3,
+     "y": 0.2,
+     "size": 120,
+     "color": "#f2c230",
+     "at": 0.5,
+     "sub": "BLACK ROCK LIGHT",
+     "subColor": "#e8e0d0"
+    }
+   ]
+  },
+  {
+   "id": "lh02",
+   "dur": 2.4,
+   "vo": "Every night, old Silas writes the same three lines.",
+   "screen": "Learns: the keeper's routine. Happens: Silas raises his candle; the log pops in and three boxes tick one by one. Changes: the routine is set up so it can break.",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "wear": 0.4,
+    "window": "night"
+   },
+   "grade": "gaslight",
+   "camera": {
+    "zoom": [
+     1.02,
+     1.07
+    ],
+    "focus": [
+     0.45,
+     0.5
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "silas2",
+     "who": "silas",
+     "x": 0.3,
+     "y": 0.98,
+     "size": 640,
+     "pose": "hold",
+     "hold": "candle",
+     "expr": [
+      {
+       "at": 0,
+       "v": "content"
+      },
+      {
+       "at": 1.6,
+       "v": "smug-closed"
+      }
+     ],
+     "talk": [
+      [
+       0.2,
+       1.4
+      ]
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "lightpool",
+     "id": "pool2",
+     "follow": "silas2",
+     "part": "hand",
+     "r": 520,
+     "dark": 0.72
+    },
+    {
+     "type": "doc",
+     "kind": "checklist",
+     "id": "log2",
+     "x": 0.7,
+     "y": 0.5,
+     "w": 760,
+     "rot": 3,
+     "at": 0.3,
+     "title": "KEEPER'S LOG",
+     "lines": [
+      "LAMP LIT",
+      "SHIPS SAFE",
+      "ALONE"
+     ],
+     "lineSize": 52,
+     "rowH": 92,
+     "checks": [
+      {
+       "row": 0,
+       "at": 0.5
+      },
+      {
+       "row": 1,
+       "at": 0.9
+      },
+      {
+       "row": 2,
+       "at": 1.3
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "lh03",
+   "dur": 3.0,
+   "vo": "Tonight he adds a fourth line: someone is on the stairs.",
+   "screen": "Learns: he is not alone. Happens: slow push-in; the door creaks open behind his back, a silhouette fades in, red eyes blink on. Changes: the safe room is invaded; Silas freezes.",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "wear": 0.4,
+    "window": "night"
+   },
+   "grade": "horror",
+   "vignette": {
+    "strength": 0.85,
+    "x": 0.45,
+    "radius": 0.55
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.1
+    ],
+    "focus": [
+     0.4,
+     0.55
+    ],
+    "ease": "inOut"
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "door",
+     "id": "door3",
+     "x": 0.2,
+     "y": 0.84,
+     "size": 560,
+     "color": "#5a3a26",
+     "enter": "none",
+     "open": {
+      "at": 0.5,
+      "dur": 0.8
+     },
+     "behind": "#6f8094"
+    },
+    {
+     "type": "bean",
+     "id": "lurk3",
+     "who": "relief",
+     "x": 0.2,
+     "y": 0.84,
+     "size": 470,
+     "silhouette": "#0b0807",
+     "blink": false,
+     "at": 1.0,
+     "enter": "fade",
+     "enterDur": 1.4
+    },
+    {
+     "type": "fx",
+     "kind": "redeyes",
+     "id": "eyes3",
+     "x": 0.212,
+     "y": 0.47,
+     "at": 2.3,
+     "gap": 40,
+     "size": 16,
+     "blink": [
+      0.5
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "silas3",
+     "who": "silas",
+     "x": 0.64,
+     "y": 0.99,
+     "size": 660,
+     "hold": "candle",
+     "pose": "hold",
+     "gaze": 6,
+     "tremble": [
+      [
+       2.4,
+       3.0
+      ]
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 2.4,
+       "v": "worried"
+      }
+     ]
+    },
+    {
+     "type": "caption",
+     "text": "4. SOMEONE IS ON THE STAIRS",
+     "x": 0.6,
+     "y": 0.13,
+     "size": 60,
+     "at": 1.6,
+     "color": "#ffe9d0"
+    }
+   ]
+  },
+  {
+   "id": "lh04",
+   "dur": 1.3,
+   "vo": "(a crash)",
+   "screen": "Learns: the threat is huge. Happens: hard cut to black, a horned shadow swells, giant red eyes, the frame shakes and splits colour. Changes: dread becomes terror.",
+   "bg": {
+    "kind": "flat",
+    "color": "#050404"
+   },
+   "camera": {
+    "zoom": [
+     1.06,
+     1.12
+    ],
+    "shake": [
+     {
+      "at": 0,
+      "dur": 1.3,
+      "amp": 9
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "wallshadow",
+     "id": "ws4",
+     "x": 0.5,
+     "y": 1.05,
+     "size": 980,
+     "grow": 0.15,
+     "hornsAt": 0,
+     "eyesAt": 0,
+     "alpha": 1,
+     "color": "#1b1210"
+    },
+    {
+     "type": "fx",
+     "kind": "redeyes",
+     "id": "eyes4",
+     "x": 0.5,
+     "y": 0.42,
+     "gap": 200,
+     "size": 38,
+     "bloom": 44
+    },
+    {
+     "type": "fx",
+     "kind": "flash",
+     "id": "flash4",
+     "dur": 0.2,
+     "strength": 0.7,
+     "color": "#ff3020",
+     "hud": true
+    },
+    {
+     "type": "fx",
+     "kind": "rgbsplit",
+     "id": "split4",
+     "dur": 1.3,
+     "offset": 7,
+     "hud": true
+    }
+   ]
+  },
+  {
+   "id": "lh05",
+   "dur": 1.7,
+   "vo": "He shut his eyes...",
+   "screen": "Learns: Silas cannot face it. Happens: a screaming close-up in a red-only world; his own eyelids close over the frame. Changes: the picture goes black.",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "wear": 0.4,
+    "window": "night"
+   },
+   "grade": "mono-red",
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ],
+    "rot": [
+     {
+      "at": 0,
+      "v": 0
+     },
+     {
+      "at": 0.3,
+      "v": -6
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "silas5",
+     "who": "silas",
+     "x": 0.5,
+     "y": 1.45,
+     "size": 1300,
+     "expr": "scream",
+     "tremble": [
+      [
+       0,
+       1.7
+      ]
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "redeyes",
+     "id": "eyes5",
+     "x": 0.115,
+     "y": 0.2,
+     "gap": 26,
+     "size": 10,
+     "bloom": 16
+    },
+    {
+     "type": "fx",
+     "kind": "eyelids",
+     "id": "lids5",
+     "at": 0.7,
+     "dur": 0.8,
+     "mode": "close",
+     "hud": true
+    }
+   ]
+  },
+  {
+   "id": "lh06",
+   "dur": 2.6,
+   "transition": {
+    "kind": "glow-open",
+    "dur": 0.9,
+    "at": [
+     0.3,
+     0.45
+    ]
+   },
+   "vo": "...but it was only the new keeper. And the room was empty.",
+   "screen": "Learns: the monster was a man with a lantern, and Silas is gone. Happens: a torch orb opens on the relief keeper; cobwebs, the empty chair; his face snaps to shock. Changes: the threat flips; the mystery begins.",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "wear": 1.0,
+    "window": "night"
+   },
+   "grade": "gaslight",
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "focus": [
+     0.45,
+     0.5
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "cobweb",
+     "id": "web6a",
+     "x": 0.08,
+     "y": 0.12,
+     "size": 380,
+     "corner": "tl",
+     "spider": true,
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "cobweb",
+     "id": "web6b",
+     "x": 0.92,
+     "y": 0.12,
+     "size": 320,
+     "corner": "tr",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "armchair",
+     "id": "chair6",
+     "x": 0.66,
+     "y": 0.92,
+     "size": 480,
+     "color": "#5a2a30",
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "relief6",
+     "who": "relief",
+     "x": 0.3,
+     "y": 0.98,
+     "size": 640,
+     "hold": "torch",
+     "pose": "hold",
+     "expr": [
+      {
+       "at": 0,
+       "v": "worried"
+      },
+      {
+       "at": 1.5,
+       "v": "shock"
+      }
+     ],
+     "snapTilt": 6
+    },
+    {
+     "type": "fx",
+     "kind": "lightpool",
+     "id": "pool6",
+     "follow": "relief6",
+     "part": "hand",
+     "r": 620,
+     "dark": 0.55
+    },
+    {
+     "type": "label",
+     "tag": "1924",
+     "text": "THE NEW KEEPER",
+     "x": 0.2,
+     "y": 0.2,
+     "size": 64,
+     "at": 1.0,
+     "arrow": "down-right"
+    },
+    {
+     "type": "label",
+     "text": "EMPTY",
+     "x": 0.72,
+     "y": 0.42,
+     "size": 72,
+     "color": "#ff6b6b",
+     "at": 1.6,
+     "arrow": "down"
+    }
+   ]
+  },
+  {
+   "id": "lh07",
+   "dur": 2.6,
+   "transition": {
+    "kind": "fade-white",
+    "dur": 0.4
+   },
+   "vo": "Silas vanished in the great storm of 1894.",
+   "screen": "Learns: the twist; Silas has been gone for thirty years. Happens: a sepia newspaper spins in over the storm, MISSING slams on 1894. Changes: the keeper we watched cannot be alive.",
+   "bg": {
+    "kind": "sea",
+    "preset": "storm",
+    "horizon": 0.62
+   },
+   "grade": "sepia",
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 1.3,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "rain",
+     "id": "rain7",
+     "hud": true,
+     "density": 70,
+     "angle": 10
+    },
+    {
+     "type": "doc",
+     "kind": "newspaper",
+     "id": "news7",
+     "x": 0.5,
+     "y": 0.52,
+     "w": 700,
+     "h": 900,
+     "rot": -4,
+     "at": 0.15,
+     "masthead": "THE COAST GAZETTE",
+     "date": "NOV 4, 1894",
+     "headline": "KEEPER LOST IN STORM",
+     "subhead": "Black Rock light found burning",
+     "photo": {
+      "who": "silas",
+      "bg": "#cbbf9a"
+     },
+     "grayscale": true
+    },
+    {
+     "type": "doc",
+     "kind": "stamp",
+     "id": "stamp7",
+     "x": 0.7,
+     "y": 0.66,
+     "text": "MISSING",
+     "size": 110,
+     "at": 1.3
+    }
+   ]
+  },
+  {
+   "id": "lh08",
+   "dur": 2.9,
+   "vo": "Yet tonight's entry is in fresh ink: not alone anymore.",
+   "screen": "Learns: Silas never left. Happens: the log's last line ticks by itself; the relief keeper freezes; focus racks to a smiling ghost of Silas behind him. Changes: the scare becomes a haunting, almost warm.",
+   "bg": {
+    "kind": "room",
+    "variant": "parlour",
+    "wear": 1.0,
+    "window": "night"
+   },
+   "grade": "moonlit",
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "focus": [
+     0.5,
+     0.45
+    ]
+   },
+   "focus": [
+    {
+     "at": 0,
+     "on": "relief8",
+     "px": 8
+    },
+    {
+     "at": 1.9,
+     "on": "ghost8",
+     "dur": 0.4,
+     "px": 10
+    }
+   ],
+   "layers": [
+    {
+     "type": "bean",
+     "id": "ghost8",
+     "who": "silas",
+     "x": 0.58,
+     "y": 0.9,
+     "size": 560,
+     "pose": "wave",
+     "expr": "content",
+     "material": {
+      "kind": "ghost",
+      "alpha": 0.6
+     },
+     "glow": {
+      "color": "#dff2ff",
+      "blur": 26
+     },
+     "at": 1.7,
+     "enter": "fade",
+     "enterDur": 0.5
+    },
+    {
+     "type": "bean",
+     "id": "relief8",
+     "who": "relief",
+     "x": 0.3,
+     "y": 1.02,
+     "size": 700,
+     "hold": "torch",
+     "pose": "hold",
+     "expr": [
+      {
+       "at": 0,
+       "v": "worried"
+      },
+      {
+       "at": 1.4,
+       "v": "hollow"
+      }
+     ],
+     "gaze": -6
+    },
+    {
+     "type": "doc",
+     "kind": "checklist",
+     "id": "log8",
+     "x": 0.77,
+     "y": 0.25,
+     "w": 560,
+     "rot": -3,
+     "at": 0.1,
+     "title": "LOG, TONIGHT",
+     "lines": [
+      "LAMP LIT",
+      "SHIPS SAFE",
+      "NOT ALONE ANYMORE"
+     ],
+     "lineSize": 44,
+     "rowH": 70,
+     "checks": [
+      {
+       "row": 0,
+       "at": 0.2
+      },
+      {
+       "row": 1,
+       "at": 0.25
+      },
+      {
+       "row": 2,
+       "at": 1.2,
+       "color": "#3a7ad0"
+      }
+     ],
+     "strikes": []
+    }
+   ]
+  },
+  {
+   "id": "lh09",
+   "dur": 2.8,
+   "transition": {
+    "kind": "swarm",
+    "creature": "bat",
+    "dur": 1.0,
+    "count": 110
+   },
+   "vo": "The light on Black Rock still turns. They say it has two keepers now.",
+   "screen": "Payoff: Learns: the light is kept by the dead. Happens: bats clear to the calm night rock, the beam sweeps, two ghostly faces glow in the lamp room. Changes: the opening image, now understood.",
+   "bg": {
+    "kind": "sea",
+    "preset": "night",
+    "horizon": 0.64
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "focus": [
+     0.6,
+     0.4
+    ]
+   },
+   "layers": [
+    {
+     "type": "fx",
+     "kind": "mist",
+     "id": "mist9",
+     "x": 0.5,
+     "y": 0.8,
+     "w": 1800,
+     "count": 9,
+     "rise": 200
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh9_rock",
+     "x": 0.68,
+     "y": 0.9094444444444444,
+     "size": 685.7142857142857,
+     "pts": [
+      [
+       -0.5,
+       0.14
+      ],
+      [
+       -0.34,
+       -0.06
+      ],
+      [
+       -0.1,
+       -0.14
+      ],
+      [
+       0.14,
+       -0.12
+      ],
+      [
+       0.36,
+       -0.05
+      ],
+      [
+       0.5,
+       0.14
+      ]
+     ],
+     "rough": 0.9,
+     "color": "#4b4752",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh9_beam",
+     "x": 0.68,
+     "y": 0.24079365079365073,
+     "size": 1700,
+     "at": 0,
+     "pts": [
+      [
+       0,
+       -0.012
+      ],
+      [
+       -0.5,
+       -0.085
+      ],
+      [
+       -0.5,
+       0.085
+      ],
+      [
+       0,
+       0.012
+      ]
+     ],
+     "rough": 0,
+     "outline": false,
+     "shade": false,
+     "color": "#fff3b8",
+     "alpha": 0.5,
+     "glow": {
+      "color": "#fff6c8",
+      "blur": 30,
+      "pulse": 0.1
+     },
+     "rot": 14,
+     "enter": "fade",
+     "enterDur": 0.3,
+     "move": [
+      {
+       "at": 0.0,
+       "dur": 2.8,
+       "rot": -6,
+       "ease": "inOut"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh9_tower",
+     "x": 0.68,
+     "y": 0.5622222222222222,
+     "size": 600,
+     "pts": [
+      [
+       -0.16,
+       0.5
+      ],
+      [
+       -0.1,
+       -0.5
+      ],
+      [
+       0.1,
+       -0.5
+      ],
+      [
+       0.16,
+       0.5
+      ]
+     ],
+     "rough": 0,
+     "color": "#ece4d4",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh9_band0",
+     "x": 0.68,
+     "y": 0.5622222222222222,
+     "size": 600,
+     "pts": [
+      [
+       -0.1192,
+       -0.18
+      ],
+      [
+       -0.11080000000000001,
+       -0.32
+      ],
+      [
+       0.11080000000000001,
+       -0.32
+      ],
+      [
+       0.1192,
+       -0.18
+      ]
+     ],
+     "rough": 0,
+     "color": "#c8323a",
+     "shade": false,
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh9_band1",
+     "x": 0.68,
+     "y": 0.5622222222222222,
+     "size": 600,
+     "pts": [
+      [
+       -0.1414,
+       0.18999999999999995
+      ],
+      [
+       -0.133,
+       0.050000000000000044
+      ],
+      [
+       0.133,
+       0.050000000000000044
+      ],
+      [
+       0.1414,
+       0.18999999999999995
+      ]
+     ],
+     "rough": 0,
+     "color": "#c8323a",
+     "shade": false,
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh9_rail",
+     "x": 0.68,
+     "y": 0.28047619047619043,
+     "size": 203.57142857142856,
+     "pts": [
+      [
+       -0.5,
+       0.06
+      ],
+      [
+       -0.5,
+       -0.06
+      ],
+      [
+       0.5,
+       -0.06
+      ],
+      [
+       0.5,
+       0.06
+      ]
+     ],
+     "rough": 0,
+     "color": "#2e2a30",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh9_lamp",
+     "x": 0.68,
+     "y": 0.24079365079365073,
+     "size": 139.28571428571428,
+     "pts": [
+      [
+       -0.42,
+       0.34
+      ],
+      [
+       -0.42,
+       -0.34
+      ],
+      [
+       0.42,
+       -0.34
+      ],
+      [
+       0.42,
+       0.34
+      ]
+     ],
+     "rough": 0,
+     "color": "#ffe27a",
+     "enter": "none",
+     "glow": {
+      "color": "#fff1a8",
+      "blur": 40,
+      "pulse": 0.25
+     }
+    },
+    {
+     "type": "prop",
+     "kind": "region",
+     "id": "lh9_cap",
+     "x": 0.68,
+     "y": 0.16738095238095232,
+     "size": 182.14285714285714,
+     "pts": [
+      [
+       -0.5,
+       0.24
+      ],
+      [
+       0,
+       -0.26
+      ],
+      [
+       0.5,
+       0.24
+      ]
+     ],
+     "rough": 0,
+     "color": "#c8323a",
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "id": "ghost9a",
+     "who": "silas",
+     "x": 0.765,
+     "y": 0.84,
+     "size": 170,
+     "pose": "hold",
+     "hold": "candle",
+     "material": {
+      "kind": "ghost",
+      "alpha": 0.7
+     },
+     "glow": {
+      "color": "#dff2ff",
+      "blur": 18
+     },
+     "at": 1.2,
+     "enter": "fade",
+     "enterDur": 0.6
+    },
+    {
+     "type": "bean",
+     "id": "ghost9b",
+     "who": "relief",
+     "x": 0.845,
+     "y": 0.87,
+     "size": 170,
+     "pose": "wave",
+     "flip": true,
+     "material": {
+      "kind": "ghost",
+      "alpha": 0.7
+     },
+     "glow": {
+      "color": "#dff2ff",
+      "blur": 18
+     },
+     "at": 1.6,
+     "enter": "fade",
+     "enterDur": 0.6
+    },
+    {
+     "type": "title",
+     "text": "THE LIGHT STILL TURNS",
+     "x": 0.235,
+     "y": 0.84,
+     "size": 84,
+     "color": "#e8f0ff",
+     "at": 1.0
+    }
+   ]
+  }
+ ]
+}

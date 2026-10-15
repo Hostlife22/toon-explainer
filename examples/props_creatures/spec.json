@@ -2135,6 +2135,649 @@
           "flip": true
         }
       ]
+    },
+    {
+      "id": "p35_claw_crane",
+      "dur": 3.2,
+      "vo": "The prize was lowered from above, and the claw let go.",
+      "bg": {
+        "kind": "interior",
+        "wall": "#5a6a8a",
+        "floor": "#3a3a4a",
+        "light": false
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.03
+        ]
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "kind": "crate",
+          "x": 0.5,
+          "y": 0.8,
+          "size": 220
+        },
+        {
+          "type": "prop",
+          "kind": "claw-crane",
+          "x": 0.5,
+          "y": 0.6,
+          "size": 360,
+          "enter": "none",
+          "load": "moneybag",
+          "drop": {
+            "at": 0.3,
+            "dur": 0.9,
+            "from": 1.1
+          },
+          "releaseAt": 1.5
+        },
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.2,
+          "y": 0.88,
+          "size": 400,
+          "pose": [
+            {
+              "at": 0,
+              "v": "shade-eyes"
+            },
+            {
+              "at": 1.55,
+              "v": "arms-up"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "worried"
+            },
+            {
+              "at": 1.55,
+              "v": "star-eyes"
+            }
+          ]
+        },
+        {
+          "type": "bean",
+          "who": "spy",
+          "x": 0.8,
+          "y": 0.88,
+          "size": 400,
+          "flip": true,
+          "pose": "rub-hands",
+          "expr": "smug"
+        },
+        {
+          "type": "label",
+          "text": "CLAW CRANE",
+          "x": 0.2,
+          "y": 0.15,
+          "size": 64,
+          "tag": "LOAD, RELEASE, RISE",
+          "at": 0.2
+        }
+      ]
+    },
+    {
+      "id": "p36_rosette_bone",
+      "dur": 3.0,
+      "vo": "The winner got a ribbon. The loser got the bone.",
+      "bg": {
+        "kind": "flat",
+        "color": "#e8dcc0"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "host",
+          "x": 0.32,
+          "y": 0.94,
+          "size": 560,
+          "pose": "hips",
+          "expr": "smug"
+        },
+        {
+          "type": "prop",
+          "kind": "rosette",
+          "x": 0.335,
+          "y": 0.75,
+          "size": 190,
+          "text": "FIRST\nPRIZE",
+          "swing": true,
+          "at": 0.4,
+          "enter": "pop"
+        },
+        {
+          "type": "bean",
+          "who": "messenger",
+          "x": 0.7,
+          "y": 0.94,
+          "size": 560,
+          "flip": true,
+          "pose": "offer",
+          "hold": "meat-bone",
+          "expr": "sad"
+        },
+        {
+          "type": "label",
+          "text": "ROSETTE  MEAT-BONE",
+          "x": 0.5,
+          "y": 0.13,
+          "size": 60,
+          "at": 0.2
+        }
+      ]
+    },
+    {
+      "id": "p37_bucket",
+      "dur": 3.0,
+      "vo": "One carried the water. The other wore the bucket.",
+      "bg": {
+        "kind": "sky",
+        "preset": "day",
+        "clouds": 2,
+        "ground": "grass"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.3,
+          "y": 0.92,
+          "size": 520,
+          "pose": "hold",
+          "hold": "bucket",
+          "expr": "happy"
+        },
+        {
+          "type": "bean",
+          "who": "doctor",
+          "x": 0.7,
+          "y": 0.92,
+          "size": 520,
+          "flip": true,
+          "pose": "shrug",
+          "expr": "side-eye"
+        },
+        {
+          "type": "prop",
+          "kind": "bucket",
+          "x": 0.7,
+          "y": 0.462,
+          "size": 240,
+          "upside": true,
+          "at": 0.8,
+          "enter": "drop"
+        },
+        {
+          "type": "label",
+          "text": "BUCKET",
+          "x": 0.5,
+          "y": 0.13,
+          "size": 64,
+          "tag": "HELD AND WORN",
+          "at": 0.2
+        }
+      ]
+    },
+    {
+      "id": "p38_meat_grinder",
+      "dur": 3.4,
+      "vo": "In went the ham, out came the sausage.",
+      "bg": {
+        "kind": "interior",
+        "wall": "#c9b48a",
+        "floor": "#7a5a3c"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "kind": "meat-grinder",
+          "x": 0.38,
+          "y": 0.86,
+          "size": 520,
+          "feed": "meat-bone",
+          "feedAt": 0.4,
+          "crank": [
+            [
+              0.8,
+              3.2
+            ]
+          ],
+          "extrude": {
+            "at": 1.0,
+            "dur": 2.2,
+            "len": 640
+          }
+        },
+        {
+          "type": "bean",
+          "who": "doctor",
+          "x": 0.14,
+          "y": 0.88,
+          "size": 400,
+          "pose": "grab",
+          "expr": "squint"
+        },
+        {
+          "type": "bean",
+          "who": "kid",
+          "x": 0.86,
+          "y": 0.88,
+          "size": 360,
+          "flip": true,
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 1.8,
+              "v": "cheeks"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 1.8,
+              "v": "shock"
+            }
+          ]
+        },
+        {
+          "type": "label",
+          "text": "MEAT GRINDER",
+          "x": 0.5,
+          "y": 0.12,
+          "size": 64,
+          "tag": "FEED, CRANK, EXTRUDE",
+          "at": 0.2
+        }
+      ]
+    },
+    {
+      "id": "p39_cobweb_peel",
+      "dur": 3.2,
+      "vo": "Years later the hall was empty, except for one banana peel.",
+      "bg": {
+        "kind": "interior",
+        "wall": "#8a7a6a",
+        "floor": "#5a4a3a",
+        "light": false
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "kind": "cobweb",
+          "x": 0.11,
+          "y": 0.2,
+          "size": 400,
+          "corner": "tl"
+        },
+        {
+          "type": "prop",
+          "kind": "cobweb",
+          "x": 0.89,
+          "y": 0.2,
+          "size": 400,
+          "corner": "tr",
+          "spider": true
+        },
+        {
+          "type": "prop",
+          "kind": "banana-peel",
+          "x": 0.42,
+          "y": 0.86,
+          "size": 300
+        },
+        {
+          "type": "bean",
+          "who": "messenger",
+          "x": 1.1,
+          "y": 0.88,
+          "size": 400,
+          "flip": true,
+          "walk": [
+            [
+              0,
+              1.6
+            ]
+          ],
+          "move": [
+            {
+              "at": 0,
+              "dur": 1.6,
+              "to": [
+                0.66,
+                0.88
+              ],
+              "ease": "linear"
+            }
+          ],
+          "pose": [
+            {
+              "at": 0,
+              "v": "idle"
+            },
+            {
+              "at": 1.7,
+              "v": "point"
+            }
+          ],
+          "expr": [
+            {
+              "at": 0,
+              "v": "neutral"
+            },
+            {
+              "at": 1.7,
+              "v": "shock"
+            }
+          ]
+        },
+        {
+          "type": "label",
+          "text": "COBWEB  BANANA PEEL",
+          "x": 0.5,
+          "y": 0.13,
+          "size": 60,
+          "at": 0.2
+        }
+      ]
+    },
+    {
+      "id": "p40_region",
+      "dur": 3.2,
+      "vo": "The province was lifted off the map and crowned.",
+      "bg": {
+        "kind": "flat",
+        "color": "#8ac8e8"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "kind": "region",
+          "x": 0.3,
+          "y": 0.55,
+          "size": 520,
+          "rough": 0.9,
+          "color": "#7fae4a",
+          "face": "worried",
+          "label": "Lowmark",
+          "seed": "lowmark"
+        },
+        {
+          "type": "prop",
+          "kind": "region",
+          "x": 0.7,
+          "y": 0.6,
+          "size": 520,
+          "rough": 0.5,
+          "color": "#d9a54a",
+          "seed": "highmark",
+          "pts": [
+            [
+              -0.4,
+              -0.2
+            ],
+            [
+              -0.1,
+              -0.42
+            ],
+            [
+              0.3,
+              -0.32
+            ],
+            [
+              0.44,
+              0.05
+            ],
+            [
+              0.2,
+              0.4
+            ],
+            [
+              -0.25,
+              0.35
+            ],
+            [
+              -0.45,
+              0.1
+            ]
+          ],
+          "face": {
+            "mood": "happy"
+          },
+          "label": "Highmark",
+          "move": [
+            {
+              "at": 0.6,
+              "dur": 0.8,
+              "to": [
+                0.7,
+                0.52
+              ],
+              "scale": 1.12,
+              "ease": "outBack"
+            }
+          ],
+          "material": {
+            "kind": "gold",
+            "at": 1.5,
+            "dur": 0.5
+          }
+        },
+        {
+          "type": "label",
+          "text": "REGION PROP",
+          "x": 0.5,
+          "y": 0.12,
+          "size": 64,
+          "tag": "FACE, LABEL, ROUGH COAST",
+          "at": 0.2
+        }
+      ]
+    },
+    {
+      "id": "p41_coin_gavel",
+      "dur": 3.0,
+      "vo": "The verdict went to the highest bidder.",
+      "bg": {
+        "kind": "interior",
+        "wall": "#7a4a3a",
+        "floor": "#4a3022"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.05
+        ],
+        "shake": [
+          {
+            "at": 1.2,
+            "dur": 0.15,
+            "amp": 8
+          },
+          {
+            "at": 2.2,
+            "dur": 0.15,
+            "amp": 8
+          }
+        ]
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "kind": "coin-gavel",
+          "x": 0.42,
+          "y": 0.52,
+          "size": 620,
+          "enter": "drop-squash",
+          "strike": [
+            1.1,
+            2.1
+          ]
+        },
+        {
+          "type": "bean",
+          "who": "king",
+          "x": 0.82,
+          "y": 0.88,
+          "size": 420,
+          "flip": true,
+          "pose": "rub-hands",
+          "expr": "dollar"
+        },
+        {
+          "type": "label",
+          "text": "COIN GAVEL",
+          "x": 0.5,
+          "y": 0.12,
+          "size": 64,
+          "tag": "JUSTICE FOR SALE",
+          "at": 0.2
+        }
+      ]
+    },
+    {
+      "id": "p42_iso_tiles",
+      "dur": 3.0,
+      "vo": "The game board was split between two players.",
+      "bg": {
+        "kind": "flat",
+        "color": "#8ac8e8"
+      },
+      "camera": {
+        "zoom": [
+          1.0,
+          1.04
+        ]
+      },
+      "layers": [
+        {
+          "type": "prop",
+          "kind": "iso-tile",
+          "x": 0.5,
+          "y": 0.5,
+          "size": 340,
+          "building": "tower",
+          "owner": "#c8302a"
+        },
+        {
+          "type": "prop",
+          "kind": "iso-tile",
+          "x": 0.4115,
+          "y": 0.5787,
+          "size": 340,
+          "owner": "#c8302a"
+        },
+        {
+          "type": "prop",
+          "kind": "iso-tile",
+          "x": 0.5885,
+          "y": 0.5787,
+          "size": 340
+        },
+        {
+          "type": "prop",
+          "kind": "iso-tile",
+          "x": 0.3229,
+          "y": 0.6574,
+          "size": 340,
+          "building": "house",
+          "owner": "#c8302a"
+        },
+        {
+          "type": "prop",
+          "kind": "iso-tile",
+          "x": 0.5,
+          "y": 0.6574,
+          "size": 340,
+          "at": 0.8,
+          "enter": "drop-squash"
+        },
+        {
+          "type": "prop",
+          "kind": "iso-tile",
+          "x": 0.6771,
+          "y": 0.6574,
+          "size": 340,
+          "building": "house",
+          "owner": "#3a6ea5"
+        },
+        {
+          "type": "prop",
+          "kind": "iso-tile",
+          "x": 0.4115,
+          "y": 0.7361,
+          "size": 340,
+          "owner": "#3a6ea5"
+        },
+        {
+          "type": "prop",
+          "kind": "iso-tile",
+          "x": 0.5885,
+          "y": 0.7361,
+          "size": 340,
+          "owner": "#3a6ea5"
+        },
+        {
+          "type": "prop",
+          "kind": "iso-tile",
+          "x": 0.5,
+          "y": 0.8148,
+          "size": 340,
+          "building": "tower",
+          "owner": "#3a6ea5"
+        },
+        {
+          "type": "label",
+          "text": "ISO TILES",
+          "x": 0.5,
+          "y": 0.12,
+          "size": 64,
+          "tag": "OWNER, HOUSE, TOWER",
+          "at": 0.2
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,1652 @@
+{
+ "title": "The Great Emu War",
+ "fps": 30,
+ "seed": 1932,
+ "style": {
+  "grain": true,
+  "vignette": 0.26
+ },
+ "cast": {
+  "soldier": {
+   "outfit": "tunic",
+   "robe": "#a48a5a",
+   "head": "brodie",
+   "headColor": "#6d6a3c",
+   "hair": "short",
+   "hairColor": "#5a3a22",
+   "puttees": "#8a7550",
+   "belt": "#6b4a2a"
+  },
+  "soldier2": {
+   "outfit": "tunic",
+   "robe": "#9a8252",
+   "head": "brodie",
+   "headColor": "#62603a",
+   "hair": "short",
+   "hairColor": "#2a1d18",
+   "skin": "#e8c8a8",
+   "puttees": "#8a7550"
+  },
+  "sarge": {
+   "outfit": "tunic",
+   "robe": "#a48a5a",
+   "head": "brodie",
+   "headColor": "#6d6a3c",
+   "hair": "short",
+   "hairColor": "#7a4a2a",
+   "beard": "walrus",
+   "mustacheColor": "#7a4a2a",
+   "build": "fat",
+   "medals": 2
+  },
+  "farmer": {
+   "outfit": "overalls",
+   "bibColor": "#4a6a9a",
+   "robe": "#e8dcc4",
+   "legColor": "#4a6a9a",
+   "head": "wide-brim",
+   "headColor": "#c8a868",
+   "beard": "stubble",
+   "hairColor": "#6a4a2a",
+   "skin": "#f0c8a0"
+  }
+ },
+ "overlays": [
+  {
+   "from": 5.0,
+   "to": 19.6,
+   "hideIn": [
+    "e06_map"
+   ],
+   "layer": {
+    "type": "hud",
+    "kind": "chip",
+    "text": "MISSION: STOP THE EMUS",
+    "key": "EMUS",
+    "corner": "tr",
+    "size": 38
+   }
+  }
+ ],
+ "shots": [
+  {
+   "id": "e01_wheat",
+   "dur": 2.4,
+   "vo": "Western Australia, 1932. Twenty thousand emus march into the wheat.",
+   "screen": "a wheat field under a blue sky; emus sprint in from the right and start pecking; the counter slams 20,000 EMUS.",
+   "transition": "cut",
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4,
+    "hills": 2,
+    "horizon": 0.6,
+    "groundY": 0.72,
+    "ground": "#e2bd52"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "punch": [
+     {
+      "at": 1.15,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "image",
+     "id": "m1",
+     "x": 0.62,
+     "y": 0.78,
+     "w": 230,
+     "frames": {
+      "idle": "emu/emu-stand.svg",
+      "blink": "emu/emu-blink.svg"
+     },
+     "swap": [
+      {
+       "at": 0.6,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 0.87,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      },
+      {
+       "at": 1.3,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 1.57,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      },
+      {
+       "at": 1.9,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 2.17,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      }
+     ],
+     "flip": true
+    },
+    {
+     "type": "image",
+     "id": "m2",
+     "x": 0.83,
+     "y": 0.8,
+     "w": 250,
+     "frames": {
+      "idle": "emu/emu-stand.svg",
+      "blink": "emu/emu-blink.svg"
+     },
+     "swap": [
+      {
+       "at": 0.9,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 1.17,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      },
+      {
+       "at": 1.6,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 1.87,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      }
+     ],
+     "flip": true
+    },
+    {
+     "type": "image",
+     "id": "m3",
+     "x": 1.15,
+     "y": 0.92,
+     "w": 330,
+     "frames": {
+      "idle": "emu/emu-run-a.svg",
+      "talk": "emu/emu-run-b.svg"
+     },
+     "talk": [
+      [
+       0,
+       0.75
+      ]
+     ],
+     "flip": true,
+     "move": [
+      {
+       "at": 0,
+       "dur": 0.75,
+       "to": [
+        0.44,
+        0.92
+       ],
+       "ease": "outCubic"
+      }
+     ],
+     "swap": [
+      {
+       "at": 0.76,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       },
+       "talk": null
+      },
+      {
+       "at": 1.25,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 1.55,
+       "frames": {
+        "idle": "emu/emu-stand.svg"
+       }
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "m4",
+     "x": 1.3,
+     "y": 0.97,
+     "w": 360,
+     "frames": {
+      "idle": "emu/emu-run-a.svg",
+      "talk": "emu/emu-run-b.svg"
+     },
+     "talk": [
+      [
+       0,
+       1.0
+      ]
+     ],
+     "flip": true,
+     "move": [
+      {
+       "at": 0.2,
+       "dur": 0.85,
+       "to": [
+        0.74,
+        0.97
+       ],
+       "ease": "outCubic"
+      }
+     ],
+     "swap": [
+      {
+       "at": 1.06,
+       "frames": {
+        "idle": "emu/emu-shout.svg"
+       },
+       "talk": null
+      },
+      {
+       "at": 1.7,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "id": "d1",
+     "x": 0.46,
+     "y": 0.92,
+     "at": 0.7,
+     "count": 7
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "id": "d2",
+     "x": 0.76,
+     "y": 0.97,
+     "at": 1.0,
+     "count": 7
+    },
+    {
+     "type": "fx",
+     "kind": "birds",
+     "id": "b1",
+     "count": 4,
+     "x": 0.3,
+     "y": 0.2,
+     "dir": -1
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "id": "wheat",
+     "z": 1.35,
+     "count": 34,
+     "h": 170,
+     "color": "#b8902e",
+     "hi": "#f6dc78"
+    },
+    {
+     "type": "counter",
+     "x": 0.27,
+     "y": 0.3,
+     "from": 0,
+     "to": 20000,
+     "dur": 0.7,
+     "sep": ",",
+     "size": 150,
+     "color": "#ffe066",
+     "at": 0.3,
+     "enter": "slam"
+    },
+    {
+     "type": "label",
+     "text": "EMUS",
+     "x": 0.27,
+     "y": 0.47,
+     "size": 96,
+     "at": 1.15,
+     "enter": "slam"
+    },
+    {
+     "type": "era",
+     "small": "WESTERN AUSTRALIA",
+     "parts": [
+      [
+       "1932",
+       "#f2c230"
+      ],
+      [
+       "WHEATBELT",
+       "#fff"
+      ]
+     ],
+     "x": 0.025,
+     "y": 0.95,
+     "at": 0.2
+    }
+   ]
+  },
+  {
+   "id": "e02_papers",
+   "dur": 2.0,
+   "vo": "They eat everything. The farmers beg the army for help.",
+   "screen": "a crimson ray burst; two newspapers slap in 0.5 s apart, EMUS EAT EVERYTHING and FARMERS CALL THE ARMY; the farmer screams.",
+   "transition": {
+    "kind": "torn-split",
+    "dur": 0.35
+   },
+   "bg": {
+    "kind": "mood",
+    "variant": "rays",
+    "preset": "crimson",
+    "spin": 8
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "punch": [
+     {
+      "at": 1.05,
+      "amount": 0.08
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "newspaper",
+     "id": "np1",
+     "x": 0.36,
+     "y": 0.47,
+     "scale": 0.82,
+     "rot": -6,
+     "at": 0.2,
+     "masthead": "THE WHEATBELT WEEKLY",
+     "date": "NOVEMBER 1932",
+     "headline": "EMU INVASION!",
+     "subhead": "Twenty thousand birds, one very bad harvest",
+     "photo": {
+      "who": "farmer",
+      "bg": "#d9c890"
+     }
+    },
+    {
+     "type": "doc",
+     "kind": "newspaper",
+     "id": "np2",
+     "x": 0.62,
+     "y": 0.5,
+     "scale": 0.82,
+     "rot": 7,
+     "at": 0.85,
+     "masthead": "THE OUTBACK DAILY",
+     "date": "NOVEMBER 1932",
+     "headline": "SEND THE ARMY!",
+     "subhead": "Send the machine guns, they say",
+     "photo": {
+      "who": "soldier",
+      "bg": "#c8c0a8"
+     }
+    },
+    {
+     "type": "bean",
+     "id": "far",
+     "who": "farmer",
+     "x": 0.86,
+     "y": 1.12,
+     "size": 700,
+     "flip": true,
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 1.05,
+       "v": "clutch-head"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "worried"
+      },
+      {
+       "at": 1.05,
+       "v": "scream"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "fm",
+     "mark": "shout-jag",
+     "target": "far",
+     "at": 1.05,
+     "dur": 0.8
+    },
+    {
+     "type": "fx",
+     "kind": "sweat-spray",
+     "id": "fs",
+     "target": "far",
+     "at": 1.1,
+     "dur": 0.9
+    }
+   ]
+  },
+  {
+   "id": "e03_army",
+   "dur": 1.8,
+   "vo": "The army sends soldiers. And two machine guns.",
+   "screen": "a game splash: THE ARMY JOINS THE BATTLE!; a quest chip appears in the corner and stays: MISSION: STOP THE EMUS.",
+   "transition": {
+    "kind": "flash-cut"
+   },
+   "bg": {
+    "kind": "flat",
+    "color": "#7ec8f0"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "doc",
+     "kind": "joins",
+     "name": "THE ARMY",
+     "sub": "JOINS THE BATTLE!",
+     "who": "sarge",
+     "pose": "sword-up",
+     "expr": "angry",
+     "whoX": 0.2
+    }
+   ]
+  },
+  {
+   "id": "e04_jam",
+   "dur": 2.8,
+   "vo": "Day one. They open fire... and the gun jams.",
+   "screen": "a soldier behind sandbags fires three bursts at the far-off flock; CLICK; an error popup GUN JAMMED; the emus do not even look up.",
+   "transition": "cut",
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 3,
+    "hills": 2,
+    "horizon": 0.58,
+    "groundY": 0.68,
+    "ground": "#e2bd52"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "jump": [
+     {
+      "at": 1.25,
+      "zoom": 1.22,
+      "focus": [
+       0.3,
+       0.6
+      ]
+     }
+    ],
+    "shake": [
+     {
+      "at": 0.25,
+      "dur": 0.8,
+      "amp": 6
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "image",
+     "id": "f1",
+     "x": 0.66,
+     "y": 0.7,
+     "w": 150,
+     "frames": {
+      "idle": "emu/emu-stand.svg",
+      "blink": "emu/emu-blink.svg"
+     },
+     "swap": [
+      {
+       "at": 0.5,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 0.77,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      },
+      {
+       "at": 1.4,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 1.67,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      },
+      {
+       "at": 2.2,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 2.47,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      }
+     ],
+     "flip": true
+    },
+    {
+     "type": "image",
+     "id": "f2",
+     "x": 0.76,
+     "y": 0.72,
+     "w": 160,
+     "frames": {
+      "idle": "emu/emu-stand.svg",
+      "blink": "emu/emu-blink.svg"
+     },
+     "swap": [
+      {
+       "at": 0.9,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 1.17,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      },
+      {
+       "at": 1.8,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 2.07,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      }
+     ],
+     "flip": true
+    },
+    {
+     "type": "image",
+     "id": "f3",
+     "x": 0.86,
+     "y": 0.7,
+     "w": 150,
+     "frames": {
+      "idle": "emu/emu-stand.svg",
+      "blink": "emu/emu-blink.svg"
+     },
+     "swap": [
+      {
+       "at": 0.3,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 0.57,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      },
+      {
+       "at": 1.1,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 1.37,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      },
+      {
+       "at": 2.4,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 2.67,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      }
+     ],
+     "flip": true
+    },
+    {
+     "type": "image",
+     "id": "f4",
+     "x": 0.94,
+     "y": 0.74,
+     "w": 170,
+     "frames": {
+      "idle": "emu/emu-stand.svg",
+      "blink": "emu/emu-blink.svg"
+     },
+     "flip": true,
+     "swap": [
+      {
+       "at": 1.3,
+       "frames": {
+        "idle": "emu/emu-shout.svg"
+       }
+      },
+      {
+       "at": 2.0,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "gunner",
+     "who": "soldier",
+     "x": 0.26,
+     "y": 0.98,
+     "size": 560,
+     "pose": [
+      {
+       "at": 0,
+       "v": "hold"
+      },
+      {
+       "at": 1.25,
+       "v": "shrug"
+      },
+      {
+       "at": 2.0,
+       "v": "facepalm"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "angry"
+      },
+      {
+       "at": 1.25,
+       "v": "shock"
+      },
+      {
+       "at": 2.0,
+       "v": "grimace"
+      }
+     ],
+     "tremble": [
+      [
+       0.25,
+       1.05
+      ]
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "rifle",
+     "id": "gun",
+     "x": 0.38,
+     "y": 0.73,
+     "size": 380,
+     "rot": 92,
+     "enter": "none",
+     "shake": [
+      {
+       "at": 0.25,
+       "dur": 0.8,
+       "amp": 6
+      }
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "sandbags",
+     "id": "sb",
+     "z": 1.15,
+     "h": 0.2
+    },
+    {
+     "type": "fx",
+     "kind": "muzzle",
+     "id": "mz",
+     "x": 0.5,
+     "y": 0.68,
+     "at": 0.25,
+     "count": 6,
+     "spacing": 0,
+     "every": 0.13,
+     "dir": 1
+    },
+    {
+     "type": "fx",
+     "kind": "onomatopoeia",
+     "id": "click",
+     "text": "CLICK",
+     "x": 0.58,
+     "y": 0.42,
+     "size": 300,
+     "at": 1.15,
+     "dur": 1.0
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "q",
+     "mark": "question",
+     "target": "gunner",
+     "at": 1.3,
+     "dur": 1.5
+    },
+    {
+     "type": "fx",
+     "kind": "smoke",
+     "id": "sm",
+     "x": 0.5,
+     "y": 0.7,
+     "w": 160,
+     "count": 3,
+     "rise": 120,
+     "at": 1.15,
+     "scale": 0.6
+    },
+    {
+     "type": "doc",
+     "kind": "error",
+     "id": "err",
+     "x": 0.66,
+     "y": 0.3,
+     "scale": 1.6,
+     "at": 1.5,
+     "title": "ERROR",
+     "text": "GUN JAMMED AGAIN",
+     "button": "OK"
+    }
+   ]
+  },
+  {
+   "id": "e05_chase",
+   "dur": 2.8,
+   "vo": "So they chase the emus in a truck. Emus run at fifty kilometres an hour.",
+   "screen": "desert plain; the army car bounces after the flock, the emus pull away and leave it in their dust; label 50 KM/H.",
+   "transition": {
+    "kind": "whip",
+    "dir": "left",
+    "dur": 0.3
+   },
+   "bg": {
+    "kind": "desert",
+    "preset": "day",
+    "cacti": 3,
+    "horizon": 0.58,
+    "clouds": 3
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.08
+    ],
+    "pan": [
+     [
+      0,
+      0
+     ],
+     [
+      -60,
+      0
+     ]
+    ]
+   },
+   "layers": [
+    {
+     "type": "image",
+     "id": "r1",
+     "x": 0.52,
+     "y": 0.86,
+     "w": 260,
+     "frames": {
+      "idle": "emu/emu-run-a.svg",
+      "talk": "emu/emu-run-b.svg"
+     },
+     "talk": [
+      [
+       0,
+       2.8
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.8,
+       "to": [
+        1.02,
+        0.86
+       ],
+       "ease": "inQuad"
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "r2",
+     "x": 0.66,
+     "y": 0.93,
+     "w": 300,
+     "frames": {
+      "idle": "emu/emu-run-a.svg",
+      "talk": "emu/emu-run-b.svg"
+     },
+     "talk": [
+      [
+       0,
+       2.8
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.8,
+       "to": [
+        1.16,
+        0.93
+       ],
+       "ease": "inQuad"
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "r3",
+     "x": 0.78,
+     "y": 0.83,
+     "w": 230,
+     "frames": {
+      "idle": "emu/emu-run-a.svg",
+      "talk": "emu/emu-run-b.svg"
+     },
+     "talk": [
+      [
+       0,
+       2.8
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.8,
+       "to": [
+        1.1,
+        0.83
+       ],
+       "ease": "inQuad"
+      }
+     ]
+    },
+    {
+     "type": "vehicle",
+     "kind": "car1910",
+     "id": "truck",
+     "x": 0.1,
+     "y": 0.95,
+     "size": 600,
+     "color": "#5a6a3a",
+     "riders": [
+      "sarge",
+      "soldier"
+     ],
+     "drive": [
+      [
+       0,
+       2.8
+      ]
+     ],
+     "bobAmp": 9,
+     "enter": "none",
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.8,
+       "to": [
+        0.4,
+        0.95
+       ],
+       "ease": "out"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "id": "td",
+     "x": 0.14,
+     "y": 0.95,
+     "at": 0.4,
+     "count": 9
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "id": "td2",
+     "x": 0.22,
+     "y": 0.95,
+     "at": 1.3,
+     "count": 9
+    },
+    {
+     "type": "fx",
+     "kind": "speedlines",
+     "id": "spd",
+     "x": 0.6,
+     "y": 0.6,
+     "inner": 520,
+     "count": 50,
+     "at": 0.0,
+     "out": 1.0
+    },
+    {
+     "type": "label",
+     "text": "50 KM/H",
+     "tag": "EMU TOP SPEED",
+     "x": 0.5,
+     "y": 0.3,
+     "size": 110,
+     "at": 0.7,
+     "enter": "slam"
+    },
+    {
+     "type": "label",
+     "text": "TOO SLOW",
+     "x": 0.24,
+     "y": 0.5,
+     "size": 70,
+     "color": "#ffd0c8",
+     "at": 1.9,
+     "enter": "pop-tilt",
+     "arrow": "down"
+    }
+   ]
+  },
+  {
+   "id": "e06_map",
+   "dur": 3.0,
+   "vo": "For a month the army chases flocks across the map. The emus simply scatter.",
+   "screen": "an atlas map of the wheatbelt; a brawl cloud of tin hats zigzags across it, dropping blasts that turn to smoke; X marks for every miss; then the emus' brown blotches take the whole region: EMU LAND.",
+   "transition": {
+    "kind": "pixelate",
+    "dur": 0.4
+   },
+   "bg": {
+    "kind": "flat",
+    "color": "#5b72d6"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "map",
+     "id": "wb",
+     "style": "atlas",
+     "land": [
+      [
+       0.5,
+       0.52,
+       0.44,
+       0.4
+      ]
+     ],
+     "regions": [
+      {
+       "id": "belt",
+       "blob": [
+        0.5,
+        0.52,
+        0.34,
+        0.3
+       ],
+       "color": "#e2bd52",
+       "dur": 0.001,
+       "face": {
+        "mood": [
+         {
+          "at": 0,
+          "v": "worried"
+         },
+         {
+          "at": 1.6,
+          "v": "shock"
+         }
+        ],
+        "scale": 0.24
+       },
+       "faceOffset": [
+        0.18,
+        -0.1
+       ],
+       "conquer": {
+        "by": "#7a5a44",
+        "pattern": "blotch",
+        "chunk": [
+         0.66,
+         0.6
+        ],
+        "blobs": 18,
+        "at": 1.75,
+        "dur": 0.9,
+        "mood": "cry"
+       },
+       "label": {
+        "text": "WHEATBELT",
+        "size": 60
+       }
+      }
+     ],
+     "words": [
+      {
+       "text": "EMU LAND",
+       "x": 0.5,
+       "y": 0.68,
+       "style": "extrude",
+       "size": 170,
+       "rot": -6,
+       "at": 2.3
+      }
+     ],
+     "cities": [
+      {
+       "x": 0.3,
+       "y": 0.36,
+       "icon": "house",
+       "at": 0,
+       "size": 70
+      },
+      {
+       "x": 0.72,
+       "y": 0.72,
+       "icon": "house",
+       "at": 0,
+       "size": 70
+      }
+     ],
+     "fights": [
+      {
+       "id": "army",
+       "path": [
+        [
+         0.18,
+         0.62
+        ],
+        [
+         0.38,
+         0.4
+        ],
+        [
+         0.52,
+         0.68
+        ],
+        [
+         0.7,
+         0.38
+        ],
+        [
+         0.84,
+         0.58
+        ]
+       ],
+       "at": 0.1,
+       "dur": 1.9,
+       "size": 110,
+       "count": 3,
+       "heads": 6,
+       "skins": [
+        "#a48a5a",
+        "#7a5a44"
+       ],
+       "trail": {
+        "color": "#5a3a24",
+        "width": 7
+       },
+       "drops": {
+        "every": 0.3,
+        "icon": "blast",
+        "size": 64,
+        "life": 0.6,
+        "after": "smoke"
+       },
+       "out": 2.2
+      }
+     ],
+     "xmarks": [
+      {
+       "x": 0.36,
+       "y": 0.42,
+       "size": 110,
+       "at": 0.8
+      },
+      {
+       "x": 0.54,
+       "y": 0.66,
+       "size": 110,
+       "at": 1.15
+      },
+      {
+       "x": 0.7,
+       "y": 0.4,
+       "size": 110,
+       "at": 1.5
+      }
+     ]
+    },
+    {
+     "type": "label",
+     "text": "MISSED",
+     "x": 0.18,
+     "y": 0.18,
+     "size": 80,
+     "color": "#ffe066",
+     "at": 1.0,
+     "enter": "pop-tilt"
+    },
+    {
+     "type": "label",
+     "text": "MISSED",
+     "x": 0.82,
+     "y": 0.18,
+     "size": 80,
+     "color": "#ffe066",
+     "at": 1.5,
+     "enter": "pop-tilt"
+    }
+   ]
+  },
+  {
+   "id": "e07_weeks",
+   "dur": 2.6,
+   "vo": "Weeks pass. Ten thousand bullets. The emus barely notice.",
+   "screen": "days flash by faster and faster over the camp; the slumped soldiers by their tent, the calendar tears, the bullet counter races; the emus hop about in the background.",
+   "transition": {
+    "kind": "dissolve",
+    "dur": 0.3
+   },
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 0,
+    "hills": 2,
+    "horizon": 0.6,
+    "groundY": 0.72,
+    "ground": "#e2bd52",
+    "timelapse": {
+     "accel": {
+      "from": 1.6,
+      "to": 0.45,
+      "over": 1.8,
+      "at": 0.2
+     },
+     "shades": true,
+     "phase": 0.15
+    }
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "image",
+     "id": "w1",
+     "x": 0.62,
+     "y": 0.74,
+     "w": 160,
+     "frames": {
+      "idle": "emu/emu-stand.svg",
+      "blink": "emu/emu-blink.svg"
+     },
+     "flip": true,
+     "jump": [
+      {
+       "at": 0.2,
+       "dur": 0.3,
+       "h": 50
+      },
+      {
+       "at": 0.8,
+       "dur": 0.3,
+       "h": 50
+      },
+      {
+       "at": 1.4,
+       "dur": 0.3,
+       "h": 50
+      },
+      {
+       "at": 2.0,
+       "dur": 0.3,
+       "h": 50
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "w2",
+     "x": 0.74,
+     "y": 0.76,
+     "w": 170,
+     "frames": {
+      "idle": "emu/emu-stand.svg",
+      "blink": "emu/emu-blink.svg"
+     },
+     "jump": [
+      {
+       "at": 0.5,
+       "dur": 0.3,
+       "h": 50
+      },
+      {
+       "at": 1.1,
+       "dur": 0.3,
+       "h": 50
+      },
+      {
+       "at": 1.7,
+       "dur": 0.3,
+       "h": 50
+      },
+      {
+       "at": 2.3,
+       "dur": 0.3,
+       "h": 50
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "w3",
+     "x": 0.86,
+     "y": 0.73,
+     "w": 150,
+     "frames": {
+      "idle": "emu/emu-stand.svg",
+      "blink": "emu/emu-blink.svg"
+     },
+     "swap": [
+      {
+       "at": 0.4,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 0.67,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      },
+      {
+       "at": 1.2,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 1.47,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      },
+      {
+       "at": 2.0,
+       "frames": {
+        "idle": "emu/emu-peck.svg"
+       }
+      },
+      {
+       "at": 2.27,
+       "frames": {
+        "idle": "emu/emu-stand.svg",
+        "blink": "emu/emu-blink.svg"
+       }
+      }
+     ],
+     "flip": true
+    },
+    {
+     "type": "prop",
+     "kind": "tent",
+     "x": 0.42,
+     "y": 0.72,
+     "size": 300,
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "who": "soldier",
+     "x": 0.2,
+     "y": 0.97,
+     "size": 440,
+     "pose": "sit-slump",
+     "expr": "hollow"
+    },
+    {
+     "type": "bean",
+     "id": "s2",
+     "who": "soldier2",
+     "x": 0.34,
+     "y": 0.99,
+     "size": 440,
+     "pose": "sit-slump",
+     "expr": "sleepy",
+     "flip": true
+    },
+    {
+     "type": "fx",
+     "kind": "marks",
+     "id": "zz",
+     "mark": "zzz",
+     "target": "s2",
+     "at": 0.3
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "id": "wheat7",
+     "z": 1.35,
+     "count": 24,
+     "h": 120,
+     "color": "#b8902e",
+     "hi": "#f6dc78"
+    },
+    {
+     "type": "calendar",
+     "x": 0.86,
+     "y": 0.3,
+     "size": 300,
+     "head": "DAY",
+     "from": 1,
+     "to": 30,
+     "dur": 2.2,
+     "delay": 0.2,
+     "ease": "inQuad"
+    },
+    {
+     "type": "counter",
+     "x": 0.36,
+     "y": 0.2,
+     "from": 0,
+     "to": 9860,
+     "dur": 2.2,
+     "delay": 0.2,
+     "ease": "inQuad",
+     "sep": ",",
+     "size": 110,
+     "color": "#ffe066",
+     "at": 0
+    },
+    {
+     "type": "label",
+     "text": "BULLETS FIRED",
+     "x": 0.36,
+     "y": 0.34,
+     "size": 60,
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "id": "e08_retreat",
+   "dur": 2.2,
+   "vo": "In the end, the army gives up.",
+   "screen": "dusk; the soldiers wave white flags and sweat; MISSION FAILED glitches in; they zip off, leaving dust; one emu stands where they were.",
+   "transition": "cut",
+   "bg": {
+    "kind": "sky",
+    "preset": "dusk",
+    "clouds": 3,
+    "hills": 2,
+    "horizon": 0.6,
+    "groundY": 0.72,
+    "ground": "#e2bd52",
+    "cloudStyle": "streak"
+   },
+   "grade": {
+    "preset": "dusk-blue",
+    "strength": 0.25
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "image",
+     "id": "boss",
+     "x": 0.78,
+     "y": 0.95,
+     "w": 380,
+     "frames": {
+      "idle": "emu/emu-shout.svg",
+      "blink": "emu/emu-blink.svg"
+     },
+     "flip": true
+    },
+    {
+     "type": "crowd",
+     "id": "sq",
+     "who": [
+      "soldier",
+      "sarge",
+      "soldier2"
+     ],
+     "x": 0.32,
+     "y": 0.96,
+     "count": 3,
+     "spread": 620,
+     "size": 420,
+     "pose": "hold-high",
+     "hold": "white-flag",
+     "expr": "worried",
+     "out": 1.55,
+     "exit": "zip",
+     "exitDur": 0.5
+    },
+    {
+     "type": "hud",
+     "kind": "warning",
+     "id": "fail",
+     "text": "MISSION FAILED",
+     "x": 0.5,
+     "y": 0.2,
+     "at": 0.55,
+     "glitch": true
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "id": "wheat8",
+     "z": 1.35,
+     "count": 22,
+     "h": 110,
+     "color": "#b8902e",
+     "hi": "#f6dc78"
+    }
+   ]
+  },
+  {
+   "id": "e09_medal",
+   "dur": 2.4,
+   "vo": "The Great Emu War. The winner: the emus.",
+   "screen": "a gold burst; the emu stands proud with a WAR HERO rosette pinned to its chest; confetti; title THE EMUS WON.",
+   "transition": {
+    "kind": "swarm",
+    "creature": "bird",
+    "count": 90,
+    "dur": 0.9
+   },
+   "bg": {
+    "kind": "mood",
+    "variant": "rays",
+    "preset": "gold",
+    "pulse": true,
+    "spin": 6
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "punch": [
+     {
+      "at": 1.2,
+      "amount": 0.1
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "image",
+     "id": "hero",
+     "x": 0.5,
+     "y": 1.02,
+     "w": 560,
+     "frames": {
+      "idle": "emu/emu-stand.svg",
+      "blink": "emu/emu-blink.svg"
+     },
+     "swap": [
+      {
+       "at": 1.2,
+       "frames": {
+        "idle": "emu/emu-shout.svg"
+       }
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "rosette",
+     "x": 0.44,
+     "y": 0.68,
+     "size": 200,
+     "text": "WAR\nHERO",
+     "at": 0.6,
+     "enter": "drop-squash",
+     "swing": true
+    },
+    {
+     "type": "fx",
+     "kind": "confetti",
+     "id": "cf",
+     "count": 80,
+     "at": 1.2
+    },
+    {
+     "type": "fx",
+     "kind": "sparkle",
+     "id": "sp",
+     "x": 0.5,
+     "y": 0.5,
+     "radius": 420,
+     "count": 8,
+     "at": 0.6
+    },
+    {
+     "type": "title",
+     "text": "THE EMUS WON",
+     "x": 0.5,
+     "y": 0.18,
+     "size": 130,
+     "at": 1.2,
+     "arc": 10,
+     "color": "#c8323a"
+    }
+   ]
+  }
+ ]
+}
