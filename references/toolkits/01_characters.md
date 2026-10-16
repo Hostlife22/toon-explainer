@@ -69,6 +69,31 @@ Coordinates: (`x`, `y`) is the point between the feet. All times inside the laye
 | `blink` | true | `false` disables blinking (statues, the dead). |
 | `legs` | – | `false` hides the legs (riders, busts, portraits). |
 
+### Characters 2.0 fields (`bean`)
+
+Modules: `turn.js`, `limbs.js`, `gait.js`, `motion.js`, `bean.js`, `closeup.js`, `closeup-mouth.js`, `lipsync.js`, `costume.js` in `scripts/engine/lib/characters/`, travel paths in `lib/base/motion-path.js`. Vocabulary: `scripts/vocab/characters-v2.json`; field checks: `scripts/spec_characters.py`. Catalog: [`examples/characters_v2/spec.json`](../../examples/characters_v2/spec.json) (one shot per feature). The classic look draws exactly as before unless one of these fields is used; the painted look turns **acting** on by default.
+
+| Field | Default | Effect |
+|---|---|---|
+| `view` | `3q` | `front`, `3q`, `side` (alias `profile`), `back`, or a `[{at, v}]` timeline (layer time). A change turns through the views in between, one drawing each, squashed sideways (0.9 × 1.04) with an automatic hair smear; adjacent views get one squashed drawing of the new view. |
+| `facing` | `right` | `right` / `left` or a timeline: the rig mirrors itself (on top of `flip`). A facing change is part of the turn (3q right → 3q left passes through `front`; back → 3q left passes through the left profile). |
+| `turn` | on | `false` snaps turns; `{frames 1 (0..4 per in-between), smear: false, squash: false}`. A flip that comes from `move` / `path` gets a front-view in-between too (acting or path). |
+| `reach` | – | IK arm target: `{x, y}` normalised world point (`space: "local"` = rig units from the feet, x forward), or `{target: "<layer id>", dx, dy}` (the anchor of a layer in the same shot, followed while it moves). Options: `arm` `right` (default) / `left` / `both`, `hand` (shape while reaching; `grab` for a target), `dur` 0.35 (travel time), `arc` 0.25 (the hand rises on an arc, a fraction of the distance), `stretch: true` (rubber-hose arm when the target is out of reach). A `[{at, v}]` timeline moves the hand target to target on arcs; `v: null` returns to the pose. To pick something up: reach the prop's `target`, end the prop with `out`, and `swap` `hold` on at the same time. |
+| `hand`, `handL` | pose hand | Right / left hand shape, constant or timeline: `open` `fist` `point` `thumb` `thumbs-up` `grab` `wave` `peace` and counting `one` `two` `three` `four` `five` (registry `T.HANDS`). |
+| `acting` | painted: on · classic: off | `true` / `false` or `{antic, overshoot, breathe, shift, squash, turn: false}` to drop one part. See [02 Acting](02_acting.md#body-acting-acting). |
+| `sneak`, `march` | – | Gait windows like `walk` / `run` (see the gait table in ④). |
+| `path` | – | Common field (any layer): `{pts: [[x, y], ...] (2+), at 0, dur, ease linear, face true, gait walk}` travels along a smooth curve at constant speed (shot time), faces the direction of travel (`face: false` keeps the flip) and, for beans, runs `gait` (`walk` `run` `sneak` `march`, `false` = glide) during the travel with the stride matched to the speed. A plain list of points stays the own `path` of `fx` / game layers. |
+| `impact` | – | `[t, ...]` or `[{at, dir 1, amount 1}]` (layer time): a squash and a recoil lean when hit. |
+| `secondary` | 1 | Strength 0..3 of the spring secondary motion (hair, cape, robe hem, crests and plumes, tie) while acting; 0 = rigid. |
+| `detail` | painted: auto | Close-up face level: `true` forces it, `false` turns it off, `auto` = on when the head is at least 230 px tall on screen (painted look only when the field is absent). Draws graded irises with highlights under mood-shaped lids, tapered brows, nose and cheek shading, wrinkles (brow furrow, forehead, crow's feet, nasolabial folds, eye bags), sweat beads, tear streams, veins, blush, stubble and mouths with teeth rows and a tongue. |
+| `lipsync` | – | Mouth shapes from a voiceover envelope: `{src: "vo.lips.json"}` (written by `scripts/lipsync.py`, inlined by `render.py`) or inline `{levels: "0137...", fps 30}`; `offset` (s), `align` `film` (the envelope starts at film time 0, default) or `layer`, `gain` 1. Five shapes (the expression's rest mouth, `ajar`, `mid`, `o`, `wide`) on twos; replaces `talk`. |
+
+Look fields: `patches` (`true` = 2 or a count 0..8 of stitched patches, any look), `fabric` (painted: woven texture over the robe and outfit; `false` or another texture kind such as `wood`), `folds: false` (no painted cloth folds). Painted arms and legs are shaded tapered tubes with a cuff and a joint crease; belts get a shaded band and a buckle.
+
+Close-up expressions added: `terror`, `disgust`, `awe`, `crying`, `laughing`, `scheming`, `exhausted` (they work at every size; moods for `rage`, `smug` and the base set shape the close-up brows, lids and wrinkles; table `T.CLOSEUP_MOODS`).
+
+Lip-sync workflow: `python3 scripts/lipsync.py film/vo.mp3 --out film/vo.lips.json` (per-frame RMS, normalised to the 95th percentile, gated, one digit 0..9 per frame), then `"lipsync": {"src": "vo.lips.json"}` on the speaking bean; with one voiceover for the whole film `align: "film"` needs no offset.
+
 ### Poses (`pose`)
 
 65 poses in `T.POSES` (`rig.js`). Arms are two-bone tubes posed by shoulder/elbow angles or IK targets.
@@ -375,6 +400,12 @@ Frames at 30 fps; seconds are layer time.
 | Headwear motion | crests and hair nearly rigid | helmet crests ±4 units, bead strings ±3°, ponytail ±4°, `bucket-helmet` bulb blinks at 1 Hz |
 | Overhead walk / turn | – | `topbean` step 0.56 s on twos; turns over 90° get 2 in-between frames; breathing 0–2 % at 0.5 Hz |
 | Crowd cheer | – | `armsUp` 2 Hz, seeded per member |
+| Turnaround | 1 drawing per in-between view, squashed | `view` / `facing` keys; `turn.frames` 1 |
+| Gait `walk` (acting, `path`) | contact → down → passing → up, on twos | 0.62 s cycle, stance 60 %, stride 64 units (or matched to the speed), lift 24, bob 9, lean 3° |
+| Gait `run` | flight phase, arms pumping | 0.4 s, stance 38 %, stride 96, lift 42, bob 18, lean 12° |
+| Gait `sneak` | crouched tiptoe, hands up like claws | 1.05 s, stance 66 %, lift 46, crouch 42, lean 14° |
+| Gait `march` | stiff stance leg, high knee, straight arm swing | 0.64 s, stance 52 %, lift 62, lean −2° |
+| Lip-sync | a mouth per 2 frames | levels → shapes at 0.08 / 0.3 / 0.55 / 0.8; a jump of 3+ shapes gets the middle one first |
 
 ## ⑤ Recipes
 

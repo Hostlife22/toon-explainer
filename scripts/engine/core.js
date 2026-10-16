@@ -188,8 +188,12 @@
       if (m.alpha != null) st.a = T.lerp(st.a, m.alpha, p);
       if (m.flip != null && p >= 1) st.flip = m.flip ? -1 : 1;
     }
+    if (L.path && T.travelAt) { // travel along a curve (motion-path.js); faces the direction of travel unless path.face is false
+      const pp = T.travelAt(L.path, lt);
+      if (pp) { st.x = pp.x; st.y = pp.y; if (pp.flip) st.flip = pp.flip * (L.flip ? -1 : 1); }
+    }
     const seed = L.id || L.type + (L.x ?? 0) + (L.y ?? 0);
-    if (L.bob) st.y += Math.sin((lt + (T.hash(seed) % 100) / 37) * Math.PI * 2 * (L.bobHz ?? 0.8)) * L.bob;
+    if (L.bob) { const b = Math.sin((lt + (T.hash(seed) % 100) / 37) * Math.PI * 2 * (L.bobHz ?? 0.8)) * L.bob; st.y += b; if (b < 0) st.jy = -b; }
     if (L.sway) st.r += Math.sin(lt * Math.PI * 2 * (L.swayHz ?? 0.5)) * L.sway * T.DEG;
     if (L.wobble) { st.x += T.noise(lt * 6, seed + 'wx') * L.wobble; st.y += T.noise(lt * 6, seed + 'wy') * L.wobble; }
     for (const s of L.shake || []) {

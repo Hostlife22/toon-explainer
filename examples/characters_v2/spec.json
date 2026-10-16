@@ -1,0 +1,977 @@
+{
+ "title": "Characters 2.0 catalog",
+ "seed": 23,
+ "style": {
+  "look": "painted",
+  "grain": true,
+  "vignette": 0.25
+ },
+ "cast": {
+  "orator": {
+   "robe": "#f1eadb",
+   "sash": "#b8323a",
+   "hair": "long",
+   "hairColor": "#3b2a20",
+   "belt": "#7a4a2a",
+   "cape": "#9e2a30"
+  },
+  "scout": {
+   "robe": "#3f6b4a",
+   "hair": "short",
+   "hairColor": "#2a1c14",
+   "belt": "#5a3a22",
+   "patches": 3
+  },
+  "guard": {
+   "robe": "#c0202a",
+   "armor": "#a9aeb4",
+   "pleats": true,
+   "head": "imperial-helmet",
+   "hair": "bald",
+   "sandal": "#5a3a22"
+  },
+  "thief": {
+   "robe": "#33334a",
+   "hair": "curly",
+   "hairColor": "#1e1a20",
+   "beard": "stubble",
+   "patches": true
+  },
+  "sage": {
+   "robe": "#d8c9a8",
+   "hair": "long",
+   "hairColor": "#cfc8bc",
+   "beard": "long",
+   "beardColor": "#e2dcd0",
+   "belt": "#6a4a2a"
+  },
+  "girl": {
+   "robe": "#d06a3a",
+   "hair": "bun",
+   "hairColor": "#4a2a1a",
+   "age": "child"
+  },
+  "hero": {
+   "robe": "#b8323a",
+   "hair": "curly",
+   "hairColor": "#4a3022",
+   "cape": "#7a1e24",
+   "belt": "#5a3a22"
+  }
+ },
+ "shots": [
+  {
+   "id": "c01_turnaround",
+   "dur": 5,
+   "bg": {
+    "kind": "interior",
+    "window": [
+     0.66,
+     0.16,
+     0.2,
+     0.34
+    ],
+    "columns": [
+     0.1,
+     0.92
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ],
+    "focus": [
+     0.45,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "orator",
+     "who": "orator",
+     "x": 0.42,
+     "y": 0.9,
+     "size": 640,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 3.6,
+       "v": "happy"
+      }
+     ],
+     "view": [
+      {
+       "at": 0,
+       "v": "3q"
+      },
+      {
+       "at": 0.9,
+       "v": "profile"
+      },
+      {
+       "at": 1.8,
+       "v": "back"
+      },
+      {
+       "at": 2.7,
+       "v": "3q"
+      },
+      {
+       "at": 3.6,
+       "v": "front"
+      }
+     ],
+     "facing": [
+      {
+       "at": 0,
+       "v": "right"
+      },
+      {
+       "at": 2.7,
+       "v": "left"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 3.6,
+       "v": "present"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "dinner-table",
+     "x": 0.76,
+     "y": 0.9,
+     "size": 300
+    },
+    {
+     "type": "prop",
+     "kind": "candle",
+     "x": 0.72,
+     "y": 0.69,
+     "size": 110
+    },
+    {
+     "type": "prop",
+     "kind": "scroll",
+     "x": 0.82,
+     "y": 0.71,
+     "size": 90,
+     "rot": -10
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "c02_reach_hold",
+   "dur": 4.5,
+   "bg": {
+    "kind": "interior",
+    "columns": [
+     0.08
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.05,
+     1.1
+    ],
+    "focus": [
+     0.5,
+     0.62
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "dinner-table",
+     "x": 0.64,
+     "y": 0.92,
+     "size": 320
+    },
+    {
+     "type": "prop",
+     "id": "coin",
+     "kind": "coin",
+     "x": 0.57,
+     "y": 0.74,
+     "size": 60,
+     "exit": "fade",
+     "exitDur": 0.05,
+     "out": 2.2
+    },
+    {
+     "type": "bean",
+     "id": "thief",
+     "who": "thief",
+     "x": 0.4,
+     "y": 0.92,
+     "size": 600,
+     "expr": [
+      {
+       "at": 0,
+       "v": "scheming"
+      },
+      {
+       "at": 2.3,
+       "v": "laughing"
+      }
+     ],
+     "reach": [
+      {
+       "at": 0.8,
+       "v": {
+        "target": "coin",
+        "dur": 0.45,
+        "stretch": true
+       }
+      },
+      {
+       "at": 2.3,
+       "v": {
+        "x": 0.56,
+        "y": 0.5,
+        "hand": "thumbs-up"
+       }
+      },
+      {
+       "at": 3.6,
+       "v": null
+      }
+     ],
+     "swap": [
+      {
+       "at": 2.2,
+       "hold": "coin"
+      }
+     ],
+     "handL": "grab"
+    },
+    {
+     "type": "prop",
+     "kind": "candle",
+     "x": 0.78,
+     "y": 0.68,
+     "size": 110
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "c03_hands",
+   "dur": 4.5,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4,
+    "hills": 2
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "count",
+     "who": "scout",
+     "x": 0.3,
+     "y": 1.04,
+     "size": 760,
+     "expr": "content",
+     "pose": "idle",
+     "hand": [
+      {
+       "at": 0,
+       "v": "one"
+      },
+      {
+       "at": 0.7,
+       "v": "two"
+      },
+      {
+       "at": 1.4,
+       "v": "three"
+      },
+      {
+       "at": 2.1,
+       "v": "four"
+      },
+      {
+       "at": 2.8,
+       "v": "five"
+      },
+      {
+       "at": 3.5,
+       "v": "peace"
+      }
+     ],
+     "reach": {
+      "x": 215,
+      "y": -440,
+      "space": "local"
+     }
+    },
+    {
+     "type": "bean",
+     "id": "wave",
+     "who": "girl",
+     "x": 0.7,
+     "y": 1.0,
+     "size": 560,
+     "expr": "happy",
+     "pose": "idle",
+     "flip": true,
+     "hand": [
+      {
+       "at": 0,
+       "v": "wave"
+      },
+      {
+       "at": 2.2,
+       "v": "thumbs-up"
+      }
+     ],
+     "handL": "grab",
+     "reach": {
+      "x": 200,
+      "y": -330,
+      "space": "local"
+     }
+    },
+    {
+     "type": "prop",
+     "kind": "signpost",
+     "x": 0.88,
+     "y": 0.86,
+     "size": 260
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "z": 1.3,
+     "count": 14,
+     "h": 130
+    },
+    {
+     "type": "fg",
+     "kind": "bushes",
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "c04_walk_path",
+   "dur": 5,
+   "bg": {
+    "kind": "sky",
+    "preset": "sunset",
+    "clouds": 5,
+    "hills": 3
+   },
+   "camera": {
+    "zoom": [
+     1.05,
+     1.05
+    ],
+    "focus": [
+     0.5,
+     0.66
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "temple",
+     "x": 0.86,
+     "y": 0.52,
+     "size": 190,
+     "atmos": 0.4
+    },
+    {
+     "type": "bean",
+     "id": "walker",
+     "who": "orator",
+     "x": 0.12,
+     "y": 0.86,
+     "size": 400,
+     "expr": "content",
+     "path": {
+      "pts": [
+       [
+        0.12,
+        0.86
+       ],
+       [
+        0.5,
+        0.82
+       ],
+       [
+        0.86,
+        0.86
+       ],
+       [
+        0.6,
+        0.9
+       ]
+      ],
+      "at": 0,
+      "dur": 4.6,
+      "gait": "walk"
+     }
+    },
+    {
+     "type": "bean",
+     "id": "sneaker",
+     "who": "thief",
+     "x": 0.2,
+     "y": 0.9,
+     "size": 360,
+     "expr": "scheming",
+     "path": {
+      "pts": [
+       [
+        0.05,
+        0.9
+       ],
+       [
+        0.42,
+        0.89
+       ]
+      ],
+      "at": 0.4,
+      "dur": 4.2,
+      "gait": "sneak"
+     }
+    },
+    {
+     "type": "bean",
+     "id": "marcher",
+     "who": "guard",
+     "x": 0.88,
+     "y": 0.78,
+     "size": 300,
+     "expr": "angry",
+     "march": [
+      [
+       0,
+       5
+      ]
+     ],
+     "flip": true,
+     "move": [
+      {
+       "at": 0,
+       "dur": 5,
+       "to": [
+        0.58,
+        0.78
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "z": 1.3,
+     "count": 16,
+     "h": 140
+    }
+   ]
+  },
+  {
+   "id": "c05_jump_squash",
+   "dur": 3.5,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 3,
+    "hills": 2
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.02
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "jumper",
+     "who": "girl",
+     "x": 0.4,
+     "y": 0.9,
+     "size": 460,
+     "expr": [
+      {
+       "at": 0,
+       "v": "happy"
+      },
+      {
+       "at": 0.6,
+       "v": "awe"
+      },
+      {
+       "at": 1.5,
+       "v": "laughing"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 0.7,
+       "v": "arms-up"
+      },
+      {
+       "at": 1.6,
+       "v": "idle"
+      }
+     ],
+     "jump": [
+      {
+       "at": 0.7,
+       "dur": 0.75,
+       "h": 260
+      },
+      {
+       "at": 2.2,
+       "dur": 0.5,
+       "h": 140
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "bonk",
+     "who": "scout",
+     "x": 0.72,
+     "y": 0.9,
+     "size": 460,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 1.3,
+       "v": "terror"
+      }
+     ],
+     "impact": [
+      1.3
+     ],
+     "flip": true
+    },
+    {
+     "type": "prop",
+     "kind": "barrel",
+     "x": 0.9,
+     "y": 0.9,
+     "size": 180
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "z": 1.3,
+     "count": 12,
+     "h": 120
+    },
+    {
+     "type": "fg",
+     "kind": "bushes",
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "c06_face_closeup",
+   "dur": 6,
+   "bg": {
+    "kind": "palace"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.02
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "face",
+     "who": "hero",
+     "x": 0.42,
+     "y": 1.75,
+     "size": 1500,
+     "expr": [
+      {
+       "at": 0,
+       "v": "rage"
+      },
+      {
+       "at": 0.75,
+       "v": "terror"
+      },
+      {
+       "at": 1.5,
+       "v": "smug"
+      },
+      {
+       "at": 2.25,
+       "v": "disgust"
+      },
+      {
+       "at": 3,
+       "v": "awe"
+      },
+      {
+       "at": 3.75,
+       "v": "crying"
+      },
+      {
+       "at": 4.5,
+       "v": "scheming"
+      },
+      {
+       "at": 5.25,
+       "v": "exhausted"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "candle",
+     "x": 0.88,
+     "y": 0.8,
+     "size": 200
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.86,
+     "y": 0.3,
+     "size": 110
+    },
+    {
+     "type": "fg",
+     "kind": "ots",
+     "who": "thief",
+     "side": "right"
+    }
+   ]
+  },
+  {
+   "id": "c07_faces_sheet",
+   "dur": 2,
+   "bg": {
+    "kind": "flat",
+    "color": "#cdbb98"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "f1",
+     "who": "scout",
+     "x": 0.18,
+     "y": 0.86,
+     "size": 820,
+     "expr": "rage",
+     "legs": false,
+     "detail": true,
+     "view": "front",
+     "contact": false
+    },
+    {
+     "type": "bean",
+     "id": "f2",
+     "who": "girl",
+     "x": 0.5,
+     "y": 0.86,
+     "size": 820,
+     "expr": "laughing",
+     "legs": false,
+     "detail": true,
+     "view": "front",
+     "contact": false
+    },
+    {
+     "type": "bean",
+     "id": "f3",
+     "who": "thief",
+     "x": 0.82,
+     "y": 0.86,
+     "size": 820,
+     "expr": "disgust",
+     "legs": false,
+     "detail": true,
+     "view": "front",
+     "contact": false
+    },
+    {
+     "type": "label",
+     "text": "rage   \u00b7   laughing   \u00b7   disgust",
+     "x": 0.5,
+     "y": 0.12,
+     "size": 46
+    }
+   ]
+  },
+  {
+   "id": "c08_lipsync",
+   "dur": 3.4,
+   "bg": {
+    "kind": "interior",
+    "window": [
+     0.7,
+     0.12,
+     0.2,
+     0.36
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "speaker",
+     "who": "orator",
+     "x": 0.42,
+     "y": 1.45,
+     "size": 1150,
+     "expr": "neutral",
+     "view": "3q",
+     "lipsync": {
+      "src": "vo.lips.json",
+      "align": "layer"
+     }
+    },
+    {
+     "type": "prop",
+     "kind": "candle",
+     "x": 0.86,
+     "y": 0.78,
+     "size": 170
+    },
+    {
+     "type": "prop",
+     "kind": "scroll",
+     "x": 0.12,
+     "y": 0.84,
+     "size": 120,
+     "rot": 12
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "c09_secondary",
+   "dur": 3.5,
+   "bg": {
+    "kind": "sky",
+    "preset": "dusk",
+    "clouds": 4,
+    "hills": 3
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "tent",
+     "x": 0.2,
+     "y": 0.7,
+     "size": 170,
+     "atmos": 0.3
+    },
+    {
+     "type": "bean",
+     "id": "runner",
+     "who": "orator",
+     "x": 0.08,
+     "y": 0.9,
+     "size": 460,
+     "expr": [
+      {
+       "at": 0,
+       "v": "worried"
+      },
+      {
+       "at": 1.4,
+       "v": "shock"
+      }
+     ],
+     "run": [
+      [
+       0,
+       1.3
+      ]
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 1.3,
+       "v": "scared"
+      }
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 1.3,
+       "to": [
+        0.46,
+        0.9
+       ],
+       "ease": "linear"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "plume",
+     "who": "guard",
+     "x": 0.82,
+     "y": 0.9,
+     "size": 420,
+     "expr": "angry",
+     "flip": true,
+     "move": [
+      {
+       "at": 0.8,
+       "dur": 0.5,
+       "to": [
+        0.74,
+        0.9
+       ],
+       "ease": "out"
+      }
+     ],
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 1.3,
+       "v": "point"
+      }
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "z": 1.3,
+     "count": 14,
+     "h": 130
+    },
+    {
+     "type": "fg",
+     "kind": "bushes",
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "c10_costume",
+   "dur": 2.5,
+   "bg": {
+    "kind": "street1920",
+    "obelisk": 0.5
+   },
+   "camera": {
+    "zoom": [
+     1.08,
+     1.12
+    ],
+    "focus": [
+     0.5,
+     0.66
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "patched",
+     "who": "scout",
+     "x": 0.25,
+     "y": 0.94,
+     "size": 470,
+     "expr": "exhausted",
+     "pose": "hips"
+    },
+    {
+     "type": "bean",
+     "id": "belted",
+     "who": "sage",
+     "x": 0.5,
+     "y": 0.94,
+     "size": 470,
+     "expr": "content",
+     "pose": "steeple",
+     "view": "front"
+    },
+    {
+     "type": "bean",
+     "id": "robed",
+     "who": "orator",
+     "x": 0.75,
+     "y": 0.94,
+     "size": 470,
+     "expr": "smug",
+     "pose": "cross",
+     "flip": true
+    },
+    {
+     "type": "prop",
+     "kind": "crate",
+     "x": 0.9,
+     "y": 0.9,
+     "size": 160
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "side": "left"
+    }
+   ]
+  }
+ ]
+}

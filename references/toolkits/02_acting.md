@@ -155,6 +155,22 @@ Kinds from `tumble` to `pivot-fall` play time-reversed when used in the other di
 
 Bean-only acting fields (`pose` / `expr` keys, `antic`, `snapTilt`, `tremble`, `talk`, `lean`) are in [01 Characters](01_characters.md).
 
+### Body acting (`acting`)
+
+On by default in the painted look (`style.look: "painted"`), opt-in with `acting: true` in classic, off with `acting: false`; `{antic, overshoot, breathe, shift, squash, turn: false}` drops single parts. All of it is a pure function of time (`motion.js`).
+
+| Part | Effect |
+|---|---|
+| `antic` | Before a big pose change (arms travel over 50° or the body pose changes), 4 frames of anticipation: the arms swing against their coming motion (16 % of it, at most 20°), the body dips 10 units and squashes 5 %. The explicit classic `antic: true` keeps its own 3-frame dip. |
+| `overshoot` | Pose changes follow an under-damped spring (about 16 % overshoot, settled in ~0.3 s; `poseBlend` sets the speed) instead of the classic settle squash; reach moves use it too. |
+| `breathe` | Idle breathing at 0.28 Hz lifts the shoulders and the head 2.5 units. |
+| `shift` | Idle weight shift from foot to foot every 3.2–4.5 s (seeded): lean ±2.2°, hips ±5 units, eased over 0.7 s. |
+| `squash` | Jumps (`jump`): 4-frame crouch (to 0.8), launch stretch 1.16, falling stretch 1.07, landing squash 0.78 that bounces back in 0.35 s; volume kept by the width. `impact` entries squash sideways and lean back. |
+| `turn` | Front-view in-between when a `move` / `path` flip turns the character around. |
+| secondary motion | Hair (shear from the crown), cape, robe hem, helmet crests / plumes and ties lag behind the body: a damped spring (1.4 Hz, damping 0.32) driven by the layer's acceleration over the last 1.2 s plus drag on its speed (`T.springLag`), turn impulses and the gait. The bean field `secondary` scales it (the common `sway` field is a different thing: a rotation). |
+
+`path` (any layer, shot time) moves a layer along a Catmull-Rom curve through `pts` at constant speed and faces it along the travel; beans walk it with a gait cycle (see [01 Characters](01_characters.md#characters-20-fields-bean)). `ground` (any layer, normalised floor y) keeps the painted contact shadow on the floor under a flying or hovering layer; jumps and upward `bob` lift it automatically.
+
 ## ④ Timing
 
 All counts at 30 fps; one frame = 0.033 s.

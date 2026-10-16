@@ -41,7 +41,7 @@
       { shade: (k) => { k.fillStyle = shade(m, -0.18); k.beginPath(); k.ellipse(-150, -520, 90, 150, 0, 0, Math.PI * 2); k.fill(); k.fillStyle = shade(m, 0.35); k.beginPath(); k.ellipse(30, -590, 50, 20, -0.3, 0, Math.PI * 2); k.fill(); } });
     const guards = sh > 0 ? [-HW * 0.98] : [-HW * 0.98, HW * 0.98 - 46]; // in 3/4 only the back cheek guard shows
     guards.forEach((gx) => T.outlined(ctx, (k) => T.rrect(k, gx, -478, 46, 128, 20), m, { line: 7 }));
-    const crest = c.crest ?? P.red, sway = Math.sin(lt * 3) * 4;
+    const crest = c.crest ?? P.red, sway = Math.sin(lt * 3) * 4 + T.swayX(0.5);
     T.outlined(ctx, (k) => { k.moveTo(-130 + back, -605); k.quadraticCurveTo(back + sway, -780, 140 + back, -615); k.quadraticCurveTo(back, -690, -130 + back, -605); }, crest,
       { shade: (k) => { k.strokeStyle = shade(crest, -0.25); k.lineWidth = 5; for (let i = -4; i <= 4; i++) { k.beginPath(); k.moveTo(back + i * 26, -640); k.lineTo(back + i * 30, -740); k.stroke(); } } });
   };
