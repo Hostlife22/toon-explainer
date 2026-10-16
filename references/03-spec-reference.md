@@ -101,6 +101,7 @@ More fields accepted by every layer:
 | `atmos` | `0.45` or `{"amount":0.6,"color":"#c9d6e0"}` | Atmospheric perspective: tints the layer toward the haze colour (the sky's horizon colour by default, or the bg's `atmos`) by `amount` 0..1. Far temples, ships on the horizon, a distant army. Works in both looks |
 | `contact` | `true`, `1.4` or `{"w":1.2,"h":0.05,"alpha":0.6,"dy":0.5}` | Painted look: soft contact shadow (ambient occlusion) on the ground under the layer. On by default for `bean` (and crowd members); `false` turns it off. `w` scales the width, `dy` is the offset below the anchor as a fraction of `size` (0.5 for centred props) |
 | `painted` | `false` | Painted look: keep this layer flat (`false`), or shade a lettering / UI layer that is flat by default (`true`) |
+| `trail` | `true` or `{"frames":4,"length":0.12,"alpha":0.5,"min":6}` | Motion smear: while the layer moves (more than `min` px over `length` s, rotation counts too), `frames` ghost copies of it at earlier times are drawn under it, fading out. Thrown coins, a swung hammer, a flying prop. Works on any layer type and in both looks ([08 Impact](toolkits/08_fx_and_tone.md#particles-impact-and-painted-fx)) |
 
 Shot-level `focus` (rack focus; not the same as `camera.focus`, which is only the zoom target point): `"focus": [{"at":0,"on":"king","px":10},{"at":2.2,"on":"bg","dur":0.5}]`. From `at`, every layer **with an `id`** other than `on` ramps to `px` of blur and `on` ramps sharp over `dur` (0.4 s, ease in-out); the background gets `bg` px (default `px`, or 0 when `on` is `"bg"`). Pull focus on the word that names the new subject.
 - Always sharp: layers without an `id`, and lettering and screen furniture even with an `id`: `label`, `title`, `caption`, `date`, `era`, `counter`, `timer`, `doc`, `hud`, `cursor` and `fx`. Add `"focusable": true` to let one of these blur.
@@ -240,6 +241,8 @@ During `talk`, the idle and talk frames alternate at 8 Hz. `blink` shows every ~
 
 These are the base kinds. Over 40 more live in [08 FX and tone](toolkits/08_fx_and_tone.md) and [02 Acting](toolkits/02_acting.md).
 
+Props & FX 2.0 adds closed-form `particles` (14 presets), `impact-frame`, `streaks`, `shockwave`, `dustkick`, `toxic-cloud` and `aura`; under the painted look `smoke`, `fire`, `explosion`, `dust`, `puff` and `gas` are repainted with them ([08 Particles, impact and painted FX](toolkits/08_fx_and_tone.md#particles-impact-and-painted-fx)).
+
 ## Painted look (`style.look`)
 `"style": {"look": "painted"}` (or `"look": "painted"` on one shot) switches the film from the classic flat look (one fill and one shadow tone per colour, uniform ink) to a painted look modelled on the reference frames, through shared drawing helpers so most of the library changes at once:
 - **Light.** `style.light` (and `shot.light` per shot): `dir` (degrees toward the light: 0 = from the right, 90 = from above; default 58, upper right), `color` (key / rim tint), `rim` (0..1 rim-light strength), `ambient` (shadow tint, cool by default), `intensity` (0..1 shadow depth). The light is in screen space, so a flipped character is lit from the same side.
@@ -247,6 +250,7 @@ These are the base kinds. Over 40 more live in [08 FX and tone](toolkits/08_fx_a
 - **Ground and depth.** Characters get a contact shadow and a soft shadow of the head on the torso; `atmos` hazes far layers.
 - **Places.** Painted clouds (lit cap, soft volume, darker underside), sun bloom, deeper zenith and horizon haze; textured ground (grass strokes and 2-tone tufts, cobbles, sand); per-kind surface textures (plaster walls, wood floors and planks, carpets, cobbled streets, water, parchment fibre) and an occlusion band where walls meet the floor.
 - **Frame.** A key-light wash falling off to a cool, darker far side, and paper tooth baked into the film grain.
+- **Props, FX and paper.** The most used props get materials (glass with liquid, metal sheen, wood grain, burlap, leather) and a contact shadow ([03 Props](toolkits/03_props_creatures_vehicles.md#painted-materials-and-props-20)); smoke, fire, explosions, dust and gas become soft lit puffs and additive glows; `doc` sheets become aged paper with folds and stains ([06 Paper](toolkits/06_paper_and_lettering.md#③11-painted-paper-front-page-and-letter)).
 - Lettering and screen furniture (`label`, `title`, `caption`, `date`, `era`, `counter`, `timer`, `doc`, `hud`, `cursor`, `subtitle`, `timeline`, `panel`, `fx`) stay flat unless they set `painted: true`.
 - Classic stays the default and renders exactly as before. The painted look costs under 2x the classic frame time (measured on `examples/showcase` at `--scale 0.5`). `examples/painted_bench` has one dense shot per scene type; the grades that suit it (`golden-hour`, `dusk`, `overcast`, `night`) are listed below. Techniques and APIs: [08 FX and tone](toolkits/08_fx_and_tone.md#painted-look).
 

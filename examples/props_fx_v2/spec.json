@@ -1,0 +1,1059 @@
+{
+ "title": "Props & FX 2.0 catalog",
+ "seed": 77,
+ "style": {
+  "look": "painted",
+  "grain": true,
+  "vignette": 0.3
+ },
+ "cast": {
+  "chemist": {
+   "robe": "#f1eee6",
+   "hair": "short",
+   "hairColor": "#3a2a20"
+  }
+ },
+ "shots": [
+  {
+   "id": "v01_lab",
+   "dur": 3.5,
+   "bg": {
+    "kind": "interior",
+    "window": [
+     0.7,
+     0.14,
+     0.18,
+     0.3
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "focus": [
+     0.5,
+     0.62
+    ]
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "LAB GLASSWARE",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "prop",
+     "kind": "dinner-table",
+     "x": 0.4,
+     "y": 0.97,
+     "size": 560
+    },
+    {
+     "type": "prop",
+     "kind": "dinner-table",
+     "x": 0.73,
+     "y": 0.97,
+     "size": 460
+    },
+    {
+     "type": "prop",
+     "kind": "burner",
+     "x": 0.3,
+     "y": 0.6,
+     "size": 170
+    },
+    {
+     "type": "prop",
+     "kind": "round-flask",
+     "x": 0.3,
+     "y": 0.39,
+     "size": 210,
+     "id": "rf",
+     "liquid": "#7ad04a",
+     "fill": 0.55,
+     "boil": true,
+     "fumes": "steam"
+    },
+    {
+     "type": "prop",
+     "kind": "flask",
+     "x": 0.42,
+     "y": 0.59,
+     "size": 200,
+     "id": "fl",
+     "liquid": "#e8603a",
+     "fill": [
+      {
+       "at": 0,
+       "v": 0.15
+      },
+      {
+       "at": 2.5,
+       "v": 0.7
+      }
+     ],
+     "bubbles": true
+    },
+    {
+     "type": "prop",
+     "kind": "beaker",
+     "x": 0.52,
+     "y": 0.62,
+     "size": 160,
+     "id": "bk",
+     "liquid": "#5fa8e8",
+     "fill": 0.5
+    },
+    {
+     "type": "prop",
+     "kind": "tube-rack",
+     "x": 0.68,
+     "y": 0.61,
+     "size": 190,
+     "id": "rk",
+     "fumesAt": 1,
+     "fumes": "gas"
+    },
+    {
+     "type": "prop",
+     "kind": "retort",
+     "x": 0.8,
+     "y": 0.6,
+     "size": 180,
+     "id": "rt",
+     "liquid": "#b05ad0",
+     "fill": 0.45
+    },
+    {
+     "type": "prop",
+     "kind": "test-tube",
+     "x": 0.03,
+     "y": 0.8,
+     "size": 520,
+     "z": 1.3,
+     "blur": 4,
+     "liquid": "#e8c84a",
+     "fill": 0.6
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.93,
+     "y": 1.02,
+     "size": 560,
+     "pose": "think",
+     "expr": "smug",
+     "view": "3q",
+     "flip": true
+    }
+   ]
+  },
+  {
+   "id": "v02_store",
+   "dur": 3.0,
+   "bg": {
+    "kind": "factory"
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.0
+    ]
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "PAINTED MATERIALS",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "prop",
+     "kind": "barrel",
+     "x": 0.18,
+     "y": 0.72,
+     "size": 260
+    },
+    {
+     "type": "prop",
+     "kind": "barrel",
+     "x": 0.3,
+     "y": 0.76,
+     "size": 230
+    },
+    {
+     "type": "prop",
+     "kind": "crate",
+     "x": 0.5,
+     "y": 0.74,
+     "size": 240,
+     "text": "TEL"
+    },
+    {
+     "type": "prop",
+     "kind": "crate",
+     "x": 0.5,
+     "y": 0.5,
+     "size": 200,
+     "text": "ETHYL"
+    },
+    {
+     "type": "prop",
+     "kind": "sack",
+     "x": 0.68,
+     "y": 0.76,
+     "size": 210,
+     "text": "LEAD"
+    },
+    {
+     "type": "prop",
+     "kind": "bottle",
+     "x": 0.8,
+     "y": 0.76,
+     "size": 200,
+     "text": "POISON",
+     "liquid": "#4a8a3a",
+     "pour": {
+      "at": 1.2,
+      "dur": 0.6
+     }
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.9,
+     "y": 0.42,
+     "size": 140,
+     "spin": true
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.5,
+     "y": 0.6,
+     "preset": "dust",
+     "rate": 6,
+     "life": 4,
+     "speed": 20,
+     "spread": 360,
+     "gravity": -5,
+     "w": 1400,
+     "h": 500,
+     "size": [
+      6,
+      12
+     ],
+     "grow": 1,
+     "prewarm": true
+    }
+   ]
+  },
+  {
+   "id": "v03_machines",
+   "dur": 3.5,
+   "bg": {
+    "kind": "factory"
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "MOVING MACHINES",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "prop",
+     "kind": "gears",
+     "x": 0.2,
+     "y": 0.42,
+     "size": 260,
+     "speed": 0.4
+    },
+    {
+     "type": "prop",
+     "kind": "piston",
+     "x": 0.42,
+     "y": 0.62,
+     "size": 300,
+     "speed": 1.6
+    },
+    {
+     "type": "prop",
+     "kind": "gauge",
+     "x": 0.62,
+     "y": 0.38,
+     "size": 240,
+     "label": "LEAD ppm",
+     "value": [
+      {
+       "at": 0,
+       "v": 0.15
+      },
+      {
+       "at": 2.2,
+       "v": 0.95,
+       "ease": "inOut"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "valve",
+     "x": 0.62,
+     "y": 0.78,
+     "size": 200,
+     "open": [
+      {
+       "at": 0.4,
+       "v": 0
+      },
+      {
+       "at": 2.4,
+       "v": 1
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "fuel-pump",
+     "x": 0.84,
+     "y": 0.66,
+     "size": 380,
+     "brand": "ETHYL",
+     "price": "27c",
+     "running": true
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.0,
+     1.08
+    ]
+   }
+  },
+  {
+   "id": "v04_money",
+   "dur": 3.0,
+   "bg": {
+    "kind": "office"
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "GOODS AND TREASURE",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "prop",
+     "kind": "coin-pile",
+     "x": 0.16,
+     "y": 0.72,
+     "size": 240
+    },
+    {
+     "type": "prop",
+     "kind": "banknotes",
+     "x": 0.36,
+     "y": 0.74,
+     "size": 220,
+     "amount": "100"
+    },
+    {
+     "type": "prop",
+     "kind": "gold-bars",
+     "x": 0.56,
+     "y": 0.75,
+     "size": 220
+    },
+    {
+     "type": "prop",
+     "kind": "book-stack",
+     "x": 0.74,
+     "y": 0.7,
+     "size": 260
+    },
+    {
+     "type": "prop",
+     "kind": "paper-stack",
+     "x": 0.9,
+     "y": 0.74,
+     "size": 200
+    },
+    {
+     "type": "prop",
+     "kind": "inkwell",
+     "x": 0.3,
+     "y": 0.42,
+     "size": 150
+    },
+    {
+     "type": "prop",
+     "kind": "oil-lamp",
+     "x": 0.5,
+     "y": 0.44,
+     "size": 150
+    },
+    {
+     "type": "prop",
+     "kind": "lantern",
+     "x": 0.68,
+     "y": 0.4,
+     "size": 170
+    },
+    {
+     "type": "prop",
+     "kind": "amphora",
+     "x": 0.86,
+     "y": 0.38,
+     "size": 180
+    },
+    {
+     "type": "prop",
+     "kind": "apple",
+     "x": 0.12,
+     "y": 0.42,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "cheese",
+     "x": 0.2,
+     "y": 0.45,
+     "size": 110
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.1,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "v05_tools",
+   "dur": 3.0,
+   "bg": {
+    "kind": "sky",
+    "preset": "sunset"
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "TOOLS AND WEAPONS",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "prop",
+     "kind": "cannon",
+     "x": 0.28,
+     "y": 0.74,
+     "size": 300,
+     "fire": [
+      0.8
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "musket",
+     "x": 0.62,
+     "y": 0.78,
+     "size": 320,
+     "fire": [
+      1.6
+     ],
+     "rot": -8
+    },
+    {
+     "type": "prop",
+     "kind": "anvil",
+     "x": 0.75,
+     "y": 0.8,
+     "size": 200
+    },
+    {
+     "type": "prop",
+     "kind": "hammer",
+     "x": 0.86,
+     "y": 0.64,
+     "size": 160,
+     "rot": -30
+    },
+    {
+     "type": "prop",
+     "kind": "axe",
+     "x": 0.08,
+     "y": 0.66,
+     "size": 160
+    },
+    {
+     "type": "prop",
+     "kind": "pickaxe",
+     "x": 0.5,
+     "y": 0.82,
+     "size": 150,
+     "rot": 70
+    },
+    {
+     "type": "prop",
+     "kind": "shovel",
+     "x": 0.94,
+     "y": 0.8,
+     "size": 160
+    },
+    {
+     "type": "prop",
+     "kind": "bow",
+     "x": 0.46,
+     "y": 0.34,
+     "size": 200,
+     "draw": [
+      {
+       "at": 0,
+       "v": 0
+      },
+      {
+       "at": 1.5,
+       "v": 1
+      }
+     ]
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "v06_particles",
+   "dur": 3.5,
+   "bg": {
+    "kind": "sky",
+    "preset": "night"
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "PARTICLES",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.18,
+     "y": 0.86,
+     "preset": "smoke",
+     "w": 120,
+     "prewarm": true
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.18,
+     "y": 0.88,
+     "preset": "fire",
+     "w": 160,
+     "prewarm": true
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.18,
+     "y": 0.86,
+     "preset": "embers",
+     "prewarm": true
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.45,
+     "y": 0.8,
+     "preset": "sparks",
+     "rate": 80,
+     "dir": -70
+    },
+    {
+     "type": "prop",
+     "kind": "anvil",
+     "x": 0.45,
+     "y": 0.88,
+     "size": 180
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.68,
+     "y": 0.84,
+     "preset": "steam",
+     "w": 60,
+     "prewarm": true
+    },
+    {
+     "type": "prop",
+     "kind": "beaker",
+     "x": 0.68,
+     "y": 0.9,
+     "size": 120,
+     "liquid": "#5fa8e8",
+     "fill": 0.6,
+     "boil": true
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.88,
+     "y": 0.86,
+     "preset": "bubbles",
+     "w": 80,
+     "prewarm": true
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.88,
+     "y": 0.86,
+     "preset": "splash",
+     "rate": 30
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.15,
+     1.05
+    ]
+   }
+  },
+  {
+   "id": "v07_weather",
+   "dur": 3.0,
+   "bg": {
+    "kind": "street1920"
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "RAIN AND LEAVES",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.5,
+     "y": 0.5,
+     "preset": "rain",
+     "prewarm": true
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.3,
+     "y": 0.95,
+     "preset": "splash",
+     "rate": 24,
+     "w": 900,
+     "speed": 200,
+     "size": [
+      5,
+      9
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.7,
+     "y": 0.95,
+     "preset": "splash",
+     "rate": 24,
+     "w": 900,
+     "speed": 200,
+     "size": [
+      5,
+      9
+     ],
+     "id": "sp2"
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.5,
+     "y": 0.5,
+     "preset": "leaves",
+     "prewarm": true
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ]
+   }
+  },
+  {
+   "id": "v08_party",
+   "dur": 2.5,
+   "bg": {
+    "kind": "stage"
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "CONFETTI, SNOW, AURA",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.5,
+     "y": 0.5,
+     "preset": "snow",
+     "prewarm": true,
+     "rate": 30
+    },
+    {
+     "type": "fx",
+     "kind": "aura",
+     "x": 0.5,
+     "y": 0.52,
+     "radius": 200,
+     "color": "#ffe27a"
+    },
+    {
+     "type": "prop",
+     "kind": "gold-bars",
+     "x": 0.5,
+     "y": 0.56,
+     "size": 220
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.5,
+     "y": 0.5,
+     "preset": "confetti",
+     "prewarm": true
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.06,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "v09_impact",
+   "dur": 3.0,
+   "bg": {
+    "kind": "desert"
+   },
+   "camera": {
+    "shake": [
+     {
+      "at": 0.62,
+      "amp": 14,
+      "dur": 0.35
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "IMPACT",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "prop",
+     "kind": "anvil",
+     "x": 0.5,
+     "y": 0.78,
+     "size": 280,
+     "id": "anv",
+     "enter": "drop",
+     "at": 0.3,
+     "enterDur": 0.9
+    },
+    {
+     "type": "fx",
+     "kind": "dustkick",
+     "x": 0.5,
+     "y": 0.78,
+     "target": "anv"
+    },
+    {
+     "type": "fx",
+     "kind": "shockwave",
+     "x": 0.5,
+     "y": 0.9,
+     "ground": true,
+     "size": 520,
+     "at": 0.62
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.1,
+     "y": 0.3,
+     "size": 120,
+     "trail": true,
+     "move": [
+      {
+       "at": 1.2,
+       "dur": 0.7,
+       "to": [
+        0.9,
+        0.36
+       ],
+       "ease": "in"
+      }
+     ],
+     "spin": true
+    },
+    {
+     "type": "fx",
+     "kind": "streaks",
+     "x": 0.5,
+     "y": 0.3,
+     "h": 260,
+     "count": 18,
+     "at": 1.2
+    },
+    {
+     "type": "fx",
+     "kind": "impact-frame",
+     "x": 0.5,
+     "y": 0.5,
+     "at": 0.62,
+     "frames": 2,
+     "mode": "flat"
+    }
+   ]
+  },
+  {
+   "id": "v10_toxic",
+   "dur": 3.5,
+   "bg": {
+    "kind": "factory"
+   },
+   "grade": "overcast",
+   "layers": [
+    {
+     "type": "label",
+     "text": "TOXIC GAS",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "fx",
+     "kind": "toxic-cloud",
+     "x": 0.35,
+     "y": 0.86,
+     "size": 380,
+     "ground": true,
+     "drift": 12,
+     "color": "#9fb34a"
+    },
+    {
+     "type": "fx",
+     "kind": "particles",
+     "x": 0.78,
+     "y": 0.5,
+     "preset": "gas",
+     "color": "#7d8288",
+     "rate": 8,
+     "prewarm": true,
+     "dir": -80
+    },
+    {
+     "type": "prop",
+     "kind": "fuel-pump",
+     "x": 0.78,
+     "y": 0.7,
+     "size": 320,
+     "brand": "ETHYL"
+    },
+    {
+     "type": "prop",
+     "kind": "skull",
+     "x": 0.35,
+     "y": 0.5,
+     "size": 120,
+     "bob": 10
+    },
+    {
+     "type": "fx",
+     "kind": "aura",
+     "x": 0.35,
+     "y": 0.5,
+     "radius": 120,
+     "color": "#b8e05a",
+     "rays": 8
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.0,
+     1.1
+    ]
+   }
+  },
+  {
+   "id": "v11_boom",
+   "dur": 3.0,
+   "bg": {
+    "kind": "battlefield"
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "EXPLOSION",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "fx",
+     "kind": "smoke",
+     "x": 0.3,
+     "y": 0.55,
+     "w": 700,
+     "count": 10
+    },
+    {
+     "type": "fx",
+     "kind": "fire",
+     "x": 0.22,
+     "y": 0.78,
+     "w": 320,
+     "size": 170,
+     "count": 4
+    },
+    {
+     "type": "fx",
+     "kind": "explosion",
+     "x": 0.66,
+     "y": 0.6,
+     "size": 260,
+     "at": 0.4
+    },
+    {
+     "type": "fx",
+     "kind": "impact-frame",
+     "x": 0.5,
+     "y": 0.5,
+     "at": 0.42,
+     "frames": 1,
+     "mode": "invert"
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "v12_paper",
+   "dur": 3.5,
+   "bg": {
+    "kind": "office"
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "PAINTED PAPER",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "doc",
+     "kind": "front-page",
+     "x": 0.22,
+     "y": 0.56,
+     "scale": 0.7,
+     "masthead": "THE DAILY HERALD",
+     "date": "OCT 31, 1924",
+     "headline": "LOONEY GAS\nKILLS FIVE",
+     "subhead": "Plant workers poisoned by tetraethyl lead",
+     "photo": {
+      "prop": "fuel-pump",
+      "color": "#b8b0a0",
+      "caption": "The new ETHYL pump"
+     },
+     "stories": [
+      {
+       "title": "SALES HALTED"
+      },
+      {
+       "title": "DOCTORS WARN"
+      },
+      {
+       "title": "STOCKS DIP"
+      },
+      {
+       "title": "WEATHER"
+      }
+     ]
+    },
+    {
+     "type": "doc",
+     "kind": "letter",
+     "x": 0.52,
+     "y": 0.56,
+     "scale": 0.68,
+     "title": "Dear Mr. Kettering,",
+     "lines": 8,
+     "write": 2.2,
+     "signature": "T. Midgley Jr.",
+     "seal": true
+    },
+    {
+     "type": "doc",
+     "kind": "document",
+     "x": 0.82,
+     "y": 0.5,
+     "scale": 0.62,
+     "title": "LAB REPORT",
+     "lines": [
+      "Lead in blood: high",
+      "Symptoms: severe",
+      "Verdict: unsafe"
+     ],
+     "stamp": {
+      "text": "DENIED",
+      "at": 1.6,
+      "color": "#c8141c"
+     },
+     "stains": 2,
+     "folds": 2
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.08,
+     1.0
+    ]
+   }
+  }
+ ]
+}

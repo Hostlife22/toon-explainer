@@ -193,6 +193,40 @@ Times inside a layer are layer-local (they count from the layer's `at`). A field
 | `prize-wheel` (ground) | `segments: [{label, color, w}]` (6 WIN / LOSE / AGAIN segments by default), `spin: {at, dur: 3.2, turns: 3.5, land: 0, overshoot: 0.4}` | Deterministic: exponential decay overshoots the `land` segment, then creeps back over the last 15 % (outBack) |
 | `coin-flip` | `faces` (`["star", "crown"]`: emblem shapes or letters), `land` (`"A"` \| `"B"`), `dur` (1.6), `from` (`[0.3, 0.7]`, start offset in frame fractions from the layer position), `grow` (`[0.6, 1.6]`), `split` (event, default at `dur`), `floor` (1.9 × radius) | Parabola into (`x`, `y`) flipping every 7 frames. `split`: 1 white frame, then the jagged halves drift ±200 px over 12 frames, fall onto the invisible floor and stay |
 
+### Painted materials and props 2.0
+
+`props/props-paint.js`, `props-lab.js`, `props-goods.js`, `props-tools.js`, `props-machines.js`. All new kinds are
+centred (`size` = height; long tools and guns: `size` = length) and drawn with shared materials, in both looks:
+
+| Material | API | Look |
+|---|---|---|
+| Glass | `T.matGlass(ctx, path, {tint, alpha, line, liquid, contents(ctx, bb), lt})` | Tinted see-through body, darker refracting edges, a long specular streak and a glint on the lit side, a light inner rim for the glass thickness |
+| Liquid | `T.matLiquid(ctx, bb, {level, color, tilt, bubbles, seed, meniscus}, lt)` | Gradient fill below `level`, a lit meniscus ellipse, rising bubbles (closed form); `tilt` keeps the surface level while the vessel tips |
+| Metal | `T.matMetal(ctx, path, color, {line, axis})` | The painted multi-tone fill plus anisotropic sheen bands and a sharp specular streak mirrored to the light |
+| Wood, fabric, paper, stone, leather | `T.matWood` / `T.matFabric` / `T.matPaper` / `T.matStone` / `T.matLeather(ctx, path, color, {line, rot, grain, fold, alpha})` | The texture tile (`wood`, `fabric`, `paper`, `stone`, `plaster`) under the painted look; classic wood keeps a few grain strokes. `fold` (0..1) adds a crease |
+
+| Group | Kinds | Fields |
+|---|---|---|
+| Lab glassware | `flask`, `round-flask`, `beaker`, `test-tube`, `tube-rack`, `retort`, `burner` | `liquid` (hex), `fill` (0..1 or `[{at, v}]` timeline), `bubbles` (true \| count), `boil` (bubbles + a tremble), `fumes` (true = steam, or a particles preset such as `gas`, `smoke`), `fumeColor`, `color` (glass tint); `tube-rack`: `liquids` (list), `fumesAt` (tube index); `burner`: `flame` (0 = off) |
+| Stacks and money | `book-stack`, `paper-stack`, `coin-pile`, `banknotes`, `gold-bars` | `count`, `colors` (book spines), `color`, `text` (`$` on notes, `AU` on bars; `false` hides), `amount` (banknote corner value) |
+| Goods and food | `amphora`, `apple`, `cheese`, `fish` | `color`; `fish`: `flop` |
+| Furniture smalls and light | `chair`, `stool`, `oil-lamp`, `lantern`, `inkwell` | `color`; lamps: `flame: false` = unlit; `inkwell`: `ink` |
+| Tools | `hammer`, `wrench`, `saw`, `shovel`, `pickaxe`, `anvil`, `axe` | `color` (metal), `wood` |
+| Weapons | `bow`, `pistol`, `musket`, `cannon` | `bow`: `draw` (0..1 timeline), `arrow: false`; guns: `fire` (layer seconds, or a list): 3-frame muzzle star, a burst of gun smoke and recoil |
+| Machines | `gears`, `piston`, `gauge`, `valve`, `fuel-pump` | `gears`: `count` (1..5), `speed` (turns/s), meshing at the tooth ratio; `piston`: `speed`, `exhaust` (false = no puffs); `gauge`: `value` (0..1 timeline; the needle shivers while it moves and in the red zone), `danger` (0.8), `label`; `valve`: `open` (timeline, the wheel turns 1.5 turns per unit); `fuel-pump`: `brand` (globe), `price`, `running` (the counter rolls), `text` (fixed counter) |
+
+**Painted versions of classic props.** Under `style.look: "painted"` these are redrawn with the materials (the classic
+functions stay in `T.PROPS_CLASSIC` and still draw the classic look): `bottle` (glass with liquid that stays level as
+it pours, cork, paper label; `liquid`, `fill`, `bubbles`), `crate` (planks, seams, separate frame boards and brace,
+nails, stencil `text`), `barrel` (staves, metal hoops, a lid; `hoop`), `coin` (metal, milled rim, embossed `text`),
+`moneybag` and `sack` (burlap, folds), `hourglass` (glass bulbs, sand draining, wooden caps), `bulb` (glowing glass,
+filament, threaded base), `book` (leather, page block, gilt), `scroll` (aged paper, handwriting), `sword` (steel with
+fuller, gilt guard, wrapped grip), `shield` (painted leather, metal boss).
+
+**Contact shadows.** Under the painted look a `prop` layer that stands on something gets a soft contact shadow
+(`T.PROP_FOOT`: width per kind; every `T.PROP_GROUND` kind too). `contact: false` removes it, `contact: {...}` sets it
+explicitly (03 Common layer fields).
+
 ### Bean `hold` and `holdL`
 
 `hold` (right hand) and `holdL` (left hand) on a `bean`, a `crowd` or a cast look take any centred prop kind above (the validator checks the `props` vocabulary). How the hand draws it:

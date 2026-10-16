@@ -299,6 +299,57 @@ Lettering and screen furniture stay flat (`T.PAINT_EXEMPT`); `painted: true` opt
 default and is unchanged. Frame cost is under 2x classic; the bench film is `examples/painted_bench` (render its
 contact sheet with the command in CLAUDE.md).
 
+### Particles, impact and painted FX
+
+`fx/particles.js`, `fx/impact.js`, `fx/fx-paint.js`. Every particle is a pure function of (seed, index, time): spawn
+time, launch angle, speed, size and tone come from an integer hash, the position is the closed-form solution of launch
+velocity + gravity + wind under linear drag, plus smooth hashed turbulence. Nothing is stepped, so frames never depend
+on render order and you can scrub anywhere. Under the painted look puffs are soft lit sprites (lit cap toward the
+light, shadow band, feathered edge) and fire / sparks / embers glow additively; the classic look draws flat toon marks
+with ink.
+
+**`particles`**: `{"type": "fx", "kind": "particles", "preset": "smoke", "x", "y", "rate", "spread", "life", "gravity", "wind", "at", "dur"}`
+
+| Field | Meaning (preset default) |
+|---|---|
+| `preset` | `smoke`, `dust`, `sparks`, `fire`, `embers`, `steam`, `splash`, `rain`, `snow`, `debris`, `confetti`, `leaves`, `bubbles`, `gas` (`TOON.PARTICLE_PRESETS`) |
+| `rate` | particles per second; `burst: N` spawns N at once instead (debris bursts by default) |
+| `life` | seconds each particle lives (each varies 0.7x to 1.3x) |
+| `dir`, `spread` | launch direction in degrees (0 = right, -90 = up) and the full cone width |
+| `speed` | launch speed px/s (each varies 0.55x to 1.45x) |
+| `gravity`, `wind`, `drag` | px/s^2 (negative = buoyant smoke), the air speed particles drift toward (px/s), linear drag 1/s |
+| `turb` | turbulence amplitude in px (smooth noise per particle) |
+| `size`, `grow` | px, a number or `[min, max]`; end size / start size |
+| `w`, `h`, `ox`, `oy` | emitter box and offset from the layer point (sky presets sit 600 px above it and span 2300 px: put the layer at `y` 0.5) |
+| `color` / `colors` | one hex (tones are derived) or a full list (base, shadow, light; fire uses a hot-to-cold ramp) |
+| `dur` | emission time in layer seconds (default: while the layer lives); particles finish their life after it |
+| `prewarm` | `true` (one `life`) or seconds: the emitter starts already running |
+| `floor`, `spin`, `alpha`, `seed` | landing line in px below the emitter (debris), rotation speed, opacity, seed override (default `id`) |
+
+**Impact language**
+
+| Kind | Fields (defaults) | What it does |
+|---|---|---|
+| `impact-frame` | `mode` (`invert` \| `flat` \| `flash`), `frames` (2, 1..6), `color` (paper `#f6efe2` / flash colour), `accent` (`#c8141c`, `null` = two tones), `ink`, `threshold` (0.36) | Holds for `frames` frames from the layer `at`, over the finished frame below it: `invert` negates it, `flat` posterises it to ink / accent / paper (manga hit frame), `flash` whites it out. Put it last in the layer list at the hit time |
+| `streaks` | `angle` (180 = lines travel left), `count` (36), `speed` (2600), `w`, `h` (area), `len` ([160, 560]), `width` ([3, 10]), `color` (white), `ink` (dark lines), `alpha` (0.8) | Parallel speed lines sliding past (the background rushes by). Radial lines stay `speedlines` |
+| `shockwave` | `size` (420 radius), `dur` (0.6), `rings` (2), `color`, `width`, `squash`, `ground` (flattened ring + dust rolling out both ways), `dust` (false = no dust), `dustColor` | Expanding rings, soft additive band with a thin refraction edge (painted) or white ring with ink (classic) |
+| `dustkick` | `target` (layer id), `times` ([layer seconds]), `size` (1), `side` (`both` \| `left` \| `right`), `color` | Dust rolls out along the ground and settles, pebbles hop. With `target` it fires at each landing of that layer (the end of every `jump`, the first touch of a `drop` entrance, the end of a `slam`) at its feet in world space, so it stays put whatever the camera does |
+| `toxic-cloud` | `size` (320), `color` (`#9fb34a`), `count` (18 puffs), `dur` (2 s growth), `ground` (hugs the floor), `drift` (px/s), `wisps` (true), `alpha` | A churning mass of lit puffs that grows in, with a sickly under-glow and gas wisps peeling off. Lead exhaust, chlorine, plague miasma |
+| `aura` | `radius` (220), `color` (`#ffe27a`), `pulse` (0.08), `rays` (10), `motes` (true) | Additive glow with slowly turning soft rays and rising glowing motes: relics, power-ups, radioactive objects. For a halo hugging a layer's own shape use the `glow` modifier |
+
+Layer field `trail` (any layer): motion smear, see [03 Common layer fields](../03-spec-reference.md#common-layer-fields).
+
+**Painted versions of classic kinds** (painted look only; the classic look is unchanged, `T.FX_CLASSIC` keeps the
+originals):
+
+| Kind | Painted |
+|---|---|
+| `smoke` | a drifting band of lit, prewarmed smoke puffs (same `w`, `count`, `rise`, `color`) |
+| `fire` | a dark heat-smoke column behind, the flipbook tongues, additive licking flames, a flickering glow and particle embers |
+| `explosion` | flash, starburst, a fireball of hot puffs over a dark smoke billow, sparks, debris that lands, a shock ring; lasts about 2.5 s |
+| `dust`, `puff` | bursts of lit dust puffs; the swap cloud as multi-tone puffs |
+| `gas` | the creeping front as lit billows |
+
 ## ④ Timing
 
 All at 30 fps. "Twos" means a new drawing every 2 frames.
