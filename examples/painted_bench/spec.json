@@ -57,19 +57,10 @@
    "id": "b01_interior",
    "dur": 2.5,
    "bg": {
-    "kind": "interior",
-    "window": [
-     0.62,
-     0.16,
-     0.2,
-     0.34
-    ],
-    "columns": [
-     0.12,
-     0.9
-    ],
-    "drapes": [
-     0.5
+    "kind": "set",
+    "preset": "study",
+    "parts": [
+     {"kind": "column", "x": 0.04, "y": 0.78, "h": 0.76, "color": "#c8b89a"}
     ]
    },
    "camera": {
@@ -133,7 +124,8 @@
    "dur": 2.5,
    "bg": {
     "kind": "street1920",
-    "obelisk": 0.5
+    "obelisk": 0.5,
+    "lamps": [0.22, 0.8]
    },
    "camera": {
     "zoom": [
@@ -190,21 +182,12 @@
    "id": "b03_landscape",
    "dur": 2.5,
    "bg": {
-    "kind": "sky",
+    "kind": "hills",
     "preset": "sunset",
     "clouds": 5,
-    "hills": 3,
     "trees": [
-     [
-      0.15,
-      0.8,
-      0.32
-     ],
-     [
-      0.86,
-      0.8,
-      0.28
-     ]
+     [0.1, 0.88, 0.55],
+     [0.9, 0.86, 0.45]
     ]
    },
    "camera": {

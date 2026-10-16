@@ -478,8 +478,10 @@
     const notes = Array.from({ length: n }, (_, i) => ({ x: W * (0.12 + ((i % cols) + r() * 0.4) * (0.76 / cols)), y: H * (0.14 + (Math.floor(i / cols) + r() * 0.3) * (0.7 / Math.max(1, rows))), w: 120 + r() * 80, h: 120 + r() * 70, a: (r() - 0.5) * 16 * DEG, k: KINDS[Math.floor(r() * 4)], lines: 2 + Math.floor(r() * 2), ...(spec ? { text: spec[i].text, at: spec[i].at, ...(spec[i].color ? { k: spec[i].color } : {}) } : {}) }));
     const pinAt = (nt) => [nt.x + nt.w / 2, nt.y + 14];
     cam(ctx, env, 1, () => {
-      full(ctx, '#5a3a22');
-      ol(ctx, (k) => k.rect(-OV * 0.4, H * 0.02 - 60, W + OV * 0.8, H * 0.96 + 120), base, { line: 0, shade: (k) => { const g = T.rng(T.hash(seed + 'gr')); for (let i = 0; i < 1600; i++) { k.fillStyle = g() > 0.5 ? rgba(T.shade(base, -0.3), 0.5) : rgba(T.mix(base, '#ffffff', 0.3), 0.4); k.fillRect(g() * (W + 200) - 100, g() * (H + 120) - 60, 2 + g() * 3, 2 + g() * 3); } } });
+      if (!env.richBase) { // the painted (Places 2.0) corkboard draws its own board and frame underneath
+        full(ctx, '#5a3a22');
+        ol(ctx, (k) => k.rect(-OV * 0.4, H * 0.02 - 60, W + OV * 0.8, H * 0.96 + 120), base, { line: 0, shade: (k) => { const g = T.rng(T.hash(seed + 'gr')); for (let i = 0; i < 1600; i++) { k.fillStyle = g() > 0.5 ? rgba(T.shade(base, -0.3), 0.5) : rgba(T.mix(base, '#ffffff', 0.3), 0.4); k.fillRect(g() * (W + 200) - 100, g() * (H + 120) - 60, 2 + g() * 3, 2 + g() * 3); } } });
+      }
       notes.forEach((nt, i) => {
         const p = nt.at != null ? T.ease.outBack(T.prog(lt, nt.at, 0.2)) : 1; if (p <= 0) return; // pop-tilt in (6 frames)
         ctx.save(); ctx.translate(nt.x + nt.w / 2, nt.y + nt.h / 2); ctx.rotate(nt.a * (2 - p)); ctx.scale(p, p);

@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 from density import lint  # noqa: F401  (re-exported: non-fatal density warnings, printed by the CLI)
+from places_check import check_depth, check_set_bg, check_set_layer
 
 KNOWN_LAYERS = {"bean", "image", "label", "title", "date", "era", "counter", "timer", "caption",
                 "prop", "card", "sign", "calendar", "map", "fx", "fg", "crowd"}
@@ -379,6 +380,8 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         errors.append(f"{where}: image needs src or frames.idle")
     _check_common(layer, where, cast, errors)
     _check_paint_fields(layer, where, errors)
+    if kind == "set":
+        check_set_layer(layer, where, LAYER_KINDS, errors)
     for win in layer.get("talk", []) or []:
         if not (isinstance(win, list) and len(win) == 2 and all(isinstance(v, (int, float)) for v in win) and win[0] <= win[1]):
             errors.append(f"{where}: talk windows must be [[start, end], ...] with start <= end")
@@ -487,6 +490,9 @@ def _check_bg(bg, where: str, errors: list[str]) -> None:
         errors.append(f"{where}: image bg needs image")
     if kind == "interior" and bg.get("windowSky", "day") not in KNOWN_SKY:
         errors.append(f"{where}: windowSky {bg.get('windowSky')!r} not in {sorted(KNOWN_SKY)}")
+    check_depth(bg, where, errors)
+    if kind == "set":
+        check_set_bg(bg, where, LAYER_KINDS, errors)
 
 
 KNOWN_LOOKS = {"classic", "painted"}  # shade.js T.LOOKS

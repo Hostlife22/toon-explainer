@@ -82,6 +82,8 @@ Parallax: every layer has a `z` (default 1). At 0 the layer is pinned to the scr
 - `burst`: background for reactions; `color`, `center`, `edge`, `at`: `[x,y]`, `wedges`: bool.
 - `flat`: `color`.
 - `image`: `image` (path relative to the spec), `overscan` (1.08), `z`, `filter` (canvas CSS filter, e.g. `"saturate(1.1)"`).
+- Any kind: `parallax` (0..3, default 1) scales the depth between its planes as the camera moves (0 = flat, 2 = deep); `haze` (0..2, or a hex colour) scales the far-plane haze of the Places 2.0 kinds.
+- `set` (modular room from parts: `wall`, `floor`, `preset`, `parts`), `hills`, `woods`, `river`, `dunes`, `ancient`, `castle`: Places 2.0 kinds, see [04 Places](toolkits/04_places.md#places-20-sets-depth-planes-and-painted-places). The layer type `set` draws the same parts as a layer.
 
 ## Common layer fields
 `type`, `id`, `x`, `y`, `scale`, `rot` (degrees), `alpha`, `flip`, `z`, `hud` (ignores the camera), `at`, `out`,
@@ -246,6 +248,7 @@ These are the base kinds. Over 40 more live in [08 FX and tone](toolkits/08_fx_a
 - **Shapes.** Every filled `T.outlined` shape gets a deep band on the far edge, a shadow band, the base colour on the lit side, an airbrushed falloff toward the far edges and a rim light along the lit edge; its ink is thinner on the lit side and heavier on the shadow side. Shapes under 18 px keep a flat fill, shapes under 64 px get one band. Faces are shaded at 45 % so they stay bright.
 - **Ground and depth.** Characters get a contact shadow and a soft shadow of the head on the torso; `atmos` hazes far layers.
 - **Places.** Painted clouds (lit cap, soft volume, darker underside), sun bloom, deeper zenith and horizon haze; textured ground (grass strokes and 2-tone tufts, cobbles, sand); per-kind surface textures (plaster walls, wood floors and planks, carpets, cobbled streets, water, parchment fibre) and an occlusion band where walls meet the floor.
+- **Places 2.0.** Richer painted versions of `office`, `stage`, `street1920`, `factory`, `gallery`, `sky`, `mountains`, `room`, `studio`, `corkboard` and `parchment`; hazed, cached depth planes; window light shafts, dust motes, lamp pools, chimney smoke, swaying trees and grass. See [04 Places](toolkits/04_places.md#places-20-sets-depth-planes-and-painted-places).
 - **Frame.** A key-light wash falling off to a cool, darker far side, and paper tooth baked into the film grain.
 - Lettering and screen furniture (`label`, `title`, `caption`, `date`, `era`, `counter`, `timer`, `doc`, `hud`, `cursor`, `subtitle`, `timeline`, `panel`, `fx`) stay flat unless they set `painted: true`.
 - Classic stays the default and renders exactly as before. The painted look costs under 2x the classic frame time (measured on `examples/showcase` at `--scale 0.5`). `examples/painted_bench` has one dense shot per scene type; the grades that suit it (`golden-hour`, `dusk`, `overcast`, `night`) are listed below. Techniques and APIs: [08 FX and tone](toolkits/08_fx_and_tone.md#painted-look).

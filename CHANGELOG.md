@@ -13,6 +13,15 @@ Painted engine, phases 0 and 1: a density lint and the paint core.
 - `scripts/density.py`: `spec.py` prints non-fatal warnings for shots under 4 layers (title cards excepted), `void` backgrounds, characters without a foreground element, and 3+ consecutive cuts at the same camera zoom.
 - `examples/painted_bench`: one dense painted shot per scene type (interior, street, landscape, map, globe, face close-up, vehicle, crowd).
 
+Painted engine, phase 2: Places 2.0.
+
+- Modular set kit: bg kind `set` (`wall` plaster / brick / wood / stone / wallpaper / tile, perspective `floor` wood / stone / tile / carpet / dirt, `dark`, `parts`) with 29 painted parts (window with light shaft and dust, door, arch, column, roof beams, stairs, fireplace, curtain, painting, lamp, chandelier, banner, pipes, shelf, cabinet, rug, table, desk, chair, bed, plant, clock, throne, bench, flasks, crates, globe) and presets `throne`, `lab`, `courtroom`, `library`, `tavern`, `study`, `office`; layer type `set` places the same parts in front of the characters.
+- Depth planes: `parallax` on any background scales the depth between its planes (old kinds too); far planes of the new kinds carry atmospheric `haze`. In the painted look static planes are cached in offscreen canvases (deterministic keys) and animated details draw live, so the painted film got faster (film backgrounds 38 -> 31 ms/frame at scale 0.5).
+- New landscapes: `hills`, `woods`, `river` (and `coast`), `dunes`, `ancient`, `castle`, with swaying trees and grass, glints, surf, blowing sand, smoke and fluttering banners.
+- Richer painted versions of `office`, `stage`, `street1920`, `factory`, `gallery`, `sky`, `mountains`, `room`, `studio`, `corkboard` and `parchment` (same fields; classic look pixel-identical).
+- Painted fg framing: `foliage`, `column`, `window-frame`, `silhouettes`.
+- `examples/painted_places` catalog; `painted_bench` interior, street and landscape shots use the new sets.
+
 ## 3.6.0 · 2026-10-15
 
 More pictures, more examples and a reproducible showcase.

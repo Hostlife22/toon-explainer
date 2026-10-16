@@ -149,6 +149,7 @@
   T.paintBg = (ctx, shot, lt, env) => {
     const P = T.PAINT, k = P.light.intensity, bgs = Array.isArray(shot.bg) ? shot.bg : [shot.bg || { kind: 'sky' }];
     for (const bg of bgs) {
+      if (T.isRich && T.isRich(bg)) continue; // Places 2.0 kinds texture their own surfaces under the set dressing
       const kind = bg.kind || (bg.image ? 'image' : 'sky'), f = T.BG_SURFACES[kind], fl = T.BG_FLOOR[kind];
       if (f) { ctx.save(); f(ctx, bg, env); ctx.restore(); }
       if (fl) cam(ctx, env, 0.85, () => {
