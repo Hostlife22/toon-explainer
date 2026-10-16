@@ -149,9 +149,11 @@
     palace: (bg) => [bg.floorY ?? 0.8, 0.6], hospital: () => [0.62, 0.9],
   };
 
-  // Right after one background is drawn (core.js drawBgs): its surface textures and floor occlusion band, so a later
-  // background covers them and rack-focus blur includes them.
+  // Right after one background is drawn (core.js drawBgs, inside its parallax): its surface textures and floor
+  // occlusion band, so a later background covers them and rack-focus blur includes them. Places 2.0 rich kinds
+  // texture their own surfaces under the set dressing.
   T.paintBg = (ctx, bg, lt, env) => {
+    if (T.isRich && T.isRich(bg)) return;
     const kind = bg.kind || (bg.image ? 'image' : 'sky'), f = T.BG_SURFACES[kind], fl = T.BG_FLOOR[kind];
     if (f) { ctx.save(); f(ctx, bg, env); ctx.restore(); }
     if (!fl) return;

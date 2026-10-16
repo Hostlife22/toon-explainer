@@ -82,6 +82,8 @@ Parallax: every layer has a `z` (default 1). At 0 the layer is pinned to the scr
 - `burst`: background for reactions; `color`, `center`, `edge`, `at`: `[x,y]`, `wedges`: bool.
 - `flat`: `color`.
 - `image`: `image` (path relative to the spec), `overscan` (1.08), `z`, `filter` (canvas CSS filter, e.g. `"saturate(1.1)"`).
+- Any kind: `parallax` (0..3, default 1) scales the depth between its planes as the camera moves (0 = flat, 2 = deep); `haze` (0..2, or a hex colour) scales the far-plane haze of the Places 2.0 kinds.
+- `set` (modular room from parts: `wall`, `floor`, `preset`, `parts`), `hills`, `woods`, `river`, `dunes`, `ancient`, `castle`: Places 2.0 kinds, see [04 Places](toolkits/04_places.md#places-20-sets-depth-planes-and-painted-places). The layer type `set` draws the same parts as a layer.
 
 ## Common layer fields
 `type`, `id`, `x`, `y`, `scale`, `rot` (degrees), `alpha`, `flip`, `z`, `hud` (ignores the camera), `at`, `out`,
@@ -250,6 +252,7 @@ Props & FX 2.0 adds closed-form `particles` (14 presets), `impact-frame`, `strea
 - **Shapes.** Every `T.outlined` shape with an opaque hex fill gets a deep band on the far edge, a shadow band, the base colour on the lit side, an airbrushed falloff toward the far edges and a rim light along the lit edge; its ink is thinner on the lit side and heavier on the shadow side. Shapes under 18 px keep a flat fill, shapes under 64 px get one band. Faces are shaded at 45 % so they stay bright.
 - **Ground and depth.** Characters get a contact shadow and a soft shadow of the head on the torso; `atmos` hazes far layers.
 - **Places.** Painted clouds (lit cap, soft volume, darker underside), sun bloom, deeper zenith and horizon haze; textured ground (grass strokes and 2-tone tufts, cobbles, sand); per-kind surface textures (plaster walls, wood floors and planks, carpets, cobbled streets, water, parchment fibre) and an occlusion band where walls meet the floor.
+- **Places 2.0.** Richer painted versions of `office`, `stage`, `street1920`, `factory`, `gallery`, `sky`, `mountains`, `room`, `studio`, `corkboard` and `parchment`; hazed, cached depth planes; window light shafts, dust motes, lamp pools, chimney smoke, swaying trees and grass. See [04 Places](toolkits/04_places.md#places-20-sets-depth-planes-and-painted-places).
 - **Frame.** A key-light wash falling off to a cool, darker far side, and paper tooth baked into the film grain (`style.grain: false` keeps a static paper texture). A layer fading in or out is shaded on its own canvas first, so its bands do not build up alpha.
 - **Props, FX and paper.** The most used props get materials (glass with liquid, metal sheen, wood grain, burlap, leather) and a contact shadow ([03 Props](toolkits/03_props_creatures_vehicles.md#painted-materials-and-props-20)); smoke, fire, explosions, dust and gas become soft lit puffs and additive glows; `doc` sheets become aged paper with folds and stains ([06 Paper](toolkits/06_paper_and_lettering.md#③11-painted-paper-front-page-and-letter)).
 - Lettering and screen furniture (`label`, `title`, `caption`, `date`, `era`, `counter`, `timer`, `doc`, `hud`, `cursor`, `subtitle`, `timeline`, `panel`, `fx`) stay flat unless they set `painted: true`.

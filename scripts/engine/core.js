@@ -122,9 +122,13 @@
     if (i === 0) return keys[0].v;
     return T.lerp(keys[i - 1].v, keys[i].v, T.ease.outCubic(T.prog(lt, keys[i].at ?? 0, blend)));
   };
-  // Apply camera with a parallax factor f (0 = locked to screen, 1 = full camera).
+  // Apply camera with a parallax factor f (0 = locked to screen, 1 = full camera). While a background with a
+  // `parallax` multiplier draws, T.BG_DEPTH scales every plane's distance from the camera plane (f = 1).
+  T.BG_DEPTH = null;
+  T.depthF = (f) => (T.BG_DEPTH == null || T.BG_DEPTH === 1 ? f : 1 - (1 - f) * T.BG_DEPTH);
   T.applyCam = (ctx, cam, f = 1) => {
     if (!cam || f === 0) return;
+    f = T.depthF(f);
     const z = 1 + (cam.z - 1) * f;
     ctx.translate(cam.fx + cam.sx, cam.fy + cam.sy);
     ctx.rotate(cam.rot * f);
@@ -331,9 +335,10 @@
   T.HUD_DEFAULT = { era: true, timer: true, date: false, title: false };
   const HUD_DEFAULT = T.HUD_DEFAULT;
   T.drawShot = (ctx, shot, lt, env) => {
-    const prevPaint = T.PAINT;
+    const prevPaint = T.PAINT, prevDepth = T.BG_DEPTH;
     T.PAINT = T.paintState ? T.paintState(env.spec, shot) : null; // painted look state for this shot (shade.js)
-    try { drawShotBody(ctx, shot, lt, env); } finally { T.PAINT = prevPaint; }
+    T.BG_DEPTH = null; // a shot nested in a background (screens) must not inherit its parent's parallax
+    try { drawShotBody(ctx, shot, lt, env); } finally { T.PAINT = prevPaint; T.BG_DEPTH = prevDepth; }
   };
   function drawShotBody(ctx, shot, lt, env) {
     ctx.save();
@@ -348,9 +353,13 @@
         const draw = T.bgs[bg.kind || (bg.image ? 'image' : 'sky')];
         if (!draw) throw new Error(`Unknown bg kind "${bg.kind}" in shot ${shot.id}`);
         c.save();
-        draw(c, bg, lt, shotEnv);
-        c.restore();
-        if (T.PAINT && T.paintBg) { c.save(); T.paintBg(c, bg, lt, shotEnv); c.restore(); } // painted look: this bg's textures and occlusion
+        const depth = T.BG_DEPTH;
+        T.BG_DEPTH = bg.parallax ?? null; // per-background parallax multiplier (applyCam)
+        try {
+          draw(c, bg, lt, shotEnv);
+          c.restore();
+          if (T.PAINT && T.paintBg) { c.save(); T.paintBg(c, bg, lt, shotEnv); c.restore(); } // painted look: this bg's textures and occlusion, moving with its parallax
+        } finally { T.BG_DEPTH = depth; }
       }
     };
     drawBgs(ctx);

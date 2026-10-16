@@ -17,6 +17,7 @@ from pathlib import Path
 from density import lint  # noqa: F401  (re-exported: non-fatal density warnings, printed by the CLI)
 import props_fx  # Props & FX 2.0 field checks (particles, impact language, trail, paper)
 from motion_check import check_motion
+from places_check import check_depth, check_set_bg, check_set_layer
 
 KNOWN_LAYERS = {"bean", "image", "label", "title", "date", "era", "counter", "timer", "caption",
                 "prop", "card", "sign", "calendar", "map", "fx", "fg", "crowd"}
@@ -388,6 +389,8 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         props_fx.check_layer(state, where, found, LAYER_KINDS.get("particle_preset", set()))
         errors.extend(e for e in found if not (e in seen or seen.add(e)))
     check_motion(layer, where, errors, _ease_names(), LAYER_KINDS.get("creature"))
+    if kind == "set":
+        check_set_layer(layer, where, LAYER_KINDS, errors)
     for win in layer.get("talk", []) or []:
         if not (isinstance(win, list) and len(win) == 2 and all(isinstance(v, (int, float)) for v in win) and win[0] <= win[1]):
             errors.append(f"{where}: talk windows must be [[start, end], ...] with start <= end")
@@ -531,7 +534,7 @@ def _nested_whos(value):
 
 # Backgrounds that paint a sky behind themselves and pass `preset` to it (other kinds use `preset` for their own variants).
 SKY_BACKED_BGS = {"sky", "city", "battlefield", "desert", "eastcity", "factory", "graveyard", "karst", "mountains",
-                  "street1920", "trench"}
+                  "street1920", "trench", "hills", "woods", "river", "dunes", "ancient", "castle"}  # + Places 2.0 landscapes
 
 
 def _check_bg(bg, where: str, errors: list[str]) -> None:
@@ -563,6 +566,9 @@ def _check_bg(bg, where: str, errors: list[str]) -> None:
         errors.append(f"{where}: image bg needs image")
     if kind == "interior" and bg.get("windowSky", "day") not in KNOWN_SKY:
         errors.append(f"{where}: windowSky {bg.get('windowSky')!r} not in {sorted(KNOWN_SKY)}")
+    check_depth(bg, where, errors)
+    if kind == "set":
+        check_set_bg(bg, where, LAYER_KINDS, errors)
 
 
 KNOWN_LOOKS = {"classic", "painted"}  # shade.js T.LOOKS

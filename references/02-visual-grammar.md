@@ -123,6 +123,15 @@ A viewer-stand-in character `who:"you"` (neutral clothing), `expr:"worried"`, th
 ### P. Over-the-shoulder conversation
 `fg: ots` (`who` is the listener, `side` opposite the speaker) + the speaker in 3/4 view with `talk`, pose changes, and a caption. Put the caption **after** `ots` in the layer list so the back of the head doesn't cover it.
 
+### Q. Lived-in room (painted look)
+`bg: set` with a `preset` (`study`, `library`, `office`, `tavern`, `lab`, `throne`, `courtroom`) or your own `parts`; a `window` with `light: true` gives a shaft with dust, a `lamp` or `fireplace` gives a warm pool (raise `dark` for a night scene). Put the speaker in the light, add a `set` layer (`table` with a `candle`, `z` 1.1) in front of the characters, and frame with `fg: column` or `fg: curtains`.
+
+### R. Establishing landscape with depth (painted look)
+`hills`, `woods`, `river` (`coast`), `dunes`, `ancient` or `castle` + a slow camera `pan`: far planes are hazed and slide less. Push `parallax` to 1.5–2 for a showy reveal and `haze` up for heat or morning mist. Frame with `fg: foliage` (top corners) and keep the character on the near meadow or plaza.
+
+### S. Looking out / listening audience
+Through a window: `fg: window-frame` over a `castle` or `street1920`, a character's shoulder at `z` 1.3 in a corner. A speech or verdict: `fg: silhouettes` (`who` = cast backs) under a speaker on a `stage` or in a `set` `courtroom`.
+
 ## Tone: cold vs. comedic
 
 | | Cold (MASTER_PROMPT) | Comedic (as in the reference) |
