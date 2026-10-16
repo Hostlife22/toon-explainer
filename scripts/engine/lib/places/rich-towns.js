@@ -58,7 +58,7 @@
   T.richBg('street1920', (ctx, bg, lt, env) => {
     const hz = H * (bg.horizon ?? 0.7), grey = !!bg.grey, night = bg.preset === 'night';
     const { pal } = T.richSky(ctx, bg, lt, env, { preset: grey ? 'overcast' : bg.preset ?? 'day', horizon: hz });
-    const haze = grey ? '#a8b0b8' : T.atmosColor({ shot: { bg: { kind: 'sky', preset: grey ? 'overcast' : bg.preset ?? 'day' } } });
+    const haze = typeof bg.haze === 'string' ? bg.haze : grey ? '#a8b0b8' : T.atmosColor({ shot: { bg: { kind: 'sky', preset: grey ? 'overcast' : bg.preset ?? 'day' } } });
     T.plane(ctx, env, { f: 0.3, key: key('street', env, bg, 'far'), haze: T.hazeOf(bg, 0.5), hazeColor: haze }, (g) => T.cityline(g, hz - 30, env.seed + 'far', grey ? '#7a7e82' : T.mix(pal.hills[2], '#8a6a5a', 0.4), { h: 170, windowAlpha: night ? 0.7 : 0.25 }));
     T.plane(ctx, env, { f: 0.55, key: key('street', env, bg, 'mid'), haze: T.hazeOf(bg, 0.25), hazeColor: haze }, (g) => {
       for (const dx of bg.domes ?? [0.3, 0.7]) dome(g, dx * W, hz - 180, 1, grey ? '#9a9a96' : '#d8c2a0', grey ? '#6d6f73' : '#8a6a5a');
@@ -114,7 +114,7 @@
   T.richBg('factory', (ctx, bg, lt, env) => {
     const hz = H * (bg.horizon ?? 0.72), preset = bg.preset ?? 'overcast', night = preset === 'night', col = bg.color ?? '#3c3f45';
     T.richSky(ctx, bg, lt, env, { preset, horizon: hz });
-    const haze = T.atmosColor({ shot: { bg: { kind: 'sky', preset } } });
+    const haze = typeof bg.haze === 'string' ? bg.haze : T.atmosColor({ shot: { bg: { kind: 'sky', preset } } });
     T.plane(ctx, env, { f: 0.3, key: key('factory', env, bg, 'far'), haze: T.hazeOf(bg, 0.55), hazeColor: haze }, (g) => T.cityline(g, hz - 20, env.seed + 'ff', T.shade(col, 0.1), { h: 150, domes: false, windowAlpha: night ? 0.6 : 0.15, windowColor: '#f0c060' }));
     const stacks = [];
     T.plane(ctx, env, { f: 0.7, key: key('factory', env, bg, 'halls') }, (g) => {

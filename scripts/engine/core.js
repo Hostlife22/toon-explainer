@@ -331,9 +331,10 @@
   T.HUD_DEFAULT = { era: true, timer: true, date: false, title: false };
   const HUD_DEFAULT = T.HUD_DEFAULT;
   T.drawShot = (ctx, shot, lt, env) => {
-    const prevPaint = T.PAINT;
+    const prevPaint = T.PAINT, prevDepth = T.BG_DEPTH;
     T.PAINT = T.paintState ? T.paintState(env.spec, shot) : null; // painted look state for this shot (shade.js)
-    try { drawShotBody(ctx, shot, lt, env); } finally { T.PAINT = prevPaint; }
+    T.BG_DEPTH = null; // a shot nested in a background (screens) must not inherit its parent's parallax
+    try { drawShotBody(ctx, shot, lt, env); } finally { T.PAINT = prevPaint; T.BG_DEPTH = prevDepth; }
   };
   function drawShotBody(ctx, shot, lt, env) {
     ctx.save();

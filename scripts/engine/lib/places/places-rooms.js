@@ -291,7 +291,7 @@
   T.BG_FRONT.cell = cellBars;
 
   // ---------- harbor (pier) ----------
-  const HARBOR = { sunset: { sky: ['#7a3a6a', '#d85a6a', '#f6d27a'], sea: '#6a4a9a', sun: '#fff0b0' }, day: { sky: ['#5aa8e0', '#9ad8f0', '#e0f4fa'], sea: '#2ec4b6', sun: '#ffffff' }, night: { sky: ['#0a1428', '#1d2b46', '#3a4a6a'], sea: '#1a2a4a', sun: '#f0f0d8' }, fog: { sky: ['#9aa4a8', '#c4cacc', '#dde0e0'], sea: '#7a8a8c', sun: '#ffffff' } };
+  const HARBOR = T.HARBOR = { sunset: { sky: ['#7a3a6a', '#d85a6a', '#f6d27a'], sea: '#6a4a9a', sun: '#fff0b0' }, day: { sky: ['#5aa8e0', '#9ad8f0', '#e0f4fa'], sea: '#2ec4b6', sun: '#ffffff' }, night: { sky: ['#0a1428', '#1d2b46', '#3a4a6a'], sea: '#1a2a4a', sun: '#f0f0d8' }, fog: { sky: ['#9aa4a8', '#c4cacc', '#dde0e0'], sea: '#7a8a8c', sun: '#ffffff' } };
   function ship(ctx, x, y, s, lt, sail) {
     const bob = Math.sin((lt / 2.2) * TAU) * 4;
     ctx.save(); ctx.translate(x, y + bob); ctx.scale(s, s);

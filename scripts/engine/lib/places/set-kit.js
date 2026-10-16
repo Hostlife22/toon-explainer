@@ -6,6 +6,8 @@
   'use strict';
   const T = window.TOON, W = T.W, H = T.H;
 
+  // Parts whose animation sits inside the part (later parts must cover it); the rest animate as plane overlays.
+  for (const k of ['fireplace', 'table', 'desk', 'clock', 'flasks', 'curtain', 'banner']) T.SET_PARTS[k].inPlace = true;
   const partOf = (kind) => {
     const P = T.SET_PARTS[kind];
     if (!P) throw new Error(`set: unknown part "${kind}" (known: ${Object.keys(T.SET_PARTS).join(', ')})`);
@@ -15,8 +17,9 @@
 
   // Draw parts in order: static draws, then (unless o.live === false) their animated details.
   T.drawSetParts = (ctx, parts, lt, env, o = {}) => {
-    if (o.still !== false) parts.forEach((p, i) => partOf(p.kind).draw(ctx, p, env, stateOf(p, (o.base ?? 0) + i, env)));
-    if (o.live !== false) parts.forEach((p, i) => { const P = partOf(p.kind); if (P.live) P.live(ctx, p, lt, env, stateOf(p, (o.base ?? 0) + i, env)); });
+    const S = (p, i) => stateOf(p, (o.base ?? 0) + i, env);
+    parts.forEach((p, i) => { const P = partOf(p.kind); if (o.still !== false) P.draw(ctx, p, env, S(p, i)); if (o.live !== false && P.live && P.inPlace) P.live(ctx, p, lt, env, S(p, i)); });
+    if (o.live !== false) parts.forEach((p, i) => { const P = partOf(p.kind); if (P.live && !P.inPlace) P.live(ctx, p, lt, env, S(p, i)); });
   };
 
   const PRESETS = {
@@ -103,10 +106,18 @@
     if (!R) { R = resolve(bg); resolved.set(bg, R); }
     const e = { ...env, setFloorY: R.fy * H };
     R.planes.forEach(([z, list], gi) => {
-      const parts = list.map((x) => x.p);
-      // dark: the room's ambient level (0..1), baked over the static parts so lamps and fire glow against it
-      T.plane(ctx, env, { f: z, key: `set|${env.seed}|${T.bgKey(bg)}|${gi}`, haze: R.dark, hazeColor: '#120a16' }, (g) => list.forEach(({ p, i }) => T.SET_PARTS[p.kind].draw(g, p, e, stateOf(p, i, e))));
-      if (parts.some((p) => T.SET_PARTS[p.kind].live)) T.plane(ctx, env, { f: z, live: true }, (g) => list.forEach(({ p, i }) => { const P = T.SET_PARTS[p.kind]; if (P.live) P.live(g, p, lt, e, stateOf(p, i, e)); }));
+      // A plane is split into runs after each part whose animation belongs between it and the parts drawn later
+      // (fire, candles, pendulum, cloth): run = cached statics, then that run's in-place animation. Light effects
+      // (window shafts, lamp pools, steam) are overlays drawn once over the whole plane.
+      const runs = [[]];
+      list.forEach((it, j) => { runs[runs.length - 1].push(it); if (T.SET_PARTS[it.p.kind].inPlace && j < list.length - 1) runs.push([]); });
+      const live = (g, items, inPlace) => items.forEach(({ p, i }) => { const P = T.SET_PARTS[p.kind]; if (P.live && !!P.inPlace === inPlace) P.live(g, p, lt, e, stateOf(p, i, e)); });
+      runs.forEach((run, ri) => {
+        // dark: the room's ambient level (0..1), baked over the static parts so lamps and fire glow against it
+        T.plane(ctx, env, { f: z, key: `set|${env.seed}|${T.bgKey(bg)}|${gi}.${ri}`, haze: R.dark, hazeColor: '#120a16' }, (g) => run.forEach(({ p, i }) => T.SET_PARTS[p.kind].draw(g, p, e, stateOf(p, i, e))));
+        if (run.some(({ p }) => T.SET_PARTS[p.kind].live && T.SET_PARTS[p.kind].inPlace)) T.plane(ctx, env, { f: z, live: true }, (g) => live(g, run, true));
+      });
+      if (list.some(({ p }) => T.SET_PARTS[p.kind].live && !T.SET_PARTS[p.kind].inPlace)) T.plane(ctx, env, { f: z, live: true }, (g) => live(g, list, false));
     });
     if (bg.vignette !== 0) { // corners of the room fall into shadow
       const g = ctx.createRadialGradient(W / 2, H * 0.45, H * 0.35, W / 2, H * 0.45, W * 0.75);
@@ -120,7 +131,7 @@
     const pre = L.preset != null ? PRESETS[L.preset] : null;
     if (L.preset != null && !pre) throw new Error(`set layer: unknown preset "${L.preset}"`);
     const parts = [...((pre && pre.parts) || []), ...(L.parts || [])];
-    ctx.translate(-env.st.x, -env.st.y);
+    ctx.translate(-(L.x ?? 0.5) * W, -(L.y ?? 0.5) * H); // undo the resting anchor only: move, bob and entrances still apply
     T.drawSetParts(ctx, parts, lt, { ...env, setFloorY: (L.floorY ?? 0.78) * H });
   };
   T.DEFAULT_ENTER.set = 'none';

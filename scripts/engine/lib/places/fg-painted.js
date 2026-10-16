@@ -20,31 +20,33 @@
       T.leafCluster(ctx, cx, cy, rx, rx * 0.72, seed + i, i % 3 === 0 ? T.shade(leaf, -0.06) : i % 3 === 1 ? leaf : T.shade(leaf, 0.08), 6);
     }
   }
+  // Visible frame edges in the layer's local x (vertical films show a strip of the world).
+  const span = (L, env) => { const [lo, vw] = T.visibleSpan(env), ox = (L.x ?? 0.5) * W; return { l: lo - ox, r: lo + vw - ox, w: vw }; };
   const FGP = {
     foliage(ctx, L, lt, env) {
-      const leaf = L.color ?? '#3a5a26', sides = L.sides ?? ['tl', 'tr', 'bl'];
+      const leaf = L.color ?? '#3a5a26', sides = L.sides ?? ['tl', 'tr', 'bl'], S = span(L, env), SW = S.w;
       for (const side of sides) {
-        const dx = side.includes('l') ? -1 : 1, top = side.includes('t'), x = dx * (W / 2 + 40), y = top ? -H / 2 - 40 : H / 2 + 40;
+        const dx = side.includes('l') ? -1 : 1, top = side.includes('t'), x = dx < 0 ? S.l - 40 : S.r + 40, y = top ? -H / 2 - 40 : H / 2 + 40;
         const a = T.sway(lt, (L.id ?? 'fol') + side, 0.3, 1.6 * T.DEG);
         ctx.save(); ctx.translate(x, y); ctx.rotate(a * (top ? 1 : -0.6));
-        const box = top ? [-W * 0.45 * (dx > 0 ? 1 : 0) - 200, -200, W * 0.45 + 400, 760] : [-W * 0.4 * (dx > 0 ? 1 : 0) - 200, -700, W * 0.4 + 400, 900];
-        T.drawSprite(ctx, env, `fol|${L.id ?? ''}|${side}|${leaf}`, box, (g) => {
-          if (top) bough(g, 0, 0, -dx, W * 0.42, leaf, (L.id ?? 'fol') + side);
+        const box = top ? [-SW * 0.45 * (dx > 0 ? 1 : 0) - 200, -200, SW * 0.45 + 400, 760] : [-W * 0.4 * (dx > 0 ? 1 : 0) - 200, -700, W * 0.4 + 400, 900];
+        T.drawSprite(ctx, env, `fol|${L.id ?? ''}|${side}|${leaf}|${SW}`, box, (g) => {
+          if (top) bough(g, 0, 0, -dx, SW * 0.42, leaf, (L.id ?? 'fol') + side);
           else for (let i = 0; i < 4; i++) T.leafCluster(g, -dx * (60 + i * 150), -60 - (i % 2) * 90 - i * 30, 200 - i * 26, 150 - i * 18, (L.id ?? 'fol') + side + i, i % 2 ? leaf : T.shade(leaf, 0.08), 7);
         });
         ctx.restore();
       }
     },
-    column(ctx, L) {
-      const d = (L.side ?? 'left') === 'left' ? -1 : 1, x = d * (W / 2 - (L.inset ?? 60)), w = L.width ?? 300;
+    column(ctx, L, lt, env) {
+      const S = span(L, env), d = (L.side ?? 'left') === 'left' ? -1 : 1, x = d < 0 ? S.l + (L.inset ?? 60) : S.r - (L.inset ?? 60), w = L.width ?? (S.w < W ? 200 : 300);
       T.drawColumn(ctx, x, H / 2 + 120, H + 500, w, T.mix(L.color ?? '#d8cfbc', '#2a2030', L.tone ?? 0.25)); // nearer than the light: a darker tone
     },
-    'window-frame'(ctx, L, lt) {
-      const hole = L.hole ?? [0.2, 0.12, 0.6, 0.62], x = -W / 2 + hole[0] * W, y = -H / 2 + hole[1] * H, w = hole[2] * W, h = hole[3] * H, wall = L.wall ?? '#cdbb98', fr = L.frame ?? '#6a4428', depth = L.depth ?? 46;
-      const outer = (k) => { k.rect(-W / 2 - OV, -H / 2 - OV, W + OV * 2, H + OV * 2); k.rect(x + w, y, -w, h); };
+    'window-frame'(ctx, L, lt, env) {
+      const S = span(L, env), hole = L.hole ?? [0.2, 0.12, 0.6, 0.62], x = S.l + hole[0] * S.w, y = -H / 2 + hole[1] * H, w = hole[2] * S.w, h = hole[3] * H, wall = L.wall ?? '#cdbb98', fr = L.frame ?? '#6a4428', depth = L.depth ?? 46;
+      const outer = (k) => { k.rect(S.l - OV, -H / 2 - OV, S.w + OV * 2, H + OV * 2); k.rect(x + w, y, -w, h); };
       ctx.save(); ctx.beginPath(); outer(ctx); ctx.fillStyle = wall; ctx.fill('evenodd');
-      ctx.clip('evenodd'); if (T.PAINT) T.fillTexture(ctx, null, 'plaster', { rect: [-W / 2 - OV, -H / 2 - OV, W + OV * 2, H + OV * 2], alpha: 0.6 });
-      const g = ctx.createRadialGradient(0, 0, Math.min(w, h) * 0.5, 0, 0, W * 0.8); g.addColorStop(0, rgba('#140a06', 0)); g.addColorStop(1, rgba('#140a06', 0.45)); ctx.fillStyle = g; ctx.fillRect(-W / 2 - OV, -H / 2 - OV, W + OV * 2, H + OV * 2);
+      ctx.clip('evenodd'); if (T.PAINT) T.fillTexture(ctx, null, 'plaster', { rect: [S.l - OV, -H / 2 - OV, S.w + OV * 2, H + OV * 2], alpha: 0.6 });
+      const cx = S.l + S.w / 2, g = ctx.createRadialGradient(cx, 0, Math.min(w, h) * 0.5, cx, 0, Math.max(S.w, H) * 0.8); g.addColorStop(0, rgba('#140a06', 0)); g.addColorStop(1, rgba('#140a06', 0.45)); ctx.fillStyle = g; ctx.fillRect(S.l - OV, -H / 2 - OV, S.w + OV * 2, H + OV * 2);
       ctx.restore();
       ol(ctx, (k) => { k.moveTo(x - depth, y - depth); k.lineTo(x, y); k.lineTo(x, y + h); k.lineTo(x - depth, y + h + depth); k.closePath(); }, T.shade(wall, -0.25), 4);
       ol(ctx, (k) => { k.moveTo(x - depth, y - depth); k.lineTo(x + w + depth, y - depth); k.lineTo(x + w, y); k.lineTo(x, y); k.closePath(); }, T.shade(wall, -0.35), 4);
@@ -59,10 +61,11 @@
     },
     // Backs of an audience (heads from the character rig in back view, darkened), bobbing slightly.
     silhouettes(ctx, L, lt, env) {
+      const S = span(L, env);
       const n = L.count ?? 3, dark = L.tone ?? 0.55, r = T.rng(T.hash(L.id ?? 'sil')), who = L.who ? [].concat(L.who) : [];
       const HAIR = ['short', 'long', 'curly', 'bun', 'bald'], HC = ['#3a2a1e', '#5a3a22', '#2a2220', '#7a5a3a', '#4a3a30'], ROBE = ['#4a5a7a', '#6a3a3a', '#3a5a4a', '#5a4a6a'];
       for (let i = 0; i < n; i++) {
-        const x = -W / 2 + ((i + 0.5) / n) * W + (r() - 0.5) * 140, s = (L.size ?? 1) * (1.05 + r() * 0.3), y = H / 2 - 150 * s + Math.sin(lt * 1.3 + i * 2) * 5;
+        const x = S.l + ((i + 0.5) / n) * S.w + (r() - 0.5) * Math.min(140, S.w * 0.07), s = (L.size ?? 1) * (1.05 + r() * 0.3), y = H / 2 - 150 * s + Math.sin(lt * 1.3 + i * 2) * 5;
         const base = { hair: HAIR[i % 5], hairColor: HC[(i * 3) % 5], robe: ROBE[i % 4], ...((who[i] && env.cast[who[i]]) || {}), ...(L.look || {}) };
         const c = { ...base, skin: T.shade(base.skin ?? T.PAL.skin, -dark), skinShade: T.shade('#c4c1cd', -dark), hairColor: T.shade(base.hairColor ?? T.PAL.hair, -dark * 0.7) };
         ctx.save(); ctx.translate(x, y); ctx.scale(s, s);

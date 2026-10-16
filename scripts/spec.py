@@ -458,7 +458,7 @@ def _nested_whos(value):
 
 # Backgrounds that paint a sky behind themselves and pass `preset` to it (other kinds use `preset` for their own variants).
 SKY_BACKED_BGS = {"sky", "city", "battlefield", "desert", "eastcity", "factory", "graveyard", "karst", "mountains",
-                  "street1920", "trench"}
+                  "street1920", "trench", "hills", "woods", "river", "dunes", "ancient", "castle"}  # + Places 2.0 landscapes
 
 
 def _check_bg(bg, where: str, errors: list[str]) -> None:

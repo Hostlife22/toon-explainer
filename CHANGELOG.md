@@ -21,6 +21,8 @@ Painted engine, phase 2: Places 2.0.
 - Richer painted versions of `office`, `stage`, `street1920`, `factory`, `gallery`, `sky`, `mountains`, `room`, `studio`, `corkboard` and `parchment` (same fields; classic look pixel-identical).
 - Painted fg framing: `foliage`, `column`, `window-frame`, `silhouettes`.
 - `examples/painted_places` catalog; `painted_bench` interior, street and landscape shots use the new sets.
+- Review fixes: a `set` layer follows its own `move`/bob/entrance; painted surface overlays keep their background's `parallax`, and parallax no longer leaks into nested screen shots; painted fg framing (`column`, `foliage`, `window-frame`, `silhouettes`) anchors to the visible strip in vertical films; `wall: false` / `floor: false` validate; malformed set enums, non-finite part geometry and bad presets of the new landscapes are reported instead of crashing or rendering; `street1920` / `factory` honour a custom `haze` colour; animation inside a set part (fire, candles) stays behind parts listed after it.
+- Richer painted `corkboard` (cork granules, pinned clutter, red yarn, frame), `parchment` (ruled lines, ornament border, aged edges, burnt corners), and new painted `battlefield`, `trench` and `harbor`; vegetation on sunset hills stays green.
 
 ## 3.6.0 · 2026-10-15
 

@@ -54,8 +54,8 @@
     ctx.restore();
     ctx.strokeStyle = rgba(INK, o.ink ?? 0.55); ctx.lineWidth = o.line ?? 4; ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke();
     ctx.strokeStyle = rgba(T.mix(fill, '#fff4d0', 0.5), 0.8); ctx.lineWidth = 4; ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y + 4) : ctx.moveTo(x, y + 4))); ctx.stroke();
-    if (o.bushes) { const br = T.rng(T.hash(seed + 'bu')); for (let i = 0; i < o.bushes; i++) { const x = br() * (W + OV) - OV / 2, y = ySample(pts, x) + 6; T.bush(ctx, x, y, (o.bushSize ?? 60) * (0.6 + br() * 0.8), seed + 'b' + i, o.bushColor ?? T.shade(fill, -0.18)); } }
-    if (o.trees) { const tr = T.rng(T.hash(seed + 'tr')); for (let i = 0; i < o.trees; i++) { const x = tr() * (W + OV) - OV / 2, y = ySample(pts, x) + 8, h = (o.treeSize ?? 120) * (0.7 + tr() * 0.6); T.foliageTree(ctx, x, y, h, seed + 'tr' + i, { leaf: o.treeColor ?? T.shade(fill, -0.12), line: 3 }); } }
+    if (o.bushes) { const br = T.rng(T.hash(seed + 'bu')); for (let i = 0; i < o.bushes; i++) { const x = br() * (W + OV) - OV / 2, y = ySample(pts, x) + 6; T.bush(ctx, x, y, (o.bushSize ?? 60) * (0.6 + br() * 0.8), seed + 'b' + i, o.bushColor ?? T.shade(T.mix(fill, '#4f7a34', 0.5), -0.15)); } }
+    if (o.trees) { const tr = T.rng(T.hash(seed + 'tr')); for (let i = 0; i < o.trees; i++) { const x = tr() * (W + OV) - OV / 2, y = ySample(pts, x) + 8, h = (o.treeSize ?? 120) * (0.7 + tr() * 0.6); T.foliageTree(ctx, x, y, h, seed + 'tr' + i, { leaf: o.treeColor ?? T.shade(T.mix(fill, '#4f7a34', 0.5), -0.08), line: 3 }); } }
     return pts;
   };
 

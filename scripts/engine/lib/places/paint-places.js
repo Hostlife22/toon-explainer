@@ -151,6 +151,9 @@
     for (const bg of bgs) {
       if (T.isRich && T.isRich(bg)) continue; // Places 2.0 kinds texture their own surfaces under the set dressing
       const kind = bg.kind || (bg.image ? 'image' : 'sky'), f = T.BG_SURFACES[kind], fl = T.BG_FLOOR[kind];
+      const depth = T.BG_DEPTH;
+      T.BG_DEPTH = bg.parallax ?? null; // the surface moves with its background's planes
+      try {
       if (f) { ctx.save(); f(ctx, bg, env); ctx.restore(); }
       if (fl) cam(ctx, env, 0.85, () => {
         const fy = fl(bg) * H, o = OV(), up = ctx.createLinearGradient(0, fy - 90, 0, fy), dn = ctx.createLinearGradient(0, fy, 0, fy + 70);
@@ -158,6 +161,7 @@
         dn.addColorStop(0, rgba('#1a1020', 0.38)); dn.addColorStop(1, rgba('#1a1020', 0));
         ctx.fillStyle = up; ctx.fillRect(-o, fy - 90, W + o * 2, 90); ctx.fillStyle = dn; ctx.fillRect(-o, fy, W + o * 2, 70);
       });
+      } finally { T.BG_DEPTH = depth; }
     }
   };
 

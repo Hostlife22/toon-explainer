@@ -2,11 +2,13 @@
 every background accepts (`parallax`, `haze`). spec.py calls these with the vocabulary it merged from scripts/vocab."""
 from __future__ import annotations
 
+import math
+
 PART_NUMS = ("x", "y", "w", "h", "scale", "z")
 
 
 def _num(v) -> bool:
-    return isinstance(v, (int, float)) and not isinstance(v, bool)
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
 
 
 def check_depth(bg: dict, where: str, errors: list[str]) -> None:
@@ -19,6 +21,12 @@ def check_depth(bg: dict, where: str, errors: list[str]) -> None:
         errors.append(f"{where}: haze must be a number in 0..2 (far-plane atmosphere, 1 = default)")
 
 
+def _enum(value, group: str, label: str, where: str, kinds: dict, errors: list[str]) -> None:
+    known = kinds.get(group, set())
+    if not isinstance(value, str) or (known and value not in known):
+        errors.append(f"{where}: {label} {value!r} not in {sorted(known)}")
+
+
 def check_parts(parts, where: str, kinds: dict, errors: list[str]) -> None:
     """A list of set parts: [{kind, x, y, w, h, scale, z, ...}] with kinds from TOON.SET_PARTS."""
     if parts is None:
@@ -26,45 +34,39 @@ def check_parts(parts, where: str, kinds: dict, errors: list[str]) -> None:
     if not isinstance(parts, list):
         errors.append(f"{where}: parts must be a list of {{kind, x, y, ...}} objects")
         return
-    known = kinds.get("set_part", set())
     for i, part in enumerate(parts):
         at = f"{where}.parts[{i}]"
         if not isinstance(part, dict):
             errors.append(f"{at}: must be an object {{kind, x, y, ...}}")
             continue
-        if known and part.get("kind") not in known:
-            errors.append(f"{at}: unknown set part {part.get('kind')!r} (known: {sorted(known)})")
+        _enum(part.get("kind"), "set_part", "unknown set part", at, kinds, errors)
         for key in PART_NUMS:
             if key in part and not _num(part[key]):
-                errors.append(f"{at}: {key} must be a number")
+                errors.append(f"{at}: {key} must be a finite number")
         if part.get("kind") == "wall" and part.get("material") is not None:
-            _material(part["material"], "set_wall", at + ".material", kinds, errors)
+            _enum(part["material"], "set_wall", "material", at, kinds, errors)
         if part.get("kind") == "floor" and part.get("material") is not None:
-            _material(part["material"], "set_floor", at + ".material", kinds, errors)
-
-
-def _material(value, group: str, where: str, kinds: dict, errors: list[str]) -> None:
-    known = kinds.get(group, set())
-    if known and value not in known:
-        errors.append(f"{where}: {value!r} not in {sorted(known)}")
+            _enum(part["material"], "set_floor", "material", at, kinds, errors)
 
 
 def check_set_bg(bg: dict, where: str, kinds: dict, errors: list[str]) -> None:
-    preset = bg.get("preset")
-    presets = kinds.get("set_preset", set())
-    if preset is not None and presets and preset not in presets:
-        errors.append(f"{where}: set preset {preset!r} not in {sorted(presets)}")
-    if bg.get("wall") is not None:
-        _material(bg["wall"], "set_wall", where + ": wall", kinds, errors)
-    if bg.get("floor") is not None:
-        _material(bg["floor"], "set_floor", where + ": floor", kinds, errors)
+    if bg.get("preset") is not None:
+        _enum(bg["preset"], "set_preset", "set preset", where, kinds, errors)
+    for key, group in (("wall", "set_wall"), ("floor", "set_floor")):
+        if bg.get(key) is not None and bg[key] is not False:  # false leaves the surface out
+            _enum(bg[key], group, key, where, kinds, errors)
     fy = bg.get("floorY")
     if fy is not None and not (_num(fy) and 0.3 <= fy <= 1):
         errors.append(f"{where}: floorY must be a number in 0.3..1")
+    dark = bg.get("dark")
+    if dark is not None and not (_num(dark) and 0 <= dark <= 1):
+        errors.append(f"{where}: dark must be a number in 0..1")
     check_parts(bg.get("parts"), where, kinds, errors)
 
 
 def check_set_layer(layer: dict, where: str, kinds: dict, errors: list[str]) -> None:
-    if not layer.get("parts") and layer.get("preset") is None:
+    if layer.get("preset") is not None:
+        _enum(layer["preset"], "set_preset", "set preset", where, kinds, errors)
+    elif not layer.get("parts"):
         errors.append(f"{where}: set layer needs parts")
     check_parts(layer.get("parts"), where, kinds, errors)

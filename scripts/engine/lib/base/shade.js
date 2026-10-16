@@ -34,7 +34,7 @@
 
   // A sky with a visible sun lights the shot from the sun (kept at least ~14 degrees above the horizon), unless a
   // light dir is given. Sky-backed kinds pass their preset to the sky (spec.py SKY_BACKED_BGS).
-  T.SUN_LIT_BGS = new Set(['sky', 'city', 'battlefield', 'desert', 'eastcity', 'factory', 'graveyard', 'karst', 'mountains', 'street1920', 'trench']);
+  T.SUN_LIT_BGS = new Set(['sky', 'city', 'battlefield', 'desert', 'eastcity', 'factory', 'graveyard', 'karst', 'mountains', 'street1920', 'trench', 'hills', 'woods', 'river', 'dunes', 'ancient', 'castle']);
   function sunDir(shot) {
     const bg = shot && (Array.isArray(shot.bg) ? shot.bg[0] : shot.bg || { kind: 'sky' });
     if (!bg || !T.SUN_LIT_BGS.has(bg.kind || 'sky') || bg.timelapse || !T.SKY) return null;

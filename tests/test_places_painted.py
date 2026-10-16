@@ -18,7 +18,8 @@ GRAB = "async (t)=>{window.renderFrame(t);return window.__canvas.toDataURL('imag
 CATALOG = ROOT / "examples" / "painted_places" / "spec.json"
 NEW_BGS = ["set", "hills", "woods", "river", "dunes", "ancient", "castle"]
 NEW_FG = ["foliage", "column", "window-frame", "silhouettes"]
-RICH = ["office", "stage", "street1920", "room", "studio", "factory", "sky", "mountains", "gallery", "corkboard", "parchment"]
+RICH = ["office", "stage", "street1920", "room", "studio", "factory", "sky", "mountains", "gallery", "corkboard", "parchment",
+        "battlefield", "trench", "harbor"]
 
 
 def _shot(sid, bg, layers=None, camera=None, look=None):
@@ -193,6 +194,85 @@ def test_set_registries_are_exposed():
     assert need <= set(out["parts"]), sorted(need - set(out["parts"]))
     assert {"throne", "lab", "courtroom"} <= set(out["presets"])
     assert out["api"] == []
+
+
+# ---------- review fixes ----------
+def test_surface_suppression_validates():
+    bg = {"kind": "set", "wall": False, "floor": False, "parts": [{"kind": "lamp", "x": 0.5}]}
+    assert validate(_spec([_shot("a", bg)])) == []
+
+
+@pytest.mark.parametrize("bad, needle", [
+    ({"kind": "set", "parts": [{"kind": []}]}, "part"),
+    ({"kind": "set", "preset": {"x": 1}}, "preset"),
+    ({"kind": "set", "wall": ["brick"]}, "wall"),
+    ({"kind": "set", "parts": [{"kind": "window", "x": 0.5, "h": float("nan")}]}, "h"),
+    ({"kind": "set", "parts": [{"kind": "window", "x": 0.5, "w": float("inf")}]}, "w"),
+    ({"kind": "hills", "preset": "typo"}, "preset"),
+    ({"kind": "castle", "preset": "typo"}, "preset"),
+])
+def test_malformed_set_and_landscape_fields_are_errors_not_crashes(bad, needle):
+    errors = "\n".join(validate(_spec([_shot("a", bad)])))
+    assert needle in errors, errors
+
+
+def test_set_layer_follows_its_move():
+    part = [{"kind": "table", "x": 0.5, "y": 0.95}]
+    still = _spec([_shot("a", {"kind": "flat", "color": "#334455"}, layers=[{"type": "set", "parts": part}])])
+    moved = copy.deepcopy(still)
+    moved["shots"][0]["layers"][0]["move"] = [{"at": 0, "to": [0.8, 0.5], "dur": 0.5}]
+    assert _frames(still, [1.5]) != _frames(moved, [1.5]), "a set layer must follow its own move"
+
+
+def test_parallax_state_does_not_leak_between_draws():
+    spec = _spec([_shot("a", {"kind": "hills", "parallax": 2}, camera={"pan": [[0, 0], [200, 0]]},
+                        layers=[{"type": "prop", "kind": "coin", "x": 0.5, "y": 0.5, "z": 0.5}])])
+    js = """(t) => { window.renderFrame(t); const a = window.__canvas.toDataURL('image/png');
+      TOON.BG_DEPTH = 3; window.renderFrame(t); const b = window.__canvas.toDataURL('image/png');
+      const left = TOON.BG_DEPTH; TOON.BG_DEPTH = null; return a === b && left === 3; }"""
+    assert _page_eval(spec, lambda page: page.evaluate(js, 1.5))
+
+
+def test_fg_column_is_visible_in_vertical_format():
+    base = _spec([_shot("a", {"kind": "flat", "color": "#334455"}, layers=[])])
+    base["format"] = "vertical"
+    col = copy.deepcopy(base)
+    col["shots"][0]["layers"] = [{"type": "fg", "kind": "column", "side": "left"}]
+    import base64
+    import io
+    from PIL import Image
+
+    def left_strip(url):
+        im = Image.open(io.BytesIO(base64.b64decode(url.split(",", 1)[1]))).convert("RGB")
+        return im.crop((0, 0, im.width // 5, im.height)).tobytes()
+    assert left_strip(_frames(base, [1.0])[0]) != left_strip(_frames(col, [1.0])[0]), "column must show at the strip's edge"
+
+
+def test_animation_stays_behind_later_parts_of_the_same_plane():
+    """Fire in a fireplace hidden behind a shelf listed after it must not show through the shelf."""
+    import base64
+    import io
+    from PIL import Image
+
+    bg = {"kind": "set", "wall": "plaster", "floor": "wood", "vignette": 0, "parts": [
+        {"kind": "fireplace", "x": 0.5, "y": 0.78}, {"kind": "shelf", "x": 0.5, "y": 0.8, "scale": 2.2}]}
+    spec = _spec([_shot("a", bg, layers=[{"type": "prop", "kind": "coin", "x": 0.05, "y": 0.05, "size": 20}], camera={"zoom": [1, 1]})], look=None)  # classic: no animated paper grain
+    spec["style"]["grain"] = False
+    spec["style"]["vignette"] = 0
+
+    def centre(url):
+        im = Image.open(io.BytesIO(base64.b64decode(url.split(",", 1)[1]))).convert("RGB")
+        return im.crop((im.width * 45 // 100, im.height * 55 // 100, im.width * 55 // 100, im.height * 70 // 100)).tobytes()
+    a, b = _frames(spec, [0.2, 0.9])
+    assert centre(a) == centre(b), "the fire flickers through the shelf in front of it"
+
+
+@pytest.mark.parametrize("kind", ["street1920", "factory"])
+def test_custom_haze_colour_is_used(kind):
+    plain = _spec([_shot("a", {"kind": kind}, layers=[])])
+    red = copy.deepcopy(plain)
+    red["shots"][0]["bg"]["haze"] = "#ff0000"
+    assert _frames(plain, [1.0]) != _frames(red, [1.0])
 
 
 def test_catalog_covers_every_new_kind_and_is_painted():
