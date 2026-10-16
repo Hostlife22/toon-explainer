@@ -23,7 +23,7 @@
     const walking = st === 'walk' || st === 'run', run = st === 'run', scared = st === 'scared', eat = st === 'eat', sleep = st === 'sleep';
     const cyc = run ? 150 : 110, ph = tr.moving ? tr.dist / cyc : lt * (run ? 3.4 : 2.2);
     const col = L.color ?? '#f4efe4', comb = L.color2 ?? '#d8322e', e = exprOf(L, lt, scared ? 'scared' : sleep ? 'sleep' : 'neutral');
-    CK.shadow(ctx, L, 0, 120);
+    CK.shadow(ctx, L, 0, 120, CK.lift(env, k));
     const bob = walking ? -Math.abs(Math.sin(ph * TAU)) * 10 : sleep ? 60 : 0;
     // legs: two-beat walk, planted foot slides back at the travel speed
     for (const [i, far] of [[1, true], [0, false]]) {
@@ -121,7 +121,7 @@
       ctx.save(); ctx.translate(-10, 30 + w(-10)); ctx.rotate(0.4 + Math.sin(t * TAU * hz * 1.3) * 0.3); T.outlined(ctx, leaf(0, 0, -50, 26, 14), fin, { line: 5 }); ctx.restore();
       CK.eye(ctx, 100, -20, 16, { e, blink: CK.blink(seed + f.id, lt), look: [0.5, 0], lidColor: col });
       ctx.strokeStyle = P.ink; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(150, 20, 16, 2.2, 3.4); ctx.stroke();
-      if (L.bubbles !== false && f.id === 0) for (let i = 0; i < 3; i++) { const p = CK.fract(lt / 1.6 + i / 3); ctx.globalAlpha = 1 - p; T.outlined(ctx, (c) => c.arc(170 + Math.sin(p * 9 + i) * 10, -40 - p * 220, 8 + p * 8, 0, TAU), 'rgba(220,240,255,0.6)', { line: 3, paint: false }); ctx.globalAlpha = 1; }
+      if (L.bubbles !== false && f.id === 0) for (let i = 0; i < 3; i++) { const p = CK.fract(lt / 1.6 + i / 3); ctx.save(); ctx.globalAlpha *= 1 - p; T.outlined(ctx, (c) => c.arc(170 + Math.sin(p * 9 + i) * 10, -40 - p * 220, 8 + p * 8, 0, TAU), 'rgba(220,240,255,0.6)', { line: 3, paint: false }); ctx.restore(); }
       ctx.restore();
     }
   }
@@ -136,7 +136,7 @@
     const ph = tr.moving ? tr.dist / wl : lt * 0.6, pts = [];
     for (let s = 0; s <= len; s += 30) { const x = -s, fade = Math.min(1, s / 160); pts.push([x, -30 - Math.sin((x / wl) * TAU + ph * TAU) * amp * fade]); }
     const ws = pts.map((_, i) => { const f = i / (pts.length - 1); return 30 * (1 - f * f) + 3; });
-    CK.shadow(ctx, L, -len / 2, len / 2 + 40);
+    CK.shadow(ctx, L, -len / 2, len / 2 + 40, CK.lift(env, k));
     T.outlined(ctx, CK.tube(pts, ws, false), col, { line: 8, shade: (c) => { c.fillStyle = sh(col, -0.3); for (let i = 2; i < pts.length - 2; i += 2) { c.beginPath(); c.ellipse(pts[i][0], pts[i][1] - ws[i] * 0.3, 12, ws[i] * 0.45, 0, 0, TAU); c.fill(); } } });
     const lift = st === 'scared' || L.raised ? 120 : 34, hx = 26, hy = -30 - lift;
     T.outlined(ctx, CK.tube([[0, pts[0][1]], [14, -30 - lift * 0.6], [hx, hy]], [30, 28, 26], false), col, { line: 8 });

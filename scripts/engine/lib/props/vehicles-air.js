@@ -94,5 +94,5 @@
     T.outlined(ctx, (c) => { c.moveTo(-110, -36); c.lineTo(90, -36); c.quadraticCurveTo(160, -30, 190, 0); c.quadraticCurveTo(160, 30, 90, 36); c.lineTo(-110, 36); c.closePath(); }, col, { line: 8, shade: (c) => { c.fillStyle = trim; c.fillRect(110, -40, 20, 80); c.fillRect(-60, -40, 14, 80); } });
     T.outlined(ctx, (c) => c.arc(40, 0, 18, 0, TAU), '#8ac8e8', { line: 6 });
     T.outlined(ctx, poly([[-40, -2], [-120, -10], [-120, 10]]), trim, { line: 6 });
-  }, 200, (L, S) => (S.speed > 2 || L.ignite ? [['smoke', L.path ? -120 * S.size / 200 : 0, L.path ? 0 : -4, { color: '#d8d2c8', every: 0.04, life: 2.6, rise: -10, wind: 0, scale: S.size / 200 * 1.5 }]] : []));
+  }, 200, (L, S) => [['smoke', L.path ? -120 * S.size / 200 : 0, L.path ? 0 : -4, { color: '#d8d2c8', every: 0.04, life: 2.6, rise: -10, wind: 0, scale: S.size / 200 * 1.5, when: (te) => !!L.ignite || (S.moving && T.vehicleMotion(L, te).speed > 2) }]]);
 })();

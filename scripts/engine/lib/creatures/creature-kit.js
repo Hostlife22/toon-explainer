@@ -92,6 +92,47 @@
     };
     return { fill: CK.tube(pts0, ws0), edge };
   };
+  // ---------- organic outlines ----------
+  // Samples along the curve T.smoothPath draws through control points pts (quadratics between midpoints).
+  CK.blobSamples = (pts, per = 8) => {
+    const n = pts.length, mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], out = [];
+    for (let i = 0; i < n; i++) {
+      const a = mid(pts[(i - 1 + n) % n], pts[i]), c = pts[i], b = mid(pts[i], pts[(i + 1) % n]);
+      for (let k = 0; k < per; k++) { const t = k / per, u = 1 - t; out.push([u * u * a[0] + 2 * u * t * c[0] + t * t * b[0], u * u * a[1] + 2 * u * t * c[1] + t * t * b[1]]); }
+    }
+    return out;
+  };
+  const outward = (S) => { // unit outward normals of a closed sample loop
+    const n = S.length, cx = S.reduce((s, p) => s + p[0], 0) / n, cy = S.reduce((s, p) => s + p[1], 0) / n;
+    return S.map((p, i) => {
+      const a = S[(i - 1 + n) % n], b = S[(i + 1) % n], dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1;
+      let nx = dy / d, ny = -dx / d;
+      if (nx * (p[0] - cx) + ny * (p[1] - cy) < 0) { nx = -nx; ny = -ny; }
+      return [nx, ny];
+    });
+  };
+  // Fur: the blob outline with pointed clumps where sel(nx, ny) (outward normal) is true. o: {amp, every, seed, sel}
+  CK.furry = (pts, o = {}) => {
+    const S = CK.blobSamples(pts, 10), N = outward(S), r = T.rng(T.hash('fur' + (o.seed ?? ''))), every = o.every ?? 3, amp = o.amp ?? 14;
+    const P = S.map((p, i) => {
+      const on = (!o.sel || o.sel(N[i][0], N[i][1])) && i % every === 0, a = on ? amp * (0.6 + r() * 0.7) : 0;
+      return [p[0] + N[i][0] * a + (on ? -N[i][1] * amp * 0.3 : 0), p[1] + N[i][1] * a + (on ? N[i][0] * amp * 0.3 : 0)];
+    });
+    return (k) => { k.moveTo(P[0][0], P[0][1]); for (let i = 1; i < P.length; i++) k.lineTo(P[i][0], P[i][1]); k.closePath(); };
+  };
+  // Wool: the blob outline as a ring of bulging scallops (bump px outward, one every `every` samples).
+  CK.wooly = (pts, o = {}) => {
+    const S = CK.blobSamples(pts, 12), N = outward(S), every = o.every ?? 5, bump = o.bump ?? 18, idx = [];
+    for (let i = 0; i < S.length; i += every) idx.push(i);
+    return (k) => {
+      k.moveTo(S[0][0], S[0][1]);
+      for (let j = 0; j < idx.length; j++) {
+        const a = idx[j], b = idx[(j + 1) % idx.length], m = Math.round((a + (b || S.length)) / 2) % S.length, w = bump * (0.8 + 0.4 * Math.sin(a * 1.7));
+        k.quadraticCurveTo(S[m][0] + N[m][0] * w * 2, S[m][1] + N[m][1] * w * 2, S[b][0], S[b][1]);
+      }
+      k.closePath();
+    };
+  };
   // Point list of a chain from base, segment length seg, absolute angles angs[i].
   CK.chain = (x, y, seg, angs) => { const out = [[x, y]]; for (const a of angs) { x += Math.cos(a) * seg; y += Math.sin(a) * seg; out.push([x, y]); } return out; };
   CK.rot = (x, y, a) => [x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) + y * Math.cos(a)];
@@ -173,9 +214,10 @@
   // ---------- marks ----------
   CK.zzz = (ctx, x, y, lt, size = 30) => { // three rising "z" letters drawn as ink strokes, 1.8 s loop
     ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const a0 = ctx.globalAlpha;
     for (let i = 0; i < 3; i++) {
       const p = fract(lt / 1.8 + i / 3), s = size * (0.6 + p * 0.6), zx = x + p * size * 1.6 + Math.sin(p * 5 + i) * 6, zy = y - p * size * 3.2;
-      ctx.globalAlpha = Math.sin(p * Math.PI);
+      ctx.globalAlpha = a0 * Math.sin(p * Math.PI);
       ctx.strokeStyle = P.ink; ctx.lineWidth = s * 0.22;
       ctx.beginPath(); ctx.moveTo(zx - s / 2, zy - s / 2); ctx.lineTo(zx + s / 2, zy - s / 2); ctx.lineTo(zx - s / 2, zy + s / 2); ctx.lineTo(zx + s / 2, zy + s / 2); ctx.stroke();
     }
@@ -184,18 +226,21 @@
   CK.sweat = (ctx, x, y, lt, r = 10) => { // two drops popping off the brow on a 0.7 s loop
     for (let i = 0; i < 2; i++) {
       const p = fract(lt / 0.7 + i * 0.5), dx = (i ? 1 : -0.4) * p * r * 3, dy = -Math.sin(p * Math.PI) * r * 2 + p * r * 2;
-      ctx.save(); ctx.globalAlpha = 1 - p * 0.7;
+      ctx.save(); ctx.globalAlpha *= 1 - p * 0.7;
       T.outlined(ctx, (k) => { k.moveTo(x + dx, y + dy - r * 1.4); k.quadraticCurveTo(x + dx + r, y + dy, x + dx, y + dy + r * 0.6); k.quadraticCurveTo(x + dx - r, y + dy, x + dx, y + dy - r * 1.4); k.closePath(); }, '#bfe4f6', { line: Math.max(2, r * 0.3), paint: false });
       ctx.restore();
     }
   };
   // Contact shadow on the ground (local y = 0) honouring layer.contact; painted look only.
+  // lift: height of the rig above the ground in local units (a jump): the shadow stays down there and shrinks.
   CK.shadow = (ctx, L, cx, halfW, lift = 0) => {
     if (!T.PAINT || L.contact === false || !T.contactShadow) return;
     const o = typeof L.contact === 'object' && L.contact ? L.contact : { w: typeof L.contact === 'number' ? L.contact : 1 };
-    const k = 1 / (1 + Math.max(0, lift) / (halfW * 1.2));
-    T.contactShadow(ctx, cx, 0, halfW * (o.w ?? 1) * k, halfW * (o.h ?? 0.13) * k, (o.alpha ?? 0.55) * k);
+    const up = Math.max(0, lift), k = 1 / (1 + up / (halfW * 1.2));
+    T.contactShadow(ctx, cx, up, halfW * (o.w ?? 1) * k, halfW * (o.h ?? 0.13) * k, (o.alpha ?? 0.55) * k);
   };
+  // Jump height of the layer (core st.jy, px) in rig-local units of scale k.
+  CK.lift = (env, k) => (env && env.st && env.st.jy > 0 ? env.st.jy / Math.max(1e-6, k * Math.abs(env.st.s || 1)) : 0);
 
   // ---------- secondary motion ----------
   // A hanging / streaming chain (tail, mane lock): segment angles relax from base toward `stream` (0..1 = speed),
@@ -239,7 +284,7 @@
     };
     const norm = (m) => (m === 'auto' || m == null ? null : GAIT_ALIAS[m] || m);
     let cur = norm(mode), pv = norm(prev), bw = 1 - w;
-    if (mode === 'auto' || (gt && gt.cur === 'auto')) { const [a, b, f] = auto(speed); cur = a; pv = b; bw = f; }
+    if (mode === 'auto') { const [a, b, f] = auto(speed); cur = a; pv = b; bw = f; } // an explicit state wins over gait auto
     if (pv === cur) bw = 0;
     const gait = GAITS[cur] ? cur : null, g2 = GAITS[pv] ? pv : null;
     const ampOf = (m) => (GAITS[m] ? 1 : 0);
@@ -290,6 +335,25 @@
     CK.V2.add(kind);
     if (o.sit) CK.SIT.add(kind);
     T.CREATURES[kind] = (ctx, L, lt, env) => (T.creatureRig(L, !!T.PAINT) === 'v2' ? fn(ctx, L, lt, env || {}) : CK.LEGACY[kind](ctx, L, lt, env));
+  };
+  // Running animals kick up dust on dirt (painted or not): world-space puffs from the hooves, emitted only while the
+  // animal moves faster than a trot (vehicles-kit.js VK.puffs). dust: true / false / amount overrides the ground test.
+  const DUSTY = new Set(['desert', 'battlefield', 'trench', 'graveyard']);
+  const dusty = (L, env) => {
+    if (L.dust != null) return L.dust === true ? 1 : +L.dust || 0;
+    const bg = env && env.shot && (Array.isArray(env.shot.bg) ? env.shot.bg[0] : env.shot.bg);
+    return bg && (bg.ground === 'dirt' || DUSTY.has(bg.kind)) ? 1 : 0;
+  };
+  const NO_DUST = new Set(['bird', 'fish', 'snake']);
+  const baseCreatureLayer = T.layers.creature;
+  T.layers.creature = (ctx, L, lt, env) => {
+    const amt = T.VK && env && env.st && !NO_DUST.has(L.kind) && (L.path || (L.move && L.move.length)) && T.creatureRig(L, !!T.PAINT) === 'v2' ? dusty(L, env) : 0;
+    if (amt > 0) {
+      const size = L.size ?? 300, fast = size * 1.1, sc = (size / 300) * amt;
+      const when = (te) => T.layerTravel(L, te).speed > fast;
+      T.VK.inWorld(ctx, env, (c) => { for (const lx of [-0.42 * size, 0.3 * size]) T.VK.puffs(c, L, env.lt, 'dust', lx, -4, { when, scale: sc, wind: -40 }); });
+    }
+    baseCreatureLayer(ctx, L, lt, env);
   };
   // The engine's own contact shadow skips creatures and vehicles: their rigs draw shadows under the actual feet / wheels.
   // Classic-drawn creatures and vehicles stand on their origin, so an explicit contact sits at dy 0 (not mid-size).

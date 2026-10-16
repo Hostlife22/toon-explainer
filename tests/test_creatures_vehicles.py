@@ -63,13 +63,28 @@ GOOD_PATH = {"type": "vehicle", "kind": "plane", "x": 0.5, "y": 0.4, "size": 400
 
 def test_path_and_gait_fields_validate():
     assert validate(film([GOOD_PATH])) == []
-    assert validate(film([{**GOOD_PATH, "path": [[0.1, 0.5], [0.9, 0.5]]}])) == [], "array shorthand"
+    assert any("pts" in e for e in validate(film([{**GOOD_PATH, "path": [[0.1, 0.5], [0.9, 0.5]]}]))), "plain arrays: fx / cursor / map only"
     assert validate(film([{"type": "creature", "kind": "horse", "gait": [{"at": 0, "v": "walk"}, {"at": 1, "v": "gallop"}],
-                           "state": "idle", "path": [[0.1, 0.9], [0.9, 0.9]]}])) == []
+                           "state": "idle", "path": {"pts": [[0.1, 0.9], [0.9, 0.9]]}}])) == []
+
+
+def test_bad_vehicle_enums_are_reported_without_crashing():
+    for bad in ({"terrain": []}, {"animal": {}}, {"terrain": "lava"}, {"dust": float("nan")}):
+        assert validate(film([{"type": "vehicle", "kind": "wagon", "x": 0.5, "y": 0.9, **bad}])), bad
 
 
 @pytest.mark.parametrize("bad, message", [
-    ({"path": [[0.1, 0.5]]}, "path"),
+    ({"path": {"pts": [[0.1, 0.5]]}}, "path"),
+    ({"path": {"pts": [[0.1, float("nan")], [0.2, 0.5]]}}, "path"),
+    ({"path": {"pts": [[0.1, 0.5], [0.2, 0.5]], "dur": float("inf")}}, "dur"),
+    ({"path": {"pts": [[0.1, 0.5], [0.2, 0.5]], "bank": float("nan")}}, "bank"),
+    ({"path": {"pts": [[0.1, 0.5], [0.2, 0.5]], "curve": []}}, "curve"),
+    ({"path": {"pts": [[0.1, 0.5], [0.2, 0.5]], "ease": {}}}, "ease"),
+    ({"gait": []}, "gait"),
+    ({"gait": ["walk"]}, "gait"),
+    ({"gait": {}}, "gait"),
+    ({"gait": [{"at": "x", "v": "walk"}]}, "gait"),
+    ({"state": [{"at": 0}]}, "state"),
     ({"path": {"pts": [[0.1, 0.5], "x"]}}, "path"),
     ({"path": {"pts": [[0.1, 0.5], [0.2, 0.5]], "dur": 0}}, "dur"),
     ({"path": {"pts": [[0.1, 0.5], [0.2, 0.5]], "ease": "wobbly"}}, "ease"),
@@ -225,3 +240,50 @@ def test_painted_bench_vehicle_shot_travels_a_path():
     spec = json.loads(BENCH.read_text(encoding="utf-8"))
     shot = next(s for s in spec["shots"] if s["id"] == "b07_vehicle")
     assert any(L.get("type") in ("vehicle", "creature") and "path" in L for L in shot["layers"])
+
+
+def test_motion_edge_cases_stay_finite_and_signed():
+    js = """() => {
+      const T = TOON, fin = (o) => Object.values(o).every((v) => typeof v !== 'number' || Number.isFinite(v));
+      const zero = T.motionAt({path: {pts: [[0.5, 0.5], [0.5, 0.5]], loop: true, dur: 1}}, 0.7);
+      const early = T.motionAt({path: {pts: [[0.1, 0.5], [0.9, 0.5]], at: 1 / 120, dur: 1}}, 0);
+      // outBack overshoots the end and comes back: the velocity turns negative near the end
+      const P = {pts: [[0.1, 0.5], [0.9, 0.5]], at: 0, dur: 1, ease: 'outBack'};
+      let back = null;
+      for (let t = 0.3; t < 1; t += 0.01) { const m = T.motionAt({path: P}, t); if (m.vel < -1) { back = m; break; } }
+      // leftward path with face: false -> the rig (facing right) walks backward: signed travel is negative
+      const left = {type: 'creature', kind: 'horse', path: {pts: [[0.9, 0.8], [0.1, 0.8]], dur: 2, ease: 'linear', face: false}};
+      const lt1 = T.layerTravel(left, 1), right = T.layerTravel({...left, path: {...left.path, face: true}}, 1);
+      // a looping bezier closes: the point just before the wrap is near the start
+      const B = {pts: [[0.1, 0.5], [0.3, 0.2], [0.6, 0.2], [0.8, 0.5]], curve: 'bezier', loop: true, dur: 2, ease: 'linear'};
+      const end = T.motionAt({path: B}, 1.999), start = T.motionAt({path: B}, 0);
+      const mo = T.CK.motion({kind: 'horse', state: 'sleep', gait: 'auto', path: {pts: [[0.1, 0.8], [0.9, 0.8]], dur: 1}}, 0.5,
+                             {lt: 0.5, st: {s: 1, path: {}}}, {k: 1, legLen: 200});
+      return {zero: fin(zero), early: [early.speed, fin(early)], back: back && [back.speed, back.dir], lt1: lt1.dist, right: right.dist,
+              gap: Math.hypot(end.x - start.x, end.y - start.y), mode: mo.mode,
+              tank: T.VK.TRAILS.tank({kind: 'tank', smoke: false, dust: false}, {size: 500}).length};
+    }"""
+    out = _page_eval(film([GOOD_PATH]), lambda page: page.evaluate(js))
+    assert out["zero"], "zero-length loops stay finite"
+    assert out["early"] == [0, True], "no speed before the path starts"
+    assert out["back"] and out["back"][0] > 1 and out["back"][1] == -1, "moving back along the path: positive speed, facing back"
+    assert out["lt1"] < 0 < out["right"], "face: false travel is signed by the rig's facing"
+    assert out["gap"] < 30, "a looping bezier closes back to its start"
+    assert out["mode"] == "sleep", "an explicit state wins over gait auto"
+    assert out["tank"] == 0, "smoke: false and dust: false switch the tank trails off"
+
+
+def test_smoke_history_does_not_change_when_the_engine_speeds_up():
+    js = """() => {
+      const VK = TOON.VK, L = {type: 'vehicle', kind: 'locomotive', size: 900, path: {pts: [[0.1, 0.8], [0.9, 0.8]], dur: 3, ease: 'in'}};
+      const at = (t) => {
+        const S = VK.state(L, t, {lt: t, st: {s: 1}}, 900), [kind, lx, ly, o] = VK.TRAILS.locomotive(L, S)[0];
+        return VK.puffList(L, t, kind, lx, ly, o).map((p) => [p.i, Math.round(p.bx), Math.round(p.by), p.r.toFixed(3)].join(':'));
+      };
+      const a = at(1.6), b = at(2.2), sb = new Set(b), ib = new Set(b.map((k) => k.split(':')[0]));
+      const common = a.filter((k) => ib.has(k.split(':')[0]));
+      return {common: common.length, same: common.filter((k) => sb.has(k)).length};
+    }"""
+    out = _page_eval(film([GOOD_PATH]), lambda page: page.evaluate(js))
+    assert out["common"] > 3
+    assert out["same"] == out["common"], "puffs emitted earlier keep their emission point and size as the train accelerates"

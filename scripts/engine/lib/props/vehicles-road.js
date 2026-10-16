@@ -33,7 +33,7 @@
   }
   const trailsCar = (exh, lamp) => (L, S) => {
     const k = S.size / exh[2], out = [];
-    if (L.exhaust !== false) out.push(['exhaust', exh[0] * k, exh[1] * k, { scale: k * (1 + S.speed / 300) }]);
+    if (L.exhaust !== false) out.push(['exhaust', exh[0] * k, exh[1] * k, { scaleAt: (te) => k * (1 + (S.moving ? T.vehicleMotion(L, te).speed : 0) / 300) }]);
     if (L.dust ?? (L.terrain === 'dirt' || L.terrain === 'rough')) out.push(['dust', exh[0] * k * 0.6, -4, {}]);
     return out;
   };
@@ -149,7 +149,7 @@
     T.outlined(ctx, (c) => T.rrect(c, -150, -270, 20, 44, 4), '#3a3530', { line: 5 }); // exhaust stack
     if (L.burning && T.drawFlame) { ctx.save(); ctx.translate(0, -200); T.drawFlame(ctx, 220, S.lt, 'tankfire'); ctx.restore(); }
     ctx.restore();
-  }, 560, (L, S) => { const k = S.size / 560; return [['smoke', -140 * k, -276 * k, { color: L.burning ? '#2b2620' : '#6a6460', size: 18, every: L.burning ? 0.07 : 0.16 }], ...(L.dust !== false ? [['dust', -200 * k, -4, {}], ['dust', 200 * k, -4, {}]] : [])]; });
+  }, 560, (L, S) => { const k = S.size / 560; return [...(L.smoke !== false ? [['smoke', -140 * k, -276 * k, { color: L.burning ? '#2b2620' : '#6a6460', size: 18, every: L.burning ? 0.07 : 0.16 }]] : []), ...(L.dust !== false ? [['dust', -200 * k, -4, {}], ['dust', 200 * k, -4, {}]] : [])]; });
 
   // ---------- chariot and wagon: animal team + spoked wheels; the team trots / gallops with the travel ----------
   function team(ctx, L, S, env, k, front, o) {

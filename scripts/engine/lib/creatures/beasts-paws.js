@@ -31,18 +31,20 @@
     };
   }
   // Flexible-spine body: rump, waist, chest masses joined in one smooth outline.
-  const furBody = (len, depth, chest, rump, top) => blob([[-len, -top - depth * 0.2], [-len * 1.05, -top + depth * 0.4], [-len * 0.75, -top + depth * 0.95], [-len * 0.1, -top + depth * 0.8],
+  const furPts = (len, depth, chest, rump, top) => ([[-len, -top - depth * 0.2], [-len * 1.05, -top + depth * 0.4], [-len * 0.75, -top + depth * 0.95], [-len * 0.1, -top + depth * 0.8],
     [len * 0.6, -top + depth * 1.0], [len * 1.02, -top + depth * 0.55], [len * 0.92, -top - depth * 0.05 - chest], [len * 0.4, -top - depth * 0.05], [-len * 0.4, -top - depth * 0.02 - rump * 0.3], [-len * 0.85, -top - depth * 0.05 - rump]]);
+  const furBody = (...a) => blob(furPts(...a));
   const TAIL = (at, base, o = {}) => ({ at, n: o.n ?? 6, seg: o.seg ?? 20, w: o.w ?? [10, 10, 9, 8, 7, 6, 3], base, hz: o.hz ?? 0.8, amp: o.amp ?? 0.12, lag: 0.7, curl: o.curl ?? 0, stream: 1, streamAng: o.streamAng ?? 0.92, tuck: o.tuck ?? 120, sit: o.sit ?? 175, flick: o.flick ?? 1 });
-  const common = { unit: 400, foot: CK.FEET.paw, canSit: true, flex: 0.07, line: 8, lieH: 0.42, tuck: [80, -40], sitFoot: 90, zzz: [10, -60], sweat: [20, -50], sitHead: 20 };
+  const common = { unit: 400, foot: CK.FEET.paw, canSit: true, flex: 0.07, line: 8, lieH: 0.42, tuck: [80, -40], sitFoot: 90, zzz: [10, -60], sweat: [20, -50], sitHead: 20, hindStand: -10, foreStand: 6 };
 
   const DOG = { ...common, size: 300, legLen: 150, color: '#d9a441', color2: '#f2e2c0', cycleK: 0.9,
     hip: [-118, -168], shoulder: [100, -164], pivot: [0, -200], hindTop: [26, 40], foreTop: [0, 30],
-    hindLeg: [60, 56, 16], foreLeg: [56, 58, 16], hindW: [42, 26, 13, 10, 10], foreW: [34, 22, 12, 10, 10],
+    hindLeg: [60, 56, 16], foreLeg: [56, 58, 16], hindW: [44, 26, 13, 10, 10], foreW: [34, 20, 13, 10, 10],
     body: furBody(150, 80, 14, 8, 230), neckBase: [118, -238], neckLen: 70, neckAng: -50, neckW: [40, 34, 30], headAbs: 0, eatHead: 70, sleepHead: 10, runHead: 10, eatAng: 50, sleepAng: 10, runAng: -20, sitNeck: -80,
     headScale: 1.3, head: pawHead({ snout: 50, ears: 'flop', earLen: 60 }), tail: TAIL([-150, -248], -40, { amp: 0.35, hz: 2.2, curl: 40, tuck: 140 }), sitPitch: -38 };
   const WOLF = { ...DOG, size: 320, color: '#8a8a92', color2: '#e8e6e0', legLen: 165, hip: [-124, -182], shoulder: [106, -178], pivot: [0, -214],
-    hindLeg: [66, 62, 18], foreLeg: [62, 64, 18], body: furBody(158, 82, 22, 6, 246), neckBase: [124, -254], headScale: 1.05,
+    hindLeg: [66, 62, 18], foreLeg: [62, 64, 18], body: CK.furry(furPts(158, 82, 22, 6, 246), { amp: 8, every: 4, seed: 'wolf', sel: (nx, ny) => (ny < -0.5 && nx > -0.2) || nx < -0.75 }), neckBase: [124, -254], headScale: 1.05,
+    hindW: [46, 28, 14, 11, 11], foreW: [36, 22, 13, 11, 11],
     head: pawHead({ snout: 64, ears: 'point', earLen: 52, teeth: true, inner: '#5a5a62' }), tail: TAIL([-160, -258], 120, { w: [14, 20, 22, 20, 16, 10, 4], amp: 0.1, hz: 0.6, tuck: 130 }),
     extraMid: (ctx, F) => { const [x, y] = F.bodyPt([132, -224]); T.outlined(ctx, blob(T.blobPts(x, y, 36, 46, F.seed + 'ruff', 10, 0.3)), F.col2, { line: 6 }); } };
   const CAT = { ...common, size: 200, legLen: 140, color: '#e08a3a', color2: '#f6e6d0', flex: 0.1, cycleK: 0.85,
@@ -54,8 +56,8 @@
     bodyShade: (k, F) => { if (F.L.stripes === false) return; k.strokeStyle = sh(F.col, -0.25); k.lineWidth = 12; k.lineCap = 'round'; for (const x of [-100, -60, -20, 20]) { k.beginPath(); k.moveTo(x, -290); k.quadraticCurveTo(x + 10, -250, x - 4, -224); k.stroke(); } } };
   const BEAR = { ...common, size: 340, legLen: 140, color: '#6a4a32', color2: '#c8a07a', flex: 0.05, cycleK: 0.9, claws: true,
     hip: [-130, -160], shoulder: [120, -156], pivot: [0, -220], hindTop: [26, 34], foreTop: [0, 30],
-    hindLeg: [58, 52, 16], foreLeg: [56, 54, 16], hindW: [56, 40, 26, 22, 22], foreW: [52, 36, 26, 22, 22],
-    body: furBody(170, 130, 30, 0, 290), neckBase: [150, -260], neckLen: 50, neckAng: -20, neckW: [64, 58, 52], headAbs: 10, headScale: 1.3, eatHead: 70, sleepHead: 20, runHead: 10, eatAng: 50, sleepAng: 20, runAng: 0, sitNeck: -80,
+    hindLeg: [58, 52, 16], foreLeg: [56, 54, 16], hindW: [70, 46, 30, 24, 22], foreW: [62, 42, 30, 24, 22],
+    body: CK.furry([[-170, -300], [-196, -250], [-176, -180], [-100, -156], [20, -150], [130, -160], [196, -200], [200, -270], [150, -330], [80, -350], [10, -316], [-90, -326]], { amp: 13, every: 3, seed: 'bear', sel: (nx, ny) => ny < 0.55 }), neckBase: [150, -260], neckLen: 50, neckAng: -20, neckW: [64, 58, 52], headAbs: 10, headScale: 1.3, eatHead: 70, sleepHead: 20, runHead: 10, eatAng: 50, sleepAng: 20, runAng: 0, sitNeck: -80,
     head: pawHead({ snout: 30, ears: 'round', earLen: 34, nose: 13, teeth: true }), tail: { at: [-176, -270], n: 2, seg: 12, w: [16, 14, 8], base: 160, hz: 0.5, amp: 0.1 }, sitPitch: -48 };
   const RAT = { ...common, size: 110, legLen: 90, color: '#8a8580', color2: '#c8c0b8', flex: 0.12, cycleK: 0.8, canSit: false,
     hip: [-96, -112], shoulder: [86, -100], pivot: [0, -150], hindTop: [24, 26], foreTop: [0, 18],

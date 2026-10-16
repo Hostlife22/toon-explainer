@@ -15,9 +15,10 @@ Painted engine, phases 0 and 1: a density lint and the paint core.
 
 Phase 6, creatures and vehicles 2.0:
 
-- `path` on any layer (`creatures/motion-path.js`): constant-speed motion along smooth, linear or bezier curves with ease, auto facing (with a squash through reversals), `orient`, `bank` and `loop`; `T.layerTravel` gives the distance travelled along `path` or `move`.
+- `path: {pts, at, dur, ease, curve, orient, face, bank, loop}` on any layer (`creatures/motion-path.js`): constant-speed motion along smooth, linear or bezier curves (looping beziers close smoothly) with ease, facing the direction of motion (reversing eases turn the layer round), `orient`, `bank` and `loop`; `T.layerTravel` gives the signed distance the rig walked or rolled along `path` or `move`.
 - v2 creature rigs: gait tables with planted feet (walk, trot, gallop, auto by speed), 2-bone IK legs, states `idle`, `eat`, `sleep`, `scared`, `sit`, toon eyes by `expr`, lagging tails and manes, riders with saddle, bridle and reins. Upgraded `horse`, `cow`, `bull`, `sheep`, `pig`, `camel`, `elephant`, `dog`, `wolf` (painted look or new fields); new `cat`, `bear`, `rat`, `chicken`, `bird` (`flock`), `fish` (`school`), `snake`.
 - v2 vehicles: wheels and rods driven by distance, terrain suspension, world-space smoke / exhaust / dust / steam / wake trails and contrails, headlights, ships on a swell. New `model-t`, `sedan1920`, `car1950`, `car-modern`, `chariot`, `wagon` (animal teams), `locomotive`, `ship`, `sailship`, `plane`, `zeppelin`, `balloon`, `rocket`; `tank`, `train`, `biplane`, `submarine`, `car1910` upgrade in the painted look.
+- Animals kick up dust when running on dirt (`dust`); contact shadows stay on the ground during jumps; organic silhouettes (jointed tapered legs, thigh contours, wool, fur clumps, hump, knee wrinkles).
 - Classic specs render pixel-identical; `rig: "classic"` / `"v2"` forces a rig.
 - `examples/creatures_vehicles_v2` (12 shots); the painted bench vehicle shot now drives a wagon and a Model T along paths.
 

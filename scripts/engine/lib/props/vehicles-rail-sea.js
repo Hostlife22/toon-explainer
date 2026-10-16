@@ -60,8 +60,9 @@
   const locoTrails = (L, S) => {
     const W = locoWidth(L), k = S.size / W, ex = W / 2 - ENG;
     const out = [];
-    if (L.smoke !== false) out.push(['smoke', (ex + 347) * k, -312 * k, { color: L.smokeColor ?? '#6e6a68', scale: k * 1.5, rise: 240, every: 0.08 + 0.08 * (1 - T.clamp(S.speed / 300)) }]);
-    if (S.driving && L.steam !== false) out.push(['steam', (ex + 330) * k, -84 * k, { scale: k * 1.4, every: 0.25, life: 0.8, rise: 20, wind: -60 }]);
+    const speedAt = (te) => (S.moving ? T.vehicleMotion(L, te).speed : VK.inWin(L.drive, te - (S.slt - S.lt)) ? 220 : 0);
+    if (L.smoke !== false) out.push(['smoke', (ex + 347) * k, -312 * k, { color: L.smokeColor ?? '#6e6a68', scale: k * 1.5, rise: 240, every: 0.08, keep: (te) => 1 - 0.45 * T.clamp(speedAt(te) / 300) }]);
+    if (L.steam !== false) out.push(['steam', (ex + 330) * k, -84 * k, { scale: k * 1.4, every: 0.25, life: 0.8, rise: 20, wind: -60, when: (te) => speedAt(te) > 2 }]);
     return out;
   };
   VK.register('locomotive', locomotive, 900, locoTrails);
@@ -76,7 +77,7 @@
   function bowWave(ctx, x, S, k, lt) { // foam curl at the bow, bigger with speed; spray droplets on a 0.6 s loop
     const v = T.clamp(S.speed / (220 * k * S.px + 1e-6)), h = 14 + v * 34;
     T.outlined(ctx, (c) => { c.moveTo(x - 60, 0); c.quadraticCurveTo(x, -h, x + 22 + v * 30, -6); c.quadraticCurveTo(x + 10, 10, x - 60, 10); c.closePath(); }, '#f4fbff', { line: 5, paint: false });
-    if (v > 0.15) for (let i = 0; i < 6; i++) { const p = CK.fract(lt / 0.6 + i / 6), r = T.rng(T.hash('spray' + i))(); ctx.globalAlpha = (1 - p) * v; T.outlined(ctx, (c) => c.arc(x + 10 + p * (40 + r * 60), -h - p * (50 + r * 40) + p * p * 90, 5 + r * 5, 0, TAU), '#ffffff', { line: 3, paint: false }); ctx.globalAlpha = 1; }
+    if (v > 0.15) for (let i = 0; i < 6; i++) { const p = CK.fract(lt / 0.6 + i / 6), r = T.rng(T.hash('spray' + i))(); ctx.save(); ctx.globalAlpha *= (1 - p) * v; T.outlined(ctx, (c) => c.arc(x + 10 + p * (40 + r * 60), -h - p * (50 + r * 40) + p * p * 90, 5 + r * 5, 0, TAU), '#ffffff', { line: 3, paint: false }); ctx.restore(); }
   }
   function ship(ctx, L, S, env) {
     const style = L.style ?? 'liner', k = S.size / 720, hull = L.color ?? (style === 'warship' ? '#6a7078' : '#1e1e24'), top = L.color2 ?? (style === 'warship' ? '#8a9098' : '#f2efe6');
@@ -141,8 +142,8 @@
     T.outlined(ctx, poly([[-280, -100], [-340, -160], [-330, -100], [-340, -40]]), sh(col, -0.1), { line: 6 });
     if (L.face) { CK.eye(ctx, 190, -124, 16, { e: CK.expr(L.face === 'angry' ? 'angry' : 'neutral'), blink: CK.blink(L.id ?? 'sub', S.lt), look: [0.6, 0], lidColor: col }); ctx.strokeStyle = P.ink; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(170, -84); ctx.quadraticCurveTo(210, L.face === 'angry' ? -96 : -70, 250, -86); ctx.stroke(); }
     VK.propBlur(ctx, -350, -100, 46, S.lt * (0.4 + T.clamp(S.speed / 200)), { flat: 0.2 });
-    for (let i = 0; i < 6; i++) { const p = CK.fract(S.lt / 1.4 + i / 6); ctx.globalAlpha = 1 - p; T.outlined(ctx, (c) => c.arc(-360 - p * 120, -100 - p * 140 + Math.sin(p * 8 + i) * 10, 6 + p * 10, 0, TAU), 'rgba(220,240,255,0.5)', { line: 3, paint: false }); ctx.globalAlpha = 1; }
+    for (let i = 0; i < 6; i++) { const p = CK.fract(S.lt / 1.4 + i / 6); ctx.save(); ctx.globalAlpha *= 1 - p; T.outlined(ctx, (c) => c.arc(-360 - p * 120, -100 - p * 140 + Math.sin(p * 8 + i) * 10, 6 + p * 10, 0, TAU), 'rgba(220,240,255,0.5)', { line: 3, paint: false }); ctx.restore(); }
     ctx.restore();
-    if (depth > 0) { ctx.save(); ctx.globalAlpha = T.clamp(depth) * 0.55; ctx.fillStyle = L.water ?? '#2a6a8a'; ctx.fillRect(-420, -6, 840, 400); ctx.restore(); }
-  }, 620, (L, S) => (L.wake !== false && T.num(L.depth, S.lt, 0) < 0.3 ? [['wake', -300 * S.size / 620, 4, { scale: S.size / 620 * 2.5 }]] : []));
+    if (depth > 0) { ctx.save(); ctx.globalAlpha *= T.clamp(depth) * 0.55; ctx.fillStyle = L.water ?? '#2a6a8a'; ctx.fillRect(-420, -6, 840, 400); ctx.restore(); }
+  }, 620, (L, S) => (L.wake !== false ? [['wake', -300 * S.size / 620, 4, { scale: S.size / 620 * 2.5, when: (te) => T.num(L.depth, te - (S.slt - S.lt), 0) < 0.3 }]] : []));
 })();

@@ -56,7 +56,7 @@
     }
     ctx.restore();
     T.outlined(ctx, (k) => k.arc(x, y, r * 0.18, 0, TAU), o.hub ?? VK.sh(rim, -0.2), { line: line * 0.5, paint: false });
-    if (o.blur && Math.abs(o.blur) > 0.4) { ctx.save(); ctx.globalAlpha = T.clamp(Math.abs(o.blur) - 0.4) * 0.6; ctx.fillStyle = VK.sh(rim, -0.2); ctx.beginPath(); ctx.arc(x, y, r * 0.72, 0, TAU); ctx.fill(); ctx.restore(); }
+    if (o.blur && Math.abs(o.blur) > 0.4) { ctx.save(); ctx.globalAlpha *= T.clamp(Math.abs(o.blur) - 0.4) * 0.6; ctx.fillStyle = VK.sh(rim, -0.2); ctx.beginPath(); ctx.arc(x, y, r * 0.72, 0, TAU); ctx.fill(); ctx.restore(); }
   };
   // Additive headlight cone from (x, y) forward (+x), length len, half-angle spread (rad).
   VK.headlight = (ctx, x, y, len, spread = 0.22, color = '#fff2b8') => {
@@ -96,22 +96,33 @@
     fire: { every: 0.06, life: 0.5, size: 14, grow: 1.2, rise: 60, color: '#ffb030', alpha: 0.9, min: -1 },
   };
   VK.PUFF = PUFF;
-  // Emit puffs of `kind` from local point [lx, ly] (layer units incl. the kind scale) for the layer's past positions.
-  // Draws in world space: call with the context in the world (camera) frame — see VK.inWorld.
-  VK.puffs = (ctx, L, slt, kind, lx, ly, o = {}) => {
-    const p = { ...PUFF[kind], ...o }, seed = String(L.id ?? L.kind) + kind + lx;
-    const n0 = Math.floor((slt - p.life) / p.every), n1 = Math.floor(slt / p.every), a0 = ctx.globalAlpha;
-    const wind = o.wind ?? -30;
+  // The puffs of `kind` alive at shot time slt, emitted from local point [lx, ly] (layer units incl. the kind scale) of
+  // the layer's past positions. Emission times sit on a fixed grid (i * every, `every` must not depend on the current
+  // frame); whether a puff exists (o.when, o.keep probability, the `min` speed) and its size (o.scaleAt) are decided at
+  // its own emission time, so a puff never moves or changes once emitted. Pure: [{i, te, age, f, bx, by, s, r, rr, scale}].
+  VK.puffList = (L, slt, kind, lx, ly, o = {}) => {
+    const p = { ...PUFF[kind], ...o }, seed = String(L.id ?? L.kind) + kind + lx, out = [];
+    const n0 = Math.floor((slt - p.life) / p.every), n1 = Math.floor(slt / p.every);
     for (let i = Math.max(n0, 0); i <= n1; i++) {
       const te = i * p.every, age = slt - te;
       if (age < 0 || age > p.life) continue;
       if (o.when && !o.when(te)) continue;
-      if (p.min >= 0) { const sp = T.vehicleMotion(L, te).speed; if (sp < p.min) continue; }
+      if (p.min >= 0 && T.vehicleMotion(L, te).speed < p.min) continue;
+      const rr = T.rng(T.hash(seed + ':' + i)), r = rr();
+      if (o.keep && r > o.keep(te)) continue;
       const w = worldPt(L, te, lx, ly);
       if (!w) continue;
-      const r = T.rng(T.hash(seed + ':' + i)), f = age / p.life, sc = Math.abs(w[2].s);
-      const x = w[0] + (wind * age + (r() - 0.5) * (20 + 50 * f)) * sc, y = w[1] - (p.rise * (1 - (1 - f) * (1 - f)) + (r() - 0.5) * 10) * sc;
-      const rad = p.size * (1 + f * p.grow) * (0.8 + r() * 0.4) * sc * (o.scale ?? 1);
+      out.push({ i, te, age, f: age / p.life, bx: w[0], by: w[1], s: Math.abs(w[2].s), r, rr, scale: o.scaleAt ? o.scaleAt(te) : o.scale ?? 1 });
+    }
+    return out;
+  };
+  // Draws the puffs in world space: call with the context in the world (camera) frame — see VK.inWorld.
+  VK.puffs = (ctx, L, slt, kind, lx, ly, o = {}) => {
+    const p = { ...PUFF[kind], ...o }, a0 = ctx.globalAlpha, wind = o.wind ?? -30;
+    for (const q of VK.puffList(L, slt, kind, lx, ly, o)) {
+      const { age, f, s: sc, rr: r } = q;
+      const x = q.bx + (wind * age + (r() - 0.5) * (20 + 50 * f)) * sc, y = q.by - (p.rise * (1 - (1 - f) * (1 - f)) + (r() - 0.5) * 10) * sc;
+      const rad = p.size * (1 + f * p.grow) * (0.8 + r() * 0.4) * sc * q.scale;
       ctx.globalAlpha = a0 * p.alpha * (1 - f) * (f < 0.1 ? f / 0.1 : 1);
       if (p.flat) T.outlined(ctx, (k) => k.ellipse(x, y, rad * 1.8, rad * 0.35, 0, 0, TAU), p.color, { line: 0, paint: false });
       else T.outlined(ctx, (k) => k.arc(x, y, rad, 0, TAU), T.mix(p.color, '#ffffff', r() * 0.25), { line: Math.max(2, Math.min(6, rad * 0.08)), paint: f < 0.6 ? 0.7 : false, ink: VK.sh(p.color, -0.4) });

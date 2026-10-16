@@ -83,21 +83,25 @@
     for (let i = 0; i < 6; i++) { k.beginPath(); T.smoothPath(k, T.blobPts(-170 + r() * 330, -320 + r() * 120, 34 + r() * 30, 26 + r() * 20, F.seed + 's' + i, 9, 0.3)); k.fill(); }
     k.globalCompositeOperation = prev;
   };
+  const cowPts = [[-170, -336], [-226, -314], [-240, -252], [-216, -188], [-150, -160], [-40, -144], [80, -150], [172, -174], [216, -232], [206, -302], [160, -336], [60, -340], [-60, -334]];
+  const bellyFold = (k, F) => { k.strokeStyle = sh(F.col, -0.3); k.lineWidth = 4; k.lineCap = 'round'; k.beginPath(); k.moveTo(-120, -176); k.quadraticCurveTo(-20, -158, 90, -170); k.stroke(); };
   const COW = {
     size: 360, unit: 400, legLen: 200, color: '#f4f1ea', maneColor: '#2a2624', hoofColor: '#2e2622', spots: true,
-    hip: [-140, -210], shoulder: [130, -206], pivot: [0, -240],
-    hindLeg: [100, 84, 26], foreLeg: [96, 84, 26], hindW: [44, 20, 15, 14], foreW: [36, 19, 15, 14],
-    body: blob([[-160, -322], [-214, -300], [-228, -236], [-196, -170], [-110, -148], [0, -140], [120, -150], [186, -186], [206, -250], [176, -312], [100, -330], [0, -318], [-80, -324]]),
-    neckBase: [168, -270], neckLen: 70, neckAng: -15, neckW: [70, 60, 50], neckArch: 6, headAng: 40, eatAng: 75, sleepAng: 30, runAng: 0,
-    head: bovineHead('short'), headScale: 1.2, bodyShade: spotsShade,
-    tail: { at: [-218, -296], n: 6, seg: 32, w: [8, 7, 6, 6, 6, 8, 12], base: 95, hz: 0.45, amp: 0.1, flick: 1.6, streamAng: 0.9 },
+    hip: [-150, -232], shoulder: [140, -228], pivot: [0, -250], hindTop: [28, 66], foreTop: [-6, 60], hindStand: -10, foreStand: 6,
+    hindLeg: [80, 74, 22], foreLeg: [78, 76, 22], hindW: [62, 34, 20, 14, 14], foreW: [50, 28, 18, 13, 14],
+    body: blob(cowPts),
+    neckBase: [178, -276], neckLen: 70, neckAng: -15, neckW: [76, 64, 54], neckArch: 6, headAng: 40, eatAng: 75, sleepAng: 30, runAng: 0,
+    head: bovineHead('short'), headScale: 1.2, bodyShade: (k, F) => { spotsShade(k, F); bellyFold(k, F); },
+    tail: { at: [-226, -306], n: 6, seg: 32, w: [8, 7, 6, 6, 6, 8, 12], base: 95, hz: 0.45, amp: 0.1, flick: 1.6, streamAng: 0.9 },
     drawTail: (ctx, pts, F, c) => { T.outlined(ctx, CK.tube(pts, [8, 7, 6, 6, 6, 5, 4]), c, { line: 6 }); const [x, y] = pts[pts.length - 1]; T.outlined(ctx, leaf(x, y - 6, x + 4, y + 40, 12), F.mane, { line: 5 }); },
-    extraMid: (ctx, F) => { if (F.cfg.udder && !F.sleep) { const [x, y] = F.bodyPt([-70, -150]); T.outlined(ctx, (k) => k.ellipse(x, y + 8, 34, 22, 0, 0, TAU), '#efb0a8', { line: 6 }); } },
-    udder: true, foot: CK.FEET.cloven, tuck: [60, -50], lieH: 0.5, zzz: [20, -60], sweat: [40, -46], seat: [0, -326], riderSize: 340, saddleW: 120,
-    lines: [[[-120, -300], [-170, -250], [-160, -186]]],
+    extraMid: (ctx, F) => { // udder between the hind legs and a dewlap fold under the neck
+      if (F.cfg.udder && F.sleep < 0.5) { const [x, y] = F.bodyPt([-96, -158]); T.outlined(ctx, blob([[x - 30, y - 10], [x + 30, y - 10], [x + 26, y + 22], [x, y + 30], [x - 26, y + 22]]), '#efb0a8', { line: 6 }); }
+      const [dx, dy] = F.bodyPt([188, -200]); T.outlined(ctx, blob([[dx - 30, dy - 30], [dx + 24, dy - 20], [dx + 12, dy + 26], [dx - 20, dy + 20]]), F.col, { line: 0 });
+    },
+    udder: true, foot: CK.FEET.cloven, tuck: [70, -60], lieH: 0.5, zzz: [20, -60], sweat: [40, -46], seat: [0, -282], saddle: [0, -340], riderSize: 330, saddleW: 120,
   };
-  const BULL = { ...COW, color: '#3a2a26', spots: false, udder: false, head: bovineHead('long'), forelock: true, maneColor: '#1e1614',
-    body: blob([[-160, -318], [-214, -296], [-228, -236], [-196, -170], [-110, -150], [0, -142], [120, -150], [190, -190], [214, -260], [180, -340], [80, -360], [0, -330], [-80, -324]]) };
+  const BULL = { ...COW, color: '#3a2a26', spots: false, udder: false, head: bovineHead('long'), forelock: true, maneColor: '#1e1614', headScale: 1.3,
+    bodyShade: bellyFold, body: blob([[-170, -326], [-226, -304], [-240, -246], [-216, -186], [-150, -160], [-40, -146], [80, -150], [176, -176], [222, -240], [214, -320], [150, -376], [60, -372], [-60, -336]]) };
 
   // ---------- sheep ----------
   function sheepHead(ctx, F) {
@@ -108,18 +112,18 @@
     ctx.fillStyle = '#c9b8b0'; ctx.beginPath(); ctx.ellipse(74, 6, 4, 6, 0, 0, TAU); ctx.fill();
     CK.eye(ctx, 26, -4, 10, eyeOpts(F, { lidColor: fc }));
   }
-  const woolPuffs = (seed) => { const r = T.rng(T.hash(seed + 'wool')), out = []; for (let i = 0; i < 14; i++) out.push([-170 + (i % 7) * 56 + r() * 14, -300 + Math.floor(i / 7) * 74 + r() * 16, 44 + r() * 12]); return out; };
+  const sheepPts = [[-204, -252], [-196, -322], [-116, -356], [0, -362], [112, -350], [196, -314], [212, -244], [176, -180], [60, -160], [-60, -160], [-176, -180]];
   const SHEEP = {
-    size: 300, unit: 400, legLen: 170, color: '#f4f1ea', faceColor: '#2c2624', legColor: '#2c2624', hoofColor: '#1e1a18',
-    hip: [-120, -178], shoulder: [110, -176], pivot: [0, -230],
-    hindLeg: [84, 72, 22], foreLeg: [82, 72, 22], hindW: [20, 13, 10, 11], foreW: [18, 12, 10, 11],
-    body: (k) => { k.moveTo(-190, -230); k.quadraticCurveTo(-200, -320, -100, -330); k.quadraticCurveTo(0, -350, 100, -328); k.quadraticCurveTo(200, -310, 196, -230); k.quadraticCurveTo(190, -160, 100, -158); k.quadraticCurveTo(0, -140, -100, -158); k.quadraticCurveTo(-196, -160, -190, -230); k.closePath(); },
-    bodyOver: (ctx, F) => { // fleece: overlapping puffs with their own shading
-      const pts = woolPuffs(F.seed);
-      for (const [x, y, r] of pts) T.outlined(ctx, (k) => k.arc(x, y, r, 0, TAU), F.col, { line: 6, paint: 0.7 });
+    size: 300, unit: 400, legLen: 170, color: '#f4f1ea', faceColor: '#2c2624', legColor: '#2c2624', hoofColor: '#1e1a18', legsUnder: true, massLine: false,
+    hip: [-118, -196], shoulder: [112, -192], pivot: [0, -240], hindTop: [18, 46], foreTop: [0, 44], hindStand: -8, foreStand: 4,
+    hindLeg: [72, 68, 18], foreLeg: [70, 68, 18], hindW: [26, 16, 10, 8, 9], foreW: [20, 13, 10, 8, 9],
+    body: CK.wooly(sheepPts, { bump: 13, every: 5 }),
+    bodyShade: (k, F) => { // fleece curls
+      const r = T.rng(T.hash('curls')); k.strokeStyle = sh(F.col, -0.28); k.lineWidth = 4; k.lineCap = 'round';
+      for (let i = 0; i < 22; i++) { const x = -170 + r() * 340, y = -330 + r() * 150, rr = 9 + r() * 7; k.beginPath(); k.arc(x, y, rr, Math.PI * 0.9, Math.PI * 2.1); k.stroke(); }
     },
-    neckBase: [150, -270], neckLen: 50, neckAng: -30, neckW: [40, 34, 28], headAng: 50, eatAng: 80, sleepAng: 30, runAng: -10,
-    head: sheepHead, tail: { at: [-196, -268], n: 3, seg: 18, w: [16, 16, 14, 10], base: 110, hz: 0.6, amp: 0.15 },
+    neckBase: [158, -276], neckLen: 50, neckAng: -30, neckW: [44, 38, 32], headAng: 50, eatAng: 80, sleepAng: 30, runAng: -10,
+    head: sheepHead, headScale: 1.15, tail: { at: [-206, -270], n: 3, seg: 18, w: [16, 16, 14, 10], base: 110, hz: 0.6, amp: 0.15 },
     foot: CK.FEET.cloven, tuck: [50, -40], lieH: 0.55, zzz: [10, -50], sweat: [30, -40],
   };
 
@@ -135,13 +139,13 @@
   }
   const PIG = {
     size: 260, unit: 400, legLen: 120, color: '#f2a0b0', color2: '#f8c4d0', hoofColor: '#5a3a3a',
-    hip: [-130, -128], shoulder: [128, -126], pivot: [0, -200],
-    hindLeg: [60, 46, 18], foreLeg: [58, 46, 18], hindW: [44, 26, 20, 16], foreW: [40, 24, 19, 16],
+    hip: [-136, -150], shoulder: [134, -146], pivot: [0, -200], hindTop: [22, 44], foreTop: [0, 40], hindStand: -6, foreStand: 4,
+    hindLeg: [48, 46, 18], foreLeg: [48, 46, 18], hindW: [56, 30, 22, 17, 16], foreW: [46, 26, 20, 16, 16],
     body: blob([[-170, -290], [-230, -240], [-236, -170], [-190, -112], [-80, -96], [60, -96], [170, -116], [222, -170], [214, -250], [150, -296], [40, -306], [-80, -304]]),
+    bodyShade: (k, F) => { k.strokeStyle = sh(F.col, -0.25); k.lineWidth = 4; k.lineCap = 'round'; for (const x of [150, 166]) { k.beginPath(); k.moveTo(x, -280); k.quadraticCurveTo(x + 14, -220, x, -150); k.stroke(); } },
     neckBase: [196, -220], neckLen: 30, neckAng: 0, neckW: null, headAng: 10, eatAng: 50, sleepAng: 30, runAng: 0,
     head: pigHead, headScale: 1.35, tail: { at: [-232, -230], n: 5, seg: 12, w: [7, 6, 6, 5, 5, 4], base: 200, curl: 560, hz: 1.4, amp: 0.2 },
     foot: CK.FEET.cloven, tuck: [40, -30], lieH: 0.6, zzz: [20, -50], sweat: [30, -40],
-    lines: [[[-150, -260], [-190, -200], [-170, -140]]],
   };
 
   // ---------- camel ----------
@@ -154,25 +158,27 @@
     CK.eye(ctx, 22, -10, 11, eyeOpts(F, { e: { ...F.e, lid: Math.max(0.5, F.e.lid ?? 0.5) } }));
     ctx.strokeStyle = P.ink; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(8, -26); ctx.lineTo(38, -28); ctx.stroke(); // heavy lashes
   }
+  const camelPts = [[-150, -312], [-192, -292], [-188, -240], [-122, -206], [0, -198], [110, -208], [168, -246], [162, -302], [112, -332], [58, -418], [0, -446], [-62, -424], [-112, -352]];
   const CAMEL = {
     size: 400, unit: 400, legLen: 250, color: '#d4ae78', maneColor: '#a4804a', hoofColor: '#6a5640',
-    hip: [-110, -252], shoulder: [110, -250], pivot: [0, -280],
-    hindLeg: [126, 104, 26], foreLeg: [120, 106, 26], hindW: [30, 15, 12, 18], foreW: [26, 14, 12, 18],
-    body: blob([[-140, -300], [-180, -280], [-176, -226], [-110, -196], [0, -190], [110, -200], [160, -240], [150, -300], [90, -330], [40, -420], [-30, -430], [-90, -360]]),
-    neckBase: [140, -270], neckLen: 170, neckAng: -15, neckW: [44, 32, 28], neckArch: -40, headAng: -10, eatAng: 75, sleepAng: 20, runAng: 0,
-    head: camelHead, headScale: 1.2, tail: { at: [-172, -282], n: 4, seg: 22, w: [8, 7, 6, 8, 12], base: 100, hz: 0.6, amp: 0.1 },
-    foot: CK.FEET.pad, tuck: [60, -50], lieH: 0.3, zzz: [20, -50], sweat: [30, -40], seat: [20, -420], riderSize: 330, saddleW: 110,
+    hip: [-118, -276], shoulder: [116, -272], pivot: [0, -290], hindTop: [30, 70], foreTop: [-4, 62], hindStand: -12, foreStand: 6,
+    hindLeg: [100, 93, 26], foreLeg: [96, 96, 26], hindW: [50, 22, 17, 11, 16], foreW: [38, 18, 20, 11, 16],
+    body: CK.furry(camelPts, { amp: 10, every: 3, seed: 'camel', sel: (nx, ny) => ny < -0.8 }),
+    bodyShade: (k, F) => { k.strokeStyle = sh(F.col, -0.3); k.lineWidth = 4; k.lineCap = 'round'; k.beginPath(); k.moveTo(-90, -350); k.quadraticCurveTo(0, -330, 70, -370); k.stroke(); },
+    neckBase: [150, -286], neckLen: 160, neckAng: -18, neckW: [56, 38, 30], neckArch: -40, headAng: -10, eatAng: 75, sleepAng: 20, runAng: 0,
+    head: camelHead, headScale: 1.25, tail: { at: [-182, -288], n: 4, seg: 22, w: [8, 7, 6, 8, 12], base: 100, hz: 0.6, amp: 0.1 },
+    foot: CK.FEET.pad, tuck: [60, -50], lieH: 0.3, zzz: [20, -50], sweat: [30, -40], seat: [10, -360], saddle: [10, -440], riderSize: 320, saddleW: 110,
   };
 
   // ---------- elephant ----------
   function elephantHead(ctx, F) {
     const c = F.col, line = 9, flap = Math.sin(F.lt * 1.7) * 0.08 + F.earFlick * 0.2 + F.scared * 0.3;
     const trunk = F.eat > 0.5 ? 0.9 : Math.sin(F.lt * 1.2) * 0.25 + F.scared * -0.6, open = F.talk ? 10 : 0;
-    const tp = CK.tailPts(70, 30, 6, 30, { base: 1.4, t: F.lt, hz: 0.5, lag: 0.5, amp: 0.08, curl: (trunk * 120 + 30) });
-    T.outlined(ctx, blob([[-40, -60], [30, -76], [96, -40], [104, 30], [60, 70 + open], [0, 56], [-40, 20]]), c, { line });
+    const tp = CK.tailPts(70, 30, 6, 30, { base: 1.4, t: F.lt, hz: 0.5, lag: 0.5, amp: 0.08, curl: (trunk * 120 + 30) * D });
+    T.outlined(ctx, blob([[-46, -70], [10, -96], [74, -80], [104, -30], [106, 30], [60, 70 + open], [0, 58], [-44, 24]]), c, { line });
     T.outlined(ctx, CK.tube(tp, [26, 22, 19, 16, 14, 12, 11]), c, { line });
-    ctx.save(); ctx.translate(10, -20); ctx.rotate(flap); // big ear over the side of the head
-    T.outlined(ctx, blob([[0, -70], [-70, -70], [-96, 0], [-80, 80], [-30, 110], [0, 60]]), c, { line, shade: (k) => { k.fillStyle = sh(c, -0.12); k.beginPath(); T.smoothPath(k, [[-10, -50], [-60, -50], [-78, 0], [-66, 64], [-30, 84], [-12, 40]]); k.fill(); } });
+    ctx.save(); ctx.translate(-14, -14); ctx.rotate(flap); ctx.scale(0.72, 0.78); // big ear over the back of the head, the face stays clear
+    T.outlined(ctx, blob([[6, -84], [-84, -86], [-118, 0], [-96, 96], [-36, 128], [4, 70]]), c, { line, shade: (k) => { k.fillStyle = sh(c, -0.12); k.beginPath(); T.smoothPath(k, [[-10, -50], [-60, -50], [-78, 0], [-66, 64], [-30, 84], [-12, 40]]); k.fill(); } });
     ctx.restore();
     ctx.strokeStyle = sh(c, -0.5); ctx.lineWidth = 3; // trunk wrinkles
     for (let i = 1; i < 6; i++) { const [x, y] = tp[i], [x2, y2] = tp[i + 1], a = Math.atan2(y2 - y, x2 - x) + Math.PI / 2, w = 14; ctx.beginPath(); ctx.moveTo(x + Math.cos(a) * w, y + Math.sin(a) * w); ctx.lineTo(x - Math.cos(a) * w * 0.5, y - Math.sin(a) * w * 0.5); ctx.stroke(); }
@@ -180,14 +186,16 @@
     CK.eye(ctx, 40, -14, 11, eyeOpts(F));
   }
   const ELEPHANT = {
-    size: 360, unit: 400, legLen: 160, color: '#8d8f96', color2: '#a9abb2', cycleK: 0.9,
-    hip: [-118, -168], shoulder: [118, -170], pivot: [0, -250],
-    hindLeg: [80, 64, 20], foreLeg: [80, 66, 20], hindW: [48, 38, 34, 36], foreW: [48, 38, 34, 36],
-    body: blob([[-150, -330], [-214, -290], [-232, -210], [-200, -140], [-100, -124], [0, -122], [110, -128], [190, -160], [214, -240], [190, -320], [100, -360], [0, -350], [-80, -350]]),
-    neckBase: [196, -260], neckLen: 40, neckAng: -10, neckW: null, headAng: 10, eatAng: 30, sleepAng: 20, runAng: 0,
-    head: elephantHead, headScale: 1.45, tail: { at: [-226, -266], n: 5, seg: 20, w: [7, 6, 5, 5, 6, 10], base: 100, hz: 0.5, amp: 0.15, flick: 1.4 },
-    foot: CK.FEET.pad, tuck: [40, -30], lieH: 0.6, zzz: [30, -90], sweat: [40, -80], seat: [0, -350], riderSize: 330, saddleW: 150,
-    lines: [[[-150, -300], [-190, -230], [-180, -160]], [[120, -320], [150, -250], [140, -170]]],
+    size: 360, unit: 400, legLen: 160, color: '#8d8f96', color2: '#a9abb2', cycleK: 0.9, wrinkles: true,
+    hip: [-130, -196], shoulder: [126, -196], pivot: [0, -260], hindTop: [20, 44], foreTop: [0, 40], hindStand: -6, foreStand: 4,
+    hindLeg: [72, 68, 20], foreLeg: [74, 68, 20], hindW: [72, 54, 46, 42, 44], foreW: [66, 50, 46, 42, 44],
+    body: blob([[-160, -360], [-226, -320], [-246, -240], [-220, -170], [-130, -146], [0, -140], [120, -146], [200, -180], [230, -260], [210, -340], [130, -386], [20, -392], [-80, -384]]),
+    bodyShade: (k, F) => { k.strokeStyle = sh(F.col, -0.35); k.lineWidth = 4; k.lineCap = 'round';
+      for (const [x, y] of [[-60, -180], [0, -172], [60, -176]]) { k.beginPath(); k.moveTo(x - 30, y); k.quadraticCurveTo(x, y + 10, x + 30, y - 2); k.stroke(); }
+      for (const [x, y] of [[-170, -300], [-150, -330]]) { k.beginPath(); k.moveTo(x, y); k.quadraticCurveTo(x + 20, y - 14, x + 50, y - 10); k.stroke(); } },
+    neckBase: [200, -270], neckLen: 40, neckAng: -10, neckW: null, headAng: 10, eatAng: 30, sleepAng: 20, runAng: 0,
+    head: elephantHead, headScale: 1.6, tail: { at: [-240, -276], n: 5, seg: 20, w: [7, 6, 5, 5, 6, 10], base: 100, hz: 0.5, amp: 0.15, flick: 1.4 },
+    foot: CK.FEET.pad, tuck: [40, -30], lieH: 0.6, zzz: [30, -90], sweat: [40, -80], seat: [0, -330], saddle: [0, -392], riderSize: 330, saddleW: 150,
   };
 
   CK.register('horse', CK.quad(HORSE));

@@ -47,11 +47,22 @@
     }
     const knee = CK.ik2(sx, sy, ax, ay, bones[0], bones[1], hind ? 1 : -1);
     chain = chain.concat([knee, [ax, ay], [f.x, f.y]]);
-    if (far || !top) T.outlined(ctx, CK.tube(chain, ws), col, { line: cfg.line });
+    if (far) T.outlined(ctx, CK.tube(chain, ws), col, { line: cfg.line });
     else { // near leg grows out of the body: fill all of it, ink only below the thigh / upper arm
       const tp = CK.tubeParts(chain, ws, 1);
       T.outlined(ctx, tp.fill, col, { line: 0 });
       ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.strokeStyle = P.ink; ctx.lineWidth = cfg.line; ctx.beginPath(); tp.edge(ctx); ctx.stroke();
+      // contour of the thigh / shoulder mass on the body: an ink arc behind the joint (hind) or in front of it (fore)
+      if (top && cfg.massLine !== false) {
+        const r = ws[0] * 1.05, a0 = hind ? Math.PI * 0.55 : -Math.PI * 0.3, a1 = hind ? Math.PI * 1.35 : Math.PI * 0.45;
+        const pts = []; for (let i = 0; i <= 8; i++) { const a = T.lerp(a0, a1, i / 8) + B.pitch; pts.push([hx + Math.cos(a) * r * (hind ? 1 : 0.9), hy + 10 + Math.sin(a) * r * 1.15]); }
+        T.inkStroke(ctx, hind ? pts : pts.reverse(), { w: cfg.line * 0.75, ink: sh(col, -0.6) });
+      }
+    }
+    if (cfg.wrinkles) { // skin folds across the knee
+      ctx.strokeStyle = sh(col, -0.5); ctx.lineWidth = cfg.line * 0.4; ctx.lineCap = 'round';
+      const [kx, ky] = knee, w = ws[2] * 0.8;
+      for (const dy of [-10, 0, 10]) { ctx.beginPath(); ctx.moveTo(kx - w, ky + dy); ctx.quadraticCurveTo(kx, ky + dy + 6, kx + w * 0.7, ky + dy - 2); ctx.stroke(); }
     }
     cfg.foot(ctx, f.x, f.y, pa, far, F, ws[3]);
   }
@@ -147,12 +158,13 @@
       if (F.scared > 0.3) { const r = T.rng(T.hash(seed + ':tr:' + Math.floor(lt * 15))); B.dy += (r() - 0.5) * 5 * F.scared; B.px += (r() - 0.5) * 6 * F.scared; }
       F.B = B; F.bodyPt = bodyX(B);
       const spanX = cfg.span ?? Math.abs(cfg.shoulder[0] - cfg.hip[0]) * 0.75 + 60;
-      CK.shadow(ctx, L, (cfg.hip[0] + cfg.shoulder[0]) / 2, spanX, 0);
+      CK.shadow(ctx, L, (cfg.hip[0] + cfg.shoulder[0]) / 2, spanX, CK.lift(env, k));
       if (L.glow) { ctx.shadowColor = L.glow === true ? 'rgba(255,255,255,0.95)' : L.glow; ctx.shadowBlur = (50 + Math.sin(lt * Math.PI) * 8) * T.DPR; }
       const farCol = sh(col, -0.28), legCol = cfg.legColor ? F[cfg.legColor] ?? cfg.legColor : col;
       const farLeg = cfg.legColor ? sh(legCol, -0.28) : farCol;
       if (cfg.extraBack) cfg.extraBack(ctx, F);
       drawLeg(ctx, cfg, B, 1, mo, F, farLeg); drawLeg(ctx, cfg, B, 3, mo, F, farLeg);
+      if (cfg.legsUnder) { drawLeg(ctx, cfg, B, 0, mo, F, legCol); drawLeg(ctx, cfg, B, 2, mo, F, legCol); } // legs hidden under a fleece
       if (!cfg.tailFront) drawTail(ctx, cfg, B, mo, F, col);
       neckPose(cfg, B, mo, F);
       drawNeck(ctx, cfg, F, col);
@@ -163,7 +175,7 @@
       ctx.restore();
       ctx.shadowBlur = 0;
       if (cfg.tailFront) drawTail(ctx, cfg, B, mo, F, col);
-      drawLeg(ctx, cfg, B, 0, mo, F, legCol); drawLeg(ctx, cfg, B, 2, mo, F, legCol);
+      if (!cfg.legsUnder) { drawLeg(ctx, cfg, B, 0, mo, F, legCol); drawLeg(ctx, cfg, B, 2, mo, F, legCol); }
       if (cfg.extraMid) cfg.extraMid(ctx, F);
       drawHead(ctx, cfg, F, mo);
       if (L.rider && cfg.seat) drawRider(ctx, cfg, L, lt, env, B, F, mo);

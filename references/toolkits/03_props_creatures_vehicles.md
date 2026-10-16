@@ -302,7 +302,7 @@ Looks: `wolf` grey with a white chest ruff; `dog` golden with floppy ears; `goat
 
 ### Motion 2.0: path, gaits and trails
 
-Any layer can travel a `path` (field reference in [03-spec-reference.md](../03-spec-reference.md#common-layer-fields)): constant speed along the curve, auto facing with a squash through a turn, `orient` to the tangent, `bank` into curves. Creatures and vehicles read the distance actually travelled (along `path`, or along `move` steps), so feet stay planted and wheels never skid.
+Any layer can travel a `path: {pts, at, dur, ease, curve, orient, face, bank, loop}` (always an object; field reference in [03-spec-reference.md](../03-spec-reference.md#common-layer-fields)): constant speed along the curve, auto facing with a squash through a turn, `orient` to the tangent, `bank` into curves. Creatures and vehicles read the distance actually travelled (along `path`, or along `move` steps), so feet stay planted and wheels never skid.
 
 **v2 rigs and the classic look.** New kinds always use their v2 rig. The existing kinds `horse`, `cow`, `bull`, `sheep`, `pig`, `camel`, `elephant`, `dog`, `wolf` (creatures) and `tank`, `train`, `biplane`, `submarine`, `car1910` (vehicles) switch to their v2 rig in the painted look, with a new field (`gait`, `state`, `path`, `terrain`, `lights`, `dust`, `exhaust`, `wake`, `contrail`, `animal`, `team`, `flock`, `school`) or with `rig: "v2"`; otherwise they keep their classic drawing pixel for pixel. `rig: "classic"` forces the old drawing; `pose: "biped"` and the elephant `tower` always use it.
 
@@ -318,7 +318,8 @@ Any layer can travel a `path` (field reference in [03-spec-reference.md](../03-s
 | `color`, `color2`, `mane` | per kind | Body, belly / muzzle, mane and tail colour. `blaze` (horse white stripe), `spots` / `spotColor` (cow), `horns` (`long` / `short`), `hornColor`, `muzzle`, `ring`, `tusks: false`, `stripes: false` (cat) |
 | `glow`, `tear`, `eyes: "evil"`, `talk` | — | As on the classic animals |
 | `flock` (bird), `school` (fish) | 1 | Draws n members in a seeded formation, each on its own flap / swim phase and drift; `spread` (1) scales a flock |
-| `contact` | on | Painted look: soft shadow under the feet; `false` turns it off |
+| `contact` | on | Painted look: soft shadow under the feet (stays on the ground and shrinks during a `jump`); `false` turns it off |
+| `dust` | on dirt | Animals moving faster than a trot kick up dust puffs from the hooves on `ground: "dirt"` and on `desert`, `battlefield`, `trench`, `graveyard`; `true`, `false` or an amount overrides |
 
 New creatures: `cat` (striped, slit pupils, curling tail), `bear` (heavy, clawed paws), `rat` (long bare tail), `chicken` (two-leg walk with the head that holds still in space then snaps forward, pecks in `eat`, flaps when `scared`), `bird` (flap 1.1 s then glide 0.7 s; flap rate rises with speed; perch legs when idle), `fish` (body wave growing to the tail, tail beat follows the swim speed, bubbles; `bubbles: false`), `snake` (slither: a ground-locked wave, so the body does not slide; tongue flicks; `length` 900, `raised`).
 
@@ -328,7 +329,7 @@ New creatures: `cat` (striped, slit pupils, curling tail), `bear` (heavy, clawed
 |---|---|---|
 | `path` / `move` | — | Travel. Wheels, treads, rods and the team's gait follow the distance; `drive` windows still spin things on the spot (220 px/s of virtual travel) |
 | `terrain` | road (tank `rough`, chariot / wagon `dirt`) | Suspension over seeded bumps: `smooth`, `road`, `rail`, `cobble`, `dirt`, `rough`; the body lifts and pitches between its axles |
-| `exhaust`, `dust`, `smoke`, `steam`, `wake` | on where it fits | World-space trails: puffs are emitted along the vehicle's past positions and stay behind it (motor exhaust, dust on `dirt` / `rough`, chimney and funnel smoke, cylinder steam, foam wake). `false` turns one off |
+| `exhaust`, `dust`, `smoke`, `steam`, `wake` | on where it fits | World-space trails: puffs are emitted on a fixed time grid along the vehicle's past positions and stay behind it (motor exhaust, dust on `dirt` / `rough`, chimney and funnel smoke, cylinder steam, foam wake). Whether a puff exists and how big it is is decided at its emission time, so speeding up never moves smoke already in the air. `false` turns one off |
 | `contrail` | false | Plane / biplane: a fading white ribbon along the flown path |
 | `lights` | false | Headlight cone (additive) |
 | `riders` / `rider` | — | Seated cast members in cars, the driver of a chariot / wagon / locomotive, the pilot, the balloonist |
