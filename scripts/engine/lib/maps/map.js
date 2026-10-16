@@ -9,7 +9,10 @@
   const STYLE = {
     parchment: { sea: P.sea, coast: 'rgba(200,220,245,0.85)', land: P.land, landInk: '#8a5a20', extrude: 7, border: 6, waves: 26 },
     atlas: { sea: '#5b72d6', coast: '#9db0ef', land: '#d4bd7a', landInk: '#3a2a1a', extrude: 3, border: 5, waves: 0, dots: true },
+    // painted (map-paint.js): mottled sea, coast ripples, bevelled land on a deep drop side, relief, paper grain
+    painted: { sea: '#4f74c8', coast: '#cfe0f4', land: '#d9c38a', landInk: '#4a2e16', extrude: 12, border: 5, waves: 0, paint: true },
   };
+  T.MAP_STYLES = STYLE;
   const twos = (lt) => Math.floor(lt * 15) / 15;
 
   let dotTile = null;
@@ -30,6 +33,14 @@
   T.MAP_REGION_HOOKS = T.MAP_REGION_HOOKS || [];
   // L.view -> { begin(ctx, L, g, lt) -> drawCtx?, end(ctx, L, g, lt, drawCtx), project(px, py, g, lt, x, y) -> [px, py, s] }
   T.MAP_VIEWS = T.MAP_VIEWS || {};
+  // fn(L, lt, env) -> L': rewrites the layer before drawing (geo.js turns lon/lat into map-box coordinates).
+  T.MAP_PREP = T.MAP_PREP || [];
+  // fn(ctx, L, g, lt) -> truthy when it painted the sea and land itself (geo-base.js, map-paint.js).
+  T.MAP_BASE_HOOKS = T.MAP_BASE_HOOKS || [];
+  // fn(ctx, L, g, lt) after the regions, before the overlays (globe shading).
+  T.MAP_POST_HOOKS = T.MAP_POST_HOOKS || [];
+  // fn(ctx, R, g, lt, pts, slab) paints extra cover fills inside a region (slab(fill) paints the region in the current clip).
+  T.MAP_COVERS = T.MAP_COVERS || [];
 
   // Region colour after recolor (and blended toward the conquering colour as the conquest progresses).
   function regionColor(R, g, lt) {
@@ -114,6 +125,12 @@
     }
   }
 
+  // drawOn phase of a region: 'before' (nothing shows), 'tracing' (border being drawn, fill fading in) or 'done'
+  T.mapDrawOnPhase = (R, lt) => {
+    const D = R.drawOn; if (!D) return 'done';
+    const at = D.at ?? 0, dur = D.dur ?? 1.2;
+    return lt < at ? 'before' : lt < at + dur * 1.05 ? 'tracing' : 'done';
+  };
   function drawRegion(ctx, R, g, lt, ov) {
     if (ov && (ov.offset || ov.alpha != null)) {
       ctx.save();
@@ -127,16 +144,21 @@
     const grow = T.ease.outCubic(T.prog(lt, R.at ?? 0, R.dur ?? 1.2));
     const fade = R.out != null ? 1 - T.prog(lt, R.out, R.outDur ?? 0.5) : 1;
     if (grow <= 0 || fade <= 0) return;
-    const pts = R.pts.map(([x, y]) => [X(x), Y(y)]);
-    const [cx, cy] = centroid(pts), { w: bw, h: bh } = bbox(pts);
+    const pts = R.pts.map(([x, y]) => [X(x), Y(y)]), holes = (R.holes || []).map((h) => h.map(([x, y]) => [X(x), Y(y)]));
+    const rpath = (k) => { T.smoothPath(k, pts); for (const h of holes) T.smoothPath(k, h); }; // holes are wound the other way
+    const [cx, cy] = R.anchor ? [X(R.anchor[0]), Y(R.anchor[1])] : centroid(pts), { w: bw, h: bh } = bbox(pts);
+    const D = R.drawOn || null, dAt = D ? D.at ?? 0 : 0, dDur = D ? D.dur ?? 1.2 : 0;
+    const fillA = D ? T.ease.inOut(T.prog(lt, dAt + dDur * 0.55, dDur * 0.5)) : 1;
+    if (D && lt < dAt) return;
     const rad = Math.max(...pts.map(([x, y]) => Math.hypot(x - cx, y - cy))) * 1.05;
     let col = R.color ?? P.red;
     if (R.recolor) { const q = T.prog(lt, R.recolor.at ?? 1, R.recolor.dur ?? 0.8); if (q > 0) col = T.mix(col, R.recolor.color, q); }
     if (ov && ov.fill != null) col = ov.fill;
     const neutral = R.halftone && !(ov && ov.fill != null) && !(R.recolor && lt >= (R.recolor.at ?? 1));
     const slab = (fill, line = st.border, neutral = false) => {
-      ctx.save(); ctx.translate(0, st.extrude + 2); T.outlined(ctx, (k) => T.smoothPath(k, pts), T.shade(neutral ? st.land : fill, -0.42), { line: 0 }); ctx.restore();
-      T.outlined(ctx, (k) => T.smoothPath(k, pts), neutral ? st.land : fill, {
+      if (st.paint && T.MAP_PAINT && !neutral) { T.MAP_PAINT.regionSlab(ctx, rpath, fill, line, R.border ?? R.ink ?? T.shade(fill, -0.6), st, cx, cy, rad); return; }
+      ctx.save(); ctx.translate(0, st.extrude + 2); T.outlined(ctx, rpath, T.shade(neutral ? st.land : fill, -0.42), { line: 0 }); ctx.restore();
+      T.outlined(ctx, rpath, neutral ? st.land : fill, {
         line, ink: R.border ?? R.ink ?? (g.style === 'atlas' ? '#2a1c15' : T.shade(fill, -0.55)),
         shade: (k) => {
           if (neutral) { k.fillStyle = T.mapDots(k, R.dotColor); k.fillRect(cx - rad, cy - rad, rad * 2, rad * 2); }
@@ -145,6 +167,9 @@
       });
     };
     ctx.save(); ctx.globalAlpha *= fade;
+    const landClip = R.clip === 'land' ? g.landClip : null; // set by geo-base.js: land plus its drop side
+    if (landClip) ctx.clip(landClip);
+    if (D && fillA < 1) { if (fillA > 0) { ctx.save(); ctx.globalAlpha *= fillA; slab(col, 0, neutral); ctx.restore(); } if (T.mapTraceBorder) T.mapTraceBorder(ctx, pts, T.prog(lt, dAt, dDur), D, col); ctx.restore(); return; }
     ctx.save(); ctx.beginPath(); const from = R.from ? [X(R.from[0]), Y(R.from[1])] : [cx, cy];
     ctx.arc(from[0], from[1], (R.from ? rad * 2.2 : rad) * grow, 0, Math.PI * 2); ctx.clip();
     slab(col, R.borderWidth ?? st.border, neutral);
@@ -159,11 +184,13 @@
         ctx.save(); ctx.beginPath(); ctx.arc(o[0], o[1], reach * q, 0, Math.PI * 2); ctx.clip(); slab(acol); ctx.restore();
       }
     }
+    if (!ov) for (const cover of T.MAP_COVERS) cover(ctx, R, g, lt, pts, (fill) => slab(fill));
     if (R.whiteout) {
       const q = T.prog(lt, R.whiteout.at ?? 1, R.whiteout.dur ?? 0.5);
-      if (q > 0) { ctx.globalAlpha *= 1; T.outlined(ctx, (k) => T.smoothPath(k, pts), `rgba(250,250,246,${q})`, { line: 8 * q, ink: R.whiteout.rim ?? '#50c8c8' }); }
+      if (q > 0) { ctx.globalAlpha *= 1; T.outlined(ctx, rpath, `rgba(250,250,246,${q})`, { line: 8 * q, ink: R.whiteout.rim ?? '#50c8c8' }); }
     }
     ctx.restore();
+    if (landClip && g.coastPath) { ctx.save(); ctx.beginPath(); rpath(ctx); ctx.clip(); ctx.strokeStyle = st.landInk; ctx.lineWidth = g.coastWidth ?? 4; ctx.lineJoin = 'round'; ctx.stroke(g.coastPath); ctx.restore(); }
     if (R.pulse) { ctx.strokeStyle = T.shade(col, 0.3); ctx.lineWidth = 8 + Math.sin(lt * 5) * 4; ctx.globalAlpha *= 0.6 + Math.sin(lt * 5) * 0.3; ctx.beginPath(); T.smoothPath(ctx, pts); ctx.stroke(); }
     ctx.restore();
     const conquered = R.conquer && T.prog(lt, R.conquer.at ?? 1, R.conquer.dur ?? 0.8) >= 1;
@@ -181,9 +208,10 @@
   // ---------- the layer ----------
   // { style:'parchment'|'atlas', image?, w, h, sea, coast, landColor, land:[[cx,cy,rx,ry]], regions:[...], desaturate:{at,dur}, ... overlays }
   T.layers.map = (ctx, L, lt, env) => {
+    for (const prep of T.MAP_PREP) L = prep(L, lt, env) || L;
     // regions[].blob: [cx, cy, rx, ry] (map fractions) is shorthand for a seeded lumpy polygon when pts is omitted
     if ((L.regions || []).some((R) => R.blob && !R.pts)) L = { ...L, regions: L.regions.map((R, i) => (R.blob && !R.pts ? { ...R, pts: T.blobPts(R.blob[0], R.blob[1], R.blob[2], R.blob[3], (L.id ?? 'map') + ':' + (R.id ?? i), R.blobPoints ?? 16, R.jag ?? 0.16) } : R)) };
-    const style = L.style === 'atlas' ? 'atlas' : 'parchment', st = { ...STYLE[style] };
+    const style = STYLE[L.style] ? L.style : 'parchment', st = { ...STYLE[style] };
     if (L.extrude != null) st.extrude = L.extrude;
     const mw = (L.w ?? 1.1) * W, mh = (L.h ?? 1.1) * H;
     const X = (x) => (x - 0.5) * mw, Y = (y) => (y - 0.5) * mh;
@@ -196,7 +224,7 @@
     // geometry helpers for hooks, views and overlays (pixel space of the flat map, centred on the layer origin)
     g.view = view; g.outer = ctx;
     g.pts = (R) => R.pts.map(([x, y]) => [X(x), Y(y)]);
-    g.centroid = (R) => centroid(g.pts(R));
+    g.centroid = (R) => (R.anchor ? [X(R.anchor[0]), Y(R.anchor[1])] : centroid(g.pts(R)));
     g.bbox = (R) => { const p = g.pts(R), xs = p.map((q) => q[0]), ys = p.map((q) => q[1]), x0 = Math.min(...xs), y0 = Math.min(...ys); return { x: x0, y: y0, w: Math.max(...xs) - x0, h: Math.max(...ys) - y0 }; };
     g.color = (R, t = lt) => regionColor(R, g, t);
     g.drawRegion = (R, overrides, c2) => {
@@ -218,7 +246,7 @@
   function mapBody(ctx, L, lt, env, g, view) {
     const { X, Y, mw, mh, st, style } = g;
     if (L.image) ctx.drawImage(T.img(L.image), -mw / 2, -mh / 2, mw, mh);
-    else {
+    else if (!T.MAP_BASE_HOOKS.some((hook) => hook(ctx, L, g, lt))) {
       ctx.fillStyle = L.sea ?? st.sea; ctx.fillRect(-mw / 2, -mh / 2, mw, mh);
       const wr = T.rng(T.hash(env.seed + 'waves'));
       ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 4; ctx.lineCap = 'round';
@@ -241,6 +269,7 @@
       for (const hook of hooks) { if (hook(ctx, R, g, lt, drawDefault)) { handled = true; break; } }
       if (!handled) drawRegion(ctx, R, g, lt);
     }
+    for (const hook of T.MAP_POST_HOOKS) hook(ctx, L, g, lt);
     for (const name of T.MAP_OVERLAY_ORDER) {
       // with a view, upright overlays are drawn after view.end on the outer canvas (they place things with g.project)
       if (L[name] != null && ov[name] && !(view && ov[name].upright)) ov[name](ctx, L[name], g, lt);

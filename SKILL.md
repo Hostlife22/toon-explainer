@@ -33,7 +33,7 @@ All numbered guides are in `references/`; toolkit cards are in `references/toolk
 | Acting and gags: giant arm, poof costume change, hats, exits | `arm` layer, `fx: poof/hat/marks/prohibit`, `swap`, enter/exit kinds | `toolkits/02_acting.md` |
 | Props, objects with faces, animals, vehicles | `prop`, `obj`, `creature`, `vehicle` layers | `toolkits/03_props_creatures_vehicles.md` |
 | Places: skies, trenches, palaces, studios, rooms, foreground framing | `bg` kinds, `fg` kinds | `toolkits/04_places.md` |
-| Maps: territories, conquests, fronts, figures on the map, views | `map` layer | `toolkits/05_maps.md` |
+| Maps: territories, conquests, fronts, figures on the map, views; real geography (`geo`: countries by ISO code, globe spin, painted relief) | `map` layer | `toolkits/05_maps.md` |
 | Names, titles, counters, documents, bubbles, timelines, subtitles | lettering layers and `doc` kinds | `toolkits/06_paper_and_lettering.md` |
 | Game-parody framing: HUD, cursor, VS cards, menus, quest chips | `hud`, `cursor`, game `doc` kinds, `spec.overlays` | `toolkits/07_game_ui.md` |
 | Effects, materials, horror and war FX, grades, piles and floods, cracked glass, petrify | `fx` kinds, layer modifiers (incl. `xray`), `grade` | `toolkits/08_fx_and_tone.md` |
@@ -66,7 +66,7 @@ Films that show a whole story:
 - `examples/grammar/` — recipe catalog: reveal, map, villain, episode, finale;
 - `examples/story_*` — twelve 22 s story films on non-historical topics, each with a hook, a turn and a payoff and dense feature use: `story_moon_race` (rivals, countdown), `story_vaccine` (an inside-the-body explainer), `story_museum_heist` (a plan, CCTV, a double-cross), `story_banana_caper` (a slapstick investigation), `story_startup` (rise and fall told with UI), `story_simulation` (glitches, grid, pull-back reveal), `story_border` (a living-map dispute), `story_emu_war` (comedy history with image cutouts), `story_lighthouse` (slow-burn horror), `story_volcano` (a science disaster), and two 9:16 shorts, `story_cat_physics` and `story_honey`.
 
-Toolkit catalogs (one shot per feature; render one with `--sheet` before using its card for the first time): `character_sheet`, `eras_wardrobe`, `expressions_wardrobe`, `acting_gags`, `props_creatures`, `places_tour`, `sets_rooms`, `living_maps`, `paper_and_maps`, `paper_cards`, `game_ui`, `tone_and_horror`, `action_fx`, `transitions_lens`. `references/08-toolkits.md` says which card each one belongs to. Contact sheets of every example: `assets/sheets/<example>.jpg`.
+Toolkit catalogs (one shot per feature; render one with `--sheet` before using its card for the first time): `character_sheet`, `eras_wardrobe`, `expressions_wardrobe`, `acting_gags`, `props_creatures`, `places_tour`, `sets_rooms`, `living_maps`, `geo_maps`, `paper_and_maps`, `paper_cards`, `game_ui`, `tone_and_horror`, `action_fx`, `transitions_lens`. `references/08-toolkits.md` says which card each one belongs to. Contact sheets of every example: `assets/sheets/<example>.jpg`.
 
 ## Production rules
 
@@ -102,7 +102,8 @@ scripts/engine/          index.html + core.js (timeline, camera, layer motion, s
   lib/places/            backgrounds (sky, interior, parchment, burst), scenery (fg, forest, city), foreground,
                          places-war, places-world, places-towns, places-sets, places-rooms
   lib/maps/              map (styles, regions, faces), map-overlays (rivers, fronts, routes, tokens), map-views (views,
-                         living regions, figures, arrows, trails)
+                         living regions, figures, arrows, trails), geo + geo-base + geo-data-* (Natural Earth, projections,
+                         globe), geo-proj, geo-prep, map-paint (painted style), geo-anim (flood, drawOn), geo-ranges
   lib/paper/             paper (newspaper, documents, stamps, charts), signs-bubbles, cards (nameplates, time skips,
                          picture bubbles, number cards, graffiti), timeline-subtitles
   lib/game/              game-ui: hud and cursor layers, game doc kinds

@@ -1,0 +1,89 @@
+{
+  "title": "Geo maps: real coastlines, ISO regions, globe spin, painted relief and animated conquest",
+  "fps": 30,
+  "seed": 57,
+  "style": {"grain": true, "vignette": 0.2},
+  "cast": {},
+  "shots": [
+    {"id": "g01_europe", "dur": 4, "vo": "Europe in 1914: every border a grievance.", "transition": "cut",
+     "bg": {"kind": "flat", "color": "#14213d"},
+     "camera": {"zoom": [1.0, 1.05]},
+     "layers": [
+       {"type": "map", "id": "europe", "style": "painted",
+        "geo": {"proj": "mercator", "center": [14, 49], "span": 46, "ranges": true, "rivers": true},
+        "regions": [
+          {"id": "fr", "iso": "FRA", "color": "#3a63c8", "dur": 0.001, "label": {"text": "FRANCE", "size": 48}},
+          {"id": "de", "iso": "DEU", "color": "#8e8e8a", "dur": 0.001, "label": {"text": "GERMANY", "size": 48}},
+          {"id": "gb", "iso": "GBR", "color": "#d52a2a", "dur": 0.001, "label": {"text": "UK", "size": 44}},
+          {"id": "it", "iso": "ITA", "color": "#3aa33a", "dur": 0.001, "label": {"text": "ITALY", "size": 40, "dy": -20}},
+          {"id": "ah", "iso": ["AUT", "HUN", "CZE", "SVK", "SVN", "HRV", "BIH"], "color": "#f2c43a", "dur": 0.001,
+           "face": {"mood": "angry", "at": 0.6, "scale": 0.17}},
+          {"id": "ru", "iso": "RUS", "color": "#5f8f4a", "dur": 0.001, "label": {"text": "RUSSIA", "size": 52}, "labelAt": [33.5, 56.5]}
+        ],
+        "compass": {"x": 0.12, "y": 0.8, "size": 90, "at": 0.4}}
+     ]},
+    {"id": "g02_globe", "dur": 4.5, "vo": "Spin the world to Europe.", "transition": "cut",
+     "bg": {"kind": "flat", "color": "#070b22"},
+     "layers": [
+       {"type": "map", "id": "globe", "style": "painted",
+        "geo": {"proj": "ortho", "radius": 0.44, "graticule": true,
+                "center": [{"at": 0, "v": [-75, 12]}, {"at": 3.0, "v": [14, 44]}],
+                "zoom": [{"at": 3.0, "v": 1}, {"at": 4.3, "v": 1.9}]},
+        "regions": [
+          {"id": "eu", "iso": ["FRA", "DEU", "ITA", "ESP", "PRT", "BEL", "NLD", "AUT", "CHE", "POL", "CZE"], "color": "#d52a2a",
+           "at": 3.0, "dur": 0.6, "label": {"text": "EUROPE", "at": 3.3, "size": 60}}
+        ]}
+     ]},
+    {"id": "g03_med_flood", "dur": 5, "vo": "Rome spread across the Mediterranean.", "transition": "cut",
+     "bg": {"kind": "flat", "color": "#14213d"},
+     "layers": [
+       {"type": "map", "id": "med", "style": "painted",
+        "geo": {"proj": "equirect", "center": [12, 39.5], "span": 40, "ranges": ["alps", "apennines", "pyrenees", "atlas", "dinarics"]},
+        "regions": [
+          {"id": "rome", "iso": "ITA", "color": "#c3161f", "dur": 0.001, "face": {"mood": "smug", "scale": 0.24}, "label": {"text": "ROME", "size": 44}},
+          {"id": "gaul", "iso": "FRA", "color": "#e8d9b0", "dur": 0.001, "flood": {"at": 0.8, "dur": 1.6, "from": [7.5, 44], "by": "rome"}},
+          {"id": "hispania", "iso": ["ESP", "PRT"], "color": "#e8d9b0", "dur": 0.001, "flood": {"at": 1.8, "dur": 1.8, "from": [3, 42], "by": "rome"}},
+          {"id": "carthage", "lonlat": [[8.4, 37.3], [11.1, 37.1], [11.3, 35.2], [10.2, 33.6], [8.1, 33.2], [7.6, 35.6]], "color": "#7a3fb0",
+           "dur": 0.001, "drawOn": {"at": 0.2, "dur": 1.2}, "label": {"text": "CARTHAGE", "at": 1.3, "size": 38, "dy": 70}}
+        ],
+        "arrows": [{"from": {"ll": [12.5, 41.9]}, "to": {"ll": [10.2, 36.4]}, "at": 3.4, "label": "WAR", "width": 48}],
+        "yearLabel": {"text": "146 BC", "at": 0.3, "size": 96, "x": 0.82, "y": 0.14}}
+     ]},
+    {"id": "g04_china", "dur": 5, "vo": "Seven states, and Qin wanted them all.", "transition": "cut",
+     "bg": {"kind": "flat", "color": "#14213d"},
+     "layers": [
+       {"type": "map", "id": "china", "style": "painted",
+        "geo": {"proj": "mercator", "center": [106, 34], "span": 50, "ranges": true, "rivers": ["Huang", "Yellow", "Yangtze"], "relief": "lush"},
+        "regions": [
+          {"id": "qin", "lonlat": [[103.5, 32.5], [110.5, 32.2], [111.2, 36.2], [107.5, 38.6], [103.8, 36.4]], "color": "#f08a2c", "dur": 0.001,
+           "face": {"mood": "smug", "scale": 0.5}, "label": {"text": "QIN", "size": 40}},
+          {"id": "chu", "lonlat": [[108.5, 26.5], [117.5, 27.2], [118.8, 31], [112.5, 32.2], [108.6, 30]], "color": "#3fb8d8", "dur": 0.001,
+           "face": {"mood": "worried", "scale": 0.4}, "conquer": {"by": "qin", "at": 2.4, "dur": 1.0}},
+          {"id": "qi", "lonlat": [[115.2, 35], [119.2, 34.6], [122.4, 36.9], [119, 38.1], [116, 37.6]], "color": "#c63fd6", "dur": 0.001,
+           "face": {"mood": "shock", "scale": 0.5}, "wipe": {"at": 3.4, "dur": 1.0, "dir": "right", "by": "qin"}}
+        ],
+        "arrows": [{"from": "qin", "to": "chu", "at": 1.6, "style": "block", "width": 44}]}
+     ]},
+    {"id": "g05_atlantic", "dur": 4.5, "vo": "The crossing took six weeks.", "transition": "cut",
+     "bg": {"kind": "flat", "color": "#14213d"},
+     "layers": [
+       {"type": "map", "id": "atlantic", "style": "parchment",
+        "geo": {"proj": "equirect", "center": [-40, 42], "span": 92},
+        "regions": [{"id": "us", "iso": "USA", "color": "#3a63c8", "dur": 0.001}, {"id": "pt", "iso": "PRT", "color": "#3aa33a", "dur": 0.001}],
+        "pins": [{"lon": -74, "lat": 40.7, "label": "NEW YORK", "at": 0.2}, {"lon": -9.1, "lat": 38.7, "label": "LISBON", "at": 0.4}],
+        "routes": [{"pts": {"ll": [[-73.5, 40.4], [-9.6, 38.6]], "gc": true}, "at": 0.6, "dur": 2.0}],
+        "tokens": [{"icon": "ship", "pts": {"ll": [[-73.5, 40.4], [-9.6, 38.6]], "gc": true}, "at": 0.6, "dur": 3.2, "size": 80}],
+        "signs": [{"lon": -8.2, "lat": 42.2, "text": "EUROPE", "at": 2.8, "size": 150}]}
+     ]},
+    {"id": "g06_border_wipe", "dur": 4.5, "vo": "An empire drawn in one stroke, and wiped away in another.", "transition": "cut",
+     "bg": {"kind": "flat", "color": "#14213d"},
+     "layers": [
+       {"type": "map", "id": "danube", "style": "atlas",
+        "geo": {"proj": "mercator", "center": [17, 47], "span": 22, "ranges": ["alps", "carpathians", "dinarics"], "rivers": ["Danube"]},
+        "regions": [
+          {"id": "ah", "iso": ["AUT", "HUN", "CZE", "SVK", "SVN", "HRV", "BIH"], "color": "#f2c43a", "dur": 0.001,
+           "drawOn": {"at": 0.2, "dur": 1.6, "width": 7}, "wipe": {"at": 2.6, "dur": 1.4, "dir": "right", "by": "#9a9a98"}}
+        ]}
+     ]}
+  ]
+}
