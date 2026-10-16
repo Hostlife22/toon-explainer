@@ -13,6 +13,14 @@ Painted engine, phases 0 and 1: a density lint and the paint core.
 - `scripts/density.py`: `spec.py` prints non-fatal warnings for shots under 4 layers (title cards excepted), `void` backgrounds, characters without a foreground element, and 3+ consecutive cuts at the same camera zoom.
 - `examples/painted_bench`: one dense painted shot per scene type (interior, street, landscape, map, globe, face close-up, vehicle, crowd).
 
+Phase 6, creatures and vehicles 2.0:
+
+- `path` on any layer (`creatures/motion-path.js`): constant-speed motion along smooth, linear or bezier curves with ease, auto facing (with a squash through reversals), `orient`, `bank` and `loop`; `T.layerTravel` gives the distance travelled along `path` or `move`.
+- v2 creature rigs: gait tables with planted feet (walk, trot, gallop, auto by speed), 2-bone IK legs, states `idle`, `eat`, `sleep`, `scared`, `sit`, toon eyes by `expr`, lagging tails and manes, riders with saddle, bridle and reins. Upgraded `horse`, `cow`, `bull`, `sheep`, `pig`, `camel`, `elephant`, `dog`, `wolf` (painted look or new fields); new `cat`, `bear`, `rat`, `chicken`, `bird` (`flock`), `fish` (`school`), `snake`.
+- v2 vehicles: wheels and rods driven by distance, terrain suspension, world-space smoke / exhaust / dust / steam / wake trails and contrails, headlights, ships on a swell. New `model-t`, `sedan1920`, `car1950`, `car-modern`, `chariot`, `wagon` (animal teams), `locomotive`, `ship`, `sailship`, `plane`, `zeppelin`, `balloon`, `rocket`; `tank`, `train`, `biplane`, `submarine`, `car1910` upgrade in the painted look.
+- Classic specs render pixel-identical; `rig: "classic"` / `"v2"` forces a rig.
+- `examples/creatures_vehicles_v2` (12 shots); the painted bench vehicle shot now drives a wagon and a Model T along paths.
+
 ## 3.6.0 · 2026-10-15
 
 More pictures, more examples and a reproducible showcase.

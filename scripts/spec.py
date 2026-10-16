@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 from density import lint  # noqa: F401  (re-exported: non-fatal density warnings, printed by the CLI)
+from motion_check import check_motion
 
 KNOWN_LAYERS = {"bean", "image", "label", "title", "date", "era", "counter", "timer", "caption",
                 "prop", "card", "sign", "calendar", "map", "fx", "fg", "crowd"}
@@ -379,6 +380,7 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         errors.append(f"{where}: image needs src or frames.idle")
     _check_common(layer, where, cast, errors)
     _check_paint_fields(layer, where, errors)
+    check_motion(layer, where, errors, _ease_names(), LAYER_KINDS.get("creature"))
     for win in layer.get("talk", []) or []:
         if not (isinstance(win, list) and len(win) == 2 and all(isinstance(v, (int, float)) for v in win) and win[0] <= win[1]):
             errors.append(f"{where}: talk windows must be [[start, end], ...] with start <= end")
