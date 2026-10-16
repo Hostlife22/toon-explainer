@@ -14,13 +14,16 @@ Colors must be `#rrggbb` or `#rgb`: shadows and haze are derived from them. The 
 {
   "title": "…", "fps": 30, "seed": 1,               // seed makes the render deterministic
   "format": "landscape" | "vertical",                 // output 1920x1080 (default) or 1080x1920
-  "style": { "grain": true, "vignette": 0.3 },        // post-processing; false disables
+  "style": { "grain": true, "vignette": 0.3,          // post-processing; false disables
+             "look": "classic" | "painted",            // painted: shading, ink weight, textures (see Painted look)
+             "light": { "dir": 58, "color": "#fff0cf", "rim": 0.55, "ambient": "#3c2f5c", "intensity": 0.6 } },
   "cast": { "<name>": { /* bean appearance */ } },    // character sheet
   "shots": [ { "id": "k01", "dur": 3.2, "vo": "…", "screen": "…",
                "transition": "cut" | { "kind": "zoom-punch", "dur": 0.3 },
                "bg": { … } | [ { … }, { … } ],        // backgrounds are drawn in order
                "camera": { … }, "layers": [ … ],
                "pinned": [ … ],                       // layers without camera, centred in the visible frame
+               "look": "classic", "light": { "dir": 140 },   // per-shot look and light overrides
                "frame": 0.5 | [ {"at": 0, "v": 0.3}, … ] } ]  // vertical films: x of the visible strip
 }
 ```
@@ -95,6 +98,9 @@ More fields accepted by every layer:
 | `jitter` | `{"amp":3,"on":2}` or `true` | Seeded tremble on twos (struggle, panic, a shaking region); `from`/`to` limit it in layer time |
 | `swing` | `{"at":0.4,"amp":10,"period":1.1,"decay":2}` | Damped pendulum around the layer origin: hanging signs, a dropped microphone, keys on a hook |
 | `glow`, `silhouette`, `lineart` + module modifiers | `"glow": true` | Per-layer modifiers from `T.LAYER_MODS`; several can combine (order is fixed by the registry) |
+| `atmos` | `0.45` or `{"amount":0.6,"color":"#c9d6e0"}` | Atmospheric perspective: tints the layer toward the haze colour (the sky's horizon colour by default, or the bg's `atmos`) by `amount` 0..1. Far temples, ships on the horizon, a distant army. Works in both looks |
+| `contact` | `true`, `1.4` or `{"w":1.2,"h":0.05,"alpha":0.6,"dy":0.5}` | Painted look: soft contact shadow (ambient occlusion) on the ground under the layer. On by default for `bean` (and crowd members); `false` turns it off. `w` scales the width, `dy` is the offset below the anchor as a fraction of `size` (0.5 for centred props) |
+| `painted` | `false` | Painted look: keep this layer flat (`false`), or shade a lettering / UI layer that is flat by default (`true`) |
 
 Shot-level `focus` (rack focus; not the same as `camera.focus`, which is only the zoom target point): `"focus": [{"at":0,"on":"king","px":10},{"at":2.2,"on":"bg","dur":0.5}]`. From `at`, every layer **with an `id`** other than `on` ramps to `px` of blur and `on` ramps sharp over `dur` (0.4 s, ease in-out); the background gets `bg` px (default `px`, or 0 when `on` is `"bg"`). Pull focus on the word that names the new subject.
 - Always sharp: layers without an `id`, and lettering and screen furniture even with an `id`: `label`, `title`, `caption`, `date`, `era`, `counter`, `timer`, `doc`, `hud`, `cursor` and `fx`. Add `"focusable": true` to let one of these blur.
@@ -234,6 +240,16 @@ During `talk`, the idle and talk frames alternate at 8 Hz. `blink` shows every ~
 
 These are the base kinds. Over 40 more live in [08 FX and tone](toolkits/08_fx_and_tone.md) and [02 Acting](toolkits/02_acting.md).
 
+## Painted look (`style.look`)
+`"style": {"look": "painted"}` (or `"look": "painted"` on one shot) switches the film from the classic flat look (one fill and one shadow tone per colour, uniform ink) to a painted look modelled on the reference frames, through shared drawing helpers so most of the library changes at once:
+- **Light.** `style.light` (and `shot.light` per shot): `dir` (degrees toward the light: 0 = from the right, 90 = from above; default 58, upper right), `color` (key / rim tint), `rim` (0..1 rim-light strength), `ambient` (shadow tint, cool by default), `intensity` (0..1 shadow depth). The light is in screen space, so a flipped character is lit from the same side.
+- **Shapes.** Every filled `T.outlined` shape gets a deep band on the far edge, a shadow band, the base colour on the lit side, an airbrushed falloff toward the far edges and a rim light along the lit edge; its ink is thinner on the lit side and heavier on the shadow side. Shapes under 18 px keep a flat fill, shapes under 64 px get one band. Faces are shaded at 45 % so they stay bright.
+- **Ground and depth.** Characters get a contact shadow and a soft shadow of the head on the torso; `atmos` hazes far layers.
+- **Places.** Painted clouds (lit cap, soft volume, darker underside), sun bloom, deeper zenith and horizon haze; textured ground (grass strokes and 2-tone tufts, cobbles, sand); per-kind surface textures (plaster walls, wood floors and planks, carpets, cobbled streets, water, parchment fibre) and an occlusion band where walls meet the floor.
+- **Frame.** A key-light wash falling off to a cool, darker far side, and paper tooth baked into the film grain.
+- Lettering and screen furniture (`label`, `title`, `caption`, `date`, `era`, `counter`, `timer`, `doc`, `hud`, `cursor`, `subtitle`, `timeline`, `panel`, `fx`) stay flat unless they set `painted: true`.
+- Classic stays the default and renders exactly as before. The painted look costs under 2x the classic frame time (measured on `examples/showcase` at `--scale 0.5`). `examples/painted_bench` has one dense shot per scene type; the grades that suit it (`golden-hour`, `dusk`, `overcast`, `night`) are listed below. Techniques and APIs: [08 FX and tone](toolkits/08_fx_and_tone.md#painted-look).
+
 ## Shot color grade (`grade`)
 `"grade": "serious"` or `{ "preset": "serious", "at": 2.0, "dur": 0.5, "strength": 1 }` recolors the whole shot, **including labels and the HUD**. If a label must stay clean, put it in the next shot or lower `strength`. With `at`/`dur`, the grade kicks in mid-shot: this is how the rain starts in the reference at 22:43.9.
 
@@ -249,6 +265,9 @@ These are the base kinds. Over 40 more live in [08 FX and tone](toolkits/08_fx_a
 | `gold` | Golden hour, triumph |
 | `mono` | Plain greyscale: the past turned into a photograph, a memory |
 | `negative` | Colour negative: a frozen title, a "what if" flash (use 0.2–2 s) |
+| `golden-hour` | Low warm sun: orange soft light and a warm bloom (departure, farewell, aftermath glory) |
+| `dusk` | Violet-rose evening after sunset, a little bloom near the horizon |
+| `overcast` | Grey, flat, slightly desaturated daylight |
 
 ## Transitions
 Built into `core.js`: `cut` (0 s), `dissolve` (0.35), `fade-white` (0.4), `fade-black` (0.5), `zoom-punch` (0.3), `whip` (0.3; `dir` `left` default, `right`, `up`, `down`), `iris` (0.5). Twenty-six more, including `swirl` (the vertical shorts' spin cut), `pixelate`, `burn`, `swarm`, `squeeze` and `carry` (ink blot, peephole, cloud wipe, drip, …) with their parameters are in [09 Transitions and lens](toolkits/09_transitions_and_lens.md).

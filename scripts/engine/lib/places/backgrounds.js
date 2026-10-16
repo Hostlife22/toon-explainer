@@ -137,7 +137,7 @@
     for (let x = -OVER; x <= W + OVER; x += 30) pts.push([x, baseY - Math.abs(T.noise(x * freq, seed)) * amp - T.noise(x * freq * 3.1, seed + 'd') * amp * 0.18]);
     const path = (k) => { k.moveTo(-OVER, H + OVER); pts.forEach(([x, y]) => k.lineTo(x, y)); k.lineTo(W + OVER, H + OVER); k.closePath(); };
     T.outlined(ctx, path, col, {
-      line: 0,
+      line: 0, paint: false,
       shade: (k) => {
         const g = k.createLinearGradient(0, baseY - amp, 0, baseY + 140);
         g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(30,15,5,0.28)');
@@ -150,6 +150,7 @@
         }
       },
     });
+    if (T.PAINT) T.paintSky.ridge(ctx, path, haze);
     ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(42,28,21,0.55)';
     ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke();
     ctx.lineWidth = 6; ctx.strokeStyle = T.mix(col, '#fff4d0', 0.35);
@@ -209,6 +210,7 @@
   T.groundBand = (ctx, bg, pal, gy, seed) => ground(ctx, bg, pal, gy, seed);
   T.waterBand = (...a) => water(...a);
   T.cloudLayer = (ctx, bg, pal, lt, seed) => clouds(ctx, bg, pal, lt, seed);
+  T.cumulusCloud = (...a) => cumulus(...a); // classic inked cumulus (paint-places.js shades it for the painted look)
   T.OVERSCAN = OVER;
 
   // Time-lapse sky: a smiling sun crosses on an arc, then a crescent moon; the gradient blends day <-> night.
@@ -277,12 +279,14 @@
     else skyGradient(ctx, pal.stops, horizon);
     const sun = bg.sun || pal.sun;
     if (!bg.timelapse) sunGlow(ctx, sun[0] * W, sun[1] * H, pal.glow);
+    if (T.PAINT && !bg.timelapse) T.paintSky.atmosphere(ctx, pal, sun, horizon);
     if (pal.stars || bg.stars) stars(ctx, lt, seed);
     if (bg.rays) T.drawRays(ctx, sun[0] * W, sun[1] * H, lt, { seed });
     ctx.restore();
     ctx.save();
     T.applyCam(ctx, env.cam, 0.3);
-    clouds(ctx, bg, pal, lt, seed);
+    if (T.PAINT && (bg.cloudStyle ?? pal.cloudStyle ?? 'cumulus') === 'cumulus') T.paintSky.clouds(ctx, bg, pal, lt, seed);
+    else clouds(ctx, bg, pal, lt, seed);
     ctx.restore();
     const hills = bg.hills === false ? 0 : bg.hills ?? 3;
     for (let k = 0; k < hills; k++) {
@@ -296,7 +300,7 @@
     const gy = (bg.groundY ?? 0.8) * H;
     for (const tr of bg.trees || []) T.drawTree(ctx, tr[0] * W, tr[1] * H, (tr[2] ?? 0.35) * H, seed + 't' + tr[0]);
     if (bg.water) water(ctx, (bg.water.y ?? 0.82) * H, lt, seed, bg.water.color);
-    if (bg.ground !== false) ground(ctx, bg, pal, gy, seed);
+    if (bg.ground !== false) { ground(ctx, bg, pal, gy, seed); if (T.PAINT) T.paintSky.ground(ctx, bg, pal, gy, seed); }
     ctx.restore();
   };
 
@@ -311,6 +315,7 @@
     g.addColorStop(1, 'rgba(255,240,200,0.12)');
     ctx.fillStyle = g;
     ctx.fillRect(-OVER, -OVER, W + OVER * 2, floorY + OVER);
+    if (T.PAINT) T.paintSurface(ctx, 'plaster', [-OVER, -OVER, W + OVER * 2, floorY + OVER], bg); // before the set dressing
     if (bg.window) {
       const [wx, wy, ww, wh] = bg.window.map((v, i) => v * (i % 2 ? H : W));
       const sg = ctx.createLinearGradient(0, wy, 0, wy + wh);
@@ -332,6 +337,7 @@
     for (const dx of bg.drapes || []) drape(ctx, dx * W, lt, env.seed + dx, trim);
     ctx.fillStyle = bg.floor ?? '#a8784d';
     ctx.fillRect(-OVER, floorY, W + OVER * 2, H - floorY + OVER);
+    if (T.PAINT) T.paintSurface(ctx, 'wood', [-OVER, floorY, W + OVER * 2, H - floorY + OVER], bg);
     ctx.strokeStyle = 'rgba(42,28,21,0.35)';
     ctx.lineWidth = 4;
     for (let i = -8; i <= 8; i++) { ctx.beginPath(); ctx.moveTo(W / 2 + i * 60, floorY); ctx.lineTo(W / 2 + i * 260, H + OVER); ctx.stroke(); }

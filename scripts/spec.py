@@ -13,6 +13,8 @@ import re
 import sys
 from pathlib import Path
 
+from density import lint  # noqa: F401  (re-exported: non-fatal density warnings, printed by the CLI)
+
 KNOWN_LAYERS = {"bean", "image", "label", "title", "date", "era", "counter", "timer", "caption",
                 "prop", "card", "sign", "calendar", "map", "fx", "fg", "crowd"}
 KNOWN_BGS = {"sky", "interior", "parchment", "burst", "flat", "image", "forest", "city"}
@@ -376,6 +378,7 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
     if kind == "image" and not (layer.get("src") or (layer.get("frames") or {}).get("idle")):
         errors.append(f"{where}: image needs src or frames.idle")
     _check_common(layer, where, cast, errors)
+    _check_paint_fields(layer, where, errors)
     for win in layer.get("talk", []) or []:
         if not (isinstance(win, list) and len(win) == 2 and all(isinstance(v, (int, float)) for v in win) and win[0] <= win[1]):
             errors.append(f"{where}: talk windows must be [[start, end], ...] with start <= end")
@@ -486,6 +489,47 @@ def _check_bg(bg, where: str, errors: list[str]) -> None:
         errors.append(f"{where}: windowSky {bg.get('windowSky')!r} not in {sorted(KNOWN_SKY)}")
 
 
+KNOWN_LOOKS = {"classic", "painted"}  # shade.js T.LOOKS
+LIGHT_NUMS = {"dir": (-360, 720), "rim": (0, 1), "intensity": (0, 1)}
+
+
+def _check_light(light, where: str, errors: list[str]) -> None:
+    """style.light / shot.light: {dir (deg toward the light, 0 = right, 90 = up), color, rim, ambient, intensity}."""
+    if light is None:
+        return
+    if not isinstance(light, dict):
+        errors.append(f"{where}: light must be an object {{dir, color, rim, ambient, intensity}}")
+        return
+    for key, (lo, hi) in LIGHT_NUMS.items():
+        v = light.get(key)
+        if v is not None and not (_is_num(v) and lo <= v <= hi):
+            errors.append(f"{where}: light.{key} must be a number in {lo}..{hi}")
+    for key in ("color", "ambient"):
+        v = light.get(key)
+        if v is not None and not (isinstance(v, str) and HEX_RE.match(v)):
+            errors.append(f"{where}: light.{key} must be a hex colour, got {v!r}")
+
+
+def _check_look_name(look, where: str, errors: list[str]) -> None:
+    if look is not None and look not in KNOWN_LOOKS:
+        errors.append(f"{where}: look {look!r} not in {sorted(KNOWN_LOOKS)}")
+
+
+def _check_paint_fields(layer: dict, where: str, errors: list[str]) -> None:
+    """Per-layer painted-look fields: atmos (atmospheric perspective), contact (ground shadow), painted (opt out)."""
+    atmos = layer.get("atmos")
+    amount = atmos.get("amount", 0.5) if isinstance(atmos, dict) else atmos
+    if atmos is not None and not (_is_num(amount) and 0 <= amount <= 1):
+        errors.append(f"{where}: atmos must be 0..1 or {{amount 0..1, color}}")
+    if isinstance(atmos, dict) and atmos.get("color") is not None and not (isinstance(atmos["color"], str) and HEX_RE.match(atmos["color"])):
+        errors.append(f"{where}: atmos color must be a hex colour")
+    contact = layer.get("contact")
+    if contact is not None and not (isinstance(contact, (bool, dict)) or (_is_num(contact) and contact >= 0)):
+        errors.append(f"{where}: contact must be true/false, a width scale >= 0 or {{w, h, alpha, dy}}")
+    if layer.get("painted") is not None and not isinstance(layer["painted"], bool):
+        errors.append(f"{where}: painted must be true or false")
+
+
 def _check_layer_refs(layer: dict, where: str, ids: set, cast: dict, errors: list[str]) -> None:
     """Cross-references inside one shot (fx target, map refs, doc arrowTo and nested who), shared by layers and pinned."""
     kind = layer.get("type")
@@ -517,6 +561,12 @@ def validate(spec: dict) -> list[str]:
     fps = spec.get("fps", 30)
     if not isinstance(fps, int) or not 1 <= fps <= 60:
         errors.append("fps must be an integer 1..60")
+    style = spec.get("style") or {}
+    if not isinstance(style, dict):
+        errors.append("style must be an object")
+        style = {}
+    _check_look_name(style.get("look"), "style", errors)
+    _check_light(style.get("light"), "style", errors)
     cast = spec.get("cast", {}) or {}
     if not isinstance(cast, dict):
         errors.append("cast must be an object {name: look}")
@@ -546,6 +596,8 @@ def validate(spec: dict) -> list[str]:
         _check_transition(tr, f"{where}.transition", errors)
         if tr_kind not in KNOWN_TRANSITIONS:
             errors.append(f"{where}: transition {tr_kind!r} not in {sorted(KNOWN_TRANSITIONS)}")
+        _check_look_name(shot.get("look"), where, errors)
+        _check_light(shot.get("light"), where, errors)
         grade = shot.get("grade")
         for g in (grade if isinstance(grade, list) else [grade] if grade is not None else []):
             if isinstance(g, dict) and g.get("target", "frame") not in ("frame", "bg"):
@@ -659,6 +711,9 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         sys.exit("usage: spec.py path/to/spec.json")
     try:
-        print("OK:", summary(load(sys.argv[1])))
+        loaded = load(sys.argv[1])
+        print("OK:", summary(loaded))
+        for warning in lint(loaded):
+            print("warning:", warning)
     except SpecError as err:
         sys.exit(f"❌ {err}")

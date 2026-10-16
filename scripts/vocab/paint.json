@@ -1,0 +1,48 @@
+{
+  "_module": "base/shade.js (painted look: light, multi-tone shading, contact shadows, variable ink, textures) + painted grades",
+  "grades": [
+    "dusk",
+    "overcast"
+  ],
+  "kinds": {
+    "texture": [
+      "grass",
+      "wood",
+      "stone",
+      "brick",
+      "plaster",
+      "fabric",
+      "paper",
+      "water"
+    ],
+    "layer_mod": [
+      "atmos"
+    ]
+  },
+  "registry": {
+    "texture": "TOON.TEXTURES",
+    "layer_mod": "TOON.LAYER_MODS"
+  },
+  "_fields": {
+    "style": [
+      "look",
+      "light"
+    ],
+    "shot": [
+      "look",
+      "light"
+    ],
+    "light": [
+      "dir",
+      "color",
+      "rim",
+      "ambient",
+      "intensity"
+    ],
+    "layer": [
+      "atmos",
+      "contact",
+      "painted"
+    ]
+  }
+}

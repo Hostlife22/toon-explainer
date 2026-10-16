@@ -1,0 +1,88 @@
+"""Density lint for film specs: non-fatal warnings about thin or repetitive staging.
+
+    from density import lint
+    for warning in lint(spec): print("warning:", warning)
+
+The reference films stack a background, a middle ground with the actors and a foreground frame in almost every shot,
+and they change shot size every cut or two. These checks point at shots that read as "a couple of elements on a flat
+background". They never fail validation: `spec.py` prints them after the OK line.
+"""
+from __future__ import annotations
+
+MIN_LAYERS = 4
+SAME_SIZE_RUN = 3
+CHARACTER_TYPES = {"bean", "crowd", "topbean", "creature", "obj"}
+LETTERING_TYPES = {"title", "label", "caption", "date", "era", "counter", "timer", "doc", "subtitle", "timeline"}
+CARD_BGS = {"flat", "burst", "parchment", "chalkboard", "corkboard", "parchment-panel", "blueprint", "mood"}
+DEFAULT_ZOOM = (1.0, 1.04)  # core.js T.cameraAt
+
+
+def _layers(shot: dict) -> list[dict]:
+    out = []
+    for key in ("layers", "pinned"):
+        val = shot.get(key) or []
+        if isinstance(val, list):
+            out += [L for L in val if isinstance(L, dict)]
+    return out
+
+
+def _bgs(shot: dict) -> list[dict]:
+    bg = shot.get("bg", {"kind": "sky"})
+    return [b for b in (bg if isinstance(bg, list) else [bg]) if isinstance(b, dict)]
+
+
+def is_title_card(shot: dict) -> bool:
+    """A lettering-only shot (chapter card, date card, quote) on any background, or no actors on a card background."""
+    layers = _layers(shot)
+    if any(L.get("type") in CHARACTER_TYPES for L in layers):
+        return False
+    if layers and all(L.get("type") in LETTERING_TYPES for L in layers):
+        return True
+    return any(L.get("type") in LETTERING_TYPES for L in layers) and all(b.get("kind") in CARD_BGS for b in _bgs(shot))
+
+
+def _has_foreground(shot: dict) -> bool:
+    for L in _layers(shot):
+        z = L.get("z")
+        if L.get("type") == "fg" or L.get("fg") is True or (isinstance(z, (int, float)) and not isinstance(z, bool) and z > 1):
+            return True
+    return False
+
+
+def _zoom_key(shot: dict):
+    cam = shot.get("camera") if isinstance(shot.get("camera"), dict) else {}
+    zoom = cam.get("zoom")
+    if not (isinstance(zoom, list) and len(zoom) == 2 and all(isinstance(z, (int, float)) for z in zoom)):
+        zoom = DEFAULT_ZOOM
+    return (round(float(zoom[0]), 2), round(float(zoom[1]), 2))
+
+
+def lint(spec: dict) -> list[str]:
+    """Return density warnings (an empty list when the spec looks dense enough). Never raises on odd input."""
+    shots = spec.get("shots") if isinstance(spec, dict) else None
+    if not isinstance(shots, list):
+        return []
+    warnings: list[str] = []
+    shots = [s for s in shots if isinstance(s, dict)]
+    for shot in shots:
+        sid = shot.get("id", "?")
+        layers = _layers(shot)
+        card = is_title_card(shot)
+        if not card and len(layers) < MIN_LAYERS:
+            warnings.append(f"shot {sid}: only {len(layers)} layers; stack background, actors and a foreground frame ({MIN_LAYERS}+)")
+        if any(b.get("kind") == "void" for b in _bgs(shot)):
+            warnings.append(f"shot {sid}: void background; give the scene a place (room, street, sky, set)")
+        if not card and any(L.get("type") in CHARACTER_TYPES for L in layers) and not _has_foreground(shot):
+            warnings.append(f"shot {sid}: characters but no foreground element (fg layer or a layer with z > 1)")
+    run: list[str] = []
+    prev = None
+    for shot in shots + [None]:
+        key = _zoom_key(shot) if shot is not None else None
+        if shot is not None and key == prev:
+            run.append(str(shot.get("id", "?")))
+            continue
+        if len(run) >= SAME_SIZE_RUN:
+            warnings.append(f"shots {run[0]} .. {run[-1]}: {len(run)} cuts in a row with the same camera zoom {list(prev)}; vary the shot size")
+        run = [str(shot.get("id", "?"))] if shot is not None else []
+        prev = key
+    return warnings

@@ -262,6 +262,8 @@ grain and vignette.
 | `mono` | Plain greyscale. The past turned into a photograph (end of a short, with `panel` `frame: "photo"`), a memory, an archive look without sepia |
 | `negative` | Colour negative (a `difference` with white). A battle title frozen as a negative for about 2 s (The Longest War 20:34); a 0.2–0.3 s flash on "what if" |
 | `sunset-epic` | Founding sagas, villains arriving |
+| `dusk` | Violet-rose evening after sunset, a little warm bloom low in the frame (painted look) |
+| `overcast` | Grey, flat, slightly desaturated daylight: an ordinary day, a grim morning |
 
 Presets are op lists in `T.GRADE_PRESETS` (composite fills, `vignette`, `bloom`, `pixel`); pixel ops live in
 `T.GRADE_PIXEL` (`mono-red`, `ramp3`, `scanlines`).
@@ -273,6 +275,29 @@ Presets are op lists in `T.GRADE_PRESETS` (composite fills, `vignette`, `bloom`,
 | `style.grain` | true | Film grain tile re-placed 12 times a second; `false` disables |
 | `style.vignette` | 0.28 | Warm-dark film vignette strength; `false` disables |
 | `shot.vignette` | none | {`strength` 0.8, `x` 0.5, `y` 0.5, `radius` 0.55, `color`} replaces the film vignette for one shot; `color` is the outer stop and overrides `strength` |
+| `style.look` / `shot.look` | `classic` | `painted` turns on the painted look below for the film or one shot |
+| `style.light` / `shot.light` | see below | Key light of the painted look |
+
+### Painted look
+
+`"style": {"look": "painted"}` renders the film with light-relative shading instead of the classic flat fills
+(field contract in [03 Painted look](../03-spec-reference.md#painted-look-stylelook)). What it adds, and where:
+
+| Piece | Engine | What it does |
+| --- | --- | --- |
+| Light | `base/shade.js` `T.paintState(spec, shot)` | Resolves `light` {`dir` 58 (degrees toward the light, 0 = right, 90 = up), `color` `#fff0cf`, `rim` 0.55, `ambient` `#3c2f5c`, `intensity` 0.6}; `shot.light` merges over `style.light`. core.js sets it as `T.PAINT` while a shot draws |
+| Multi-tone shapes | `T.paintPrep`, `T.shadeFill`, `T.inkUnder` | Every filled `T.outlined` shape: deep band on the far edge, shadow band, lit base, airbrushed falloff, rim light; ink heavier on the shadow side. Bands are shifted copies of the path, so any path callback works. `T.outlined(..., {paint: false})` keeps one shape flat, `{paint: 0.45}` softens it (faces) |
+| Tapered ink | `T.inkStroke(ctx, pts, {w, w0, w1, ink})` | A brush stroke along a polyline, thin at both ends: folds, wrinkles, grass, hair strands |
+| Contact shadow | `T.contactShadow(ctx, x, y, rx, ry, alpha)`, layer field `contact` | Soft occlusion ellipse under grounded layers (beans and crowd members by default); a second one under the head |
+| Textures | `base/textures.js` `T.TEXTURES`, `T.textureTile(kind, seed)`, `T.fillTexture(ctx, pathFn, kind, {rect, scale, rot, alpha, comp, seed})` | Seeded 256 px seamless tiles, cached per (kind, seed): `grass` strokes, `wood` grain, `stone` cobbles, `brick` running bond, `plaster` mottling, `fabric` weave, `paper` fibre, `water` ripples. Overlaid on a path or a rect |
+| Painted skies | `places/paint-places.js` `T.paintSky` | Sun bloom, deeper zenith, horizon haze, 3-tone clouds (lit cap, soft volume, darker underside), grass texture on hills, textured ground with occlusion and 2-tone tufts |
+| Surfaces | `T.paintSurface`, `T.BG_SURFACES`, `T.BG_FLOOR` | Per bg kind: plaster walls and wood floors (`interior`, `room`, `palace`, `hospital`), planks with grain everywhere `T.planks` is used (`office`, `stage`, `bar`), carpets, cobbled streets (`street1920`, `factory`, `city`), water (`sea`, `harbor`), parchment fibre, a wall-floor occlusion band |
+| Atmospheric perspective | layer field `atmos` (`T.LAYER_MODS.atmos`) | Tints a far layer toward the haze colour (the sky's horizon by default) |
+| Frame | `T.paintPost` | Key-light wash falling off to a cool, darker far side; paper tooth baked into the grain tile |
+
+Lettering and screen furniture stay flat (`T.PAINT_EXEMPT`); `painted: true` opts one in. Classic remains the
+default and is unchanged. Frame cost is under 2x classic; the bench film is `examples/painted_bench` (render its
+contact sheet with the command in CLAUDE.md).
 
 ## ④ Timing
 

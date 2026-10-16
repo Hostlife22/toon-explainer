@@ -55,15 +55,22 @@
 
   T.font = (size, weight = 900) => `${Math.round(size)}px "Rubik-${weight}", "Arial Black", sans-serif`;
 
-  T.outlined = (ctx, pathFn, fill, { line = T.LINE, ink = T.PAL.ink, shade = null } = {}) => {
+  // Outlined shape: fill, optional `shade(ctx)` details clipped to the shape, ink outline. In the painted look
+  // (T.PAINT set by core.js) the fill gets light-relative shadow bands, a rim light and variable-width ink (shade.js):
+  // paint: false keeps one shape flat, a number 0..1 scales its shading (faces use 0.45). pathFn runs several times,
+  // so it must not consume RNG values.
+  T.outlined = (ctx, pathFn, fill, { line = T.LINE, ink = T.PAL.ink, shade = null, paint = true } = {}) => {
+    const info = fill && paint !== false && T.PAINT && T.paintPrep ? T.paintPrep(ctx, pathFn, typeof paint === 'number' ? paint : 1) : null;
+    if (info && line > 0) T.inkUnder(ctx, pathFn, line, ink, info); // heavier ink on the shadow side
     ctx.beginPath();
     pathFn(ctx);
     if (fill) { ctx.fillStyle = fill; ctx.fill(); }
-    if (shade) { ctx.save(); ctx.clip(); shade(ctx); ctx.restore(); }
+    if (info) T.shadeFill(ctx, pathFn, fill, info);
+    if (shade) { ctx.save(); if (info) { ctx.beginPath(); pathFn(ctx); } ctx.clip(); shade(ctx); ctx.restore(); }
     if (line > 0) {
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
-      ctx.lineWidth = line;
+      ctx.lineWidth = info && info.full && info.M * info.ll.scale >= 100 ? line * 0.8 : line;
       ctx.strokeStyle = ink;
       ctx.beginPath();
       pathFn(ctx);
@@ -153,7 +160,18 @@
   };
 
   // ---------- film grain + vignette (post) ----------
-  let grain = null;
+  let grain = null, paperGrain = null;
+  // Painted look: the same grain with the paper-fibre texture baked in, so the tooth costs no extra full-frame pass.
+  function paperGrainTile() {
+    if (paperGrain) return paperGrain;
+    const c = document.createElement('canvas');
+    c.width = c.height = 256;
+    const g = c.getContext('2d');
+    g.drawImage(grainTile(), 0, 0);
+    g.globalAlpha = 0.45; g.drawImage(T.textureTile('paper', 9), 0, 0);
+    paperGrain = c;
+    return c;
+  }
   function grainTile() {
     if (grain) return grain;
     const c = document.createElement('canvas');
@@ -172,6 +190,7 @@
   }
   T.post = (ctx, lt, env) => {
     const st = env.style || {};
+    if (T.PAINT && T.paintPost) T.paintPost(ctx, lt, env); // painted look: light wash + canvas tooth, under the grade
     if (T.grade) T.grade(ctx, lt, env);
     // shot.vignette: {strength, x, y, radius, color} overrides the film vignette (heavy horror vignettes reach 0.85)
     const sv = env.shot && env.shot.vignette;
@@ -192,8 +211,8 @@
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, T.W, T.H);
     }
-    if (st.grain !== false) {
-      const tile = grainTile();
+    if (st.grain !== false || T.PAINT) {
+      const tile = T.PAINT && T.textureTile ? paperGrainTile() : grainTile();
       const step = Math.floor(lt * 12);
       const r = T.rng(T.hash(env.seed + step));
       const ox = Math.floor(r() * 256), oy = Math.floor(r() * 256);

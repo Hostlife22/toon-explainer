@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+Painted engine, phases 0 and 1: a density lint and the paint core.
+
+- `style.look: "painted"` (or `look` per shot): light-relative multi-tone shading for every filled `T.outlined` shape (deep band, shadow band, lit base, airbrushed falloff, rim light), heavier ink on the shadow side, contact shadows under characters and under the head, paper tooth in the grain. Classic stays the default and renders as before; lettering and UI stay flat (`painted: true` opts a layer in, `painted: false` out).
+- `style.light` / `shot.light`: `dir`, `color`, `rim`, `ambient`, `intensity`.
+- Painted places: sun bloom, deeper zenith and horizon haze, 3-tone clouds, textured hills and ground with tufts and occlusion, surface textures per background kind (plaster, wood planks and floors, carpet, cobbles, water, parchment) and a wall-floor occlusion band.
+- New layer fields `atmos` (atmospheric perspective, works in both looks) and `contact` (ground shadow).
+- `base/textures.js`: seeded, cached texture tiles `grass`, `wood`, `stone`, `brick`, `plaster`, `fabric`, `paper`, `water` and `T.fillTexture`; `base/shade.js`: `T.paintState`, `T.shadeFill`, `T.inkUnder`, `T.inkStroke`, `T.contactShadow`.
+- Grades `dusk` and `overcast`.
+- `scripts/density.py`: `spec.py` prints non-fatal warnings for shots under 4 layers (title cards excepted), `void` backgrounds, characters without a foreground element, and 3+ consecutive cuts at the same camera zoom.
+- `examples/painted_bench`: one dense painted shot per scene type (interior, street, landscape, map, globe, face close-up, vehicle, crowd).
+
 ## 3.6.0 · 2026-10-15
 
 More pictures, more examples and a reproducible showcase.

@@ -28,6 +28,10 @@ uv run --with playwright python scripts/render.py examples/showcase/spec.json --
 uv run --with playwright python scripts/render.py examples/character_sheet/spec.json --stills 0.5,1.5 --out renders/review
 uv run --with playwright python scripts/render.py examples/showcase/spec.json --shot s02_forest_march --scale 0.25 --out renders/forest.mp4
 
+# Painted-look bench: one dense shot per scene type; sheet to compare looks (density warnings print after OK)
+python3 scripts/spec.py examples/painted_bench/spec.json
+uv run --with playwright python scripts/render.py examples/painted_bench/spec.json --sheet renders/painted_bench.jpg --scale 0.5
+
 # Storyboard → spec skeleton + SRT; re-time an existing spec to a real voiceover
 python3 scripts/script2spec.py film/script.md --out film/spec.json
 python3 scripts/script2spec.py film/script.md --srt vo.srt --merge film/spec.json
@@ -54,7 +58,7 @@ python scripts/build_release.py --ref HEAD --out dist
 All drawing happens in a fixed 1920×1080 logical space (the world). `--scale` only changes the physical canvas. `"format": "vertical"` renders 1080×1920 by drawing each shot in the world, shifting it so the shot's `frame` x is centred, and cropping a 607.5-wide strip (`T.init` in `core.js`); code that anchors to frame edges must use `T.visibleSpan(env)` instead of `0..T.W`, and shot `pinned` layers are drawn without the camera by `T.drawPinned`.
 
 **Python pipeline (`scripts/`).**
-- `spec.py` loads and validates specs. It mirrors the engine vocabulary in `KNOWN_*` sets, and every `scripts/vocab/*.json` file is merged into those sets at import. Vocab files may also declare `kinds` (allowed `kind` values per layer type) and `registry` (`{"vehicle": "TOON.VEHICLES"}`). A test opens the engine in Chromium and asserts that each declared registry's keys exactly match the vocab `kinds`.
+- `spec.py` loads and validates specs; its CLI also prints non-fatal density warnings from `density.py` (thin shots, `void` backgrounds, actors without a foreground, 3+ cuts at the same zoom). It mirrors the engine vocabulary in `KNOWN_*` sets, and every `scripts/vocab/*.json` file is merged into those sets at import. Vocab files may also declare `kinds` (allowed `kind` values per layer type) and `registry` (`{"vehicle": "TOON.VEHICLES"}`). A test opens the engine in Chromium and asserts that each declared registry's keys exactly match the vocab `kinds`.
 - `render.py` runs a local HTTP server (serving only the engine and the spec's referenced images), drives Chromium through Playwright, steps frames and pipes them to FFmpeg. `--workers` splits frame ranges across processes and concatenates the chunks. It also produces stills, contact sheets and audio muxing.
 - `script2spec.py` parses storyboard blocks (`Shot N / Voiceover / On screen`; `--labels` handles other languages), estimates durations from words per minute, writes an SRT, and `--merge` re-times shots by id without touching their layers.
 
@@ -78,4 +82,4 @@ If code and docs disagree, trust the code and fix the docs.
 
 ## Style constraints
 
-Keep the reference look: dark-brown ink outlines, one flat shadow tone per color, three-quarter views by default, and hold-and-snap posing (`references/01-reference-breakdown.md`). Don't copy designs or likenesses from real channels, films or people, and don't add extremist symbols. Use ASCII file names.
+Keep the reference look: dark-brown ink outlines, three-quarter views by default, and hold-and-snap posing (`references/01-reference-breakdown.md`). The classic look (default) keeps one flat shadow tone per color. The painted look (`style.look: "painted"`, `lib/base/shade.js`, `textures.js`, `places/paint-places.js`) adds light-relative multi-tone shading, rim light, heavier ink on the shadow side, contact shadows, textures, painted skies and atmospheric perspective through `T.outlined` and shared helpers; new drawing code should go through `T.outlined` (or `T.shadeFill` / `T.fillTexture`) so it picks the look up, and must leave the classic output unchanged. Don't copy designs or likenesses from real channels, films or people, and don't add extremist symbols. Use ASCII file names.

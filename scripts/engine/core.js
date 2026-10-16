@@ -198,7 +198,7 @@
     }
     for (const j of L.jump || []) {
       const p = T.prog(lt, j.at, j.dur ?? 0.45);
-      if (p > 0 && p < 1) st.y -= Math.sin(p * Math.PI) * (j.h ?? 120);
+      if (p > 0 && p < 1) { const dy = Math.sin(p * Math.PI) * (j.h ?? 120); st.y -= dy; st.jy = (st.jy || 0) + dy; } // jy: height above the ground (contact shadow)
     }
     if (L.jitter) { // struggle / panic tremble, a new seeded offset every `on` frames
       const j = L.jitter === true ? {} : typeof L.jitter === 'number' ? { amp: L.jitter } : L.jitter, llt = lt - at;
@@ -307,14 +307,19 @@
       c.translate(st.x, st.y);
       c.rotate(st.r);
       c.scale(st.s * st.flip * st.sx, st.s * st.sy);
+      if (T.PAINT && T.layerContact) T.layerContact(c, L, st);
       draw(c, L, lt - (L.at ?? 0), { ...shotEnv, st, lt });
       c.restore();
     };
+    // painted look: lettering and screen furniture stay flat unless painted: true; painted: false opts any layer out
+    const saved = T.PAINT, flat = saved && (L.painted === false || (L.painted !== true && T.PAINT_EXEMPT && T.PAINT_EXEMPT.has(L.type)));
+    if (flat) T.PAINT = null;
     ctx.save();
-    ctx.globalAlpha *= st.a;
-    if (activeMods(L).length) T.modLayer(ctx, L, lt, shotEnv, paint);
-    else paint(ctx);
-    ctx.restore();
+    try {
+      ctx.globalAlpha *= st.a;
+      if (activeMods(L).length) T.modLayer(ctx, L, lt, shotEnv, paint);
+      else paint(ctx);
+    } finally { ctx.restore(); T.PAINT = saved; }
   };
 
   // ---------- drawing a shot ----------
@@ -322,6 +327,11 @@
   T.HUD_DEFAULT = { era: true, timer: true, date: false, title: false };
   const HUD_DEFAULT = T.HUD_DEFAULT;
   T.drawShot = (ctx, shot, lt, env) => {
+    const prevPaint = T.PAINT;
+    T.PAINT = T.paintState ? T.paintState(env.spec, shot) : null; // painted look state for this shot (shade.js)
+    try { drawShotBody(ctx, shot, lt, env); } finally { T.PAINT = prevPaint; }
+  };
+  function drawShotBody(ctx, shot, lt, env) {
     ctx.save();
     ctx.setTransform(env.dpr, 0, 0, env.dpr, 0, 0);
     ctx.fillStyle = '#000';
@@ -342,6 +352,7 @@
     const focus = focusBlur(shot, lt);
     const bgBlur = focus ? focus('@bg') : 0;
     if (bgBlur >= 0.3) T.filtered(ctx, `blur(${(bgBlur * env.dpr).toFixed(2)}px) brightness(0.96)`, drawBgs); // blurred copy over the sharp one: no dark edges
+    if (T.PAINT && T.paintBg) T.paintBg(ctx, shot, lt, shotEnv); // painted look: light wash, depth haze, ground AO
     if (T.gradeBg && !env.noPost) T.gradeBg(ctx, shot, lt, shotEnv); // panel cells with grade:false stay ungraded
     for (const L0 of shot.layers || []) {
       let L = T.effLayer(L0, lt);
@@ -355,7 +366,7 @@
     const lb = shot.camera && shot.camera.letterbox;
     if (lb) drawLetterbox(ctx, lb === true ? {} : lb, lt);
     ctx.restore();
-  };
+  }
 
   // Cinematic bars for extreme close-ups: {h: 0.12, at: 0, dur: 0.2, out, color}
   function drawLetterbox(ctx, lb, lt) {
@@ -457,8 +468,9 @@
     c.setTransform(env.dpr, 0, 0, env.dpr, 0, 0);
     const own = { ...shot, layers: shot.pinned };
     const sEnv = { ...env, cam: null, shot: own, seed: (env.seed ?? 1) + ':' + shot.id + ':pinned' };
-    for (const L0 of shot.pinned) T.drawLayer(c, T.effLayer(L0, lt), lt, sEnv, null);
-    c.restore();
+    const prevPaint = T.PAINT;
+    T.PAINT = T.paintState ? T.paintState(env.spec, shot) : null;
+    try { for (const L0 of shot.pinned) T.drawLayer(c, T.effLayer(L0, lt), lt, sEnv, null); } finally { T.PAINT = prevPaint; c.restore(); }
   };
   // Output formats. "vertical" (9:16) keeps the 1920x1080 world and shows a strip of it STRIP_W wide and the full
   // height, centred on shot.frame (x fraction, number or [{at, v, ease}] keys, default 0.5), scaled to 1080x1920.

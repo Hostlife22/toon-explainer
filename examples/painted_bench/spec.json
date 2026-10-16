@@ -1,0 +1,634 @@
+{
+ "_about": "Painted-look bench: one dense shot per scene type (interior, street, landscape, map, globe, face close-up, vehicle, crowd). Later engine phases enrich it; render its sheet with the command in CLAUDE.md.",
+ "seed": 21,
+ "fps": 30,
+ "style": {
+  "look": "painted",
+  "grain": true,
+  "vignette": 0.3,
+  "light": {
+   "color": "#fff0cf",
+   "rim": 0.55,
+   "ambient": "#3c2f5c",
+   "intensity": 0.6
+  }
+ },
+ "cast": {
+  "senator": {
+   "robe": "#f1eadb",
+   "sash": "#b8323a",
+   "hair": "short",
+   "hairColor": "#3b2a20",
+   "belt": "#c9a040"
+  },
+  "merchant": {
+   "robe": "#3a6ea5",
+   "trim": "#e0b040",
+   "hair": "curly",
+   "hairColor": "#4a3022",
+   "beard": "full",
+   "beardColor": "#4a3022"
+  },
+  "legion": {
+   "robe": "#c0202a",
+   "armor": "#a9aeb4",
+   "pleats": true,
+   "head": "helmet",
+   "hair": "bald",
+   "holdL": "shield",
+   "hold": "spear",
+   "sandal": "#5a3a22"
+  },
+  "citizen": {
+   "robe": "#e9e2d2",
+   "sash": "#6a8fbf",
+   "hair": "curly",
+   "hairColor": "#5a3a26"
+  },
+  "driver": {
+   "robe": "#5a4a3a",
+   "hair": "short",
+   "hairColor": "#2e2018",
+   "head": "hat"
+  }
+ },
+ "shots": [
+  {
+   "id": "b01_interior",
+   "dur": 2.5,
+   "bg": {
+    "kind": "interior",
+    "window": [
+     0.62,
+     0.16,
+     0.2,
+     0.34
+    ],
+    "columns": [
+     0.12,
+     0.9
+    ],
+    "drapes": [
+     0.5
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ],
+    "focus": [
+     0.45,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "senator",
+     "who": "senator",
+     "x": 0.36,
+     "y": 0.86,
+     "size": 500,
+     "pose": "present",
+     "expr": "smug",
+     "talk": [
+      [
+       0.3,
+       2.0
+      ]
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "dinner-table",
+     "x": 0.66,
+     "y": 0.88,
+     "size": 300
+    },
+    {
+     "type": "prop",
+     "kind": "candle",
+     "x": 0.62,
+     "y": 0.68,
+     "size": 110
+    },
+    {
+     "type": "prop",
+     "kind": "scroll",
+     "x": 0.72,
+     "y": 0.7,
+     "size": 90,
+     "rot": -10
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "b02_street",
+   "dur": 2.5,
+   "bg": {
+    "kind": "street1920",
+    "obelisk": 0.5
+   },
+   "camera": {
+    "zoom": [
+     1.12,
+     1.18
+    ],
+    "focus": [
+     0.5,
+     0.65
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "citizen",
+     "x": 0.3,
+     "y": 0.92,
+     "size": 440,
+     "pose": "point",
+     "expr": "worried"
+    },
+    {
+     "type": "bean",
+     "who": "merchant",
+     "x": 0.62,
+     "y": 0.94,
+     "size": 470,
+     "pose": "shrug",
+     "expr": "sad",
+     "flip": true
+    },
+    {
+     "type": "prop",
+     "kind": "crate",
+     "x": 0.84,
+     "y": 0.9,
+     "size": 170
+    },
+    {
+     "type": "prop",
+     "kind": "barrel",
+     "x": 0.12,
+     "y": 0.9,
+     "size": 190
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "side": "left"
+    }
+   ]
+  },
+  {
+   "id": "b03_landscape",
+   "dur": 2.5,
+   "bg": {
+    "kind": "sky",
+    "preset": "sunset",
+    "clouds": 5,
+    "hills": 3,
+    "trees": [
+     [
+      0.15,
+      0.8,
+      0.32
+     ],
+     [
+      0.86,
+      0.8,
+      0.28
+     ]
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "temple",
+     "x": 0.72,
+     "y": 0.62,
+     "size": 260,
+     "atmos": 0.45
+    },
+    {
+     "type": "prop",
+     "kind": "tent",
+     "x": 0.3,
+     "y": 0.74,
+     "size": 160,
+     "atmos": 0.25
+    },
+    {
+     "type": "bean",
+     "who": "legion",
+     "x": 0.5,
+     "y": 0.9,
+     "size": 380,
+     "pose": "sword-up",
+     "expr": "angry"
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "z": 1.3,
+     "count": 16,
+     "h": 150
+    },
+    {
+     "type": "fg",
+     "kind": "bushes",
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "b04_map",
+   "dur": 2.5,
+   "bg": {
+    "kind": "parchment"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ],
+    "focus": [
+     0.45,
+     0.5
+    ]
+   },
+   "layers": [
+    {
+     "type": "map",
+     "land": [
+      [
+       0.4,
+       0.58,
+       0.32,
+       0.24
+      ],
+      [
+       0.74,
+       0.3,
+       0.18,
+       0.18
+      ]
+     ],
+     "regions": [
+      {
+       "pts": [
+        [
+         0.25,
+         0.55
+        ],
+        [
+         0.42,
+         0.45
+        ],
+        [
+         0.58,
+         0.52
+        ],
+        [
+         0.52,
+         0.72
+        ],
+        [
+         0.3,
+         0.7
+        ]
+       ],
+       "at": 0.2,
+       "dur": 1.0
+      }
+     ],
+     "pins": [
+      {
+       "x": 0.4,
+       "y": 0.6,
+       "at": 0.3,
+       "label": "ROME"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "legion",
+     "x": 0.24,
+     "y": 0.66,
+     "size": 300,
+     "pose": "point",
+     "expr": "worried"
+    },
+    {
+     "type": "sign",
+     "text": "RHINE",
+     "x": 0.62,
+     "y": 0.62,
+     "w": 220,
+     "scale": 0.7
+    },
+    {
+     "type": "prop",
+     "kind": "coin-heap",
+     "x": 0.8,
+     "y": 0.8,
+     "size": 160
+    },
+    {
+     "type": "prop",
+     "kind": "dagger",
+     "x": 0.12,
+     "y": 0.3,
+     "size": 120,
+     "rot": 30,
+     "z": 1.15
+    }
+   ]
+  },
+  {
+   "id": "b05_globe",
+   "dur": 2.5,
+   "bg": {
+    "kind": "sky",
+    "preset": "night",
+    "hills": false,
+    "ground": false
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.08
+    ],
+    "focus": [
+     0.5,
+     0.55
+    ]
+   },
+   "layers": [
+    {
+     "type": "map",
+     "id": "world",
+     "style": "atlas",
+     "view": "globe",
+     "globe": {
+      "full": true,
+      "r": 0.4,
+      "dy": 0.04,
+      "spin": 0.012,
+      "stars": 60
+     },
+     "regions": [
+      {
+       "id": "west",
+       "blob": [
+        0.3,
+        0.5,
+        0.17,
+        0.3
+       ],
+       "color": "#f08a2c",
+       "dur": 0.001
+      },
+      {
+       "id": "east",
+       "blob": [
+        0.72,
+        0.48,
+        0.17,
+        0.3
+       ],
+       "color": "#7a4fc2",
+       "dur": 0.001
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "senator",
+     "x": 0.14,
+     "y": 0.98,
+     "size": 360,
+     "pose": "point-up",
+     "expr": "shock"
+    },
+    {
+     "type": "prop",
+     "kind": "magnifier",
+     "x": 0.86,
+     "y": 0.3,
+     "size": 150,
+     "rot": -20
+    },
+    {
+     "type": "prop",
+     "kind": "bulb",
+     "x": 0.84,
+     "y": 0.75,
+     "size": 110,
+     "z": 1.15
+    }
+   ]
+  },
+  {
+   "id": "b06_face",
+   "dur": 2.5,
+   "bg": {
+    "kind": "palace"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "senator",
+     "x": 0.46,
+     "y": 1.6,
+     "size": 1350,
+     "pose": "think",
+     "expr": "squint",
+     "talk": [
+      [
+       0.2,
+       1.8
+      ]
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "candle",
+     "x": 0.12,
+     "y": 0.8,
+     "size": 200
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.85,
+     "y": 0.3,
+     "size": 130,
+     "spin": true
+    },
+    {
+     "type": "fg",
+     "kind": "ots",
+     "who": "merchant",
+     "side": "right"
+    }
+   ]
+  },
+  {
+   "id": "b07_vehicle",
+   "dur": 2.5,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "ground": "dirt",
+    "hills": 2,
+    "clouds": 4
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.1
+    ],
+    "focus": [
+     0.45,
+     0.7
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "cart",
+     "x": 0.3,
+     "y": 0.9,
+     "size": 420,
+     "load": "crate",
+     "drive": [
+      [
+       0,
+       2.5
+      ]
+     ],
+     "move": [
+      {
+       "at": 0,
+       "dur": 2.5,
+       "to": [
+        0.5,
+        0.9
+       ],
+       "ease": "linear"
+      }
+     ],
+     "contact": {
+      "w": 1.4
+     }
+    },
+    {
+     "type": "bean",
+     "who": "driver",
+     "x": 0.75,
+     "y": 0.92,
+     "size": 400,
+     "pose": "wave",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "signpost",
+     "x": 0.9,
+     "y": 0.86,
+     "size": 260
+    },
+    {
+     "type": "prop",
+     "kind": "barrel",
+     "x": 0.08,
+     "y": 0.92,
+     "size": 180,
+     "contact": true
+    },
+    {
+     "type": "fg",
+     "kind": "rubble",
+     "z": 1.25
+    }
+   ]
+  },
+  {
+   "id": "b08_crowd",
+   "dur": 2.5,
+   "bg": {
+    "kind": "city",
+    "preset": "day"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "who": "citizen",
+     "count": 9,
+     "rows": 2,
+     "x": 0.58,
+     "y": 0.84,
+     "size": 300,
+     "armsUp": true,
+     "expr": "happy",
+     "flipAlt": true
+    },
+    {
+     "type": "bean",
+     "who": "senator",
+     "x": 0.26,
+     "y": 1.0,
+     "size": 560,
+     "pose": "arms-up",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "banner",
+     "x": 0.62,
+     "y": 0.36,
+     "size": 240
+    },
+    {
+     "type": "prop",
+     "kind": "banner",
+     "x": 0.9,
+     "y": 0.36,
+     "size": 240,
+     "flip": true
+    },
+    {
+     "type": "fg",
+     "kind": "canopy",
+     "z": 1.25
+    }
+   ]
+  }
+ ]
+}

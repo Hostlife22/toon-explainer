@@ -299,6 +299,7 @@
     hairBack(ctx, c, s.seed, sh);
     if (c.flag && T.drawFlagHead) T.drawFlagHead(ctx, c, headPath, sh);
     else T.outlined(ctx, headPath, c.skin, {
+      paint: 0.45, // painted look: faces stay bright, as in the reference
       shade: (k) => {
         k.fillStyle = c.skinShade ?? (c.skin && c.skin !== P.skin ? T.shade(c.skin, -0.22) : SHADOW); // darker skins get a matching shadow
         if (view === 'front') { k.beginPath(); k.ellipse(HW * 1.15, CY, HW * 0.55, 190, 0, 0, Math.PI * 2); k.fill(); }

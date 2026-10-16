@@ -311,7 +311,7 @@
     T.outlined(ctx, path, robe, {
       shade: (k) => {
         k.fillStyle = c.robeShade ?? T.shade(robe, -0.24);
-        k.beginPath(); k.ellipse(back * 160, -190, 95, 210, 0, 0, Math.PI * 2); k.fill();
+        if (!T.PAINT) { k.beginPath(); k.ellipse(back * 160, -190, 95, 210, 0, 0, Math.PI * 2); k.fill(); } // painted: light-relative bands instead
         k.fillRect(-160, -112, 320, 50);
         if (c.pleats) { k.strokeStyle = T.shade(robe, -0.32); k.lineWidth = 5; for (let x = -120; x <= 120; x += 30) { k.beginPath(); k.moveTo(x * 0.92, -150); k.lineTo(x, -60); k.stroke(); } }
         if (c.folds !== false) { k.strokeStyle = T.shade(robe, -0.3); k.lineWidth = 5; k.beginPath(); k.moveTo(-40, -250); k.quadraticCurveTo(-55, -170, -70, -90); k.moveTo(50, -230); k.quadraticCurveTo(62, -160, 80, -95); k.stroke(); }
@@ -472,6 +472,7 @@
     };
     if (!front) drawFrontArms();
 
+    if (T.PAINT) T.contactShadow(ctx, B.headFwd * 300, B.neckY + 24, 120 * B.bodyW, 30, 0.38); // painted: the head's shadow on the torso
     ctx.save();
     const tilt = -rock * 1.6 + (talking ? Math.sin(lt * 9) * 1.6 : 0) + (Ly.headTilt ?? 0);
     ctx.translate(B.headFwd * 300, B.neckY); ctx.rotate(tilt * T.DEG);
