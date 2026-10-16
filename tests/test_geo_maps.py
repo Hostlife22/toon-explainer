@@ -153,7 +153,7 @@ def test_groups_merge_into_one_outline_and_drawn_regions_stop_at_the_coast(page_
     p = page_for(_spec([]))
     js = """(isos) => { const T = window.TOON, area = (r) => { let a = 0; for (let i = 0, j = r.length - 1; i < r.length; j = i++) a += r[j][0] * r[i][1] - r[i][0] * r[j][1]; return Math.abs(a / 2); };
       const m = T.geoMerge(isos, 'hi'), parts = isos.map((iso) => area(T.geoCountry(iso, 'hi').polys[0][0]));
-      return [m.length, Math.max(...m.map(area)), parts.reduce((a, b) => a + b, 0)]; }"""
+      return [m.length, Math.max(...m.map((q) => area(q.outer))), parts.reduce((a, b) => a + b, 0)]; }"""
     rings, merged, total = p.eval(js, ["AUT", "HUN", "CZE", "SVK"])
     assert rings == 1 and abs(merged - total) < 0.02 * total, (rings, merged, total)
     region = {"id": "gaul", "lonlat": [[-6, 43], [3, 43], [3, 49], [-6, 49]], "color": RED, "dur": 0.001}
@@ -257,3 +257,94 @@ def test_validator_checks_geo_fields():
     errors = "\n".join(validate(bad))
     for needle in ("map proj", "narnia", "iso", "lonlat", "flood from"):
         assert needle in errors, (needle, errors)
+
+
+# ---------- review fixes ----------
+def test_validator_rejects_hanging_empty_and_malformed_geo_values():
+    def errs(geo, regions=None, style="painted"):
+        return "\n".join(validate(_spec([{**_map(geo, regions or []), "style": style}])))
+
+    assert "graticule" in errs({**EUROPE, "graticule": -15})
+    assert "mountainSize" in errs({**EUROPE, "ranges": True, "mountainSize": 0})
+    assert "mountains" in errs({**EUROPE, "mountains": [{"lon": 5, "lat": 45, "size": 0}]})
+    assert "style" in errs(EUROPE, style={})
+    assert "proj" in errs({**EUROPE, "proj": []})
+    assert "range" in errs({**EUROPE, "ranges": [{}]})
+    assert "iso" in errs(EUROPE, [{"iso": []}])
+    assert "lonlat" in errs(EUROPE, [{"lonlat": []}])
+    assert errs({**EUROPE, "ranges": False, "mountains": [[14, 45]]}) == ""
+
+
+def test_engine_guards_bad_steps_and_handles_ranges_false(page_for):
+    with pytest.raises(SystemExit, match="graticule"):
+        page_for(_spec([_map({**EUROPE, "graticule": -15})]))
+    with pytest.raises(SystemExit, match="mountainSize"):
+        page_for(_spec([_map({**EUROPE, "ranges": True, "mountainSize": 0})]))
+    with pytest.raises(SystemExit, match="iso"):
+        page_for(_spec([_map(EUROPE, [{"iso": []}])]))
+    p = page_for(_spec([_map({**EUROPE, "ranges": False, "mountains": [[14, 45]]}, [{"iso": ["FRA", "FRA"], "color": RED, "dur": 0.001}])]))
+    assert near(p.pixels(1.0, [_equirect_px(2.5, 47.2)])[0], RED)
+    assert p.errors == []
+
+
+PIP = """(pts, x, y) => { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j];
+  if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c; } return c; }"""
+
+
+def test_ortho_clips_polygons_at_the_horizon(page_for):
+    p = page_for(_spec([]))
+    js = """() => { const T = window.TOON, pip = %s, geo = { proj: 'ortho', center: [0, 0] };
+      const L = T.geoPrepare({ type: 'map', geo, regions: [{ id: 'r', lonlat: [[0, 0], [170, 10], [170, -10]], rough: 0, clip: false }] }, 0, {});
+      const pr = T.geoProjector(geo, 2112, 1188, 0), q = pr.project(70, 0), out = pr.project(-40, 0);
+      const pts = L.regions.find((R) => R.id === 'r').pts; return [pip(pts, q[0], q[1]), pip(pts, out[0], out[1])]; }""" % PIP
+    assert p.eval(js) == [True, False]
+
+
+def test_antimeridian_regions_draw_both_visible_copies(page_for):
+    geo = {"proj": "equirect", "center": [0, 0], "span": 400}
+    region = {"id": "dl", "lonlat": [[170, -6], [-170, -6], [-170, 6], [170, 6]], "rough": 0, "clip": False, "color": RED, "dur": 0.001}
+    p = page_for(_spec([_map(geo, [region])]))
+    px = p.pixels(1.0, [_equirect_px(175, 0, geo), _equirect_px(-175, 0, geo)])
+    assert near(px[0], RED) and near(px[1], RED), px
+
+
+def test_country_holes_stay_open(page_for):
+    geo = {"proj": "equirect", "center": [25, -29], "span": 30}
+    p = page_for(_spec([_map(geo, [{"id": "za", "iso": "ZAF", "color": RED, "dur": 0.001}])]))
+    lesotho, karoo = _equirect_px(28.3, -29.6, geo), _equirect_px(22, -31, geo)
+    px = p.pixels(1.0, [lesotho, karoo])
+    assert near(px[1], RED) and not near(px[0], RED), px
+
+
+def test_multipart_flood_shares_one_seed(page_for):
+    p = page_for(_spec([]))
+    js = """() => window.TOON.geoPrepare({ type: 'map', geo: { center: [0, 0], span: 60 }, regions: [{ id: 'g', rough: 0, flood: { from: [0, 0] },
+      lonlat: [[[-10, -3], [-5, -3], [-5, 3], [-10, 3]], [[5, -3], [10, -3], [10, 3], [5, 3]]] }] }, 1, {}).regions.map((R) => R.flood.seed)"""
+    seeds = p.eval(js)
+    assert len(seeds) == 2 and seeds[0] is not None and seeds[0] == seeds[1]
+
+
+def test_draw_on_hides_effect_regions_and_their_labels_until_it_starts(page_for):
+    region = {"id": "fr", "iso": "FRA", "color": RED, "dur": 0.001, "label": "FRANCE", "face": {"mood": "happy"},
+              "drawOn": {"at": 1.0}, "wipe": {"at": 2.5, "by": "#2040e0"}}
+    with_region, empty = page_for(_spec([_map(EUROPE, [region])])), page_for(_spec([_map(EUROPE, [])]))
+    assert with_region.png(0.5) == empty.png(0.5)
+    assert with_region.errors == []
+
+
+def test_globe_post_hook_restores_only_its_own_clip(page_for):
+    p = page_for(_spec([]))
+    js = """() => { const T = window.TOON, c = document.createElement('canvas').getContext('2d'); c.save(); c.translate(5, 0);
+      for (const h of T.MAP_POST_HOOKS) h(c, { __geo: { pr: { flat: false, R: 100 } }, geo: {} }, {}, 0); return c.getTransform().e; }"""
+    assert p.eval(js) == 5
+
+
+def test_offscreen_ranges_make_no_glyphs_and_placement_is_stable(page_for):
+    p = page_for(_spec([]))
+    js = """() => { const P = window.TOON.MAP_PAINT, sp = [{ name: 'a', pts: [[-5000, 0], [-3000, 0], [0, 0], [400, 0]] }];
+      const off = P.peakGlyphs([{ name: 'b', pts: [[-9000, 0], [-7000, 0]] }], 40, { x0: -1000, y0: -600, x1: 1000, y1: 600 });
+      const small = P.peakGlyphs(sp, 40, { x0: -200, y0: -600, x1: 1000, y1: 600 }), big = P.peakGlyphs(sp, 40, { x0: -6000, y0: -600, x1: 1000, y1: 600 });
+      const key = (g) => [g.k, g.x.toFixed(3), g.y.toFixed(3)].join();
+      const bigKeys = new Set(big.map(key)); return [off.length, small.length, small.every((g) => bigKeys.has(key(g)))]; }"""
+    off, small, subset = p.eval(js)
+    assert off == 0 and small > 0 and subset

@@ -19,14 +19,17 @@
     const key = G.pr.key + '|' + G.lv;
     if (cache.has(key)) return cache.get(key);
     const D = T.geoLevel(G.lv), { pr, mw, mh } = G, lim = { x0: -mw * 0.75, y0: -mh * 0.75, x1: mw * 0.75, y1: mh * 0.75 };
-    const toPx = (pts) => pr.ring(pts).map((q) => [(q[0] - 0.5) * mw, (q[1] - 0.5) * mh, q[2]]);
+    const px = (q) => [(q[0] - 0.5) * mw, (q[1] - 0.5) * mh, q[2] ?? true];
     const onMap = (pts) => { if (!pts.some((q) => q[2])) return false; const b = box(pts); return b.x1 > lim.x0 && b.x0 < lim.x1 && b.y1 > lim.y0 && b.y0 < lim.y1; };
+    // polys: visible closed rings (clipped at the globe horizon, copied across the seam); lines: open polylines
+    const polys = (pts) => pr.polygon(pts).map((c) => c.pts.map(px)).filter((r) => r.length > 2 && onMap(r));
+    const lines = (pts) => pr.line(pts).map((l) => l.map(px)).filter(onMap);
     const land = new Path2D(), coast = new Path2D(), border = new Path2D(), lakes = new Path2D();
-    for (const c of D.countries) for (const poly of c.polys) { const pts = toPx(poly[0]); if (pts.length > 2 && onMap(pts)) addRing(land, pts); }
-    D.arcs.forEach((a, i) => { const pts = toPx(a); if (onMap(pts)) addLine(D.use[i] > 1 ? border : coast, pts); });
-    for (const lk of D.lakes) { const pts = toPx(lk.ring); if (onMap(pts) && area(pts) > 60) addRing(lakes, pts); }
-    const rivers = D.rivers.map((rv) => ({ name: rv.name, rank: rv.rank, pts: toPx(rv.line) })).filter((rv) => onMap(rv.pts));
-    const geomOut = { land, coast, border, lakes, rivers, toPx };
+    for (const c of D.countries) for (const poly of c.polys) for (const r of polys(poly[0])) addRing(land, r);
+    D.arcs.forEach((a, i) => { for (const l of lines(a)) addLine(D.use[i] > 1 ? border : coast, l); });
+    for (const lk of D.lakes) for (const r of polys(lk.ring)) if (area(r) > 60) addRing(lakes, r);
+    const rivers = D.rivers.flatMap((rv) => lines(rv.line).map((pts) => ({ name: rv.name, rank: rv.rank, pts })));
+    const geomOut = { land, coast, border, lakes, rivers, polys, lines, px };
     if (cache.size >= CACHE_MAX) cache.delete(cache.keys().next().value);
     cache.set(key, geomOut);
     return geomOut;
@@ -48,9 +51,10 @@
     }
   }
   function graticule(ctx, G, Gm, step, col) {
+    if (!(Number.isFinite(step) && step >= 1)) throw new Error(`map geo: graticule must be true or a step of at least 1 degree (got ${step})`);
     const path = new Path2D();
-    for (let lon = -180; lon < 180; lon += step) { const pts = []; for (let lat = -80; lat <= 80; lat += 4) pts.push([lon, lat]); addLine(path, Gm.toPx(pts).map((q) => q)); }
-    for (let lat = -60; lat <= 60; lat += step) { const pts = []; for (let lon = -180; lon <= 180; lon += 4) pts.push([lon, lat]); addLine(path, Gm.toPx(pts)); }
+    for (let lon = -180; lon < 180; lon += step) { const pts = []; for (let lat = -80; lat <= 80; lat += 4) pts.push([lon, lat]); for (const l of Gm.lines(pts)) addLine(path, l); }
+    for (let lat = -60; lat <= 60; lat += step) { const pts = []; for (let lon = -180; lon <= 180; lon += 4) pts.push([lon, lat]); for (const l of Gm.lines(pts)) addLine(path, l); }
     ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 1.6; ctx.stroke(path); ctx.restore();
   }
   function rivers(ctx, Gm, opt, seaCol, k) {
@@ -68,22 +72,33 @@
     const mode = geo.relief ?? true; if (mode === false) return;
     const dk = G.pr.flat ? G.pr.k : G.pr.R / 57.3;
     for (const [name, D] of Object.entries(T.GEO_DESERTS || {})) {
-      const pts = Gm.toPx(D.ring); if (!pts.some((q) => q[2])) continue;
-      T.MAP_PAINT.softFill(ctx, pts, D.color === 'highland' ? '#b48d58' : '#efd590', 2.5 * dk, D.color === 'highland' ? 0.45 : 0.7);
+      for (const pts of Gm.polys(D.ring)) T.MAP_PAINT.softFill(ctx, pts, D.color === 'highland' ? '#b48d58' : '#efd590', 2.5 * dk, D.color === 'highland' ? 0.45 : 0.7);
     }
     for (const [, R] of Object.entries(T.GEO_RANGES || {})) {
-      for (const run of T.MAP_PAINT.runs(Gm.toPx(R.pts).map((q) => (q[2] ? q : null)))) T.MAP_PAINT.softStroke(ctx, run, '#b08a55', R.w * dk * 1.5, 0.11);
+      for (const l of Gm.lines(R.pts)) for (const run of T.MAP_PAINT.runs(l.map((q) => (q[2] ? q : null)))) T.MAP_PAINT.softStroke(ctx, run, '#b08a55', R.w * dk * 1.5, 0.11);
     }
   }
-  function rangeSpines(G, Gm, geo) {
-    const sel = geo.ranges, names = sel === true ? Object.keys(T.GEO_RANGES) : list(sel);
-    const spines = names.map((n) => { const R = T.GEO_RANGES[n]; if (!R) throw new Error(`map geo: unknown range "${n}" (known: ${Object.keys(T.GEO_RANGES).join(', ')})`);
-      return { name: n, snow: !!R.snow, pts: Gm.toPx(R.pts).map((q) => (q[2] ? q : null)) }; });
+  const sizeOk = (v, what) => { if (!(Number.isFinite(v) && v > 0)) throw new Error(`map geo: ${what} must be a number above 0 (got ${v})`); return v; };
+  function rangeSpines(Gm, geo) {
+    const sel = geo.ranges, names = sel === true ? Object.keys(T.GEO_RANGES) : sel === false || sel == null ? [] : list(sel);
+    const spines = names.flatMap((n) => { const R = T.GEO_RANGES[n]; if (!R) throw new Error(`map geo: unknown range "${n}" (known: ${Object.keys(T.GEO_RANGES).join(', ')})`);
+      return Gm.lines(R.pts).map((l, c) => ({ name: n + (c ? '#' + c : ''), snow: !!R.snow, pts: l.map((q) => (q[2] ? q : null)) })); });
     for (const [i, m] of list(geo.mountains).entries()) {
-      const ll = Array.isArray(m) ? m : [m.lon, m.lat], q = Gm.toPx([ll, [ll[0] + 0.01, ll[1]]]);
-      spines.push({ name: 'peak' + i, snow: !!m.snow, size: m.size, pts: q.map((p) => (p[2] ? p : null)) });
+      const ll = Array.isArray(m) ? m : [m.lon, m.lat], size = m.size != null ? sizeOk(m.size, 'mountains size') : undefined;
+      for (const l of Gm.lines([ll, [ll[0] + 0.01, ll[1]]])) spines.push({ name: 'peak' + i, snow: !!m.snow, size, pts: l.map((p) => (p[2] ? p : null)) });
     }
     return spines;
+  }
+  // peak glyphs depend only on the projection and the selection, so static maps place them once
+  const glyphCache = new Map();
+  function rangeGlyphs(G, Gm, geo, size) {
+    const key = [G.pr.key, G.lv, JSON.stringify(geo.ranges ?? null), JSON.stringify(geo.mountains ?? null), size].join('|');
+    if (glyphCache.has(key)) return glyphCache.get(key);
+    const m = size * 2, bounds = { x0: -G.mw / 2 - m, y0: -G.mh / 2 - m, x1: G.mw / 2 + m, y1: G.mh / 2 + m };
+    const glyphs = T.MAP_PAINT.peakGlyphs(rangeSpines(Gm, geo), size, bounds);
+    if (glyphCache.size >= CACHE_MAX) glyphCache.delete(glyphCache.keys().next().value);
+    glyphCache.set(key, glyphs);
+    return glyphs;
   }
 
   T.MAP_BASE_HOOKS.unshift((ctx, L, g, lt) => {
@@ -99,7 +114,7 @@
       const R = G.pr.R, glow = ctx.createRadialGradient(0, 0, R * 0.92, 0, 0, R * 1.16);
       glow.addColorStop(0, 'rgba(150,200,255,0.75)'); glow.addColorStop(0.35, 'rgba(120,180,255,0.32)'); glow.addColorStop(1, 'rgba(120,180,255,0)');
       ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(0, 0, R * 1.16, 0, TAU); ctx.fill();
-      ctx.save(); ctx.beginPath(); seaArea(ctx); ctx.clip(); // restored by the post hook, after the regions
+      ctx.save(); ctx.beginPath(); seaArea(ctx); ctx.clip(); g.globeClip = true; // restored by the post hook, after the regions
     }
     if (painted) T.MAP_PAINT.sea(ctx, seaArea, seaCol);
     else { ctx.fillStyle = seaCol; ctx.beginPath(); seaArea(ctx); ctx.fill(); }
@@ -119,12 +134,13 @@
     if (geo.borders !== false) { ctx.strokeStyle = T.MAP_PAINT.rgba(ink, painted ? 0.7 : 0.55); ctx.lineWidth = (painted ? 2.4 : 2) * k; if (geo.borders === 'dashed') ctx.setLineDash([10 * k, 7 * k]); ctx.stroke(Gm.border); ctx.setLineDash([]); }
     ctx.strokeStyle = ink; ctx.lineWidth = (painted ? 4 : 3.5) * k; ctx.stroke(Gm.coast);
     ctx.restore();
-    if (geo.ranges || geo.mountains) T.MAP_PAINT.mountains(ctx, rangeSpines(G, Gm, geo), (geo.mountainSize ?? 40) * Math.min(k, 1.3));
+    if (geo.ranges || geo.mountains) T.MAP_PAINT.drawGlyphs(ctx, rangeGlyphs(G, Gm, geo, sizeOk(geo.mountainSize ?? 40, 'mountainSize') * Math.min(k, 1.3)));
     return true;
   });
 
   T.MAP_POST_HOOKS.push((ctx, L, g) => {
-    const G = L.__geo; if (!G || G.pr.flat) return;
+    const G = L.__geo; if (!G || G.pr.flat || !g.globeClip) return; // only when the base hook opened the globe clip
+    g.globeClip = false;
     const R = G.pr.R, geo = L.geo, lx = -R * 0.38, ly = -R * 0.42;
     if (geo.shade !== false) {
       const sh = ctx.createRadialGradient(lx, ly, R * 0.05, lx * 0.4, ly * 0.4, R * 1.25);

@@ -103,7 +103,7 @@ scripts/engine/          index.html + core.js (timeline, camera, layer motion, s
                          places-war, places-world, places-towns, places-sets, places-rooms
   lib/maps/              map (styles, regions, faces), map-overlays (rivers, fronts, routes, tokens), map-views (views,
                          living regions, figures, arrows, trails), geo + geo-base + geo-data-* (Natural Earth, projections,
-                         globe), map-paint (painted style), geo-anim (flood, drawOn), geo-ranges
+                         globe), geo-proj, geo-prep, map-paint (painted style), geo-anim (flood, drawOn), geo-ranges
   lib/paper/             paper (newspaper, documents, stamps, charts), signs-bubbles, cards (nameplates, time skips,
                          picture bubbles, number cards, graffiti), timeline-subtitles
   lib/game/              game-ui: hud and cursor layers, game doc kinds

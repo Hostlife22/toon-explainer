@@ -125,6 +125,12 @@
     }
   }
 
+  // drawOn phase of a region: 'before' (nothing shows), 'tracing' (border being drawn, fill fading in) or 'done'
+  T.mapDrawOnPhase = (R, lt) => {
+    const D = R.drawOn; if (!D) return 'done';
+    const at = D.at ?? 0, dur = D.dur ?? 1.2;
+    return lt < at ? 'before' : lt < at + dur * 1.05 ? 'tracing' : 'done';
+  };
   function drawRegion(ctx, R, g, lt, ov) {
     if (ov && (ov.offset || ov.alpha != null)) {
       ctx.save();
@@ -138,9 +144,10 @@
     const grow = T.ease.outCubic(T.prog(lt, R.at ?? 0, R.dur ?? 1.2));
     const fade = R.out != null ? 1 - T.prog(lt, R.out, R.outDur ?? 0.5) : 1;
     if (grow <= 0 || fade <= 0) return;
-    const pts = R.pts.map(([x, y]) => [X(x), Y(y)]);
+    const pts = R.pts.map(([x, y]) => [X(x), Y(y)]), holes = (R.holes || []).map((h) => h.map(([x, y]) => [X(x), Y(y)]));
+    const rpath = (k) => { T.smoothPath(k, pts); for (const h of holes) T.smoothPath(k, h); }; // holes are wound the other way
     const [cx, cy] = R.anchor ? [X(R.anchor[0]), Y(R.anchor[1])] : centroid(pts), { w: bw, h: bh } = bbox(pts);
-    const D = R.drawOn && !ov ? R.drawOn : null, dAt = D ? D.at ?? 0 : 0, dDur = D ? D.dur ?? 1.2 : 0;
+    const D = R.drawOn || null, dAt = D ? D.at ?? 0 : 0, dDur = D ? D.dur ?? 1.2 : 0;
     const fillA = D ? T.ease.inOut(T.prog(lt, dAt + dDur * 0.55, dDur * 0.5)) : 1;
     if (D && lt < dAt) return;
     const rad = Math.max(...pts.map(([x, y]) => Math.hypot(x - cx, y - cy))) * 1.05;
@@ -149,9 +156,9 @@
     if (ov && ov.fill != null) col = ov.fill;
     const neutral = R.halftone && !(ov && ov.fill != null) && !(R.recolor && lt >= (R.recolor.at ?? 1));
     const slab = (fill, line = st.border, neutral = false) => {
-      if (st.paint && T.MAP_PAINT && !neutral) { T.MAP_PAINT.regionSlab(ctx, pts, fill, line, R.border ?? R.ink ?? T.shade(fill, -0.6), st, cx, cy, rad); return; }
-      ctx.save(); ctx.translate(0, st.extrude + 2); T.outlined(ctx, (k) => T.smoothPath(k, pts), T.shade(neutral ? st.land : fill, -0.42), { line: 0 }); ctx.restore();
-      T.outlined(ctx, (k) => T.smoothPath(k, pts), neutral ? st.land : fill, {
+      if (st.paint && T.MAP_PAINT && !neutral) { T.MAP_PAINT.regionSlab(ctx, rpath, fill, line, R.border ?? R.ink ?? T.shade(fill, -0.6), st, cx, cy, rad); return; }
+      ctx.save(); ctx.translate(0, st.extrude + 2); T.outlined(ctx, rpath, T.shade(neutral ? st.land : fill, -0.42), { line: 0 }); ctx.restore();
+      T.outlined(ctx, rpath, neutral ? st.land : fill, {
         line, ink: R.border ?? R.ink ?? (g.style === 'atlas' ? '#2a1c15' : T.shade(fill, -0.55)),
         shade: (k) => {
           if (neutral) { k.fillStyle = T.mapDots(k, R.dotColor); k.fillRect(cx - rad, cy - rad, rad * 2, rad * 2); }
@@ -180,10 +187,10 @@
     if (!ov) for (const cover of T.MAP_COVERS) cover(ctx, R, g, lt, pts, (fill) => slab(fill));
     if (R.whiteout) {
       const q = T.prog(lt, R.whiteout.at ?? 1, R.whiteout.dur ?? 0.5);
-      if (q > 0) { ctx.globalAlpha *= 1; T.outlined(ctx, (k) => T.smoothPath(k, pts), `rgba(250,250,246,${q})`, { line: 8 * q, ink: R.whiteout.rim ?? '#50c8c8' }); }
+      if (q > 0) { ctx.globalAlpha *= 1; T.outlined(ctx, rpath, `rgba(250,250,246,${q})`, { line: 8 * q, ink: R.whiteout.rim ?? '#50c8c8' }); }
     }
     ctx.restore();
-    if (landClip && g.coastPath) { ctx.save(); ctx.beginPath(); T.smoothPath(ctx, pts); ctx.clip(); ctx.strokeStyle = st.landInk; ctx.lineWidth = g.coastWidth ?? 4; ctx.lineJoin = 'round'; ctx.stroke(g.coastPath); ctx.restore(); }
+    if (landClip && g.coastPath) { ctx.save(); ctx.beginPath(); rpath(ctx); ctx.clip(); ctx.strokeStyle = st.landInk; ctx.lineWidth = g.coastWidth ?? 4; ctx.lineJoin = 'round'; ctx.stroke(g.coastPath); ctx.restore(); }
     if (R.pulse) { ctx.strokeStyle = T.shade(col, 0.3); ctx.lineWidth = 8 + Math.sin(lt * 5) * 4; ctx.globalAlpha *= 0.6 + Math.sin(lt * 5) * 0.3; ctx.beginPath(); T.smoothPath(ctx, pts); ctx.stroke(); }
     ctx.restore();
     const conquered = R.conquer && T.prog(lt, R.conquer.at ?? 1, R.conquer.dur ?? 0.8) >= 1;

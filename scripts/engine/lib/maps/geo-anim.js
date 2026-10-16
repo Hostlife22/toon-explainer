@@ -26,12 +26,12 @@
     const o = F.from ? [g.X(F.from[0]), g.Y(F.from[1])] : g.centroid(R);
     const reach = F.reach ?? Math.max(...pts.map(([x, y]) => Math.hypot(x - o[0], y - o[1]))) * 1.05;
     const byR = typeof F.by === 'string' ? g.byId[F.by] : null, col = F.color ?? (byR ? g.color(byR, lt) : F.by) ?? P.red;
-    const seed = T.hash(String(F.seed ?? R.id ?? 'flood')) % 997, fr = front(o, reach, e, seed, F.edge, lt);
+    const seed = T.hash(String(F.seed ?? R.id ?? 'flood')) % 997, a0 = ctx.globalAlpha, fr = front(o, reach, e, seed, F.edge, lt);
     ctx.save(); ctx.beginPath(); trace(ctx, fr); ctx.clip(); slab(col); ctx.restore();
     if (p < 1 && F.foam !== false) {
       ctx.save(); ctx.beginPath(); T.smoothPath(ctx, pts); ctx.clip(); ctx.lineJoin = 'round';
-      ctx.strokeStyle = T.shade(col, 0.45); ctx.globalAlpha *= 0.85; ctx.lineWidth = 12; ctx.beginPath(); trace(ctx, fr); ctx.stroke();
-      ctx.strokeStyle = T.shade(col, -0.5); ctx.globalAlpha = 1; ctx.lineWidth = 3; ctx.beginPath(); trace(ctx, fr); ctx.stroke();
+      ctx.strokeStyle = T.shade(col, 0.45); ctx.globalAlpha = a0 * 0.85; ctx.lineWidth = 12; ctx.beginPath(); trace(ctx, fr); ctx.stroke();
+      ctx.strokeStyle = T.shade(col, -0.5); ctx.globalAlpha = a0; ctx.lineWidth = 3; ctx.beginPath(); trace(ctx, fr); ctx.stroke();
       ctx.restore();
     }
   });

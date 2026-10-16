@@ -223,7 +223,7 @@
 
   // ---------- region hook ----------
   const HOOK_KEYS = ['split', 'shatter', 'slash', 'engulf', 'peel', 'drift', 'wipe', 'annex', 'damage', 'surrender', 'fire'];
-  const BARE = { face: null, label: null, strikeLabel: null, arms: null, conquer: null, whiteout: null, pulse: null };
+  const BARE = { face: null, label: null, strikeLabel: null, arms: null, conquer: null, whiteout: null, pulse: null, drawOn: null };
   const DIRS = { top: [0, -1], bottom: [0, 1], left: [-1, 0], right: [1, 0] }, dirVec = (d) => { /* wipe dir: way the edge travels, [dx, dy] or degrees */ if (typeof d === 'number') return [Math.cos(d * DEG), Math.sin(d * DEG)]; const v = Array.isArray(d) ? d : DIRS[d]; if (!v) throw new Error(`map region wipe: unknown dir "${d}"`); return v; };
   const geoOf = (R, g) => { const pts = g.pts(R), bb = g.bbox(R); return { pts, bb, c: R.anchor ? px(g, R.anchor) : mean(pts), diag: Math.hypot(bb.w, bb.h) }; };
   const paintClip = (ctx, R, g, fill, clipFn) => { ctx.save(); ctx.beginPath(); clipFn(ctx); ctx.clip(); g.drawRegion(R, { ...BARE, halftone: false, fill }, ctx); ctx.restore(); };
@@ -233,8 +233,8 @@
     const blotch = !!(R.conquer && R.conquer.pattern === 'blotch'), wipes = squadWipes(g, R);
     if (!(blotch || wipes.length || HOOK_KEYS.some((k) => R[k] != null) || newMood(R.face))) return false;
     if (R.conquer && R.conquer.pattern && !['flood', 'blotch'].includes(R.conquer.pattern)) throw new Error(`map region: unknown conquer.pattern "${R.conquer.pattern}"`);
-    const grow = T.prog(lt, R.at ?? 0, R.dur ?? 1.2), fade = R.out != null ? 1 - T.prog(lt, R.out, R.outDur ?? 0.5) : 1;
-    if (grow <= 0 || fade <= 0) return true; const geo = geoOf(R, g), b = baseState(R, g, lt), Sh = R.shatter;
+    const grow = T.prog(lt, R.at ?? 0, R.dur ?? 1.2), fade = R.out != null ? 1 - T.prog(lt, R.out, R.outDur ?? 0.5) : 1, dph = T.mapDrawOnPhase(R, lt);
+    if (grow <= 0 || fade <= 0 || dph === 'before') return true; if (dph === 'tracing') { g.drawRegion(R, null, ctx); return true; } /* effects wait for drawOn */ const geo = geoOf(R, g), b = baseState(R, g, lt), Sh = R.shatter;
     if (Sh && lt >= (Sh.at ?? 1) + (Sh.cracks ?? 0.4)) { shatter(ctx, R, g, lt, geo); return true; }
     if (R.split && lt >= (R.split.at ?? 1)) { split(ctx, R, g, lt, geo); afterFx(ctx, R, g, lt, geo); return true; }
     ctx.save(); ctx.translate(b.off[0], b.off[1]); ctx.globalAlpha *= b.alpha;

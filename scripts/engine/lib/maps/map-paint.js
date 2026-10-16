@@ -104,16 +104,21 @@
     ctx.beginPath(); ctx.moveTo(x - s * 0.6, y); ctx.quadraticCurveTo(x, y - s * 0.7, x + s * 0.6, y); ctx.stroke();
     ctx.lineWidth *= 0.7; ctx.beginPath(); ctx.moveTo(x + s * 0.1, y - s * 0.2); ctx.lineTo(x + s * 0.3, y - s * 0.02); ctx.stroke();
   }
-  // spines: [{name, pts:[[x, y], ...] in px (null where hidden), snow, size}]
-  function mountains(ctx, spines, size = 34) {
+  // spines: [{name, pts:[[x, y], ...] in px (null where hidden), snow, size}] -> glyphs inside `bounds` ({x0, y0, x1, y1}).
+  // Each sample has its own seed (spine, run, segment, index) and segments outside the bounds are skipped without
+  // sampling, so the work follows what is on screen and a glyph never moves when the view grows.
+  function peakGlyphs(spines, size = 34, bounds = null) {
     const glyphs = [];
     for (const S of spines) {
-      const r = T.rng(T.hash('peaks:' + S.name)), s0 = S.size ?? size;
-      for (const run of runs(S.pts)) {
-        const step = s0 * 0.72; let carry = 0;
+      const s0 = S.size ?? size;
+      if (!(s0 > 0)) throw new Error(`map mountains: size must be above 0 (got ${s0})`);
+      runs(S.pts).forEach((run, ri) => {
+        const step = s0 * 0.72, pad = s0 * 2; let carry = 0;
         for (let i = 1; i < run.length; i++) {
           const [ax, ay] = run[i - 1], [bx, by] = run[i], l = Math.hypot(bx - ax, by - ay), nx = -(by - ay) / (l || 1), ny = (bx - ax) / (l || 1);
-          for (let d = carry; d < l; d += step) {
+          const out = bounds && (Math.max(ax, bx) < bounds.x0 - pad || Math.min(ax, bx) > bounds.x1 + pad || Math.max(ay, by) < bounds.y0 - pad || Math.min(ay, by) > bounds.y1 + pad);
+          for (let d = carry, j = 0; !out && d < l; d += step, j++) {
+            const r = T.rng(T.hash(`peaks:${S.name}:${ri}:${i}:${j}`));
             const t = d / l, x = T.lerp(ax, bx, t), y = T.lerp(ay, by, t), s = s0 * (0.75 + r() * 0.55), o = (r() - 0.5) * s0 * 0.7;
             glyphs.push({ k: 'peak', x: x + nx * o, y: y + ny * o, s, snow: S.snow && s > s0 * 0.9, seed: r() });
             if (r() < 0.6) { const s2 = s * (0.6 + r() * 0.2), o2 = o + (r() < 0.5 ? -1 : 1) * s0 * 0.45; glyphs.push({ k: 'peak', x: x + nx * o2 + s0 * 0.3, y: y + ny * o2 - s0 * 0.12, s: s2, snow: S.snow && s2 > s0 * 0.9, seed: r() }); }
@@ -121,17 +126,19 @@
           }
           carry = ((carry - l) % step + step) % step;
         }
-      }
+      });
     }
-    glyphs.sort((a, b) => a.y - b.y);
-    for (const G of glyphs) { if (G.k === 'peak') peak(ctx, G.x, G.y, G.s, G.snow, T.rng(T.hash('pk' + G.seed))); else hill(ctx, G.x, G.y, G.s); }
+    return glyphs.sort((a, b) => a.y - b.y || a.x - b.x);
   }
+  function drawGlyphs(ctx, glyphs) { for (const G of glyphs) { if (G.k === 'peak') peak(ctx, G.x, G.y, G.s, G.snow, T.rng(T.hash('pk' + G.seed))); else hill(ctx, G.x, G.y, G.s); } }
+  const mountains = (ctx, spines, size, bounds) => drawGlyphs(ctx, peakGlyphs(spines, size, bounds));
   // split a polyline at null (hidden) points
   function runs(pts) { const out = []; let cur = []; for (const q of pts) { if (q) cur.push(q); else { if (cur.length > 1) out.push(cur); cur = []; } } if (cur.length > 1) out.push(cur); return out; }
 
   // ---------- painted region slab (called by map.js drawRegion for style "painted") ----------
-  function regionSlab(ctx, pts, fill, line, ink, st, cx, cy, rad) {
-    const path = (k) => T.smoothPath(k, pts), depth = st.extrude;
+  // path: fn(ctx) adding the region outline (and its holes) to the current path
+  function regionSlab(ctx, path, fill, line, ink, st, cx, cy, rad) {
+    const depth = st.extrude;
     ctx.save(); ctx.translate(0, depth); T.outlined(ctx, path, T.shade(fill, -0.45), { line: line * 0.8, ink }); ctx.restore();
     T.outlined(ctx, path, fill, {
       line, ink,
@@ -144,7 +151,7 @@
     });
   }
 
-  T.MAP_PAINT = { sea, ripples, landSlab, bevel, softStroke, softFill, mountains, runs, regionSlab, grainTile, seaTile, pattern, rgba };
+  T.MAP_PAINT = { sea, ripples, landSlab, bevel, softStroke, softFill, mountains, peakGlyphs, drawGlyphs, runs, regionSlab, grainTile, seaTile, pattern, rgba };
 
   // ---------- painted blob land (maps without `geo`) ----------
   T.MAP_BASE_HOOKS.push((ctx, L, g, lt) => {
