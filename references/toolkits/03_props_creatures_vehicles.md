@@ -2,7 +2,7 @@
 
 In a word: give the narration physical things to point at. A treaty flexes its arms, a signpost spins to a new name, a cage drops on the accused, a crown is lowered by helicopter, a wolf sits at the door and a tank rolls into frame.
 
-Engine: `scripts/engine/lib/props/props.js`, `props/props-world.js`, `props/props-gags.js`, `props/props-extra.js`, `props/vehicles.js`, `props/vehicles-machines.js`, `scripts/engine/lib/creatures/quadrupeds.js`, `creatures/spirits.js`, `creatures/animals-objects.js`, `scripts/engine/lib/base/widgets.js` · Vocabulary: `scripts/vocab/props.json`, `scripts/vocab/props-extra.json`, `scripts/vocab/vehicles.json`, `scripts/vocab/creatures.json`, the `props` list of `scripts/vocab/places.json`, plus `KNOWN_PROPS` and the `prop` / `image` / `card` / `sign` / `calendar` layer types in `scripts/spec.py` · Example films: [`examples/props_creatures/spec.json`](../../examples/props_creatures/spec.json) (34 shots, one per feature), [`examples/places_tour/spec.json`](../../examples/places_tour/spec.json) (vehicles), [`examples/eras_wardrobe/spec.json`](../../examples/eras_wardrobe/spec.json) (horses, reaper, birds, skeleton); render any of them with `--sheet` to browse · Related cards: [01 Characters](01_characters.md) (the bean that holds props, `pose: "sit"`, `cradle`), [02 Acting](02_acting.md) (`prohibit` sign, off-screen arms, `drop-squash` and other entrances), [04 Places](04_places.md) (rooms and floors to stand props on), [06 Paper and lettering](06_paper_and_lettering.md) (labels and number cards next to an object), [08 FX and tone](08_fx_and_tone.md) (impact FX, smoke, fire), [09 Transitions and lens](09_transitions_and_lens.md) (sub-shots and POV masks) · Shared layer fields (`at`, `out`, `x`, `y`, `scale`, `rot`, `flip`, `move`, `swap`, `jitter`, `swing`, `blur`, `enter`, `exit`): [03-spec-reference.md](../03-spec-reference.md).
+Engine: `scripts/engine/lib/props/props.js`, `props/props-world.js`, `props/props-gags.js`, `props/props-extra.js`, `props/vehicles.js`, `props/vehicles-machines.js`, `scripts/engine/lib/creatures/quadrupeds.js`, `creatures/spirits.js`, `creatures/animals-objects.js`, `scripts/engine/lib/base/widgets.js` · v2 rigs: `creatures/motion-path.js`, `creatures/creature-kit.js`, `creatures/quad-rig.js`, `creatures/beasts-hoofed.js`, `creatures/beasts-paws.js`, `creatures/beasts-small.js`, `props/vehicles-kit.js`, `props/vehicles-road.js`, `props/vehicles-rail-sea.js`, `props/vehicles-air.js` · Vocabulary: `scripts/vocab/creatures-vehicles-v2.json`, `scripts/vocab/props.json`, `scripts/vocab/props-extra.json`, `scripts/vocab/vehicles.json`, `scripts/vocab/creatures.json`, the `props` list of `scripts/vocab/places.json`, plus `KNOWN_PROPS` and the `prop` / `image` / `card` / `sign` / `calendar` layer types in `scripts/spec.py` · Example films: [`examples/creatures_vehicles_v2/spec.json`](../../examples/creatures_vehicles_v2/spec.json) (12 painted shots: gaits, states, new animals, cars, trains, ships, aircraft), [`examples/props_creatures/spec.json`](../../examples/props_creatures/spec.json) (34 shots, one per feature), [`examples/places_tour/spec.json`](../../examples/places_tour/spec.json) (vehicles), [`examples/eras_wardrobe/spec.json`](../../examples/eras_wardrobe/spec.json) (horses, reaper, birds, skeleton); render any of them with `--sheet` to browse · Related cards: [01 Characters](01_characters.md) (the bean that holds props, `pose: "sit"`, `cradle`), [02 Acting](02_acting.md) (`prohibit` sign, off-screen arms, `drop-squash` and other entrances), [04 Places](04_places.md) (rooms and floors to stand props on), [06 Paper and lettering](06_paper_and_lettering.md) (labels and number cards next to an object), [08 FX and tone](08_fx_and_tone.md) (impact FX, smoke, fire), [09 Transitions and lens](09_transitions_and_lens.md) (sub-shots and POV masks) · Shared layer fields (`at`, `out`, `x`, `y`, `scale`, `rot`, `flip`, `move`, `swap`, `jitter`, `swing`, `blur`, `enter`, `exit`): [03-spec-reference.md](../03-spec-reference.md).
 
 ## ① When to use it
 
@@ -334,6 +334,61 @@ Looks: `wolf` grey with a white chest ruff; `dog` golden with floppy ears; `goat
 | `dump-truck` | `tilt` (degrees, number or `[{at, v, ease}]` timeline), `riders: [who, ...]`, `color` (`#f2d02f`) | The bed turns about its rear hinge; once `tilt` passes 25° the riders scream, slide off (accelerating) and pile up behind the truck with `expr: "dead"`. Vibrates while driving |
 | `helicopter` | `load: {prop, size: 300, cable: 220, ...prop fields}`, `color` (`#5a7a4a`) | Rotor blur alternates every frame, body rocks ±2°, the load swings ±6° on its cable (1.6 s) |
 
+### Motion 2.0: path, gaits and trails
+
+Any layer can travel a `path: {pts, at, dur, ease, curve, orient, face, bank, loop}` (always an object; field reference in [03-spec-reference.md](../03-spec-reference.md#common-layer-fields)): constant speed along the curve, auto facing with a squash through a turn, `orient` to the tangent, `bank` into curves. Creatures and vehicles read the distance actually travelled (along `path`, or along `move` steps), so feet stay planted and wheels never skid.
+
+**v2 rigs and the classic look.** New kinds always use their v2 rig. The existing kinds `horse`, `cow`, `bull`, `sheep`, `pig`, `camel`, `elephant`, `dog`, `wolf` (creatures) and `tank`, `train`, `biplane`, `submarine`, `car1910` (vehicles) switch to their v2 rig in the painted look, with a new field (`gait`, `state`, `path`, `terrain`, `lights`, `dust`, `exhaust`, `wake`, `contrail`, `animal`, `team`, `flock`, `school`) or with `rig: "v2"`; otherwise they keep their classic drawing pixel for pixel. `rig: "classic"` forces the old drawing; `pose: "biped"` and the elephant `tower` always use it.
+
+**Creature fields (v2)**
+
+| Field | Default | Effect |
+|---|---|---|
+| `gait` | auto when moving | `walk` (4-beat, 0.62 duty), `trot` (diagonal pairs), `gallop` (`run`; rotary, with a moment of suspension), `auto` (by speed: idle under 0.12 leg lengths/s, walk, trot from 2.4, gallop from 5.2, cross-faded). Constant or `[{at, v}]` timeline (0.3 s blends). Feet are planted while in stance: the stride is locked to the distance travelled; on the spot the cycle runs at a cadence (walk 0.9, trot 1.35, gallop 1.9 cycles/s, times `gaitRate`) |
+| `state` | `idle` | `idle` (breathing, weight shift, ear and tail flicks, blinks, look-around), `walk` / `trot` / `run` / `gallop`, `eat` (head down, chewing, tail swish), `sleep` (lies down, legs folded, eyes shut, slow breath, "z" marks), `scared` (rears back, ears flat, wide eyes, tremble, sweat, tail tucked), `sit` (dog, wolf, cat, bear; the legacy `pose: "sit"` maps to it). Birds: `fly`, `glide`, `idle` (perched). Timeline allowed |
+| `expr` | by state | Toon eye with pupil, lid and brow: `neutral`, `happy`, `angry`, `sad`, `scared`, `shock`, `worried`, `sleepy`, `evil`, `smug`, `dead`, plus the bean names they map to |
+| `walk`, `run` | — | Legacy windows still work (walk, gallop) |
+| `rider` | — | Horse, cow, bull, camel, elephant: seated cast member, saddle cloth, near leg and boot, bridle and reins (horse); `riderPose`, `riderExpr`, `riderHold`, `riderHoldL`, `riderScale`, `riderY`, `riderLeg`, `riderBoot`, `saddle`, `tackColor`. `tack: true` puts the bridle on a riderless horse |
+| `color`, `color2`, `mane` | per kind | Body, belly / muzzle, mane and tail colour. `blaze` (horse white stripe), `spots` / `spotColor` (cow), `horns` (`long` / `short`), `hornColor`, `muzzle`, `ring`, `tusks: false`, `stripes: false` (cat) |
+| `glow`, `tear`, `eyes: "evil"`, `talk` | — | As on the classic animals |
+| `flock` (bird), `school` (fish) | 1 | Draws n members in a seeded formation, each on its own flap / swim phase and drift; `spread` (1) scales a flock |
+| `contact` | on | Painted look: soft shadow under the feet (stays on the ground and shrinks during a `jump`); `false` turns it off |
+| `dust` | on dirt | Animals moving faster than a trot kick up dust puffs from the hooves on `ground: "dirt"` and on `desert`, `battlefield`, `trench`, `graveyard`; `true`, `false` or an amount overrides |
+
+New creatures: `cat` (striped, slit pupils, curling tail), `bear` (heavy, clawed paws), `rat` (long bare tail), `chicken` (two-leg walk with the head that holds still in space then snaps forward, pecks in `eat`, flaps when `scared`), `bird` (flap 1.1 s then glide 0.7 s; flap rate rises with speed; perch legs when idle), `fish` (body wave growing to the tail, tail beat follows the swim speed, bubbles; `bubbles: false`), `snake` (slither: a ground-locked wave, so the body does not slide; tongue flicks; `length` 900, `raised`).
+
+**Vehicle fields (v2)**
+
+| Field | Default | Effect |
+|---|---|---|
+| `path` / `move` | — | Travel. Wheels, treads, rods and the team's gait follow the distance; `drive` windows still spin things on the spot (220 px/s of virtual travel) |
+| `terrain` | road (tank `rough`, chariot / wagon `dirt`) | Suspension over seeded bumps: `smooth`, `road`, `rail`, `cobble`, `dirt`, `rough`; the body lifts and pitches between its axles |
+| `exhaust`, `dust`, `smoke`, `steam`, `wake` | on where it fits | World-space trails: puffs are emitted on a fixed time grid along the vehicle's past positions and stay behind it (motor exhaust, dust on `dirt` / `rough`, chimney and funnel smoke, cylinder steam, foam wake). Whether a puff exists and how big it is is decided at its emission time, so speeding up never moves smoke already in the air. `false` turns one off |
+| `contrail` | false | Plane / biplane: a fading white ribbon along the flown path |
+| `lights` | false | Headlight cone (additive) |
+| `riders` / `rider` | — | Seated cast members in cars, the driver of a chariot / wagon / locomotive, the pilot, the balloonist |
+| `animal`, `team` | `horse`, 2 | Chariot and wagon: the creature kind and count pulling it (v2 rig, gait locked to the travel); `animalColor`, `animalColors: [...]` |
+| `engine` | true | false stops the idle shiver |
+
+| Kind | Extra fields (defaults) | Look and motion |
+|---|---|---|
+| `model-t` | `color` (`#23252b`) | ~1908 tourer: canopy on posts, brass radiator and lamp, 12-spoke wheels, fenders and running board |
+| `sedan1920` | `color` (`#6a1e24`), `color2` (roof) | Long louvred hood, closed cabin with two windows, wire wheels, spare tyre |
+| `car1950` | `color` (`#5ab0b8`), `color2` (`#f4efe6` roof and flash) | Rounded fenders with skirts, chrome bumpers and strip, whitewalls, tail light |
+| `car-modern` | `color` (`#d8322e`) | Low hatch, tinted glass, alloy wheels, LED lamps |
+| `tank` (v2) | `color`, `burning`, `terrain` | Lozenge hull with plates and rivets, tread links and six road wheels moving with the distance, exhaust stack smoke, dust |
+| `chariot` | `rider`, `color` (`#b8862e`), `color2` (trim) | Two-wheeled car behind a galloping / trotting team, pole to the yoke |
+| `wagon` | `rider`, `cover` (true), `load` (prop, when uncovered), `color`, `color2` (canvas) | Covered wagon with hooped canvas, wood-grain box, four spoked wheels |
+| `locomotive`, `train` (v2) | `cars` (2), `color`, `color2` (red), `carColor`, `rider`, `smokeColor`, `lights` | Steam engine: driving wheels with coupling and connecting rods phase-locked to the wheel angle, chimney smoke thicker when slow, cylinder steam, carriages swaying with a lag |
+| `ship` | `style` (`liner` \| `warship`), `color` (hull), `color2` (superstructure), `funnel`, `boot`, `name`, `rock` | Heaves and pitches on two crossing swells, bow wave with spray growing with speed, funnel smoke, foam wake |
+| `sailship` | `color` (sails), `color2` (hull), `cross`, `crossColor`, `flag` | Two tiers of bellied square sails (fuller with speed), pennants streaming back, wood-grain hull |
+| `submarine` (v2) | `face`, `periscope`, `depth` (0..1 or timeline: sinks under a water tint), `water` | Ribbed hull, prop blur, bubble stream |
+| `plane` | `color`, `roundel`, `rider` (pilot), `contrail`, `burning`, `gear` | Monoplane; rolls on turns from the path `bank` (the wing foreshortens, shows its underside, swaps in front of / behind the body), prop blur |
+| `biplane` (v2) | `color`, `roundel`, `rider`, `contrail`, `burning` | Fabric-textured fuselage, struts, two wings rolling with the bank |
+| `zeppelin` | `color`, `mark`, `burning` | Ribbed envelope, fins, gondola with windows, two prop blurs, slow pitch |
+| `balloon` | `colors` / `color`, `color2`, `rider` | Striped envelope, ropes, wicker basket, burner flame on a seeded schedule, pendulum sway |
+| `rocket` | `color`, `color2`, `ignite` | Fins, porthole; flickering three-tone flame and launch shake while it moves or with `ignite`; smoke column left in the world. Stands on its fins; on a `path` with `orient` it flies nose first |
+
 ### Widgets (`base/widgets.js`)
 
 | Layer | Fields (defaults) | Behaviour |
@@ -529,6 +584,22 @@ Cut on a `zoom-punch` to the shocked soldier ([09](09_transitions_and_lens.md)).
 {"type": "prop", "kind": "iso-tile", "x": 0.62, "y": 0.8, "size": 380, "building": "tower", "owner": "#c8302a"},
 {"type": "prop", "kind": "iso-tile", "x": 0.8, "y": 0.8, "size": 380, "building": "house", "owner": "#3a6ea5"},
 {"type": "prop", "kind": "coin-gavel", "x": 0.3, "y": 0.5, "size": 520, "enter": "drop-squash", "strike": [1.2]}
+```
+
+### Cavalry charge along a road (v2)
+
+```json
+{"type": "creature", "kind": "horse", "size": 300, "rider": "knight", "riderHold": "spear", "riderExpr": "angry",
+ "path": {"pts": [[-0.1, 0.92], [0.5, 0.9], [1.1, 0.93]], "dur": 3, "ease": "in"}}
+```
+
+The horse starts in a walk, breaks into a trot and a gallop as it speeds up (auto gait), feet planted on the ground.
+
+### A plane banking through a turn with a contrail
+
+```json
+{"type": "vehicle", "kind": "plane", "size": 300, "contrail": true,
+ "path": {"pts": [[-0.1, 0.6], [0.35, 0.35], [0.7, 0.55], [1.1, 0.25]], "dur": 4, "ease": "linear", "orient": 35, "bank": 50}}
 ```
 
 ## ⑥ Limits and pitfalls

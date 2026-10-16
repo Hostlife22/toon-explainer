@@ -16,6 +16,7 @@ from pathlib import Path
 
 from density import lint  # noqa: F401  (re-exported: non-fatal density warnings, printed by the CLI)
 import props_fx  # Props & FX 2.0 field checks (particles, impact language, trail, paper)
+from motion_check import check_motion
 
 KNOWN_LAYERS = {"bean", "image", "label", "title", "date", "era", "counter", "timer", "caption",
                 "prop", "card", "sign", "calendar", "map", "fx", "fg", "crowd"}
@@ -386,6 +387,7 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         found: list[str] = []
         props_fx.check_layer(state, where, found, LAYER_KINDS.get("particle_preset", set()))
         errors.extend(e for e in found if not (e in seen or seen.add(e)))
+    check_motion(layer, where, errors, _ease_names(), LAYER_KINDS.get("creature"))
     for win in layer.get("talk", []) or []:
         if not (isinstance(win, list) and len(win) == 2 and all(isinstance(v, (int, float)) for v in win) and win[0] <= win[1]):
             errors.append(f"{where}: talk windows must be [[start, end], ...] with start <= end")

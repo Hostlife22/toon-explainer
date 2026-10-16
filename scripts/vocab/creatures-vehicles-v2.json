@@ -1,0 +1,7 @@
+{
+  "_doc": "Creatures and vehicles 2.0 (lib/creatures/creature-kit.js, quad-rig.js, beasts-*.js, motion-path.js; lib/props/vehicles-kit.js, vehicles-road.js, vehicles-rail-sea.js, vehicles-air.js): new creature and vehicle kinds. Path motion, gait and state fields are checked by scripts/motion_check.py. See references/toolkits/03_props_creatures_vehicles.md.",
+  "kinds": {
+    "creature": ["cat", "bear", "rat", "chicken", "bird", "fish", "snake"],
+    "vehicle": ["model-t", "sedan1920", "car1950", "car-modern", "chariot", "wagon", "locomotive", "ship", "sailship", "plane", "zeppelin", "balloon", "rocket"]
+  }
+}

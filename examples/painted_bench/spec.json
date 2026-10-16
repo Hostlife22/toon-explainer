@@ -510,46 +510,58 @@
     ],
     "focus": [
      0.45,
-     0.7
+     0.75
     ]
    },
    "layers": [
     {
      "type": "vehicle",
-     "kind": "cart",
-     "x": 0.3,
-     "y": 0.9,
-     "size": 420,
-     "load": "crate",
-     "drive": [
-      [
-       0,
-       2.5
-      ]
+     "kind": "model-t",
+     "id": "car",
+     "size": 300,
+     "riders": [
+      "driver"
      ],
-     "move": [
-      {
-       "at": 0,
-       "dur": 2.5,
-       "to": [
-        0.5,
-        0.9
+     "atmos": 0.2,
+     "path": {
+      "pts": [
+       [
+        1.08,
+        0.72
        ],
-       "ease": "linear"
-      }
-     ],
-     "contact": {
-      "w": 1.4
+       [
+        0.72,
+        0.72
+       ]
+      ],
+      "dur": 2.5,
+      "ease": "out"
      }
     },
     {
-     "type": "bean",
-     "who": "driver",
-     "x": 0.75,
-     "y": 0.92,
-     "size": 400,
-     "pose": "wave",
-     "expr": "happy"
+     "type": "vehicle",
+     "kind": "wagon",
+     "id": "wagon",
+     "size": 560,
+     "terrain": "dirt",
+     "path": {
+      "pts": [
+       [
+        0.02,
+        0.9
+       ],
+       [
+        0.3,
+        0.88
+       ],
+       [
+        0.55,
+        0.9
+       ]
+      ],
+      "dur": 2.5,
+      "ease": "linear"
+     }
     },
     {
      "type": "prop",
