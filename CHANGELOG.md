@@ -22,6 +22,16 @@ Maps 2.0: real geography.
 - Animated conquest: region `flood` (organic boiling front from a lon/lat point, shared across all parts of a group), `drawOn` (border traced with a pen, then the fill fades in), `wipe.dir` (a straight edge sweeping `left`, `right`, `top`, `bottom`, a vector or an angle).
 - The validator checks map `style`, `geo.proj`, `geo.ranges`, `geo.detail`, `iso` codes, `lonlat` rings and lon/lat cover origins. New example `examples/geo_maps` (Europe 1914, globe spin, Mediterranean flood, warring states of China, an Atlantic crossing, a border drawn and wiped).
 
+Painted engine, phase 7: props and FX 2.0.
+
+- Closed-form particles: `fx` kind `particles` with 14 presets (`smoke`, `dust`, `sparks`, `fire`, `embers`, `steam`, `splash`, `rain`, `snow`, `debris`, `confetti`, `leaves`, `bubbles`, `gas`) and fields `rate`, `spread`, `life`, `gravity`, `wind`, `dur`, `burst`, `prewarm`, ...; every particle is a pure function of (seed, index, time). Painted rendering: soft lit puffs and additive glows.
+- Impact language: `impact-frame` (1-6 frame `invert`, `flat` poster or `flash` hit frame), `streaks`, `shockwave`, `dustkick` (fires on a target's landings), `toxic-cloud`, `aura`, and the layer field `trail` (motion smear on any layer).
+- Under the painted look `smoke`, `fire`, `explosion`, `dust`, `puff` and `gas` are repainted with particles; `bottle`, `crate`, `barrel`, `coin`, `moneybag`, `sack`, `hourglass`, `bulb`, `book`, `scroll`, `sword` and `shield` get materials, and standing props get contact shadows. Classic frames are unchanged.
+- Materials API: `T.matGlass`, `T.matLiquid`, `T.matMetal`, `T.matWood`, `T.matFabric`, `T.matPaper`, `T.matStone`, `T.matLeather`.
+- 37 new props: lab glassware (`flask`, `round-flask`, `beaker`, `test-tube`, `tube-rack`, `retort`, `burner`) with liquid levels, bubbles and fumes; `book-stack`, `paper-stack`, `coin-pile`, `banknotes`, `gold-bars`, `amphora`, `apple`, `cheese`, `fish`, `chair`, `stool`, `oil-lamp`, `lantern`, `inkwell`; `hammer`, `wrench`, `saw`, `shovel`, `pickaxe`, `anvil`, `axe`, `bow`, `pistol`, `musket`, `cannon` (guns `fire` with flash, smoke and recoil); machines with moving parts `gears`, `piston`, `gauge`, `valve`, `fuel-pump`.
+- Painted paper: aged sheets with folds, stains and grungy stamps (`folds`, `stains`); new doc kinds `front-page` and `letter` (handwriting that writes on, signature, wax seal).
+- `examples/props_fx_v2`: a 12-shot catalog of the above.
+
 ## 3.6.0 · 2026-10-15
 
 More pictures, more examples and a reproducible showcase.

@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 
 from density import lint  # noqa: F401  (re-exported: non-fatal density warnings, printed by the CLI)
+import props_fx  # Props & FX 2.0 field checks (particles, impact language, trail, paper)
 
 KNOWN_LAYERS = {"bean", "image", "label", "title", "date", "era", "counter", "timer", "caption",
                 "prop", "card", "sign", "calendar", "map", "fx", "fg", "crowd"}
@@ -380,6 +381,11 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         errors.append(f"{where}: image needs src or frames.idle")
     _check_common(layer, where, cast, errors)
     _check_paint_fields(layer, where, errors)
+    seen: set[str] = set()
+    for state in _swap_states(layer):
+        found: list[str] = []
+        props_fx.check_layer(state, where, found, LAYER_KINDS.get("particle_preset", set()))
+        errors.extend(e for e in found if not (e in seen or seen.add(e)))
     for win in layer.get("talk", []) or []:
         if not (isinstance(win, list) and len(win) == 2 and all(isinstance(v, (int, float)) for v in win) and win[0] <= win[1]):
             errors.append(f"{where}: talk windows must be [[start, end], ...] with start <= end")
