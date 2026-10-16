@@ -18,6 +18,7 @@
   // Constant or timeline [{at, v}] → {cur, prev, p, at}
   T.timed = (val, lt, blend = 0.18) => {
     if (!Array.isArray(val)) return { cur: val, prev: val, p: 1, at: -1e9 };
+    if (!val.length) return { cur: undefined, prev: undefined, p: 1, at: -1e9 }; // empty timeline: no value
     let i = -1;
     for (let k = 0; k < val.length; k++) if (lt >= (val[k].at ?? 0)) i = k;
     if (i < 0) return { cur: val[0].v, prev: val[0].v, p: 1, at: -1e9 };
@@ -206,7 +207,7 @@
     ctx.restore();
   }
 
-  function arm(ctx, j, sleeve, skin, hold, lt = 0, w = ARM_W, hs = 1) {
+  function arm(ctx, j, sleeve, skin, hold, lt = 0, w = ARM_W, hs = 1, holdSize = null) {
     if (T.PAINT && T.paintLimb) T.paintLimb(ctx, [j.sx, j.sy], [j.ex, j.ey], [j.hx, j.hy], w, sleeve, { cuff: 0.84 }); // painted: shaded tube
     else {
       const path = () => { ctx.beginPath(); ctx.moveTo(j.sx, j.sy); ctx.quadraticCurveTo(j.ex, j.ey, (j.ex + j.hx) / 2, (j.ey + j.hy) / 2); ctx.lineTo(j.hx, j.hy); };
@@ -219,8 +220,8 @@
       ctx.save(); ctx.translate(j.hx, j.hy);
       if (hold === 'sword') ctx.rotate(Math.PI - j.dir); // blade follows the forearm
       else if (hold === 'spear' || hold === 'torch') { ctx.rotate(T.clamp(-Math.sin(j.dir) * 0.35, -0.35, 0.35)); ctx.translate(0, hold === 'spear' ? 160 : 40); } // shafts stay upright
-      else ctx.translate(0, hold === 'shield' ? 0 : -60);
-      T.drawProp(ctx, hold, hold === 'shield' ? 260 : hold === 'spear' ? 420 : 170, lt, {}); ctx.restore();
+      else ctx.translate(0, hold === 'shield' ? 0 : -60 * (holdSize ? Math.min(1, holdSize / 170) : 1));
+      T.drawProp(ctx, hold, holdSize ?? (hold === 'shield' ? 260 : hold === 'spear' ? 420 : 170), lt, {}); ctx.restore();
     }
     hand(ctx, j.hx, j.hy, j.dir, j.hand, skin, hs);
   }

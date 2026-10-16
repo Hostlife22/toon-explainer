@@ -13,28 +13,38 @@
   function applyReach(ctx, Ly, lt, env, base, dyE, arms, G, act) {
     const r = T.reachOf(Ly, lt);
     if (!r) return arms;
-    const ref = r.cur || r.prev;
-    if (!ref) return arms;
+    if (!r.cur && !r.prev) return arms;
     const dur = (r.cur && r.cur.dur) ?? (r.prev && r.prev.dur) ?? 0.35;
-    if (!r.cur && r.since >= dur * 2.5) return arms; // back on the pose
     const p = r.since > 1e8 ? 1 : act && act.overshoot ? T.poseSpring(r.since, dur * 0.25) : T.ease.inOut(T.prog(r.since, 0, dur));
-    const which = ref.arm === 'left' ? [0] : ref.arm === 'both' ? [0, 1] : [1];
-    const out = arms.slice();
-    which.forEach((i) => {
-      const side = i ? 1 : -1, off = which.length > 1 ? side * 26 : 0;
-      const at = (e) => { const q = T.reachPoint(ctx, e, env, base, dyE); return q ? [q[0] + off, q[1]] : [arms[i].hx, arms[i].hy]; };
-      const a = at(r.prev), b = at(r.cur);
+    const armsOf = (e) => (!e ? [] : e.arm === 'left' ? [0] : e.arm === 'both' ? [0, 1] : [1]);
+    const inPrev = armsOf(r.prev), inCur = armsOf(r.cur), out = arms.slice();
+    // Each arm travels from where it was (the previous target, or its pose wrist) to where it goes (the new target, or
+    // back to the pose): switching arms releases the old one and lifts the new one, nothing snaps.
+    [0, 1].forEach((i) => {
+      const was = inPrev.includes(i), will = inCur.includes(i);
+      if (!was && !will) return;
+      if (!will && r.since >= dur * 2.5) return; // released: back on the pose
+      const side = i ? 1 : -1;
+      const at = (e, list) => {
+        if (!e || !list.includes(i)) return [arms[i].hx, arms[i].hy];
+        const q = T.reachPoint(ctx, e, env, base, dyE), off = list.length > 1 ? side * 26 : 0;
+        return q ? [q[0] + off, q[1]] : [arms[i].hx, arms[i].hy];
+      };
+      const a = at(r.prev, inPrev), b = at(r.cur, inCur), ref = will ? r.cur : r.prev;
       const [tx, ty] = T.arcPoint(a, b, p, ref.arc ?? 0.25);
       let l1 = G.l1, l2 = G.l2;
       const d = Math.hypot(tx - G.sx * side, ty - G.sy);
       if (ref.stretch && d > (l1 + l2) * 0.98) { const s = d / ((l1 + l2) * 0.98); l1 *= s; l2 *= s; } // rubber-hose reach
       const j = R().ik(G.sx * side, G.sy, tx, ty, side, l1, l2);
-      const hand = (r.cur && r.cur.hand) || (r.cur && r.cur.target ? 'grab' : null) || (p < 0.5 && r.prev && r.prev.hand) || arms[i].hand;
+      const hand = will ? r.cur.hand || (r.cur.target ? 'grab' : arms[i].hand) : p < 0.5 ? r.prev.hand || (r.prev.target ? 'grab' : arms[i].hand) : arms[i].hand;
       out[i] = { sx: G.sx * side, sy: G.sy, ...j, hand };
     });
     return out;
   }
 
+  // Held prop sizes (rig units) used with acting; classic keeps 170 for everything but shields and spears.
+  T.HOLD_SIZE = { coin: 80, bulb: 100, heart: 100, question: 110, exclaim: 110, bread: 110, scroll: 120, book: 120,
+    skull: 120, hourglass: 120, moneybag: 140 };
   const over = (m) => !!(T.LEG_MODES[m] && T.LEG_MODES[m].over); // leg modes drawn over the robe (sit, tuck)
 
   T.layers.bean = (ctx, Ly, lt, env) => {
@@ -76,7 +86,7 @@
     const bs = RG.bodyState(prev, cur, pp);
     const an = RG.anticState(Ly, lt, pt, blend);
     const ts = T.turnState(Ly, lt, bs.view ?? c.view ?? '3q');
-    const ft = act || T.travelPath(Ly) ? T.flipTurn(Ly, env, ts.view) : null;
+    const ft = (act ? act.turn : T.travelPath(Ly)) ? T.flipTurn(Ly, env, ts.view) : null;
     const view = ft ? ft.view : ts.view;
     const specs = moving && !Ly.keepArms ? (gait2 || gait).arms : null;
     const reachS = (g, m) => (m === 1 ? g : { ...g, l1: g.l1 * m, l2: g.l2 * m }); // armScale: stretchy reach
@@ -169,15 +179,25 @@
       const sleeve = c.sleeve ?? c.robe;
       const armW = (c.sleeveW ?? RG.ARM_W) * B.armW;
       const noArms = c.arms === false || (c.age === 'baby' && c.arms !== true); // swaddled babies hide their arms
-      const drawArm = (i) => noArms ? null : RG.arm(ctx, arms[i], sleeve, c.skin, i ? Ly.hold || c.hold : Ly.holdL || c.holdL, lt, armW, B.hand);
+      const holdOf = (i) => (i ? Ly.hold || c.hold : Ly.holdL || c.holdL);
+      // held prop size: holdScale x the classic size, else with acting a size that suits the prop (a coin is not a shield)
+      const holdSz = (i) => {
+        const h = holdOf(i), k = Ly.holdScale ?? c.holdScale, base = h === 'shield' ? 260 : h === 'spear' ? 420 : 170;
+        return k != null ? base * k : act ? T.HOLD_SIZE[h] ?? null : null;
+      };
+      const drawArm = (i) => noArms ? null : RG.arm(ctx, arms[i], sleeve, c.skin, holdOf(i), lt, armW, B.hand, holdSz(i));
+      // acting: a near arm raised above the shoulders is drawn over the head, so arms-up / point-up stay visible
+      const raised = (i) => !!act && !front && view !== 'back' && arms[i].hy < B.neckY - 40;
+      const late = [];
       // back arm (character's left, screen-left in 3/4) goes behind the body unless the pose brings it to the face
       if (view !== 'front' && !front) drawArm(0);
       if (view === 'back') drawArm(1);
       torso(() => { RG.body(ctx, c, view, sway ? sway.x * 0.6 : 0, seed); hooks(T.BEAN_EXTRAS); });
       if (geom && legMode !== 'gait' && over(legMode)) { ctx.save(); if (dyE) ctx.translate(0, -dyE); RG.drawLegMode(ctx, c, geom, B); ctx.restore(); }
       const drawFrontArms = () => {
-        if (view === 'front' || front) drawArm(0);
-        if (view !== 'back') drawArm(1);
+        const one = (i) => (raised(i) ? late.push(i) : drawArm(i));
+        if (view === 'front' || front) one(0);
+        if (view !== 'back') one(1);
       };
       if (!front) drawFrontArms();
 
@@ -202,6 +222,7 @@
       });
       ctx.restore();
       if (front) drawFrontArms();
+      late.forEach(drawArm);
       if (probe) record(probe, ctx, base, arms, { view, facing: ts.facing, inBetween: !!(ts.inBetween || ft), sx: sq.sx * tsx, sy: sq.sy * tsy * anticSy,
         antic, overshoot: act && pt.at > -1e8 && since < 0.6 ? pp - 1 : 0, gait: gait2 ? gait2.kind : gait ? (gait.run ? 'run' : 'walk') : null,
         feet: geom && legMode === 'gait' ? geom.map((L) => L.ft.map((v) => Math.round(v))) : gait ? gait.legs.map((l) => [Math.round(l.dx), Math.round(l.dy)]) : null,

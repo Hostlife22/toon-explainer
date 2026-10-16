@@ -3,6 +3,8 @@ detail, lip-sync, costume detail). Imported by spec.py; the vocabulary lives in 
 Guide: references/toolkits/01_characters.md and 02_acting.md."""
 from __future__ import annotations
 
+import math
+
 FACINGS = {"right", "left"}
 REACH_ARMS = {"right", "left", "both"}
 REACH_SPACES = {"world", "local"}
@@ -14,13 +16,18 @@ PATH_EASES = {"linear", "inOut", "in", "out"}
 
 
 def _num(v) -> bool:
-    return isinstance(v, (int, float)) and not isinstance(v, bool)
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
+def _in(v, allowed) -> bool:
+    """Membership that never raises on unhashable values (dicts, lists)."""
+    return isinstance(v, str) and v in allowed
 
 
 def _timed(value):
     """Plain values of a constant or a [{at, v}] timeline; None when the timeline shape itself is wrong."""
     if isinstance(value, list):
-        if not all(isinstance(k, dict) and _num(k.get("at", 0)) for k in value):
+        if not value or not all(isinstance(k, dict) and _num(k.get("at", 0)) for k in value):
             return None
         return [k.get("v") for k in value]
     return [value]
@@ -39,16 +46,16 @@ def _check_reach(entry, where: str, errors: list[str]) -> None:
     has_xy = _num(entry.get("x")) and _num(entry.get("y"))
     if not has_xy and not isinstance(entry.get("target"), str):
         errors.append(f"{where}: reach needs numeric x and y or a target layer id")
-    if entry.get("arm") is not None and entry["arm"] not in REACH_ARMS:
+    if entry.get("arm") is not None and not _in(entry["arm"], REACH_ARMS):
         errors.append(f"{where}: reach arm {entry['arm']!r} not in {sorted(REACH_ARMS)}")
-    if entry.get("space") is not None and entry["space"] not in REACH_SPACES:
+    if entry.get("space") is not None and not _in(entry["space"], REACH_SPACES):
         errors.append(f"{where}: reach space {entry['space']!r} not in {sorted(REACH_SPACES)}")
     for k in ("dx", "dy", "arc", "dur"):
         if entry.get(k) is not None and not _num(entry[k]):
             errors.append(f"{where}: reach {k} must be a number")
 
 
-def _check_lipsync(lip, where: str, errors: list[str]) -> None:
+def check_lipsync(lip, where: str, errors: list[str]) -> None:
     if not isinstance(lip, dict):
         errors.append(f"{where}: lipsync must be {{src | levels, fps, offset, align}}")
         return
@@ -62,7 +69,7 @@ def _check_lipsync(lip, where: str, errors: list[str]) -> None:
     for k in ("offset", "gain"):
         if lip.get(k) is not None and not _num(lip[k]):
             errors.append(f"{where}: lipsync {k} must be a number")
-    if lip.get("align") is not None and lip["align"] not in LIP_ALIGN:
+    if lip.get("align") is not None and not _in(lip["align"], LIP_ALIGN):
         errors.append(f"{where}: lipsync align {lip['align']!r} not in {sorted(LIP_ALIGN)}")
 
 
@@ -84,22 +91,22 @@ def check_path(layer: dict, where: str, gaits: set[str], errors: list[str]) -> N
         errors.append(f"{where}: path dur must be a number of seconds above 0")
     if p.get("at") is not None and not _num(p["at"]):
         errors.append(f"{where}: path at must be a number")
-    if p.get("ease") is not None and p["ease"] not in PATH_EASES:
+    if p.get("ease") is not None and not _in(p["ease"], PATH_EASES):
         errors.append(f"{where}: path ease {p['ease']!r} not in {sorted(PATH_EASES)}")
     if p.get("face") is not None and not isinstance(p["face"], bool):
         errors.append(f"{where}: path face must be true or false")
     g = p.get("gait")
-    if g is not None and g is not False and g not in gaits:
+    if g is not None and g is not False and not _in(g, gaits):
         errors.append(f"{where}: path gait {g!r} not in {sorted(gaits)} (or false)")
 
 
 def check_bean(layer: dict, where: str, views: set[str], hands: set[str], gaits: set[str], errors: list[str]) -> None:
     """Bean-only Characters 2.0 fields."""
     vals = _timed(layer.get("view"))
-    if vals is None or any(v is not None and v not in views for v in vals):
+    if vals is None or any(v is not None and not _in(v, views) for v in vals):
         errors.append(f"{where}: view must be one of {sorted(views)} or a [{{at, v}}] timeline of them")
     vals = _timed(layer.get("facing"))
-    if vals is None or any(v is not None and v not in FACINGS for v in vals):
+    if vals is None or any(v is not None and not _in(v, FACINGS) for v in vals):
         errors.append(f"{where}: facing must be 'right' / 'left' or a [{{at, v}}] timeline of them")
     turn = layer.get("turn")
     if turn is not None and turn is not False and turn is not True:
@@ -107,7 +114,7 @@ def check_bean(layer: dict, where: str, views: set[str], hands: set[str], gaits:
             errors.append(f"{where}: turn must be true/false or {{frames 0..4, smear, squash}}")
     for hk in ("hand", "handL"):
         vals = _timed(layer.get(hk))
-        if vals is None or any(v is not None and v not in hands for v in vals):
+        if vals is None or any(v is not None and not _in(v, hands) for v in vals):
             errors.append(f"{where}: {hk} must be a hand shape in {sorted(hands)} or a timeline of them")
     reach = layer.get("reach")
     if isinstance(reach, list):
@@ -123,8 +130,9 @@ def check_bean(layer: dict, where: str, views: set[str], hands: set[str], gaits:
         if not (isinstance(acting, dict) and set(acting) <= ACTING_KEYS and all(isinstance(v, bool) for v in acting.values())):
             errors.append(f"{where}: acting must be true/false or {{{', '.join(sorted(ACTING_KEYS))}: bool}}")
     detail = layer.get("detail")
-    if detail is not None and not isinstance(detail, bool) and detail not in DETAIL:
+    if detail is not None and not isinstance(detail, bool) and not _in(detail, DETAIL):
         errors.append(f"{where}: detail must be true, false or 'auto'")
+    _check_hold_size(layer, where, errors)
     sway = layer.get("secondary")
     if sway is not None and not (_num(sway) and 0 <= sway <= 3):
         errors.append(f"{where}: secondary must be a number 0..3 (spring secondary-motion strength)")
@@ -132,19 +140,29 @@ def check_bean(layer: dict, where: str, views: set[str], hands: set[str], gaits:
         if layer.get(key) is not None and not _windows_ok(layer[key]):
             errors.append(f"{where}: {key} windows must be [[start, end], ...]")
     imp = layer.get("impact")
-    if imp is not None and not (isinstance(imp, list) and all(_num(x) or (isinstance(x, dict) and _num(x.get("at"))) for x in imp)):
-        errors.append(f"{where}: impact must be a list of times or {{at, dir, amount}}")
+    ok_imp = lambda x: _num(x) or (isinstance(x, dict) and _num(x.get("at")) and x.get("dir", 1) in (1, -1)
+                                   and not isinstance(x.get("dir", 1), bool)
+                                   and (x.get("amount") is None or (_num(x["amount"]) and 0 <= x["amount"] <= 3)))
+    if imp is not None and not (isinstance(imp, list) and all(ok_imp(x) for x in imp)):
+        errors.append(f"{where}: impact must be a list of times or {{at, dir 1 | -1, amount 0..3}}")
     if layer.get("lipsync") is not None:
-        _check_lipsync(layer["lipsync"], where, errors)
+        check_lipsync(layer["lipsync"], where, errors)
+
+
+def _check_hold_size(obj: dict, where: str, errors: list[str]) -> None:
+    v = obj.get("holdScale")
+    if v is not None and not (_num(v) and 0 < v <= 5):
+        errors.append(f"{where}: holdScale must be a number in 0..5 (1 = the classic held-prop size)")
 
 
 def check_look(look: dict, where: str, textures: set[str], errors: list[str]) -> None:
     """Costume detail look fields: patches (true or a count 0..8), fabric (true/false or a texture kind)."""
+    _check_hold_size(look, where, errors)
     p = look.get("patches")
     if p is not None and not (isinstance(p, bool) or (isinstance(p, int) and 0 <= p <= 8)):
         errors.append(f"{where}: patches must be true/false or a count 0..8")
     f = look.get("fabric")
-    if f is not None and not isinstance(f, bool) and f not in textures:
+    if f is not None and not isinstance(f, bool) and not _in(f, textures):
         errors.append(f"{where}: fabric must be true/false or a texture kind in {sorted(textures)}")
 
 

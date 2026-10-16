@@ -12,6 +12,8 @@ Painted engine, phase 3: Characters 2.0. Classic specs render as before; the pai
 - Close-up faces (`detail`, automatic on large painted heads): graded irises with highlights, mood-shaped lids and brows, nose and cheek shading, wrinkles, sweat, tears, veins, blush, stubble, mouths with teeth rows and tongue. New expressions `terror`, `disgust`, `awe`, `crying`, `laughing`, `scheming`, `exhausted`.
 - Lip-sync: `scripts/lipsync.py` writes a per-frame loudness envelope from a voiceover (FFmpeg + standard library); `lipsync: {src}` maps it to five mouth shapes on twos (`render.py` inlines the file).
 - Painted costume detail: fabric weave over robes and outfits, cloth folds that follow the secondary motion, shaded belts with buckles, `patches`.
+- With acting, raised near arms draw over the head (`arms-up`, `point-up` stay visible) and held props get sizes that suit them; `holdScale` scales a held prop in any look.
+- Hardening: gait phase integrates the cadence over speed changes (no re-phasing on eased paths), switching the reaching arm releases instead of snapping, pinned beans can reach world layers, `turn` / `acting.turn` settings apply to motion flips, impacts are clamped, cloth folds respect layer opacity, `--gate 0` keeps silence silent, external lip-sync envelopes are validated, and malformed or non-finite Characters 2.0 values are reported instead of crashing.
 - `examples/characters_v2` (one shot per feature) and livelier face and crowd shots in `examples/painted_bench`.
 
 Painted engine, phases 0 and 1: a density lint and the paint core.

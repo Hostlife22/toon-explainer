@@ -291,3 +291,96 @@ def test_catalog_validates_and_renders_deterministically():
     first = _frames(spec, total)
     again = _frames(spec, list(reversed(total)))[::-1]
     assert first == again, "characters_v2 frames depend on render order"
+
+
+# ---------- review fixes ----------
+@pytest.mark.parametrize("field,value,needle", [
+    ("hand", [], "hand"),
+    ("handL", [], "hand"),
+    ("view", [], "view"),
+    ("detail", {}, "detail"),
+    ("facing", {"v": 1}, "facing"),
+    ("hand", {"x": 1}, "hand"),
+    ("reach", {"x": 0.1, "y": 0.2, "arm": ["left"]}, "reach"),
+    ("lipsync", {"levels": "01", "align": {}}, "lipsync"),
+    ("impact", [{"at": 1, "amount": 6}], "impact"),
+    ("impact", [{"at": 1, "dir": "left"}], "impact"),
+    ("path", {"pts": [[0.1, 1e309], [0.3, 0.4]], "dur": 1}, "path"),
+    ("path", {"pts": [[0.1, 0.2], [0.3, 0.4]], "dur": 1, "ease": {}}, "path"),
+    ("path", {"pts": [[0.1, 0.2], [0.3, 0.4]], "dur": 1, "gait": []}, "path"),
+])
+def test_malformed_v2_values_are_reported_not_crashing(field, value, needle):
+    errors = "\n".join(validate(_spec([_bean(**{field: value})])))
+    assert needle in errors, (field, errors)
+
+
+def test_bad_fabric_type_is_reported():
+    spec = _spec([_bean()])
+    spec["cast"]["hero"]["fabric"] = ["wood"]
+    assert "fabric" in "\n".join(validate(spec))
+
+
+def test_lipsync_gate_zero_keeps_silence_silent():
+    import lipsync
+    assert lipsync.quantise([0.0, 0.5, 0.0], gate=0) == "090"
+
+
+def test_render_rejects_a_bad_external_envelope(tmp_path):
+    import render as R
+    (tmp_path / "bad.lips.json").write_text(json.dumps({"fps": 0, "levels": "a99"}))
+    spec = _spec([_bean(lipsync={"src": "bad.lips.json"})])
+    with pytest.raises(SystemExit) as exc:
+        R.prepare_spec(tmp_path / "spec.json", spec)
+    assert "lipsync" in str(exc.value)
+
+
+def test_engine_survives_empty_timelines_and_strong_impacts():
+    layer = _bean(hand=[], handL=[], impact=[{"at": 0.5, "amount": 6}])
+    p = _probe(_spec([layer]), [0.55])[0]["hero"]
+    assert math.isfinite(p["sx"]) and math.isfinite(p["sy"]) and p["sx"] > 0
+
+
+def test_gait_arms_counter_swing():
+    ps = [p["hero"]["hands"] for p in _probe(_spec([_bean(walk=[[0, 3]], size=600)]), [0.3, 0.6])]
+    dl, dr = ps[1][0][0] - ps[0][0][0], ps[1][1][0] - ps[0][1][0]
+    assert dl * dr < 0, ps  # one hand swings forward while the other swings back
+
+
+def test_motion_flip_turn_respects_turn_settings():
+    mv = [{"at": 1.0, "dur": 0.05, "to": [0.3, 0.9], "flip": True}]
+    t = [1.05 + 0.5 / 30]
+    on = _probe(_spec([_bean(move=mv)]), t)[0]["hero"]
+    assert on["inBetween"] is True
+    for extra in ({"acting": {"turn": False}}, {"turn": False}, {"turn": {"frames": 0}}):
+        off = _probe(_spec([_bean(move=mv, **extra)]), t)[0]["hero"]
+        assert off["inBetween"] is False, extra
+    flat = _probe(_spec([_bean(move=mv, turn={"squash": False})]), t)[0]["hero"]
+    assert flat["inBetween"] is True and abs(flat["sx"] - 1) < 1e-6
+
+
+def test_switching_the_reaching_arm_releases_instead_of_snapping():
+    layer = _bean(reach=[{"at": 0, "v": {"x": 0.38, "y": 0.62, "arm": "left"}}, {"at": 1, "v": {"x": 0.5, "y": 0.62, "arm": "right"}}], acting=False)
+    before, after = (p["hero"]["hands"] for p in _probe(_spec([layer]), [0.99, 1.0 + 1 / 30]))
+    assert math.hypot(after[0][0] - before[0][0], after[0][1] - before[0][1]) < 25, (before, after)
+    assert math.hypot(after[1][0] - before[1][0], after[1][1] - before[1][1]) < 25, (before, after)
+
+
+def test_pinned_bean_reaches_a_world_layer():
+    spec = _spec([{"type": "prop", "id": "coin", "kind": "coin", "x": 0.5, "y": 0.62, "size": 60}])
+    spec["shots"][0]["pinned"] = [_bean(reach={"target": "coin"})]
+    assert validate(spec) == []
+    p = _probe(spec, [1.0])[0]["hero"]
+    hx, hy = p["hands"][1]
+    assert math.hypot(hx - 0.5 * 1920, hy - 0.62 * 1080) < 4, p
+
+
+def test_gait_phase_is_continuous_on_an_eased_path():
+    layer = {"type": "bean", "id": "w", "who": "hero", "x": 0.05, "y": 0.9, "size": 300,
+             "path": {"pts": [[0.05, 0.9], [0.95, 0.9]], "at": 0, "dur": 2, "ease": "in", "gait": "run"}}
+    js = """() => { const L = window.FILM_SPEC.shots[0].layers[0], out = [];
+      for (let f = 0; f <= 60; f++) out.push(TOON.gaitPhase(L, f / 30, { lt: f / 30, st: TOON.layerState(L, f / 30) }, 300 / 600));
+      return out; }"""
+    ph = _page_eval(_spec([layer]), lambda page: page.evaluate(js))
+    steps = [b - a for a, b in zip(ph, ph[1:])]
+    assert all(s >= -1e-9 for s in steps), ph  # never runs backwards
+    assert max(steps) < 0.5, ph  # never jumps half a cycle in one frame

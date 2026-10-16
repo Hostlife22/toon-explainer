@@ -80,9 +80,9 @@
     for (const im of L.impact || []) {
       const e = typeof im === 'number' ? { at: im } : im, s = lt - e.at;
       if (s < 0 || s > 0.4) continue;
-      const k = (e.amount ?? 1) * Math.exp(-8 * s) * Math.cos(Math.PI * 2 * 3 * s);
-      sxImp = Math.min(sxImp, 1 - 0.18 * k);
-      lean += -(e.dir ?? 1) * 9 * Math.exp(-6 * s);
+      const k = T.clamp(Number(e.amount ?? 1) || 0, 0, 3) * Math.exp(-8 * s) * Math.cos(Math.PI * 2 * 3 * s);
+      sxImp = Math.min(sxImp, Math.max(0.45, 1 - 0.18 * k)); // never folds through zero
+      lean += -(e.dir === -1 ? -1 : 1) * 9 * T.clamp(e.amount ?? 1, 0, 3) * Math.exp(-6 * s);
     }
     const sx = sxImp * (1 / Math.sqrt(sy));
     return { sx, sy: sy / Math.sqrt(sxImp), lean };
@@ -106,15 +106,26 @@
     const trs = new DOMMatrix().translate(st.x, st.y).rotate(st.r / T.DEG).scale(st.s * st.flip * st.sx, st.s * st.sy);
     return m.multiply(trs.inverse());
   };
+  // World point -> screen point through a shot camera (for pinned layers reaching into the world).
+  let camCtx = null;
+  function camPoint(cam, z, w) {
+    if (!camCtx) camCtx = document.createElement('canvas').getContext('2d');
+    camCtx.setTransform(1, 0, 0, 1, 0, 0); T.applyCam(camCtx, cam, z);
+    const q = camCtx.getTransform().transformPoint(new DOMPoint(w[0], w[1]));
+    return [q.x, q.y];
+  }
   // A reach entry as a point in the current (arm) frame. dyE: the body drop already applied to that frame.
   T.reachPoint = (ctx, e, env, base, dyE) => {
     if (!e) return null;
     let w = null;
     if (typeof e.target === 'string') {
-      const shot = env && env.shot, L0 = shot && [...(shot.layers || []), ...(shot.pinned || [])].find((q) => q.id === e.target);
+      const shot = env && env.shot, find = (list) => (list || []).find((q) => q.id === e.target);
+      let L0 = shot && (find(shot.layers) || find(shot.pinned)), cam = null;
+      if (!L0 && env && env.outerShot) { L0 = find(env.outerShot.layers); cam = env.outerCam; } // pinned bean -> world layer
       const st = L0 ? T.layerState(T.effLayer(L0, env.lt), env.lt) : null;
       if (!st) return null;
       w = [st.x + (e.dx ?? 0), st.y + (e.dy ?? 0)];
+      if (cam) w = camPoint(cam, L0.z ?? 1, w);
     } else if ((e.space || 'world') === 'world') w = [e.x * T.W + (e.dx ?? 0), e.y * T.H + (e.dy ?? 0)];
     else return [e.x, e.y - dyE];
     if (!base) return null;

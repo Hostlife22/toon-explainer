@@ -30,6 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from spec import SpecError, image_refs, load  # noqa: E402
+from spec_characters import check_lipsync  # noqa: E402
 
 ENGINE = Path(__file__).parent / "engine"
 
@@ -67,6 +68,10 @@ def inline_lipsync(spec_path: Path, lip: dict) -> dict:
     out = {k: v for k, v in lip.items() if k != "src"}
     out["levels"] = env["levels"]
     out.setdefault("fps", env.get("fps", 30))
+    errors: list[str] = []
+    check_lipsync(out, f"lipsync envelope {lip['src']!r}", errors)
+    if errors:
+        raise SystemExit("\n".join(errors))
     return out
 
 

@@ -471,7 +471,7 @@
     c.save();
     c.setTransform(env.dpr, 0, 0, env.dpr, 0, 0);
     const own = { ...shot, layers: shot.pinned };
-    const sEnv = { ...env, cam: null, shot: own, seed: (env.seed ?? 1) + ':' + shot.id + ':pinned' };
+    const sEnv = { ...env, cam: null, shot: own, outerShot: shot, outerCam: T.cameraAt(shot.camera, lt, shot.dur), seed: (env.seed ?? 1) + ':' + shot.id + ':pinned' };
     const prevPaint = T.PAINT;
     T.PAINT = T.paintState ? T.paintState(env.spec, shot) : null;
     try { for (const L0 of shot.pinned) T.drawLayer(c, T.effLayer(L0, lt), lt, sEnv, null); } finally { T.PAINT = prevPaint; c.restore(); }

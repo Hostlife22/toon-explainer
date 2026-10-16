@@ -71,11 +71,13 @@
   // when the flip changed within the last `frames` frames (shot time), else null. env.lt = shot time.
   T.flipTurn = (L, env, view) => {
     if (!env || !env.st || !(L.move || T.travelPath(L)) || L.turn === false || view === 'front' || view === 'back') return null;
-    const per = Math.max(1, Math.min(4, (L.turn && L.turn.frames) || 1)) + 1;
-    const now = env.st.flip;
+    const cfg = typeof L.turn === 'object' && L.turn ? L.turn : {};
+    const frames = Math.max(0, Math.min(4, cfg.frames ?? 1));
+    if (!frames) return null;
+    const per = frames + 1, now = env.st.flip, sq = cfg.squash !== false;
     for (let k = 1; k <= per; k++) {
       const st = T.layerState(L, env.lt - k / FPS);
-      if (st && st.flip !== now) return { view: k <= per - 1 ? 'front' : view, inBetween: true, sx: SQUASH, sy: STRETCH, dir: now };
+      if (st && st.flip !== now) return { view: k <= per - 1 ? 'front' : view, inBetween: true, sx: sq ? SQUASH : 1, sy: sq ? STRETCH : 1, dir: now };
     }
     return null;
   };

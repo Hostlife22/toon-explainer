@@ -32,16 +32,39 @@
     return null;
   };
 
-  // Ground speed of the layer in rig units / s (path, else move), or 0 when it walks in place.
-  function speedUnits(L, env, k) {
-    const st = env && env.st;
-    if (!st || !k) return 0;
+  // Ground speed of the layer in rig units / s at shot time t (path, else move); 0 when it walks in place or has no state.
+  function speedAt(L, t, k, hasState) {
+    if (!hasState || !k) return 0;
+    const st = T.layerState(L, t);
+    if (!st) return 0;
     const s = Math.abs(st.s || 1) * k;
-    if (T.travelPath(L)) return T.travelSpeed(L.path, env.lt) / s;
+    if (T.travelPath(L)) return T.travelSpeed(L.path, t) / s;
     if (!L.move) return 0;
-    const a = T.layerState(L, env.lt - 1 / 30), b = T.layerState(L, env.lt + 1 / 30);
-    return a && b ? Math.hypot(b.x - a.x, b.y - a.y) * 15 / s : 0;
+    const a = T.layerState(L, t - 1 / 60), b = T.layerState(L, t + 1 / 60);
+    return a && b ? Math.hypot(b.x - a.x, b.y - a.y) * 30 / s : 0;
   }
+  // Start (layer time) of the gait span running at lt.
+  function spanStart(L, lt) {
+    const p = T.travelPath(L);
+    if (p && p.gait !== false) { const a = (p.at ?? 0) - (L.at ?? 0); if (lt >= a && lt <= a + (p.dur ?? 1)) return a; }
+    for (const k of ['run', 'walk', 'sneak', 'march']) for (const [a, b] of L[k] || []) if (lt >= a && lt <= b) return a;
+    return 0;
+  }
+  const cadence = (g, rate, v) => Math.max(rate / g.period, (v * g.stance) / (g.stride * 1.5)); // cycles per second
+  // Accumulated gait cycles at layer time lt: the cadence (natural, or faster when the stride would pass 1.5 x its
+  // natural length) integrated from the start of the span, so speed changes never re-phase the legs. Pure fn of time.
+  T.gaitPhase = (L, lt, env, k) => {
+    const kind = T.gaitKind(L, lt);
+    if (!kind) return 0;
+    const g = T.GAITS[kind], rate = L.gaitRate ?? 1, a = spanStart(L, lt), at = L.at ?? 0, has = !!(env && env.st);
+    if (!has || !(T.travelPath(L) || L.move)) return ((lt - a) * rate) / g.period; // walking in place: constant cadence
+    const h = 1 / 30, n =Math.max(0, Math.floor((lt - a) / h + 1e-9));
+    let ph = 0, prev = cadence(g, rate, speedAt(L, a + at, k, has));
+    for (let i = 1; i <= n; i++) { const c = cadence(g, rate, speedAt(L, a + i * h + at, k, has)); ph += (prev + c) * h / 2; prev = c; }
+    const rest = lt - a - n * h;
+    if (rest > 0) ph += cadence(g, rate, speedAt(L, lt + at, k, has)) * rest;
+    return ph;
+  };
 
   // Two-bone leg: hip -> foot with the knee pushed forward (+x); returns the knee point.
   function knee(h, f, l1, l2, fwd) {
@@ -56,13 +79,9 @@
     const kind = T.gaitKind(L, lt);
     if (!kind) return null;
     const g = T.GAITS[kind], rate = L.gaitRate ?? 1;
-    let period = g.period / rate, S = g.stride;
-    const v = speedUnits(L, env, k);
-    if (v > 1) { // match the stride to the travel speed, speeding the cadence up past 1.5 x the natural stride
-      S = v * g.stance * period;
-      if (S > g.stride * 1.5) { S = g.stride * 1.5; period = S / (v * g.stance); }
-    }
-    const ph = (twos(lt) / period) % 1;
+    const v = speedAt(L, lt + (L.at ?? 0), k, !!(env && env.st));
+    const S = v > 1 ? Math.min(v * g.stance * g.period / rate, g.stride * 1.5) : g.stride; // stride matched to the speed
+    const ph = T.gaitPhase(L, twos(lt), env, k) % 1;
     const lh = 88 * B.legH, l1 = lh * 0.5, l2 = lh * 0.5, hipY = -78 * B.legH;
     const dy = g.dy * B.legH + g.bob * B.legH * Math.cos(Math.PI * 4 * (ph - 0.08));
     const legs = [0, 1].map((i) => {

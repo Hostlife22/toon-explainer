@@ -70,7 +70,7 @@ def quantise(rms: list[float], gate: float = 0.08) -> str:
     digits = []
     for v in rms:
         x = min(1.0, v / ref)
-        digits.append("0" if x < gate else str(max(1, min(LEVELS, int(round(x * LEVELS))))))
+        digits.append("0" if v <= 0 or x < gate else str(max(1, min(LEVELS, int(round(x * LEVELS))))))
     return "".join(digits)
 
 

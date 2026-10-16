@@ -7,14 +7,14 @@
   const T = window.TOON, P = T.PAL;
 
   function folds(ctx, robe, sway, seed) {
-    const r = T.rng(T.hash('folds:' + seed)), dark = T.shade(robe, -0.2), light = T.shade(robe, 0.14), hx = sway * 0.45;
+    const r = T.rng(T.hash('folds:' + seed)), dark = T.shade(robe, -0.2), light = T.shade(robe, 0.14), hx = sway * 0.45, a0 = ctx.globalAlpha;
     [-92, -38, 28, 86].forEach((x0) => {
       const x = x0 + (r() - 0.5) * 16, top = -215 + r() * 40, w = 12 + r() * 8;
-      ctx.fillStyle = dark; ctx.globalAlpha = 0.6;
+      ctx.fillStyle = dark; ctx.globalAlpha = a0 * 0.6;
       ctx.beginPath(); ctx.moveTo(x, top); ctx.quadraticCurveTo(x + w * 0.4 + hx * 0.3, -130, x + w + hx, -58); ctx.lineTo(x - w * 0.5 + hx, -58); ctx.quadraticCurveTo(x - 2 + hx * 0.3, -130, x, top); ctx.fill();
-      ctx.globalAlpha = 0.7; ctx.strokeStyle = light; ctx.lineWidth = 5; ctx.lineCap = 'round';
+      ctx.globalAlpha = a0 * 0.7; ctx.strokeStyle = light; ctx.lineWidth = 5; ctx.lineCap = 'round';
       ctx.beginPath(); ctx.moveTo(x + w * 0.9, top + 30); ctx.quadraticCurveTo(x + w * 1.2 + hx * 0.3, -120, x + w * 1.6 + hx, -66); ctx.stroke();
-      ctx.globalAlpha = 1;
+      ctx.globalAlpha = a0;
     });
     ctx.strokeStyle = T.shade(robe, -0.3); ctx.lineWidth = 5; ctx.beginPath(); // hem: a slightly wavy shadow edge
     for (let i = 0; i <= 12; i++) { const x = -150 + i * 25 + hx, y = -74 + Math.sin(i * 1.7) * 4; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
