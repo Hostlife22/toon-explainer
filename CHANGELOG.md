@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased · painted engine
+
+Maps 2.0: real geography.
+
+- Bundled Natural Earth geography (public domain): 1:110m and 1:50m countries with shared-arc borders, lakes and rivers, about 265 KB in `scripts/engine/lib/maps/geo-data-lo.js` / `geo-data-hi.js`, rebuilt by `scripts/build_geo.py` from the raw downloads.
+- Map `geo: {proj, center, span, zoom, rotate, radius}` with `equirect`, `mercator` and `ortho` projections; `center`, `span`, `zoom` and `rotate` take `[{at, v}]` keys, so a globe spins to Europe and zooms in. The globe sits on a twinkling starfield with an atmosphere glow, sphere shading and an inked rim; `graticule` draws latitude and longitude lines.
+- Regions by ISO code (`iso: "FRA"`, groups `iso: ["ESP", "PRT"]` merged into one outline, `continent`), custom historical territories as `lonlat` rings (hand-drawn wobble, clipped to the real coast), `labelAt`. Faces, labels, conquest, wipes and every region effect work on them; overlay points take `{ll: [lon, lat]}`, `{ll: [...], gc: true}` (great circle) or `lon`/`lat` keys, and lon/lat `arrows` bow along the great circle.
+- `style: "painted"` for every map: mottled brush-textured sea, concentric coast ripples, land on a deep inked drop side with a bevel and paper grain, painted region slabs, highland and desert tint (`relief`, `lush`), mountain glyphs with snow caps and hill humps along 29 built-in ranges (`ranges`, `mountains`), rivers by name, plus `compass` and wooden `signs` overlays.
+- Animated conquest: region `flood` (organic boiling front from a lon/lat point, shared across all parts of a group), `drawOn` (border traced with a pen, then the fill fades in), `wipe.dir` (a straight edge sweeping `left`, `right`, `top`, `bottom`, a vector or an angle).
+- The validator checks map `style`, `geo.proj`, `geo.ranges`, `geo.detail`, `iso` codes, `lonlat` rings and lon/lat cover origins. New example `examples/geo_maps` (Europe 1914, globe spin, Mediterranean flood, warring states of China, an Atlantic crossing, a border drawn and wiped).
+
 ## 3.6.0 · 2026-10-15
 
 More pictures, more examples and a reproducible showcase.

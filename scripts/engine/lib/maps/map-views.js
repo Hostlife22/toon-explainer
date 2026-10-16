@@ -224,8 +224,8 @@
   // ---------- region hook ----------
   const HOOK_KEYS = ['split', 'shatter', 'slash', 'engulf', 'peel', 'drift', 'wipe', 'annex', 'damage', 'surrender', 'fire'];
   const BARE = { face: null, label: null, strikeLabel: null, arms: null, conquer: null, whiteout: null, pulse: null };
-  const DIRS = { top: [0, -1], bottom: [0, 1], left: [-1, 0], right: [1, 0] };
-  const geoOf = (R, g) => { const pts = g.pts(R), bb = g.bbox(R); return { pts, bb, c: mean(pts), diag: Math.hypot(bb.w, bb.h) }; };
+  const DIRS = { top: [0, -1], bottom: [0, 1], left: [-1, 0], right: [1, 0] }, dirVec = (d) => { /* wipe dir: way the edge travels, [dx, dy] or degrees */ if (typeof d === 'number') return [Math.cos(d * DEG), Math.sin(d * DEG)]; const v = Array.isArray(d) ? d : DIRS[d]; if (!v) throw new Error(`map region wipe: unknown dir "${d}"`); return v; };
+  const geoOf = (R, g) => { const pts = g.pts(R), bb = g.bbox(R); return { pts, bb, c: R.anchor ? px(g, R.anchor) : mean(pts), diag: Math.hypot(bb.w, bb.h) }; };
   const paintClip = (ctx, R, g, fill, clipFn) => { ctx.save(); ctx.beginPath(); clipFn(ctx); ctx.clip(); g.drawRegion(R, { ...BARE, halftone: false, fill }, ctx); ctx.restore(); };
   const squadWipes = (g, R) => (R.id ? list(g.L.squads).filter((Q) => Q.wipe && Q.wipe.region === R.id) : []);
 
@@ -275,10 +275,10 @@
     }
     const Wp = R.wipe;
     if (Wp) { const p = T.ease.inOut(T.prog(lt, Wp.at ?? 0, Wp.dur ?? 2)), o = Wp.from ? px(g, Wp.from) : geo.c, col = colorOf(g, Wp.by, lt, '#c3161f');
-      if (p > 0 && (Wp.shape ?? 'circle') === 'circle') { const rad = Math.max(...geo.pts.map(([x, y]) => Math.hypot(x - o[0], y - o[1]))) * 1.05 * p;
-        paintClip(ctx, R, g, col, (k) => k.arc(o[0], o[1], rad, 0, TAU)); if (p < 1) edge((k) => k.arc(o[0], o[1], rad, 0, TAU)); } else if (p > 0 && Wp.shape === 'line') {
-        let n = [geo.c[0] - o[0], geo.c[1] - o[1]]; const l = Math.hypot(n[0], n[1]); n = l > 1 ? [n[0] / l, n[1] / l] : [1, 0];
-        const pr = geo.pts.map(([x, y]) => (x - o[0]) * n[0] + (y - o[1]) * n[1]), d = T.lerp(Math.min(...pr) - 10, Math.max(...pr) + 10, p), ex = o[0] + n[0] * d, ey = o[1] + n[1] * d;
+      if (p > 0 && (Wp.shape ?? (Wp.dir != null ? 'line' : 'circle')) === 'circle') { const rad = (Wp.reach ?? Math.max(...geo.pts.map(([x, y]) => Math.hypot(x - o[0], y - o[1]))) * 1.05) * p;
+        paintClip(ctx, R, g, col, (k) => k.arc(o[0], o[1], rad, 0, TAU)); if (p < 1) edge((k) => k.arc(o[0], o[1], rad, 0, TAU)); } else if (p > 0 && (Wp.shape === 'line' || (Wp.shape == null && Wp.dir != null))) {
+        let n = Wp.dir != null ? dirVec(Wp.dir) : [geo.c[0] - o[0], geo.c[1] - o[1]]; const l = Math.hypot(n[0], n[1]); n = l > 1e-6 ? [n[0] / l, n[1] / l] : [1, 0];
+        const pr = (Wp.extent ?? geo.pts).map(([x, y]) => (x - o[0]) * n[0] + (y - o[1]) * n[1]), d = T.lerp(Math.min(...pr) - 10, Math.max(...pr) + 10, p), ex = o[0] + n[0] * d, ey = o[1] + n[1] * d;
         paintClip(ctx, R, g, col, (k) => halfPlane(k, ex, ey, n[0], n[1])); if (p < 1) edge((k) => { k.moveTo(ex - n[1] * 4000, ey + n[0] * 4000); k.lineTo(ex + n[1] * 4000, ey - n[0] * 4000); });
       } else if (Wp.shape && Wp.shape !== 'circle' && Wp.shape !== 'line') throw new Error(`map region wipe: unknown shape "${Wp.shape}"`); }
     if (blotch) blotchFill(ctx, R, g, lt, geo, out);

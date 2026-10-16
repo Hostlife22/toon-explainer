@@ -435,6 +435,52 @@ def _check_map_refs(layer: dict, where: str, errors: list[str]) -> None:
     for c in layer.get("crosses", []) or []:
         if isinstance(c, dict) and isinstance(c.get("region"), str) and c["region"] not in rids:
             errors.append(f"{where}: crosses region {c['region']!r} is not a region id")
+    _check_geo_map(layer, regions, where, errors)
+
+
+ISO3_RE = re.compile(r"^[A-Z]{3}$")
+
+
+def _check_geo_map(layer: dict, regions: list[dict], where: str, errors: list[str]) -> None:
+    """Geo maps (geo.js): projection and style names, range names, iso codes, lon/lat rings and cover origins."""
+    geo = layer.get("geo")
+    style = layer.get("style")
+    styles = LAYER_KINDS.get("map_style", set())
+    if style is not None and style not in styles:
+        errors.append(f"{where}: unknown map style {style!r} (known: {sorted(styles)})")
+    if geo is None:
+        return
+    if not isinstance(geo, dict):
+        errors.append(f"{where}: map geo must be an object {{proj, center, span}}")
+        return
+    projs, known_ranges = LAYER_KINDS.get("map_proj", set()), LAYER_KINDS.get("map_range", set())
+    if geo.get("proj", "equirect") not in projs:
+        errors.append(f"{where}: unknown map proj {geo.get('proj')!r} (known: {sorted(projs)})")
+    ranges = geo.get("ranges")
+    if ranges is not None and not isinstance(ranges, bool):
+        for name in ranges if isinstance(ranges, list) else [ranges]:
+            if name not in known_ranges:
+                errors.append(f"{where}: unknown map range {name!r} (known: {sorted(known_ranges)})")
+    if geo.get("detail") not in (None, "auto", "lo", "hi"):
+        errors.append(f"{where}: map geo detail must be auto, lo or hi")
+    for i, r in enumerate(regions):
+        _check_geo_region(r, f"{where}: region {r.get('id', i)!r}", errors)
+
+
+def _check_geo_region(r: dict, rw: str, errors: list[str]) -> None:
+    isos = r.get("iso")
+    for iso in (isos if isinstance(isos, list) else [isos] if isos is not None else []):
+        if not (isinstance(iso, str) and ISO3_RE.match(iso)):
+            errors.append(f"{rw} iso {iso!r} must be an ISO 3166 alpha-3 code like FRA")
+    ll = r.get("lonlat")
+    if ll is not None:
+        rings = [ll] if isinstance(ll, list) and ll and _pair(ll[0]) else ll if isinstance(ll, list) else [None]
+        if not all(isinstance(q, list) and len(q) >= 3 and all(_pair(p) for p in q) for q in rings):
+            errors.append(f"{rw} lonlat must be a ring of 3+ [lon, lat] points (or a list of rings)")
+    for key in ("flood", "wipe", "conquer"):
+        cover = r.get(key)
+        if isinstance(cover, dict) and cover.get("from") is not None and not _pair(cover["from"]):
+            errors.append(f"{rw} {key} from must be [lon, lat] in a geo map")
 
 
 def _nested_whos(value):

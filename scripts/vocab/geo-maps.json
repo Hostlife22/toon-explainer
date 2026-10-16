@@ -1,0 +1,16 @@
+{
+  "_about": "geo.js, geo-base.js, map-paint.js, geo-anim.js, geo-ranges.js: real geography (bundled Natural Earth), projections, the painted map style, flood / drawOn conquest. Map fields are checked by spec.py (_check_geo_map) and the engine; they are listed in _fields for documentation.",
+  "kinds": {
+    "map_proj": ["equirect", "mercator", "ortho"],
+    "map_style": ["parchment", "atlas", "painted"],
+    "map_range": ["alps", "pyrenees", "apennines", "carpathians", "dinarics", "balkans", "caucasus", "urals", "scandes", "atlas", "taurus", "zagros", "elburz", "himalaya", "hindukush", "tianshan", "kunlun", "altai", "qinling", "khingan", "rockies", "sierranevada", "appalachians", "andes", "ethiopian", "drakensberg", "greatdividing", "ghats", "japanalps"],
+    "map_desert": ["sahara", "arabia", "syrian", "iran", "karakum", "taklamakan", "gobi", "tibet", "thar", "kalahari", "australia", "atacama", "mojave"]
+  },
+  "registry": { "map_proj": "TOON.GEO_PROJ", "map_style": "TOON.MAP_STYLES", "map_range": "TOON.GEO_RANGES", "map_desert": "TOON.GEO_DESERTS" },
+  "_fields": {
+    "map": ["geo", "compass", "signs"],
+    "geo": ["proj", "center", "span", "zoom", "rotate", "radius", "detail", "backdrop", "stars", "graticule", "shade", "night", "ripples", "relief", "ranges", "mountains", "mountainSize", "rivers", "lakes", "borders"],
+    "region": ["iso", "continent", "lonlat", "labelAt", "minArea", "flood", "drawOn", "wipe.dir"],
+    "points": ["{ll: [lon, lat]}", "{ll: [[lon, lat], ...], gc}", "{lon, lat}"]
+  }
+}
