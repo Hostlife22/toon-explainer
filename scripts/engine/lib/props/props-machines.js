@@ -23,7 +23,6 @@
     T.matMetal(ctx, (k) => k.arc(0, 0, r * 0.18, 0, TAU), T.shade(col, 0.1), { line: LW(s) * 0.6 });
     ctx.restore();
   }
-  const puffCache = new Map();
 
   const MACH = {
     // gears: count 3 meshing gears in a zigzag train; each turns the other way at the tooth ratio of its neighbour.
@@ -63,9 +62,7 @@
       T.matMetal(ctx, (k) => k.arc(0, 0, s * 0.04, 0, TAU), '#8a8f96', { line: LW(s) * 0.6 });
       ctx.restore();
       if (o.exhaust !== false) {
-        const key = (o.id ?? 'piston') + s.toFixed(0);
-        let e = puffCache.get(key);
-        if (!e) { e = { preset: 'smoke', id: key, rate: 3 * (o.speed ?? 1), w: s * 0.04, speed: s * 0.5, size: [s * 0.08, s * 0.14], prewarm: true, life: 2, wind: 40, alpha: 0.6 }; puffCache.set(key, e); }
+        const e = T.emitterOf({ preset: 'smoke', id: (o.id ?? 'piston') + ':exhaust', rate: 3 * (o.speed ?? 1), w: s * 0.04, speed: s * 0.5, size: [s * 0.08, s * 0.14], prewarm: true, life: 2, wind: 40, opacity: 0.6 });
         ctx.save(); ctx.translate(s * 0.22, -s * 0.42); T.drawParticles(ctx, e, lt); ctx.restore();
         T.matMetal(ctx, (k) => k.rect(s * 0.18, -s * 0.46, s * 0.07, s * 0.14), '#4a4e54', { line: LW(s) * 0.6 });
       }

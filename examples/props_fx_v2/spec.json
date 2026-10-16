@@ -62,7 +62,7 @@
      "type": "prop",
      "kind": "burner",
      "x": 0.3,
-     "y": 0.6,
+     "y": 0.628,
      "size": 170
     },
     {
@@ -75,7 +75,8 @@
      "liquid": "#7ad04a",
      "fill": 0.55,
      "boil": true,
-     "fumes": "steam"
+     "fumes": "steam",
+     "stand": 1.2
     },
     {
      "type": "prop",
@@ -137,6 +138,11 @@
      "blur": 4,
      "liquid": "#e8c84a",
      "fill": 0.6
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.2
     },
     {
      "type": "bean",

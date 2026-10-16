@@ -140,6 +140,8 @@
   T.DEFAULT_ENTER = { bean: 'none', image: 'none', map: 'none', fx: 'none', fg: 'none', sign: 'none', timer: 'none', title: 'none', era: 'slide-left', caption: 'fade' }; // framing is already there at the cut
   T.ENTERS = T.ENTERS || {}; // kind → fn(p, st, isExit, L): extra entrance/exit kinds registered by modules
   T.ENTER_DUR = T.ENTER_DUR || {}; // kind → default duration (s) for registered kinds
+  // Entrance duration of a layer exactly as T.layerState resolves it (fx that react to landings use it).
+  T.enterDurOf = (L) => { const k = L.enter || T.DEFAULT_ENTER[L.type] || 'pop'; return L.enterDur ?? ENTER_DUR_BY_KIND[k] ?? T.ENTER_DUR[k] ?? ENTER_DUR; };
   function enterExit(kind, p, st, isExit, L) {
     const q = isExit ? 1 - p : p;
     if (T.ENTERS[kind]) { T.ENTERS[kind](p, st, isExit, L); return; }

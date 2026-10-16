@@ -39,27 +39,27 @@
     const seed = T.hash(L.id ?? 'streaks'), col = T.hex6(L.color ?? (L.ink ? '#2a1c15' : '#ffffff')), len = L.len ?? [160, 560], wd = L.width ?? [3, 10];
     const n2 = parseInt(col.slice(1), 16), rgb = `${n2 >> 16},${(n2 >> 8) & 255},${n2 & 255}`;
     ctx.save(); ctx.rotate((L.angle ?? 180) * T.DEG);
+    const A0 = ctx.globalAlpha;
     for (let i = 0; i < n; i++) {
       const off = (h32(seed, i, 1) - 0.5) * hh, l = T.lerp(len[0], len[1], h32(seed, i, 2)), w = T.lerp(wd[0], wd[1], h32(seed, i, 3));
       const x = ((h32(seed, i, 4) * span + lt * sp * (0.7 + 0.6 * h32(seed, i, 5))) % span) - span / 2;
-      const a = (L.alpha ?? 0.8) * (0.45 + 0.55 * h32(seed, i, 6));
+      const a = (L.opacity ?? 0.8) * (0.45 + 0.55 * h32(seed, i, 6));
       if (P) { const g = ctx.createLinearGradient(x - l, 0, x, 0); g.addColorStop(0, `rgba(${rgb},0)`); g.addColorStop(1, `rgba(${rgb},${a.toFixed(3)})`); ctx.fillStyle = g; }
-      else { ctx.fillStyle = col; ctx.globalAlpha = a; }
+      else { ctx.fillStyle = col; ctx.globalAlpha = A0 * a; } // inherited opacity (fades, trail ghosts) times the streak's
       ctx.beginPath(); ctx.moveTo(x - l, off); ctx.lineTo(x, off - w / 2); ctx.quadraticCurveTo(x + w, off, x, off + w / 2); ctx.closePath(); ctx.fill();
     }
     ctx.restore();
   };
 
   // ---------- shockwave: {size 420, dur 0.6, rings 2, color, squash (y scale), ground (squash 0.32 + dust ring), width} ----------
-  const emitCache = new Map();
-  const emitterFor = (key, make) => { let e = emitCache.get(key); if (!e) { e = make(); emitCache.set(key, e); } return e; };
+  const emitterFor = (_role, make) => T.emitterOf(make()); // identity = every emitter parameter (particles.js)
   FX.shockwave = (ctx, L, lt, env) => {
-    const P = T.paintedState(env, L), size = L.size ?? 420, dur = L.dur ?? 0.6, rings = L.rings ?? 2, sq = L.squash ?? (L.ground ? 0.32 : 1);
+    const P = T.paintedState(env, L), size = L.size ?? 420, dur = L.dur ?? 0.6, rings = Math.max(1, Math.min(8, Math.round(L.rings ?? 2))), sq = L.squash ?? (L.ground ? 0.32 : 1);
     const col = T.hex6(L.color ?? '#ffffff'), wid = L.width ?? size * 0.09;
     for (let k = 0; k < rings; k++) {
       const p = (lt - k * 0.09) / dur;
       if (p <= 0 || p >= 1) continue;
-      const r = size * T.ease.outCubic(p) * (1 - k * 0.12), w = wid * (1 - p) + 1, a = (1 - p) * (k ? 0.6 : 1);
+      const r = Math.max(1, size * T.ease.outCubic(p) * Math.max(0.3, 1 - k * 0.1)), w = wid * (1 - p) + 1, a = (1 - p) * (k ? 0.6 : 1);
       ctx.save(); ctx.scale(1, sq);
       if (P) {
         const g = ctx.createRadialGradient(0, 0, Math.max(0, r - w * 1.6), 0, 0, r + w);
@@ -92,14 +92,14 @@
     const Lt = (env.shot.layers || []).find((x) => x.id === L.target) || (env.shot.pinned || []).find((x) => x.id === L.target);
     if (!Lt) throw new Error(`dustkick: target "${L.target}" is not a layer id in shot ${env.shot.id}`);
     const ts = (Lt.jump || []).map((j) => j.at + (j.dur ?? 0.45));
-    const ek = Lt.enter || T.DEFAULT_ENTER[Lt.type] || 'pop';
-    if (ek === 'drop') ts.push((Lt.at ?? 0) + (Lt.enterDur ?? T.ENTER_DUR.drop ?? 0.5) / 2.75);
-    if (ek === 'slam') ts.push((Lt.at ?? 0) + (Lt.enterDur ?? T.ENTER_DUR.slam ?? 0.2));
+    const ek = Lt.enter || T.DEFAULT_ENTER[Lt.type] || 'pop', ed = T.enterDurOf ? T.enterDurOf(Lt) : 0.32;
+    if (ek === 'drop') ts.push((Lt.at ?? 0) + ed / 2.75); // outBounce first touches the ground at 1 / 2.75
+    if (ek === 'slam') ts.push((Lt.at ?? 0) + ed);
     for (const t of (L.times ? [] : ts)) {
-      const st = T.layerState(Lt, t + 1e-3);
+      const Le = T.effLayer(Lt, t), st = T.layerState(Le, t + 1e-3); // swaps resolved at the landing time
       if (!st) continue;
-      const centred = Lt.type === 'prop' && !T.PROP_GROUND.has(Lt.kind); // centred props stand on their lower edge
-      out.push({ t, x: st.x, y: st.y + (centred ? ((Lt.size ?? 160) / 2) * st.s : 0), w: (Lt.size ?? 300) * st.s });
+      const centred = Le.type === 'prop' && !T.PROP_GROUND.has(Le.kind); // centred props stand on their lower edge
+      out.push({ t, x: st.x, y: st.y + (centred ? ((Le.size ?? 160) / 2) * st.s : 0), w: (Le.size ?? 300) * st.s });
     }
     return out;
   }
@@ -140,7 +140,7 @@
       puffs.push({ x, y, rr, v: i % 4, tone: h32(seed, i, 6) });
     }
     puffs.sort((p, q) => p.y - q.y || p.x - q.x);
-    const a0 = ctx.globalAlpha * (L.alpha ?? 0.92);
+    const a0 = ctx.globalAlpha * (L.opacity ?? 0.92); // layer alpha is already on the context
     for (const p of puffs) {
       if (P) { ctx.globalAlpha = a0; ctx.drawImage(T.puffSprite(tones, Math.round(ll.lx * 4) / 4, Math.round(ll.ly * 4) / 4, p.v), p.x - p.rr * 1.4, p.y - p.rr * 1.4, p.rr * 2.8, p.rr * 2.8); }
       else { ctx.globalAlpha = a0; ctx.fillStyle = p.tone < 0.3 ? tones[2] : p.tone < 0.7 ? tones[0] : T.mix(tones[0], tones[1], 0.5); ctx.strokeStyle = INK(); ctx.lineWidth = Math.max(3, p.rr * 0.06); ctx.beginPath(); ctx.arc(p.x, p.y, p.rr, 0, TAU); ctx.fill(); ctx.stroke(); }
@@ -154,7 +154,7 @@
 
   // ---------- aura: {radius 220, color '#ffe27a', pulse 0.08, rays 10, motes true} ----------
   FX.aura = (ctx, L, lt, env) => {
-    const P = T.paintedState(env, L), R = (L.radius ?? 220) * (1 + Math.sin(lt * TAU * 0.6) * (L.pulse ?? 0.08)), col = T.hex6(L.color ?? '#ffe27a');
+    const P = T.paintedState(env, L), R = (L.radius ?? 220) * (1 + Math.sin(lt * TAU * 0.6) * T.clamp(L.pulse ?? 0.08, 0, 0.9)), col = T.hex6(L.color ?? '#ffe27a');
     const n = parseInt(col.slice(1), 16), rgb = `${n >> 16},${(n >> 8) & 255},${n & 255}`;
     ctx.save(); ctx.globalCompositeOperation = 'lighter';
     const g = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 1.4);

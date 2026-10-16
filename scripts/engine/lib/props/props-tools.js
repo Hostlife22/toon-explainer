@@ -8,7 +8,6 @@
   const LW = (s) => Math.max(3, s * 0.02);
   const STEEL = '#b9c0c8', IRON = '#5a5f66', WOOD = '#9a6236';
   const handle = (ctx, s, x, y0, y1, w, wood) => T.matWood(ctx, (k) => T.rrect(k, x - w / 2, y0, w, y1 - y0, w / 2), wood, { line: LW(s), rot: 90, grain: Math.max(0.2, s / 1200) });
-  const smokeCache = new Map();
   // Muzzle flash + smoke + recoil after o.fire (layer seconds) at muzzle (mx, my) pointing along +x.
   function firing(ctx, o, s, lt, mx, my) {
     if (o.fire == null) return 0;
@@ -18,9 +17,7 @@
       const a = lt - t0;
       if (a < 0 || a > 2.5) return;
       recoil = Math.max(recoil, Math.exp(-a * 9) * (a < 0.05 ? a / 0.05 : 1));
-      const key = (o.id ?? 'gun') + n + s.toFixed(0);
-      let e = smokeCache.get(key);
-      if (!e) { e = { preset: 'smoke', id: key, burst: 9, dir: 0, spread: 50, speed: s * 1.4, drag: 3, gravity: -40, life: 2.2, size: [s * 0.12, s * 0.22], grow: 2.4, w: 4, h: 4, colors: ['#cfc8bc', '#8f877c', '#f1ece2'] }; smokeCache.set(key, e); }
+      const e = T.emitterOf({ preset: 'smoke', id: (o.id ?? 'gun') + ':shot' + n, burst: 9, dir: 0, spread: 50, speed: s * 1.4, drag: 3, gravity: -40, life: 2.2, size: [s * 0.12, s * 0.22], grow: 2.4, w: 4, h: 4, colors: ['#cfc8bc', '#8f877c', '#f1ece2'] });
       ctx.save(); ctx.translate(mx, my); T.drawParticles(ctx, e, a);
       if (a < 0.1) { // 3-frame star flash
         const r = s * 0.22 * (1 - a / 0.1 * 0.4);

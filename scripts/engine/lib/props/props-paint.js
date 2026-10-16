@@ -269,7 +269,10 @@
   T.layers.prop = (ctx, L, lt, env) => {
     if (T.PAINT && L.contact == null && T.contactShadow) {
       const s = L.size ?? 160, ground = T.PROP_GROUND.has(L.kind), wf = T.PROP_FOOT[L.kind] ?? (ground ? 0.5 : null);
-      if (wf != null) T.contactShadow(ctx, 0, ground ? 0 : s * 0.47, s * wf, s * 0.055, 0.55);
+      if (wf != null) { // airborne (jump): the shadow stays on the ground and shrinks, as core's layerContact does
+        const st = env && env.st, lift = Math.max(0, (st && st.jy) || 0) / Math.max(0.05, st ? st.s : 1), k = 1 / (1 + lift / (s * 0.6));
+        T.contactShadow(ctx, 0, lift + (ground ? 0 : s * 0.47), s * wf * k, s * 0.055 * k, 0.55 * k);
+      }
     }
     return baseLayer(ctx, L, lt, env);
   };

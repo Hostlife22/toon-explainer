@@ -207,7 +207,7 @@ centred (`size` = height; long tools and guns: `size` = length) and drawn with s
 
 | Group | Kinds | Fields |
 |---|---|---|
-| Lab glassware | `flask`, `round-flask`, `beaker`, `test-tube`, `tube-rack`, `retort`, `burner` | `liquid` (hex), `fill` (0..1 or `[{at, v}]` timeline), `bubbles` (true \| count), `boil` (bubbles + a tremble), `fumes` (true = steam, or a particles preset such as `gas`, `smoke`), `fumeColor`, `color` (glass tint); `tube-rack`: `liquids` (list), `fumesAt` (tube index); `burner`: `flame` (0 = off) |
+| Lab glassware | `flask`, `round-flask`, `beaker`, `test-tube`, `tube-rack`, `retort`, `burner` | `liquid` (hex), `fill` (0..1 or `[{at, v}]` timeline), `bubbles` (true \| count), `boil` (bubbles + a tremble), `fumes` (true = steam, or a particles preset such as `gas`, `smoke`), `fumeColor`, `color` (glass tint); `round-flask`: `stand` (true, or the leg height as a fraction of `size`: an iron ring on a tripod, set it over a `burner`); `tube-rack`: `liquids` (list), `fumesAt` (tube index); `burner`: `flame` (0 = off) |
 | Stacks and money | `book-stack`, `paper-stack`, `coin-pile`, `banknotes`, `gold-bars` | `count`, `colors` (book spines), `color`, `text` (`$` on notes, `AU` on bars; `false` hides), `amount` (banknote corner value) |
 | Goods and food | `amphora`, `apple`, `cheese`, `fish` | `color`; `fish`: `flop` |
 | Furniture smalls and light | `chair`, `stool`, `oil-lamp`, `lantern`, `inkwell` | `color`; lamps: `flame: false` = unlit; `inkwell`: `ink` |

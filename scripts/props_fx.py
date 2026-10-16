@@ -5,14 +5,24 @@ mirror engine/lib/fx/particles.js, fx/impact.js, props/props-*.js and paper/pape
 """
 from __future__ import annotations
 
+import math
+
 IMPACT_MODES = {"invert", "flat", "flash"}
 HEX_CHARS = set("0123456789abcdefABCDEF")
 _LAB = ("flask", "round-flask", "beaker", "test-tube", "tube-rack", "retort", "bottle")
 TIMELINE_FIELDS = {**{k: ("fill",) for k in _LAB}, "gauge": ("value",), "valve": ("open",), "bow": ("draw",)}
 
 
+MAX_RATE = 2000  # engine/lib/fx/particles.js T.PARTICLE_MAX_RATE
+MAX_BURST = 5000
+
+
 def _num(v) -> bool:
-    return isinstance(v, (int, float)) and not isinstance(v, bool)
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
+def _name_in(v, allowed) -> bool:
+    return isinstance(v, str) and v in allowed
 
 
 def _hex(v) -> bool:
@@ -27,13 +37,12 @@ def _timeline_ok(v) -> bool:
 
 def _check_particles(layer: dict, where: str, presets: set, errors: list[str]) -> None:
     preset = layer.get("preset", "smoke")
-    if preset not in presets:
+    if not _name_in(preset, presets):
         errors.append(f"{where}: particles preset {preset!r} not in {sorted(presets)}")
-    positive = ("rate", "life", "dur", "speed")
-    for key in positive:
+    for key, hi in (("rate", MAX_RATE), ("life", 60), ("dur", 1e6), ("speed", 1e5)):
         v = layer.get(key)
-        if v is not None and not (_num(v) and v > 0):
-            errors.append(f"{where}: particles {key} must be a number > 0")
+        if v is not None and not (_num(v) and 0 < v <= hi):
+            errors.append(f"{where}: particles {key} must be a number in (0, {hi}]")
     for key in ("spread", "dir", "gravity", "wind", "drag", "turb", "grow", "w", "h", "ox", "oy", "spin", "floor"):
         v = layer.get(key)
         if v is not None and not _num(v):
@@ -42,8 +51,10 @@ def _check_particles(layer: dict, where: str, presets: set, errors: list[str]) -
         if _num(layer.get(key)) and layer[key] < 0:
             errors.append(f"{where}: particles {key} must be >= 0")
     burst = layer.get("burst")
-    if burst is not None and not (_num(burst) and burst >= 1):
-        errors.append(f"{where}: particles burst must be a count >= 1")
+    if burst is not None and not (_num(burst) and 1 <= burst <= MAX_BURST):
+        errors.append(f"{where}: particles burst must be a count in 1..{MAX_BURST}")
+    if layer.get("opacity") is not None and not (_num(layer["opacity"]) and 0 <= layer["opacity"] <= 1):
+        errors.append(f"{where}: particles opacity must be 0..1")
     size = layer.get("size")
     if size is not None and not ((_num(size) and size > 0) or (isinstance(size, list) and len(size) == 2 and all(_num(x) and x > 0 for x in size))):
         errors.append(f"{where}: particles size must be a number or [min, max] > 0")
@@ -53,7 +64,7 @@ def _check_particles(layer: dict, where: str, presets: set, errors: list[str]) -
     if colors is not None and not (isinstance(colors, list) and colors and all(_hex(c) for c in colors)):
         errors.append(f"{where}: particles colors must be a list of hex colours")
     pre = layer.get("prewarm")
-    if pre is not None and not (isinstance(pre, bool) or (_num(pre) and pre >= 0)):
+    if pre is not None and not (isinstance(pre, bool) or (_num(pre) and 0 <= pre <= 60)):
         errors.append(f"{where}: particles prewarm must be true or seconds >= 0")
 
 
@@ -62,7 +73,7 @@ def _check_fx(layer: dict, where: str, presets: set, errors: list[str]) -> None:
     if kind == "particles":
         _check_particles(layer, where, presets, errors)
     elif kind == "impact-frame":
-        if layer.get("mode", "invert") not in IMPACT_MODES:
+        if not _name_in(layer.get("mode", "invert"), IMPACT_MODES):
             errors.append(f"{where}: impact-frame mode {layer.get('mode')!r} not in {sorted(IMPACT_MODES)}")
         fr = layer.get("frames")
         if fr is not None and not (isinstance(fr, int) and not isinstance(fr, bool) and 1 <= fr <= 6):
@@ -72,14 +83,21 @@ def _check_fx(layer: dict, where: str, presets: set, errors: list[str]) -> None:
             v = layer.get(key)
             if v is not None and not (_num(v) and v > 0):
                 errors.append(f"{where}: {kind} {key} must be a number > 0")
-        for key in ("color",):
+        for key in ("color", "dustColor"):
             if layer.get(key) is not None and not _hex(layer[key]):
-                errors.append(f"{where}: {kind} color must be a hex colour")
+                errors.append(f"{where}: {kind} {key} must be a hex colour")
+        rings = layer.get("rings")
+        if rings is not None and not (isinstance(rings, int) and not isinstance(rings, bool) and 1 <= rings <= 8):
+            errors.append(f"{where}: shockwave rings must be an integer 1..8")
+        for key in ("pulse", "opacity"):
+            v = layer.get(key)
+            if v is not None and not (_num(v) and 0 <= v <= 1):
+                errors.append(f"{where}: {kind} {key} must be 0..1")
     elif kind == "dustkick":
         times = layer.get("times")
         if times is not None and not (isinstance(times, list) and all(_num(t) for t in times)):
             errors.append(f"{where}: dustkick times must be a list of seconds")
-        if layer.get("side") not in (None, "both", "left", "right"):
+        if layer.get("side") is not None and not _name_in(layer["side"], {"both", "left", "right"}):
             errors.append(f"{where}: dustkick side must be both, left or right")
 
 
@@ -112,8 +130,11 @@ def check_layer(layer: dict, where: str, errors: list[str], presets: set) -> Non
         for key in keys:
             if not _timeline_ok(layer.get(key)):
                 errors.append(f"{where}: {key} must be a number or a [{{at, v}}] timeline")
+        stand = layer.get("stand")
+        if stand is not None and not (isinstance(stand, bool) or (_num(stand) and 0 <= stand <= 3)):
+            errors.append(f"{where}: stand must be true/false or a height 0..3 (fraction of size)")
         fumes = layer.get("fumes")
-        if fumes is not None and not (isinstance(fumes, bool) or fumes in presets):
+        if fumes is not None and not (isinstance(fumes, bool) or _name_in(fumes, presets)):
             errors.append(f"{where}: fumes must be true/false or a particles preset")
         fire = layer.get("fire")
         if fire is not None and not (_num(fire) or (isinstance(fire, list) and all(_num(t) for t in fire))):

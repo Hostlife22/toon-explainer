@@ -1,19 +1,17 @@
 // props-lab.js — laboratory glassware drawn with the glass / liquid materials (props-paint.js): flask (Erlenmeyer),
 // round-flask, beaker, test-tube, tube-rack, retort and a Bunsen burner. Centred at the origin, `size` = height.
-// Fields: color (glass tint), liquid (hex), fill (0..1 or [{at, v}] timeline), bubbles (true | count), boil (true:
+// Fields: color (glass tint), stand (round-flask: true or height below the ring as a fraction of size), liquid (hex), fill (0..1 or [{at, v}] timeline), bubbles (true | count), boil (true:
 // bubbles + a tremble), fumes (true | particles preset: steam, smoke, gas, bubbles) rising from the mouth.
 (function () {
   'use strict';
   const T = window.TOON, P = T.PAL, TAU = Math.PI * 2;
   const LW = (s) => Math.max(3, s * 0.02);
   const fillOf = (o, lt, def) => T.clamp(T.num(o.fill ?? def, lt, def));
-  const fumeCache = new Map();
   // Fumes from the mouth at (x, y): a cached particles emitter (closed form, so it is safe to call every frame).
   function fumes(ctx, o, s, lt, x, y) {
     if (!o.fumes) return;
-    const preset = o.fumes === true ? 'steam' : o.fumes, k = s / 220, key = (o.id ?? 'lab') + preset + k.toFixed(2) + (o.fumeColor ?? '');
-    let e = fumeCache.get(key);
-    if (!e) { e = { preset, id: key, rate: 7, w: s * 0.08, prewarm: true, size: [26 * k, 46 * k], speed: 90 * k, color: o.fumeColor }; fumeCache.set(key, e); }
+    const preset = o.fumes === true ? 'steam' : o.fumes, k = s / 220;
+    const e = T.emitterOf({ preset, id: (o.id ?? 'lab') + ':fumes', rate: 7, w: s * 0.08, prewarm: true, size: [26 * k, 46 * k], speed: 90 * k, color: o.fumeColor });
     ctx.save(); ctx.translate(x, y); T.drawParticles(ctx, e, lt); ctx.restore();
   }
   const liquid = (o, s, level, lt, extra = {}) => ({ level, color: o.liquid ?? '#5fd06a', bubbles: o.boil ? 10 : o.bubbles, seed: o.id ?? 'lab', ...extra });
@@ -35,8 +33,17 @@
       tremble(ctx, o, s, lt);
       const r = s * 0.3, cy = s * 0.17, a = Math.asin((s * 0.075) / r);
       const body = (k) => { k.moveTo(-s * 0.075, -s * 0.47); k.lineTo(-s * 0.075, cy - r * Math.cos(a)); k.arc(0, cy, r, -Math.PI / 2 - a, -Math.PI / 2 + a, true); k.lineTo(s * 0.075, -s * 0.47); k.closePath(); };
-      const f = fillOf(o, lt, 0.5);
+      const f = fillOf(o, lt, 0.5), ry = cy + r * 0.72, H = (o.stand === true ? 0.55 : o.stand || 0) * s, iron = '#4a4e54';
+      if (H > 0) { // tripod stand: legs behind the flask, the iron ring in front of it
+        for (const [x0, x1, c] of [[-0.6, -0.95, T.shade(iron, -0.25)], [0.6, 0.95, iron], [0, 0, T.shade(iron, -0.35)]]) {
+          ctx.strokeStyle = P.ink; ctx.lineWidth = s * 0.04; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x0 * r, ry); ctx.lineTo(x1 * r, ry + H); ctx.stroke();
+          ctx.strokeStyle = c; ctx.lineWidth = s * 0.02; ctx.stroke();
+        }
+        ctx.strokeStyle = P.ink; ctx.lineWidth = s * 0.045; ctx.beginPath(); ctx.ellipse(0, ry, r * 0.66, r * 0.16, 0, Math.PI, TAU); ctx.stroke();
+        ctx.strokeStyle = T.shade(iron, -0.2); ctx.lineWidth = s * 0.022; ctx.stroke();
+      }
       T.matGlass(ctx, body, { tint: o.color ?? '#dff1f5', line: LW(s), lt, liquid: f > 0.01 ? liquid(o, s, cy + r - f * r * 1.6, lt) : null });
+      if (H > 0) T.matMetal(ctx, (k) => { k.ellipse(0, ry, r * 0.66 + s * 0.015, r * 0.16 + s * 0.015, 0, 0, Math.PI); k.ellipse(0, ry, r * 0.66 - s * 0.015, r * 0.16 - s * 0.015, 0, Math.PI, 0, true); k.closePath(); }, iron, { line: LW(s) * 0.6, axis: 'y' });
       lip(ctx, s, -s * 0.1, s * 0.1, -s * 0.47);
       fumes(ctx, o, s, lt, 0, -s * 0.49);
     },

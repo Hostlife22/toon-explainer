@@ -202,3 +202,57 @@ def test_props_fx_v2_catalog_validates_and_renders():
         starts.append(t + sh["dur"] * 0.6)
         t += sh["dur"]
     _frames(spec, starts)
+
+
+# ---------- review fixes ----------
+def test_validation_rejects_bad_enums_rates_palettes_and_bounds_without_crashing():
+    layers = [
+        {"type": "fx", "kind": "particles", "preset": [], "rate": 1e20},
+        {"type": "fx", "kind": "particles", "preset": "smoke", "rate": float("inf"), "burst": 1e9},
+        {"type": "fx", "kind": "impact-frame", "mode": {}},
+        {"type": "prop", "kind": "flask", "fumes": []},
+        {"type": "fx", "kind": "shockwave", "rings": 40},
+        {"type": "fx", "kind": "aura", "pulse": 2},
+    ]
+    errors = "\n".join(validate(_spec(layers)))
+    for needle in ("particles preset", "rate", "burst", "impact-frame mode", "fumes", "rings", "pulse"):
+        assert needle in errors, (needle, errors)
+
+
+def test_emitters_survive_huge_rates_short_palettes_and_ignore_layer_alpha():
+    js = """() => {
+      const t0 = performance.now();
+      const ctx = document.createElement('canvas').getContext('2d');
+      TOON.drawParticles(ctx, { preset: 'smoke', rate: 1e20 }, 1);
+      TOON.drawParticles(ctx, { preset: 'smoke', rate: Infinity }, 1);
+      const P = TOON.paintState({ style: { look: 'painted' } }, { id: 'x' });
+      for (const preset of ['fire', 'sparks', 'embers', 'smoke', 'confetti']) TOON.drawParticles(ctx, { preset, colors: ['#ff0000'], id: preset }, 0.5, { painted: P });
+      const a = TOON.particleAt({ preset: 'smoke', id: 'al' }, 3, 1.0), b = TOON.particleAt({ preset: 'smoke', id: 'al', alpha: 0.5 }, 3, 1.0);
+      const pre = { preset: 'smoke', id: 'pw', rate: 10, life: 1, dur: 1, prewarm: true }, cut = { preset: 'sparks', id: 'cut', rate: 10, dur: 1 };
+      let alive = 0, late = 0;
+      for (let i = 0; i < 40; i++) { if (TOON.particleAt(pre, i, 0.6)) alive++; const p = TOON.particleAt(cut, i, 1.05); if (p && 1.05 - p.a > 1) late++; }
+      return { ms: performance.now() - t0, same: a.alpha === b.alpha, alive, late };
+    }"""
+    out = _page_eval(_spec([]), lambda page: page.evaluate(js))
+    assert out["ms"] < 3000 and out["same"] and out["alive"] > 0 and out["late"] == 0, out
+
+
+def test_dustkick_follows_swapped_target_and_core_drop_timing():
+    js = """() => {
+      const target = { type: 'prop', kind: 'crate', id: 'box', size: 160, x: 0.2, y: 0.8, enter: 'none', jump: [{ at: 0.5, dur: 0.5 }], swap: [{ at: 0.5, x: 0.8 }] };
+      const pos = [], ctx = new Proxy({ globalAlpha: 1, translate: (x, y) => pos.push(x) }, { get: (o, k) => (k in o ? o[k] : () => {}) });
+      TOON.FX.dustkick(ctx, { target: 'box' }, 1.1, { shot: { id: 's', layers: [target] }, lt: 1.1, st: { x: 960, y: 540, s: 1 } });
+      return { x: pos[0] + 960, land: TOON.enterDurOf({ type: 'prop', enter: 'drop' }) };
+    }"""
+    out = _page_eval(_spec([]), lambda page: page.evaluate(js))
+    assert abs(out["x"] - 0.8 * 1920) < 1, out
+    assert abs(out["land"] - 0.32) < 1e-6, out
+
+
+def test_shockwave_dust_colour_is_part_of_the_cache_identity():
+    def shot(sid, col):
+        return {"id": sid, "dur": 1.5, "bg": {"kind": "flat", "color": "#d8cdb4"}, "layers": [
+            {"type": "fx", "kind": "shockwave", "id": "w", "ground": True, "dustColor": col, "x": 0.5, "y": 0.7}]}
+    spec = {"seed": 1, "style": {"look": "painted"}, "shots": [shot("a", "#ff0000"), shot("b", "#0000ff")]}
+    times = [0.3, 1.8]
+    assert _frames(spec, times) == _frames(spec, list(reversed(times)))[::-1]

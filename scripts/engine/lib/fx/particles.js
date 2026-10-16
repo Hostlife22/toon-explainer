@@ -59,6 +59,8 @@
     gas: { rate: 6, life: 4.2, dir: -70, spread: 60, speed: 70, gravity: -22, drag: 0.5, wind: 34, turb: 44, size: [80, 150], grow: 2.3, w: 120, alpha: 0.62, draw: 'puff', colors: ['#a3b44c', '#69782a', '#d8e47e'] },
   };
   T.PARTICLE_PRESETS = PRESETS;
+  T.PARTICLE_MAX_RATE = 2000; // per second (validated in scripts/props_fx.py)
+  T.PARTICLE_MAX_BURST = 5000;
 
   // Merge preset + layer fields into an emitter description (cached per layer object).
   const emitters = new WeakMap();
@@ -68,17 +70,23 @@
     const p = PRESETS[o.preset ?? 'smoke'];
     if (!p) throw new Error(`Unknown particles preset "${o.preset}" (known: ${Object.keys(PRESETS).join(', ')})`);
     const size = o.size == null ? p.size : Array.isArray(o.size) ? o.size : [o.size * 0.75, o.size * 1.25];
-    const colors = o.colors ?? (o.color ? (p.draw === 'paper' || p.draw === 'leaf' ? [T.hex6(o.color)] : p.colors.length > 3 ? [T.mix(o.color, '#ffffff', 0.6), o.color, T.mix(o.color, '#000000', 0.45)] : tones(T.hex6(o.color))) : p.colors);
+    const raw = (o.colors ?? (o.color ? (p.draw === 'paper' || p.draw === 'leaf' ? [o.color] : p.colors.length > 3 ? [T.mix(o.color, '#ffffff', 0.6), o.color, T.mix(o.color, '#000000', 0.45)] : tones(T.hex6(o.color))) : p.colors)).map(T.hex6);
+    if (!raw.length) throw new Error('particles: colors must not be empty');
+    // every drawer reads up to three tones (base, shadow, light) or a ramp of at least two: expand short palettes
+    const colors = raw.length >= 3 ? raw : raw.length === 2 ? [raw[0], raw[1], T.mix(raw[0], '#ffffff', 0.4)] : tones(raw[0]);
+    const num = (v, def, lo, hi) => (typeof v === 'number' && Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : def);
     const e = {
       ...p, size, colors,
-      rate: o.rate ?? p.rate, life: o.life ?? p.life, dir: o.dir ?? p.dir, spread: o.spread ?? p.spread, speed: o.speed ?? p.speed,
+      rate: num(o.rate ?? p.rate, 0, 0, T.PARTICLE_MAX_RATE), life: num(o.life ?? p.life, p.life, 0.01, 60), dir: o.dir ?? p.dir, spread: o.spread ?? p.spread, speed: o.speed ?? p.speed,
       gravity: o.gravity ?? p.gravity, drag: o.drag ?? p.drag ?? 0, wind: o.wind ?? p.wind ?? 0, turb: o.turb ?? p.turb ?? 0,
       grow: o.grow ?? p.grow ?? 1, w: o.w ?? p.w ?? 0, h: o.h ?? p.h ?? 0, ox: o.ox ?? 0, oy: o.oy ?? p.oy ?? 0, spin: o.spin ?? p.spin ?? 0,
-      floor: o.floor ?? p.floor ?? null, alpha: o.alpha ?? p.alpha ?? 1, burst: o.burst ?? p.burst ?? 0, dur: o.dur ?? Infinity,
-      prewarm: o.prewarm === true ? (o.life ?? p.life) : o.prewarm ?? 0,
+      // `opacity` is the emitter's own particle opacity; the layer's `alpha` is applied once by core to the context
+      floor: o.floor ?? p.floor ?? null, alpha: o.opacity ?? p.alpha ?? 1, burst: Math.round(num(o.burst ?? p.burst ?? 0, 0, 0, T.PARTICLE_MAX_BURST)), dur: num(o.dur, Infinity, 0, Infinity),
       seed: T.hash((o.seed ?? o.id ?? 'particles') + ':' + (o.preset ?? 'smoke')),
     };
-    e.count = e.burst > 0 ? Math.round(e.burst) : e.dur === Infinity ? Infinity : Math.ceil(e.dur * e.rate);
+    e.prewarm = o.prewarm === true ? e.life : num(o.prewarm, 0, 0, 60);
+    e.emitEnd = e.prewarm + e.dur; // emitter time when emission stops (prewarm runs before layer time 0)
+    e.count = e.burst > 0 ? e.burst : e.rate <= 0 ? 0 : e.dur === Infinity ? Infinity : Math.ceil(e.emitEnd * e.rate);
     emitters.set(o, e);
     return e;
   }
@@ -87,6 +95,7 @@
   function stateOf(e, i, t) {
     const s = e.seed, r0 = h32(s, i, 1);
     const t0 = e.burst > 0 ? r0 * 0.06 : (i + r0 * 0.9) / e.rate;
+    if (e.burst <= 0 && t0 > e.emitEnd) return null; // exact emission cutoff
     const life = e.life * (0.7 + 0.6 * h32(s, i, 2)), a = t - t0;
     if (a < 0 || a > life) return null;
     const u = a / life, ang = (e.dir + (h32(s, i, 3) - 0.5) * e.spread) * D, sp = e.speed * (0.55 + 0.9 * h32(s, i, 4));
@@ -107,6 +116,10 @@
     const fadeIn = Math.min(1, a / 0.09), fadeOut = landed ? 1 - T.clamp((u - 0.7) / 0.3) : 1 - u * u;
     return { i, x, y, vx: cvx, vy: cvy, size, u, a, alpha: e.alpha * fadeIn * fadeOut, rot: h32(s, i, 8) * TAU + e.spin * a * (h32(s, i, 9) < 0.5 ? -1 : 1), tone: h32(s, i, 10), landed };
   }
+  // Canonical emitter object for a parameter set: the full parameters are the cache identity (no lossy keys), so two
+  // layers that differ in any field never share an emitter, whatever order frames render in.
+  const canon = new Map();
+  T.emitterOf = (params) => { const key = JSON.stringify(params); let e = canon.get(key); if (!e) { e = Object.freeze({ ...params }); canon.set(key, e); } return e; };
   T.particleAt = (o, i, t) => {
     const e = emitter(o);
     return i >= 0 && i < e.count ? stateOf(e, i, t + e.prewarm) : null;
@@ -253,17 +266,20 @@
     if (t < 0) return 0;
     const P = opts.painted === undefined ? T.PAINT : opts.painted, draw = DRAW[e.draw];
     const lifeMax = e.life * 1.3;
+    if (!(e.count > 0)) return 0;
     let i0 = 0, i1 = e.count - 1;
     if (e.burst <= 0) { i0 = Math.max(0, Math.floor((t - lifeMax) * e.rate) - 1); i1 = Math.min(e.count - 1, Math.floor(t * e.rate)); }
-    if (i1 - i0 > 4000) i0 = i1 - 4000; // hard cap for absurd rates
+    if (!(Number.isFinite(i0) && Number.isFinite(i1))) return 0;
+    const n0 = Math.max(0, i1 - i0 + 1), N = Math.min(n0, 4000); // hard cap; integer counter so the loop always ends
+    i0 = i1 - N + 1;
     const ll = P ? T.lightLocal(ctx, P) : null;
     const look = P ? { lx: Math.round(ll.lx * 4) / 4, ly: Math.round(ll.ly * 4) / 4, a0: ctx.globalAlpha } : null;
     ctx.save();
     A0 = ctx.globalAlpha;
     if (P && e.glow) ctx.globalCompositeOperation = 'lighter';
     let n = 0;
-    for (let i = i0; i <= i1; i++) {
-      const p = stateOf(e, i, t);
+    for (let j = 0; j < N; j++) {
+      const p = stateOf(e, i0 + j, t);
       if (!p || p.alpha <= 0.004 || p.size <= 0.2) continue;
       draw(ctx, p, e, look);
       n++;

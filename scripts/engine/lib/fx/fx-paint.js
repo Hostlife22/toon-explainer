@@ -6,9 +6,8 @@
   'use strict';
   const T = window.TOON, FX = T.FX, TAU = Math.PI * 2;
   T.FX_CLASSIC = T.FX_CLASSIC || {};
-  const cache = new Map();
-  // Stable emitter objects per (layer id, role, parameters): particles.js caches the merged emitter per object.
-  const em = (L, role, make) => { const key = (L.id ?? L.kind) + ':' + role + ':' + JSON.stringify([L.size, L.w, L.count, L.color, L.rise]); let e = cache.get(key); if (!e) { e = make(); cache.set(key, e); } return e; };
+  // Stable emitter objects: the full parameter set is the identity (T.emitterOf), so no layer field can be left out.
+  const em = (_L, _role, make) => T.emitterOf(make());
   const hexOr = (c, def) => (typeof c === 'string' && /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(c) ? T.hex6(c) : def);
   const paint = (kind, fn) => {
     const base = FX[kind];
@@ -20,14 +19,45 @@
   // smoke: a drifting band of soft, lit puffs (w, color, rise, count as in the classic kind).
   paint('smoke', (ctx, L, lt, env, P) => {
     const w = L.w ?? 1400, rise = L.rise ?? 220, n = L.count ?? 14, life = 4.2;
-    const e = em(L, 'smoke', () => ({ preset: 'smoke', id: (L.id ?? 'smoke') + 'p', w, h: 40, rate: (n / life) * 1.5, life, prewarm: true, speed: 30, spread: 50, drag: 0.6, gravity: -((rise * 0.6) / life) * 1.4, wind: 28, size: [95, 160], grow: 1.9, alpha: 0.62, color: hexOr(L.color, undefined) }));
+    const e = em(L, 'smoke', () => ({ preset: 'smoke', id: (L.id ?? 'smoke') + 'p', w, h: 40, rate: (n / life) * 1.5, life, prewarm: true, speed: 30, spread: 50, drag: 0.6, gravity: -((rise * 0.6) / life) * 1.4, wind: 28, size: [95, 160], grow: 1.9, opacity: 0.62, color: hexOr(L.color, undefined) }));
     T.drawParticles(ctx, e, lt, { painted: P });
   });
+
+  // Painted flame: four nested tongues (deep red rim, orange, yellow, a white-hot core), each a vertical gradient that
+  // cools toward its tips, a dark rim line for the toon read and an additive heat bloom at the base. Shapes re-seed every
+  // `step` frames like the classic flipbook (T.drawFlame).
+  function paintedFlame(ctx, size, lt, seed, step) {
+    const k = Math.floor(lt * 30 / step + 1e-6) % 4, r = T.rng(T.hash(seed + ':' + k));
+    const tongue = (scale, c0, c1, n = 5) => {
+      const pts = [];
+      for (let i = 0; i <= n; i++) {
+        const x = (i / n - 0.5) * size * 0.8 * scale, top = i % 2 ? 0.55 : 1;
+        pts.push([x, -size * scale * top * (0.75 + r() * 0.35)]);
+        if (i < n) pts.push([x + (size * 0.8 * scale) / n / 2, -size * scale * (0.3 + r() * 0.2)]);
+      }
+      ctx.beginPath(); ctx.moveTo(-size * 0.42 * scale, 0);
+      pts.forEach(([x, y], i) => { const [px, py] = pts[i - 1] || [-size * 0.42 * scale, 0]; ctx.quadraticCurveTo(px, py, (px + x) / 2, (py + y) / 2); });
+      ctx.quadraticCurveTo(size * 0.45 * scale, -size * 0.1 * scale, size * 0.42 * scale, 0);
+      ctx.quadraticCurveTo(0, size * 0.12 * scale, -size * 0.42 * scale, 0);
+      const g = ctx.createLinearGradient(0, 0, 0, -size * scale); g.addColorStop(0, c0); g.addColorStop(1, c1);
+      ctx.fillStyle = g; ctx.fill();
+      return true;
+    };
+    ctx.save();
+    tongue(1.08, '#c4300c', '#7a1a08'); ctx.strokeStyle = 'rgba(70,16,6,0.55)'; ctx.lineWidth = Math.max(2, size * 0.02); ctx.lineJoin = 'round'; ctx.stroke();
+    tongue(0.86, '#ff7a14', '#d8400c');
+    tongue(0.62, '#ffd23a', '#ff9a1a', 4);
+    tongue(0.34, '#fffbe0', '#ffe06a', 3);
+    ctx.globalCompositeOperation = 'lighter';
+    const b = ctx.createRadialGradient(0, -size * 0.18, 0, 0, -size * 0.18, size * 0.55); b.addColorStop(0, 'rgba(255,200,90,0.45)'); b.addColorStop(1, 'rgba(255,140,40,0)');
+    ctx.fillStyle = b; ctx.fillRect(-size * 0.6, -size * 0.8, size * 1.2, size);
+    ctx.restore();
+  }
 
   // fire: a dark heat-smoke column behind, the classic flame tongues, additive licking flames, glow and embers.
   paint('fire', (ctx, L, lt, env, P, base) => {
     const n = L.count ?? 5, w = L.w ?? 600, s = L.size ?? 220;
-    const smoke = em(L, 'fsmoke', () => ({ preset: 'smoke', id: (L.id ?? 'fire') + 's', w: w * 0.7, oy: -s * 0.9, rate: 2 + n * 0.9, prewarm: true, colors: ['#5a4d43', '#2f2722', '#7c6c5e'], alpha: 0.5, size: [s * 0.45, s * 0.8], speed: 60, gravity: -70 }));
+    const smoke = em(L, 'fsmoke', () => ({ preset: 'smoke', id: (L.id ?? 'fire') + 's', w: w * 0.7, oy: -s * 0.9, rate: 2 + n * 0.9, prewarm: true, colors: ['#5a4d43', '#2f2722', '#7c6c5e'], opacity: 0.5, size: [s * 0.45, s * 0.8], speed: 60, gravity: -70 }));
     T.drawParticles(ctx, smoke, lt, { painted: P });
     if (L.glow !== false) {
       ctx.save(); ctx.globalCompositeOperation = 'lighter';
@@ -35,7 +65,8 @@
       g.addColorStop(0, 'rgba(255,170,60,0.5)'); g.addColorStop(0.5, 'rgba(255,120,30,0.18)'); g.addColorStop(1, 'rgba(255,100,20,0)');
       ctx.fillStyle = g; ctx.fillRect(-w, -s * 2.2, w * 2, s * 3.2); ctx.restore();
     }
-    base(ctx, { ...L, glow: false, embers: 0 }, lt, env);
+    const r = T.rng(T.hash((L.id ?? 'fire') + 'pos')), step = Math.max(1, Math.round(L.step ?? 2));
+    for (let i = 0; i < n; i++) { ctx.save(); ctx.translate((n === 1 ? 0 : i / (n - 1) - 0.5) * w, r() * 20); paintedFlame(ctx, s * (0.7 + r() * 0.6), lt + i * 0.07, (L.id ?? 'fire') + i, step); ctx.restore(); }
     const flames = em(L, 'flames', () => ({ preset: 'fire', id: (L.id ?? 'fire') + 'f', w: w * 0.85, oy: -s * 0.15, rate: 14 + n * 9, prewarm: true, size: [s * 0.22, s * 0.4], speed: s * 0.9, gravity: -s * 0.8 }));
     T.drawParticles(ctx, flames, lt, { painted: P });
     if ((L.embers ?? 18) > 0) {
@@ -47,8 +78,8 @@
   // explosion: flash, starburst, fireball puffs over a dark smoke billow, sparks, debris and a shock ring (~2.4 s).
   paint('explosion', (ctx, L, lt, env, P) => {
     const s = L.size ?? 320, id = L.id ?? 'boom';
-    const smoke = em(L, 'xsmoke', () => ({ preset: 'smoke', id: id + 's', burst: 16, dir: -90, spread: 360, speed: s * 2, drag: 2.8, gravity: -110, wind: 20, w: s * 0.3, h: s * 0.2, life: 2.6, size: [s * 0.42, s * 0.7], grow: 2.1, colors: ['#5b514a', '#2f2925', '#857767'], alpha: 0.9 }));
-    const ball = em(L, 'xball', () => ({ preset: 'smoke', id: id + 'b', burst: 14, dir: -90, spread: 360, speed: s * 2.3, drag: 4.2, gravity: -60, w: s * 0.2, h: s * 0.2, life: 0.95, size: [s * 0.36, s * 0.6], grow: 1.8, colors: ['#ffb43a', '#d2501a', '#ffe98e'], alpha: 1, turb: 10 }));
+    const smoke = em(L, 'xsmoke', () => ({ preset: 'smoke', id: id + 's', burst: 16, dir: -90, spread: 360, speed: s * 2, drag: 2.8, gravity: -110, wind: 20, w: s * 0.3, h: s * 0.2, life: 2.6, size: [s * 0.42, s * 0.7], grow: 2.1, colors: ['#5b514a', '#2f2925', '#857767'], opacity: 0.9 }));
+    const ball = em(L, 'xball', () => ({ preset: 'smoke', id: id + 'b', burst: 14, dir: -90, spread: 360, speed: s * 2.3, drag: 4.2, gravity: -60, w: s * 0.2, h: s * 0.2, life: 0.95, size: [s * 0.36, s * 0.6], grow: 1.8, colors: ['#ffb43a', '#d2501a', '#ffe98e'], opacity: 1, turb: 10 }));
     const sparks = em(L, 'xsparks', () => ({ preset: 'sparks', id: id + 'k', burst: 34, spread: 360, speed: s * 2.6, gravity: 700, life: 0.8, w: s * 0.2, h: s * 0.2 }));
     const debris = em(L, 'xdebris', () => ({ preset: 'debris', id: id + 'd', burst: 18, speed: s * 2.1, floor: s * 0.75, size: [s * 0.03, s * 0.08], color: hexOr(L.debris, undefined) }));
     T.drawParticles(ctx, smoke, lt - 0.06, { painted: P });

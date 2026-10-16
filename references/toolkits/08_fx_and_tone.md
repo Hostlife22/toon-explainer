@@ -313,7 +313,7 @@ with ink.
 | Field | Meaning (preset default) |
 |---|---|
 | `preset` | `smoke`, `dust`, `sparks`, `fire`, `embers`, `steam`, `splash`, `rain`, `snow`, `debris`, `confetti`, `leaves`, `bubbles`, `gas` (`TOON.PARTICLE_PRESETS`) |
-| `rate` | particles per second; `burst: N` spawns N at once instead (debris bursts by default) |
+| `rate` | particles per second (up to 2000); `burst: N` (up to 5000) spawns N at once instead (debris bursts by default) |
 | `life` | seconds each particle lives (each varies 0.7x to 1.3x) |
 | `dir`, `spread` | launch direction in degrees (0 = right, -90 = up) and the full cone width |
 | `speed` | launch speed px/s (each varies 0.55x to 1.45x) |
@@ -321,21 +321,21 @@ with ink.
 | `turb` | turbulence amplitude in px (smooth noise per particle) |
 | `size`, `grow` | px, a number or `[min, max]`; end size / start size |
 | `w`, `h`, `ox`, `oy` | emitter box and offset from the layer point (sky presets sit 600 px above it and span 2300 px: put the layer at `y` 0.5) |
-| `color` / `colors` | one hex (tones are derived) or a full list (base, shadow, light; fire uses a hot-to-cold ramp) |
-| `dur` | emission time in layer seconds (default: while the layer lives); particles finish their life after it |
+| `color` / `colors` | one hex (tones are derived) or a list (base, shadow, light; fire uses a hot-to-cold ramp); lists shorter than three are expanded |
+| `dur` | emission time in layer seconds (default: while the layer lives); no particle is born after it, the last ones finish their life. With `prewarm` the emitter has already run `prewarm` seconds at layer time 0 and still emits for `dur` |
 | `prewarm` | `true` (one `life`) or seconds: the emitter starts already running |
-| `floor`, `spin`, `alpha`, `seed` | landing line in px below the emitter (debris), rotation speed, opacity, seed override (default `id`) |
+| `floor`, `spin`, `opacity`, `seed` | landing line in px below the emitter (debris), rotation speed, particle opacity 0..1 (the layer's own `alpha` still fades the whole layer), seed override (default `id`) |
 
 **Impact language**
 
 | Kind | Fields (defaults) | What it does |
 |---|---|---|
 | `impact-frame` | `mode` (`invert` \| `flat` \| `flash`), `frames` (2, 1..6), `color` (paper `#f6efe2` / flash colour), `accent` (`#c8141c`, `null` = two tones), `ink`, `threshold` (0.36) | Holds for `frames` frames from the layer `at`, over the finished frame below it: `invert` negates it, `flat` posterises it to ink / accent / paper (manga hit frame), `flash` whites it out. Put it last in the layer list at the hit time |
-| `streaks` | `angle` (180 = lines travel left), `count` (36), `speed` (2600), `w`, `h` (area), `len` ([160, 560]), `width` ([3, 10]), `color` (white), `ink` (dark lines), `alpha` (0.8) | Parallel speed lines sliding past (the background rushes by). Radial lines stay `speedlines` |
-| `shockwave` | `size` (420 radius), `dur` (0.6), `rings` (2), `color`, `width`, `squash`, `ground` (flattened ring + dust rolling out both ways), `dust` (false = no dust), `dustColor` | Expanding rings, soft additive band with a thin refraction edge (painted) or white ring with ink (classic) |
-| `dustkick` | `target` (layer id), `times` ([layer seconds]), `size` (1), `side` (`both` \| `left` \| `right`), `color` | Dust rolls out along the ground and settles, pebbles hop. With `target` it fires at each landing of that layer (the end of every `jump`, the first touch of a `drop` entrance, the end of a `slam`) at its feet in world space, so it stays put whatever the camera does |
-| `toxic-cloud` | `size` (320), `color` (`#9fb34a`), `count` (18 puffs), `dur` (2 s growth), `ground` (hugs the floor), `drift` (px/s), `wisps` (true), `alpha` | A churning mass of lit puffs that grows in, with a sickly under-glow and gas wisps peeling off. Lead exhaust, chlorine, plague miasma |
-| `aura` | `radius` (220), `color` (`#ffe27a`), `pulse` (0.08), `rays` (10), `motes` (true) | Additive glow with slowly turning soft rays and rising glowing motes: relics, power-ups, radioactive objects. For a halo hugging a layer's own shape use the `glow` modifier |
+| `streaks` | `angle` (180 = lines travel left), `count` (36), `speed` (2600), `w`, `h` (area), `len` ([160, 560]), `width` ([3, 10]), `color` (white), `ink` (dark lines), `opacity` (0.8) | Parallel speed lines sliding past (the background rushes by). Radial lines stay `speedlines` |
+| `shockwave` | `size` (420 radius), `dur` (0.6), `rings` (2, 1..8), `color`, `width`, `squash`, `ground` (flattened ring + dust rolling out both ways), `dust` (false = no dust), `dustColor` | Expanding rings, soft additive band with a thin refraction edge (painted) or white ring with ink (classic) |
+| `dustkick` | `target` (layer id), `times` ([layer seconds]), `size` (1), `side` (`both` \| `left` \| `right`), `color` | Dust rolls out along the ground and settles, pebbles hop. With `target` it fires at each landing of that layer (the end of every `jump`, the first touch of a `drop` entrance, the end of a `slam`, using the layer's real entrance duration) at its feet in world space, after its `swap`s, so it stays put whatever the camera does |
+| `toxic-cloud` | `size` (320), `color` (`#9fb34a`), `count` (18 puffs), `dur` (2 s growth), `ground` (hugs the floor), `drift` (px/s), `wisps` (true), `opacity` (0.92) | A churning mass of lit puffs that grows in, with a sickly under-glow and gas wisps peeling off. Lead exhaust, chlorine, plague miasma |
+| `aura` | `radius` (220), `color` (`#ffe27a`), `pulse` (0.08, 0..1), `rays` (10), `motes` (true) | Additive glow with slowly turning soft rays and rising glowing motes: relics, power-ups, radioactive objects. For a halo hugging a layer's own shape use the `glow` modifier |
 
 Layer field `trail` (any layer): motion smear, see [03 Common layer fields](../03-spec-reference.md#common-layer-fields).
 
@@ -345,7 +345,7 @@ originals):
 | Kind | Painted |
 |---|---|
 | `smoke` | a drifting band of lit, prewarmed smoke puffs (same `w`, `count`, `rise`, `color`) |
-| `fire` | a dark heat-smoke column behind, the flipbook tongues, additive licking flames, a flickering glow and particle embers |
+| `fire` | a dark heat-smoke column behind, layered painted tongues (deep red rim, orange, yellow, white-hot core, each a cooling gradient, re-shaped every `step` frames), additive licking flames, a flickering glow and particle embers |
 | `explosion` | flash, starburst, a fireball of hot puffs over a dark smoke billow, sparks, debris that lands, a shock ring; lasts about 2.5 s |
 | `dust`, `puff` | bursts of lit dust puffs; the swap cloud as multi-tone puffs |
 | `gas` | the creeping front as lit billows |
