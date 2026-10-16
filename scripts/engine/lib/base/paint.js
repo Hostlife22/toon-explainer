@@ -60,7 +60,7 @@
   // paint: false keeps one shape flat, a number 0..1 scales its shading (faces use 0.45). pathFn runs several times,
   // so it must not consume RNG values.
   T.outlined = (ctx, pathFn, fill, { line = T.LINE, ink = T.PAL.ink, shade = null, paint = true } = {}) => {
-    const info = fill && paint !== false && T.PAINT && T.paintPrep ? T.paintPrep(ctx, pathFn, typeof paint === 'number' ? paint : 1) : null;
+    const info = paint !== false && T.PAINT && T.paintPrep && T.opaqueFill(fill) ? T.paintPrep(ctx, pathFn, typeof paint === 'number' ? paint : 1) : null;
     if (info && line > 0) T.inkUnder(ctx, pathFn, line, ink, info); // heavier ink on the shadow side
     ctx.beginPath();
     pathFn(ctx);
@@ -211,8 +211,9 @@
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, T.W, T.H);
     }
-    if (st.grain !== false || T.PAINT) {
-      const tile = T.PAINT && T.textureTile ? paperGrainTile() : grainTile();
+    if (st.grain === false && T.PAINT && T.fillTexture) T.fillTexture(ctx, null, 'paper', { rect: [0, 0, T.W, T.H], alpha: 0.45, seed: 9 }); // painted, no grain: still paper
+    else if (st.grain !== false) {
+      const tile = T.PAINT && T.textureTile ? paperGrainTile() : grainTile(); // painted: paper fibres ride on the grain tile
       const step = Math.floor(lt * 12);
       const r = T.rng(T.hash(env.seed + step));
       const ox = Math.floor(r() * 256), oy = Math.floor(r() * 256);

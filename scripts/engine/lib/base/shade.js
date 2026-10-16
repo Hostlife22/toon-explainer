@@ -40,7 +40,8 @@
     if (!bg || !T.SUN_LIT_BGS.has(bg.kind || 'sky') || bg.timelapse || !T.SKY) return null;
     const pal = T.SKY[bg.preset || 'day'], sun = bg.sun || (pal && pal.sun);
     if (!sun || sun[1] > 0.95 || sun[1] < -0.2) return null; // below the frame or far above it: keep the default key
-    return Math.atan2(Math.max(0.25 * Math.abs(sun[0] - 0.5), 0.5 - sun[1]), sun[0] - 0.5) / T.DEG;
+    const dx = (sun[0] - 0.5) * T.W, dy = (0.5 - sun[1]) * T.H; // world space: the frame is 16:9
+    return Math.atan2(Math.max(0.25 * Math.abs(dx), dy), dx) / T.DEG;
   }
 
   // Resolved paint state for a shot, or null for the classic look. Pure function of (spec, shot): cached per shot object.
@@ -101,11 +102,19 @@
   }
   const MIN_PX = 18; // shapes smaller than this on screen keep the classic flat fill
   const FULL_PX = 64; // below this: one shadow band only (no deep band, falloff, rim or ink weight), for speed
+  // Only opaque hex fills are shaded: gradients, patterns and rgba fills keep their own look and transparency.
+  const opaque = new Map();
+  T.opaqueFill = (fill) => {
+    if (typeof fill !== 'string') return false;
+    let v = opaque.get(fill);
+    if (v === undefined) { try { T.hex6(fill); v = true; } catch (e) { v = false; } opaque.set(fill, v); }
+    return v;
+  };
   // Band colours per (fill, strength), cached: hex fills get their shadow tones precomputed, so the bands are plain
   // source-over fills (blend modes are several times slower in the software rasteriser used for renders).
   const tones = new Map();
   const tonesFor = (P, fill, k) => {
-    const key = P.shadow + P.deep + (typeof fill === 'string' ? fill : '') + k;
+    const key = [P.shadow, P.deep, P.form, P.light.ambient, P.light.color, P.rimA, fill, k].join('|'); // every input of the tones
     let t = tones.get(key);
     if (!t) {
       const sh = T.mix('#ffffff', P.shadow, k), both = mulHex(sh, T.mix('#ffffff', P.deep, k));
@@ -161,12 +170,11 @@
 
   // Multi-tone shading of an already filled path: deep band on the far edge, shadow band, base on the lit side, an
   // airbrushed falloff toward the far edges and a rim light inside the lit edge. Bands come from shifted copies of the
-  // path, so any path callback works (unions of circles too); non-hex fills (gradients, patterns) are restored from
-  // `fill` over multiplied tints. Small shapes get one band only. o: an info from T.paintPrep, or options
+  // path, so any path callback works (unions of circles too); only opaque hex fills are shaded (T.opaqueFill). Small shapes get one band only. o: an info from T.paintPrep, or options
   // {strength 0..1 (1), band (fraction of the short side, 0.3), maxBand (px, 64), form: false, rim: false}.
   T.shadeFill = (ctx, pathFn, fill, o = {}) => {
     const P = T.PAINT;
-    if (!P || !fill) return null;
+    if (!P || !T.opaqueFill(fill)) return null;
     const info = o.bb ? o : T.paintPrep(ctx, pathFn, o.strength);
     if (!info) return null;
     const { bb, ll, m, M, k, full } = info;
@@ -177,19 +185,12 @@
     ctx.save();
     ctx.beginPath(); pathFn(ctx); ctx.clip();
     if (!full) { // small shape: a single shadow band
-      if (tn.hex) { ctx.fillStyle = tn.shadow; ctx.fillRect(bb.x - pad, bb.y - pad, bb.w + pad * 2, bb.h + pad * 2); ctx.fillStyle = fill; at(ds); ctx.fill(); }
+      ctx.fillStyle = tn.shadow; ctx.fillRect(bb.x - pad, bb.y - pad, bb.w + pad * 2, bb.h + pad * 2); ctx.fillStyle = fill; at(ds); ctx.fill();
       ctx.restore();
       return info;
     }
-    if (tn.hex) {
-      ctx.fillStyle = tn.deep; ctx.fillRect(bb.x - pad, bb.y - pad, bb.w + pad * 2, bb.h + pad * 2);
-      ctx.fillStyle = tn.shadow; at(dd); ctx.fill();
-    } else {
-      ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = tn.both; ctx.fillRect(bb.x - pad, bb.y - pad, bb.w + pad * 2, bb.h + pad * 2);
-      ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = fill; at(dd); ctx.fill();
-      ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = tn.sh; ctx.fill();
-      ctx.globalCompositeOperation = 'source-over';
-    }
+    ctx.fillStyle = tn.deep; ctx.fillRect(bb.x - pad, bb.y - pad, bb.w + pad * 2, bb.h + pad * 2);
+    ctx.fillStyle = tn.shadow; at(dd); ctx.fill();
     ctx.fillStyle = fill; at(ds); ctx.fill();
     const cx = bb.x + bb.w / 2, cy = bb.y + bb.h / 2, ug = gradsFor(ctx, tn);
     if (o.form !== false && M * ll.scale >= 100) { // airbrushed falloff: clean toward the light, darker toward the far edges (roundness)
@@ -235,7 +236,8 @@
   T.contactShadow = (ctx, x, y, rx, ry, alpha = 0.42, color = null) => {
     if (!(rx > 0 && ry > 0) || alpha <= 0) return;
     const c = T.hex6(color ?? (T.PAINT ? T.mix('#1a1020', T.PAINT.light.ambient, 0.4) : '#1a1020'));
-    const key = c + ':' + alpha.toFixed(3);
+    alpha = Math.round(T.clamp(alpha) * 255) / 255; // quantise first: the key and the stops come from the same value
+    const key = c + ':' + alpha;
     let g = contactGrads.get(key);
     if (!g) {
       g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);

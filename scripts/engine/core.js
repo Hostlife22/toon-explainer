@@ -253,9 +253,9 @@
   // A modifier may declare when(L) to ignore a field that a layer type uses for its own meaning.
   const activeMods = (L) => Object.keys(T.LAYER_MODS).filter((k) => L[k] && (!T.LAYER_MODS[k].when || T.LAYER_MODS[k].when(L))).sort((a, b) => (T.LAYER_MODS[a].order ?? 50) - (T.LAYER_MODS[b].order ?? 50));
   let modDepth = 0;
-  T.modLayer = (ctx, L, lt, env, paint) => {
+  T.modLayer = (ctx, L, lt, env, paint, isolate = false) => {
     const mods = activeMods(L);
-    if (!mods.length) { paint(ctx); return; }
+    if (!mods.length && !isolate) { paint(ctx); return; }
     const w = ctx.canvas.width, h = ctx.canvas.height, k = env.dpr || 1;
     const [c, o] = T.scratch('mod' + modDepth, w, h);
     o.clearRect(0, 0, w, h);
@@ -317,7 +317,9 @@
     ctx.save();
     try {
       ctx.globalAlpha *= st.a;
-      if (activeMods(L).length) T.modLayer(ctx, L, lt, shotEnv, paint);
+      // painted look: a fading layer is painted opaque on a scratch canvas first, so overlapping shading bands
+      // do not build up alpha; the composite takes the layer alpha
+      if (activeMods(L).length || (T.PAINT && st.a < 1)) T.modLayer(ctx, L, lt, shotEnv, paint, true);
       else paint(ctx);
     } finally { ctx.restore(); T.PAINT = saved; }
   };
@@ -346,13 +348,13 @@
         c.save();
         draw(c, bg, lt, shotEnv);
         c.restore();
+        if (T.PAINT && T.paintBg) { c.save(); T.paintBg(c, bg, lt, shotEnv); c.restore(); } // painted look: this bg's textures and occlusion
       }
     };
     drawBgs(ctx);
     const focus = focusBlur(shot, lt);
     const bgBlur = focus ? focus('@bg') : 0;
     if (bgBlur >= 0.3) T.filtered(ctx, `blur(${(bgBlur * env.dpr).toFixed(2)}px) brightness(0.96)`, drawBgs); // blurred copy over the sharp one: no dark edges
-    if (T.PAINT && T.paintBg) T.paintBg(ctx, shot, lt, shotEnv); // painted look: light wash, depth haze, ground AO
     if (T.gradeBg && !env.noPost) T.gradeBg(ctx, shot, lt, shotEnv); // panel cells with grade:false stay ungraded
     for (const L0 of shot.layers || []) {
       let L = T.effLayer(L0, lt);

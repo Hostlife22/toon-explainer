@@ -1,7 +1,7 @@
 // paint-places.js — painted look for places: 3-tone painted clouds, sun bloom and horizon haze, textured ground,
 // surface textures per background kind (plaster walls, wood floors, cobbles, carpets), the frame light wash, and the
 // grade presets dusk and overcast (golden-hour and night live in action-fx.js and atmosphere.js). Paper fibres join
-// the film grain tile in paint.js. Hooks are called by core.js (T.paintBg after the backgrounds), paint.js
+// the film grain tile in paint.js. Hooks are called by core.js (T.paintBg after each background), paint.js
 // (T.paintPost) and backgrounds.js (T.paintSky.*), only while T.PAINT is set.
 (function () {
   'use strict';
@@ -127,8 +127,8 @@
   T.BG_SURFACES = {
     office: (ctx, bg, env) => cam(ctx, env, 0.85, () => tex(ctx, 'fabric', band((bg.floorY ?? 0.78) * H, H + OV()), { alpha: 0.6 })),
     room: (ctx, bg, env) => cam(ctx, env, 0.85, () => tex(ctx, 'plaster', band(-OV(), H * 0.7), { alpha: 0.5 })),
-    palace: (ctx, bg, env) => cam(ctx, env, 0.85, () => tex(ctx, 'plaster', band(-OV(), H * 0.75), { alpha: 0.5 })),
-    hospital: (ctx, bg, env) => cam(ctx, env, 0.85, () => tex(ctx, 'plaster', band(-OV(), H * 0.75), { alpha: 0.45 })),
+    palace: (ctx, bg, env) => cam(ctx, env, 0.6, () => tex(ctx, 'plaster', band(-OV(), H * (bg.floorY ?? 0.8)), { alpha: 0.5 })),
+    hospital: (ctx, bg, env) => cam(ctx, env, 0.9, () => tex(ctx, 'plaster', band(-OV(), H * 0.62), { alpha: 0.45 })),
     cell: (ctx, bg, env) => cam(ctx, env, 0.85, () => tex(ctx, 'stone', band(-OV(), H + OV()), { alpha: 0.45 })),
     corridor: (ctx, bg, env) => cam(ctx, env, 0.85, () => tex(ctx, 'plaster', band(-OV(), H + OV()), { alpha: 0.4 })),
     stage: (ctx, bg, env) => cam(ctx, env, 0.9, () => tex(ctx, 'fabric', band(-OV(), H * 0.8), { alpha: 0.4 })),
@@ -142,22 +142,26 @@
     battlefield: (ctx, bg, env) => cam(ctx, env, 1, () => tex(ctx, 'grass', band(H * 0.66, H + OV()), { alpha: 0.5 })),
   };
 
-  // Floor line (fraction of H) of interior sets: the wall-floor contact gets an occlusion band.
-  T.BG_FLOOR = { interior: (bg) => bg.floorY ?? 0.78, office: (bg) => bg.floorY ?? 0.78, stage: () => 0.8, palace: () => 0.78, hospital: () => 0.78, bar: () => 0.8 };
+  // Floor line (fraction of H) and camera plane of interior sets, matching each background's own drawing: the
+  // wall-floor contact gets an occlusion band there.
+  T.BG_FLOOR = {
+    interior: (bg) => [bg.floorY ?? 0.78, 0.85], office: (bg) => [bg.floorY ?? 0.78, 0.85], stage: () => [0.8, 0.9],
+    palace: (bg) => [bg.floorY ?? 0.8, 0.6], hospital: () => [0.62, 0.9],
+  };
 
-  // After the backgrounds (core.js): per-kind surface textures and the floor occlusion band of interior sets.
-  T.paintBg = (ctx, shot, lt, env) => {
-    const P = T.PAINT, k = P.light.intensity, bgs = Array.isArray(shot.bg) ? shot.bg : [shot.bg || { kind: 'sky' }];
-    for (const bg of bgs) {
-      const kind = bg.kind || (bg.image ? 'image' : 'sky'), f = T.BG_SURFACES[kind], fl = T.BG_FLOOR[kind];
-      if (f) { ctx.save(); f(ctx, bg, env); ctx.restore(); }
-      if (fl) cam(ctx, env, 0.85, () => {
-        const fy = fl(bg) * H, o = OV(), up = ctx.createLinearGradient(0, fy - 90, 0, fy), dn = ctx.createLinearGradient(0, fy, 0, fy + 70);
-        up.addColorStop(0, rgba('#1a1020', 0)); up.addColorStop(1, rgba('#1a1020', 0.32));
-        dn.addColorStop(0, rgba('#1a1020', 0.38)); dn.addColorStop(1, rgba('#1a1020', 0));
-        ctx.fillStyle = up; ctx.fillRect(-o, fy - 90, W + o * 2, 90); ctx.fillStyle = dn; ctx.fillRect(-o, fy, W + o * 2, 70);
-      });
-    }
+  // Right after one background is drawn (core.js drawBgs): its surface textures and floor occlusion band, so a later
+  // background covers them and rack-focus blur includes them.
+  T.paintBg = (ctx, bg, lt, env) => {
+    const kind = bg.kind || (bg.image ? 'image' : 'sky'), f = T.BG_SURFACES[kind], fl = T.BG_FLOOR[kind];
+    if (f) { ctx.save(); f(ctx, bg, env); ctx.restore(); }
+    if (!fl) return;
+    const [fy0, plane] = fl(bg);
+    cam(ctx, env, plane, () => {
+      const fy = fy0 * H, o = OV(), up = ctx.createLinearGradient(0, fy - 90, 0, fy), dn = ctx.createLinearGradient(0, fy, 0, fy + 70);
+      up.addColorStop(0, rgba('#1a1020', 0)); up.addColorStop(1, rgba('#1a1020', 0.32));
+      dn.addColorStop(0, rgba('#1a1020', 0.38)); dn.addColorStop(1, rgba('#1a1020', 0));
+      ctx.fillStyle = up; ctx.fillRect(-o, fy - 90, W + o * 2, 90); ctx.fillStyle = dn; ctx.fillRect(-o, fy, W + o * 2, 70);
+    });
   };
 
   // Whole frame, before the grade: key-light wash on the light side falling off to a cool, darker far side.

@@ -9,6 +9,7 @@ before a long render starts. Keep the KNOWN_* sets in sync with scripts/engine (
 from __future__ import annotations
 
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -511,23 +512,37 @@ def _check_light(light, where: str, errors: list[str]) -> None:
 
 
 def _check_look_name(look, where: str, errors: list[str]) -> None:
-    if look is not None and look not in KNOWN_LOOKS:
+    if look is not None and (not isinstance(look, str) or look not in KNOWN_LOOKS):
         errors.append(f"{where}: look {look!r} not in {sorted(KNOWN_LOOKS)}")
 
 
+CONTACT_KEYS = {"w": (0, None), "h": (0, None), "dy": (None, None), "alpha": (0, 1)}
+
+
 def _check_paint_fields(layer: dict, where: str, errors: list[str]) -> None:
-    """Per-layer painted-look fields: atmos (atmospheric perspective), contact (ground shadow), painted (opt out)."""
-    atmos = layer.get("atmos")
-    amount = atmos.get("amount", 0.5) if isinstance(atmos, dict) else atmos
-    if atmos is not None and not (_is_num(amount) and 0 <= amount <= 1):
-        errors.append(f"{where}: atmos must be 0..1 or {{amount 0..1, color}}")
-    if isinstance(atmos, dict) and atmos.get("color") is not None and not (isinstance(atmos["color"], str) and HEX_RE.match(atmos["color"])):
-        errors.append(f"{where}: atmos color must be a hex colour")
-    contact = layer.get("contact")
-    if contact is not None and not (isinstance(contact, (bool, dict)) or (_is_num(contact) and contact >= 0)):
-        errors.append(f"{where}: contact must be true/false, a width scale >= 0 or {{w, h, alpha, dy}}")
-    if layer.get("painted") is not None and not isinstance(layer["painted"], bool):
-        errors.append(f"{where}: painted must be true or false")
+    """Per-layer painted-look fields, for the layer and every state its swaps produce: atmos (atmospheric
+    perspective), contact (ground shadow), painted (opt out)."""
+    states = _swap_states(layer)
+    for k, entry in enumerate(states):
+        at = where if k == 0 else f"{where} (after swap {k})"
+        atmos = entry.get("atmos")
+        amount = atmos.get("amount", 0.5) if isinstance(atmos, dict) else atmos
+        if atmos is not None and not (_is_num(amount) and 0 <= amount <= 1):
+            errors.append(f"{at}: atmos must be 0..1 or {{amount 0..1, color}}")
+        if isinstance(atmos, dict) and atmos.get("color") is not None and not (isinstance(atmos["color"], str) and HEX_RE.match(atmos["color"])):
+            errors.append(f"{at}: atmos color must be a hex colour")
+        contact = entry.get("contact")
+        if isinstance(contact, dict):
+            for key, val in contact.items():
+                lo, hi = CONTACT_KEYS.get(key, (None, None))
+                if key not in CONTACT_KEYS:
+                    errors.append(f"{at}: contact {key} is not a contact field (w, h, dy, alpha)")
+                elif not (_is_num(val) and math.isfinite(val) and (lo is None or val >= lo) and (hi is None or val <= hi)):
+                    errors.append(f"{at}: contact {key} must be a number" + (f" in {lo}..{hi}" if hi is not None else " >= 0" if lo is not None else ""))
+        elif contact is not None and not (isinstance(contact, bool) or (_is_num(contact) and math.isfinite(contact) and contact >= 0)):
+            errors.append(f"{at}: contact must be true/false, a width scale >= 0 or {{w, h, alpha, dy}}")
+        if entry.get("painted") is not None and not isinstance(entry["painted"], bool):
+            errors.append(f"{at}: painted must be true or false")
 
 
 def _check_layer_refs(layer: dict, where: str, ids: set, cast: dict, errors: list[str]) -> None:

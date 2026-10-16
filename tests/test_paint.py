@@ -169,3 +169,45 @@ def test_painted_bench_is_dense_and_painted():
     assert validate(spec) == []
     assert spec["style"]["look"] == "painted"
     assert len(spec["shots"]) >= 8
+
+
+# ---------- review fixes ----------
+def test_validator_rejects_bad_contact_members_swapped_paint_fields_and_non_string_looks():
+    bad = copy.deepcopy(PAINTED)
+    bad["shots"][0]["layers"][1]["contact"] = {"alpha": 2}
+    bad["shots"][0]["layers"][0]["contact"] = {"w": "wide"}
+    bad["shots"][0]["layers"][2]["swap"] = [{"at": 0.5, "atmos": {"color": "oops"}}]
+    errors = "\n".join(validate(bad))
+    assert "contact alpha" in errors and "contact w" in errors, errors
+    assert "swap" in errors and "atmos color" in errors, errors
+    for where in ("style", "shot"):
+        weird = copy.deepcopy(PAINTED)
+        (weird["style"] if where == "style" else weird["shots"][0])["look"] = [] if where == "style" else {}
+        assert any("look" in e for e in validate(weird))
+
+
+def test_tone_cache_and_background_passes_follow_the_shot():
+    two = copy.deepcopy(PAINTED)
+    two["shots"][1] = copy.deepcopy(two["shots"][0])
+    two["shots"][1].update(id="b", light={"dir": 140, "color": "#80c0ff", "rim": 1.0})
+    a = _frames(two, [0.5, 2.5])
+    b = _frames(two, [2.5, 0.5])[::-1]
+    assert a == b, "a cached tone leaked between shots with different rim light"
+    covered = copy.deepcopy(PAINTED)
+    covered["shots"] = [{"id": "c", "dur": 1, "bg": [{"kind": "interior"}, {"kind": "flat", "color": "#334455"}], "layers": []}]
+    flat_only = copy.deepcopy(covered)
+    flat_only["shots"][0]["bg"] = [{"kind": "flat", "color": "#334455"}]
+    assert _frames(covered, [0.5]) == _frames(flat_only, [0.5]), "an opaque later background must hide earlier paint passes"
+
+
+def test_sun_direction_uses_world_aspect_and_contact_alpha_is_order_free():
+    js = """() => {
+      const T = TOON, dir = T.paintState({style: {look: 'painted'}}, {id: 'x', bg: {kind: 'sky', preset: 'day'}}).light.dir;
+      const c = document.createElement('canvas'); c.width = c.height = 64; const k = c.getContext('2d');
+      const draw = (as) => { k.clearRect(0, 0, 64, 64); for (const a of as) T.contactShadow(k, 32, 32, 30, 10, a); return c.toDataURL(); };
+      const one = draw([0.4996]), two = (draw([0.5004]), draw([0.4996]));
+      return {dir, same: one === two};
+    }"""
+    out = _page_eval(PAINTED, lambda page: page.evaluate(js))
+    assert abs(out["dir"] - 30.96) < 0.1, out
+    assert out["same"], out
