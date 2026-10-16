@@ -54,6 +54,7 @@
   T.HEAD_EXTRAS = T.HEAD_EXTRAS || []; // fn(ctx, c, s, {view, sh, fx, HW, CY}) after the headwear, every view (horns, labels)
   const exprOf = (name) => T.EXPR[name] || T.EXPR.neutral || EXPR.neutral;
   const isolated = (ctx, fn) => { ctx.save(); try { fn(); } finally { ctx.restore(); } };
+  const isolatedR = (ctx, fn) => { ctx.save(); try { return fn(); } finally { ctx.restore(); } }; // same, returns fn's value
 
   function eye(ctx, kind, x, y, s, lt, c) {
     ctx.fillStyle = P.ink; ctx.strokeStyle = P.ink; ctx.lineWidth = 10; ctx.lineCap = 'round';
@@ -296,7 +297,7 @@
     const e = exprOf(s.expr);
     if (c.headShape && T.drawAltHead && T.drawAltHead(ctx, c, s)) { headwear(ctx, c, s.lt, sh, view); return; }
     if (s.smear) hairSmear(ctx, c, s, sh, view);
-    hairBack(ctx, c, s.seed, sh);
+    swayed(ctx, s.sway, 1, () => hairBack(ctx, c, s.seed, sh));
     if (c.flag && T.drawFlagHead) T.drawFlagHead(ctx, c, headPath, sh);
     else T.outlined(ctx, headPath, c.skin, {
       paint: 0.45, // painted look: faces stay bright, as in the reference
@@ -322,19 +323,34 @@
         view, HW, CY, fx, e, eyeKind: ek, mouthKind: mk,
       } : null;
       const extrasPass = (before) => { for (const fn of T.FACE_EXTRAS) if (!!fn.before === before) isolated(ctx, () => fn(ctx, c, s, a)); };
+      // close-up detail level (closeup.js): painted eyes, brows, mouth and face extras where it knows the kind
+      const D = s.detail && T.CLOSEUP && !c.flag ? T.CLOSEUP : null;
+      const da = D ? { eyes: eyes.map(([x, sg]) => [x, sg]), mouth: [mx, -382], view, fx, e } : null;
+      if (D) isolated(ctx, () => D.skin(ctx, c, s, da));
       if (a) extrasPass(true);
       const es = c.eyeScale && c.eyeScale !== 1 ? c.eyeScale : 0; // child builds: bigger eyes, same spacing
-      eyes.forEach(([x, sg]) => { if (!es) return eye(ctx, ek, x, -458, sg, s.lt, c); isolated(ctx, () => { ctx.translate(x, -458); ctx.scale(es, es); eye(ctx, ek, 0, 0, sg, s.lt, c); }); });
-      brows(ctx, e.brows, eyes.map(([x, sg]) => [x, sg]), -508, s.lt, c);
-      if (!(c.flag && c.flagMouth === false)) mouth(ctx, mk, mx, -382, s.lt, c, view);
-      if (c.blush) { ctx.fillStyle = 'rgba(230,120,120,0.35)'; eyes.forEach(([x]) => { ctx.beginPath(); ctx.ellipse(x * 1.8, -410, 26, 14, 0, 0, Math.PI * 2); ctx.fill(); }); }
+      const oneEye = (x, y, sg) => (D && isolatedR(ctx, () => D.eye(ctx, ek, x, y, sg, s, c))) || eye(ctx, ek, x, y, sg, s.lt, c);
+      eyes.forEach(([x, sg]) => { if (!es) return oneEye(x, -458, sg); isolated(ctx, () => { ctx.translate(x, -458); ctx.scale(es, es); oneEye(0, 0, sg); }); });
+      if (D && e.brows) isolated(ctx, () => D.brows(ctx, eyes.map(([x, sg]) => [x, sg]), s, c));
+      else brows(ctx, e.brows, eyes.map(([x, sg]) => [x, sg]), -508, s.lt, c);
+      if (!(c.flag && c.flagMouth === false) && !(D && D.mouth && isolatedR(ctx, () => D.mouth(ctx, mk, mx, -382, s, c, view, e)))) mouth(ctx, mk, mx, -382, s.lt, c, view);
+      if (c.blush && !D) { ctx.fillStyle = 'rgba(230,120,120,0.35)'; eyes.forEach(([x]) => { ctx.beginPath(); ctx.ellipse(x * 1.8, -410, 26, 14, 0, 0, Math.PI * 2); ctx.fill(); }); }
+      if (D) isolated(ctx, () => D.extras(ctx, c, s, da));
       if (a) extrasPass(false);
       ctx.restore();
-      extras(ctx, e, fx, s.lt);
+      extras(ctx, D ? { blood: e.blood } : e, fx, s.lt);
     }
-    hairFront(ctx, c, s.seed, sh, view);
+    swayed(ctx, s.sway, c.hair === 'long' || view === 'back' ? 0.45 : 0.18, () => hairFront(ctx, c, s.seed, sh, view));
     headwear(ctx, c, s.lt, sh, view);
     for (const fn of T.HEAD_EXTRAS) isolated(ctx, () => fn(ctx, c, s, { view, sh, fx, HW, CY }));
+  }
+
+  // Secondary motion of hair (s.sway from bean.js springs): shear around the crown, so the ends lag the most.
+  function swayed(ctx, sway, amount, fn) {
+    if (!sway || !(Math.abs(sway.x) > 0.05 || Math.abs(sway.y) > 0.05)) return fn();
+    ctx.save();
+    ctx.translate(0, -560); ctx.transform(1, 0, (sway.x * amount) / 260, 1 + (sway.y * amount) / 900, 0, 0); ctx.translate(0, 560);
+    try { fn(); } finally { ctx.restore(); }
   }
 
   // Talking mouth: changes every ~3 frames (10 Hz), never the same shape twice in a row (reference: 2–3 shapes on 2s/3s).

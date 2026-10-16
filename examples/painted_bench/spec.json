@@ -444,13 +444,41 @@
      "x": 0.46,
      "y": 1.6,
      "size": 1350,
-     "pose": "think",
-     "expr": "squint",
+     "pose": [
+      {
+       "at": 0,
+       "v": "think"
+      },
+      {
+       "at": 1.2,
+       "v": "fist"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "scheming"
+      },
+      {
+       "at": 1.2,
+       "v": "rage"
+      }
+     ],
      "talk": [
       [
        0.2,
        1.8
       ]
+     ],
+     "view": [
+      {
+       "at": 0,
+       "v": "3q"
+      },
+      {
+       "at": 1.2,
+       "v": "front"
+      }
      ]
     },
     {
@@ -600,8 +628,33 @@
      "x": 0.26,
      "y": 1.0,
      "size": 560,
-     "pose": "arms-up",
-     "expr": "happy"
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 0.9,
+       "v": "arms-up"
+      }
+     ],
+     "expr": [
+      {
+       "at": 0,
+       "v": "awe"
+      },
+      {
+       "at": 0.9,
+       "v": "laughing"
+      }
+     ],
+     "jump": [
+      {
+       "at": 0.9,
+       "dur": 0.5,
+       "h": 120
+      }
+     ]
     },
     {
      "type": "prop",

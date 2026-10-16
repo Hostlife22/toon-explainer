@@ -89,7 +89,7 @@ Parallax: every layer has a `z` (default 1). At 0 the layer is pinned to the scr
 `type`, `id`, `x`, `y`, `scale`, `rot` (degrees), `alpha`, `flip`, `z`, `hud` (ignores the camera), `at`, `out`,
 `enter`, `exit` (`none|fade|pop|drop|rise|slide-left|slide-right|slide-up|slide-down|spin|drop-squash|pop-tilt|slam` and the gag kinds in [02 Acting](toolkits/02_acting.md)), `enterDur`, `exitDur`,
 `move: [{at,dur,to:[x,y],scale,rot,alpha,flip,ease}]`, `bob` (px), `bobHz`, `sway` (deg), `swayHz`, `wobble` (px),
-`shake: [{at,dur,amp}]`, `jump: [{at,dur,h}]`.
+`shake: [{at,dur,amp}]`, `jump: [{at,dur,h}]`, `path: {pts,at,dur,ease,face,gait}` (travel along a curve, facing the travel; [02 Acting](toolkits/02_acting.md#body-acting-acting)), `ground` (normalised floor y for the painted contact shadow of a flier).
 
 More fields accepted by every layer:
 

@@ -30,6 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from spec import SpecError, image_refs, load  # noqa: E402
+from spec_characters import check_lipsync  # noqa: E402
 
 ENGINE = Path(__file__).parent / "engine"
 
@@ -55,6 +56,25 @@ def parse_args(argv=None):
     return ap.parse_args(argv)
 
 
+def inline_lipsync(spec_path: Path, lip: dict) -> dict:
+    """Replace lipsync.src (an envelope written by scripts/lipsync.py) with its levels and fps."""
+    f = (spec_path.parent / lip["src"]).resolve()
+    try:
+        env = json.loads(f.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"lipsync envelope {lip['src']!r} could not be read: {exc}") from exc
+    if not isinstance(env, dict) or not isinstance(env.get("levels"), str):
+        raise SystemExit(f"lipsync envelope {lip['src']!r} has no levels string (make it with scripts/lipsync.py)")
+    out = {k: v for k, v in lip.items() if k != "src"}
+    out["levels"] = env["levels"]
+    out.setdefault("fps", env.get("fps", 30))
+    errors: list[str] = []
+    check_lipsync(out, f"lipsync envelope {lip['src']!r}", errors)
+    if errors:
+        raise SystemExit("\n".join(errors))
+    return out
+
+
 def prepare_spec(spec_path: Path, spec: dict) -> tuple[dict, set[str]]:
     """Rewrite local image paths to /__file__/<abs> URLs and return the allow-list for the server."""
     allowed: set[str] = set()
@@ -70,6 +90,8 @@ def prepare_spec(spec_path: Path, spec: dict) -> tuple[dict, set[str]]:
         if isinstance(v, list):
             return [walk(x, key) for x in v]
         if isinstance(v, dict):
+            if key == "lipsync" and isinstance(v.get("src"), str):
+                return inline_lipsync(spec_path, v)
             return {k: walk(x, k) for k, x in v.items()}
         if isinstance(v, str) and key in ("src", "image", "idle", "talk", "blink"):
             return mapping.get(v, v)

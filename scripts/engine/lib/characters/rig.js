@@ -2,7 +2,7 @@
 // hold-and-snap posing with settle, idle rock around the feet, tremble, walk/run cycles on twos, lagging cape, costume
 // (armor, pleats, trim, sash, belt, cape, shield in the off hand). Head comes from face.js. Layer type: 'bean'.
 // Pose registry (T.POSES, body poses with dy/rot/lean/legs), leg modes, antic/snapTilt, builds and ages
-// (T.BUILDS), hooks T.BEAN_UNDER (before legs) and T.BEAN_EXTRAS (after the body).
+// (T.BUILDS), hooks T.BEAN_UNDER (before legs) and T.BEAN_EXTRAS (after the body). The layer itself is assembled in bean.js.
 // Units: 600 tall, feet at (0,0). `size` = on-screen height in px.
 (function () {
   'use strict';
@@ -18,6 +18,7 @@
   // Constant or timeline [{at, v}] → {cur, prev, p, at}
   T.timed = (val, lt, blend = 0.18) => {
     if (!Array.isArray(val)) return { cur: val, prev: val, p: 1, at: -1e9 };
+    if (!val.length) return { cur: undefined, prev: undefined, p: 1, at: -1e9 }; // empty timeline: no value
     let i = -1;
     for (let k = 0; k < val.length; k++) if (lt >= (val[k].at ?? 0)) i = k;
     if (i < 0) return { cur: val[0].v, prev: val[0].v, p: 1, at: -1e9 };
@@ -187,7 +188,14 @@
   };
 
   // ---------- drawing parts ----------
+  // Hand shapes beyond the original four come from limbs.js (T.HANDS); the original four keep this drawing.
   function hand(ctx, x, y, dir, kind, skin, hs = 1) {
+    if (T.drawHand && kind !== 'open' && kind !== 'fist' && kind !== 'point' && kind !== 'thumb' && T.HANDS[kind]) {
+      return T.drawHand(ctx, x, y, dir, kind, skin, hs, (k) => legacyHand(ctx, x, y, dir, k, skin, hs));
+    }
+    return legacyHand(ctx, x, y, dir, kind, skin, hs);
+  }
+  function legacyHand(ctx, x, y, dir, kind, skin, hs = 1) {
     ctx.save(); ctx.translate(x, y); ctx.rotate(-dir); // local +y = along forearm
     if (hs !== 1) ctx.scale(hs, hs);
     const finger = (fx, fy, len, ang) => { ctx.save(); ctx.translate(fx, fy); ctx.rotate(ang); T.outlined(ctx, (k) => T.rrect(k, -8, 0, 16, len, 8), skin, { line: 6 }); ctx.restore(); };
@@ -199,18 +207,21 @@
     ctx.restore();
   }
 
-  function arm(ctx, j, sleeve, skin, hold, lt = 0, w = ARM_W, hs = 1) {
-    const path = () => { ctx.beginPath(); ctx.moveTo(j.sx, j.sy); ctx.quadraticCurveTo(j.ex, j.ey, (j.ex + j.hx) / 2, (j.ey + j.hy) / 2); ctx.lineTo(j.hx, j.hy); };
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.strokeStyle = P.ink; ctx.lineWidth = w + T.LINE * 2; path(); ctx.stroke();
-    ctx.strokeStyle = sleeve; ctx.lineWidth = w; path(); ctx.stroke();
-    ctx.strokeStyle = T.shade(sleeve, -0.18); ctx.lineWidth = w * 0.35; ctx.beginPath(); ctx.moveTo(j.sx - 8, j.sy + 10); ctx.quadraticCurveTo(j.ex - 8, j.ey, j.ex - 6, j.ey + 6); ctx.stroke();
+  function arm(ctx, j, sleeve, skin, hold, lt = 0, w = ARM_W, hs = 1, holdSize = null) {
+    if (T.PAINT && T.paintLimb) T.paintLimb(ctx, [j.sx, j.sy], [j.ex, j.ey], [j.hx, j.hy], w, sleeve, { cuff: 0.84 }); // painted: shaded tube
+    else {
+      const path = () => { ctx.beginPath(); ctx.moveTo(j.sx, j.sy); ctx.quadraticCurveTo(j.ex, j.ey, (j.ex + j.hx) / 2, (j.ey + j.hy) / 2); ctx.lineTo(j.hx, j.hy); };
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.strokeStyle = P.ink; ctx.lineWidth = w + T.LINE * 2; path(); ctx.stroke();
+      ctx.strokeStyle = sleeve; ctx.lineWidth = w; path(); ctx.stroke();
+      ctx.strokeStyle = T.shade(sleeve, -0.18); ctx.lineWidth = w * 0.35; ctx.beginPath(); ctx.moveTo(j.sx - 8, j.sy + 10); ctx.quadraticCurveTo(j.ex - 8, j.ey, j.ex - 6, j.ey + 6); ctx.stroke();
+    }
     if (hold && T.drawProp) {
       ctx.save(); ctx.translate(j.hx, j.hy);
       if (hold === 'sword') ctx.rotate(Math.PI - j.dir); // blade follows the forearm
       else if (hold === 'spear' || hold === 'torch') { ctx.rotate(T.clamp(-Math.sin(j.dir) * 0.35, -0.35, 0.35)); ctx.translate(0, hold === 'spear' ? 160 : 40); } // shafts stay upright
-      else ctx.translate(0, hold === 'shield' ? 0 : -60);
-      T.drawProp(ctx, hold, hold === 'shield' ? 260 : hold === 'spear' ? 420 : 170, lt, {}); ctx.restore();
+      else ctx.translate(0, hold === 'shield' ? 0 : -60 * (holdSize ? Math.min(1, holdSize / 170) : 1));
+      T.drawProp(ctx, hold, holdSize ?? (hold === 'shield' ? 260 : hold === 'spear' ? 420 : 170), lt, {}); ctx.restore();
     }
     hand(ctx, j.hx, j.hy, j.dir, j.hand, skin, hs);
   }
@@ -272,10 +283,13 @@
     const pts = [L.hip, L.knee, end];
     const path = () => { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); ctx.lineTo(pts[1][0], pts[1][1]); ctx.lineTo(pts[2][0], pts[2][1]); };
     const col = L.back ? shadeCol : legCol;
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.strokeStyle = P.ink; ctx.lineWidth = w + T.LINE * 2; path(); ctx.stroke();
-    ctx.strokeStyle = col; ctx.lineWidth = w; path(); ctx.stroke();
-    if (!L.back) { // one flat shadow strip along the back edge of each bone
+    if (T.PAINT && T.paintLimb) T.paintLimb(ctx, pts[0], pts[1], pts[2], w, L.back ? T.shade(legCol, -0.12) : legCol, { taper: 0.86 }); // painted: shaded tube
+    else {
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.strokeStyle = P.ink; ctx.lineWidth = w + T.LINE * 2; path(); ctx.stroke();
+      ctx.strokeStyle = col; ctx.lineWidth = w; path(); ctx.stroke();
+    }
+    if (!L.back && !T.PAINT) { // one flat shadow strip along the back edge of each bone
       ctx.strokeStyle = shadeCol; ctx.lineWidth = w * 0.3; ctx.lineCap = 'butt';
       for (let i = 0; i < 2; i++) {
         const [a, b] = [pts[i], pts[i + 1]], sx = b[0] - a[0], sy = b[1] - a[1], sl = Math.hypot(sx, sy) || 1;
@@ -305,9 +319,11 @@
     }, c.cape, { shade: (k) => { k.fillStyle = T.shade(c.cape, -0.25); k.fillRect(-260 + w, -330, 200, 340); } });
   }
 
-  function body(ctx, c, view) {
+  // hem: secondary-motion offset of the robe hem in units (0 = the classic outline), seed: costume detail seed
+  function body(ctx, c, view, hem = 0, seed = '') {
     const robe = c.robe ?? P.red, back = view === 'front' ? 1 : -1;
-    const path = (k) => { k.moveTo(-100, -326); k.quadraticCurveTo(0, -342, 100, -326); k.quadraticCurveTo(130, -210, 148, -70); k.quadraticCurveTo(0, -48, -148, -70); k.quadraticCurveTo(-130, -210, -100, -326); k.closePath(); };
+    const path = hem ? (k) => { k.moveTo(-100, -326); k.quadraticCurveTo(0, -342, 100, -326); k.quadraticCurveTo(130 + hem * 0.3, -210, 148 + hem, -70); k.quadraticCurveTo(hem, -48, -148 + hem, -70); k.quadraticCurveTo(-130 + hem * 0.3, -210, -100, -326); k.closePath(); }
+      : (k) => { k.moveTo(-100, -326); k.quadraticCurveTo(0, -342, 100, -326); k.quadraticCurveTo(130, -210, 148, -70); k.quadraticCurveTo(0, -48, -148, -70); k.quadraticCurveTo(-130, -210, -100, -326); k.closePath(); };
     T.outlined(ctx, path, robe, {
       shade: (k) => {
         k.fillStyle = c.robeShade ?? T.shade(robe, -0.24);
@@ -319,9 +335,15 @@
         if (c.sash) { k.fillStyle = c.sash; k.beginPath(); k.moveTo(-100, -336); k.lineTo(-36, -336); k.lineTo(152, -126); k.lineTo(152, -64); k.closePath(); k.fill(); k.strokeStyle = T.shade(c.sash, -0.22); k.lineWidth = 5; k.stroke(); }
       },
     });
+    const costume = T.paintCostume && (T.PAINT || c.patches);
+    if (costume && !c.outfit) T.paintCostume(ctx, c, view, { path, sway: hem, seed, stage: 'under' }); // painted cloth folds
     if (c.outfit && T.OUTFITS && T.OUTFITS[c.outfit]) T.OUTFITS[c.outfit](ctx, c, view);
     if (T.drawOutfitExtras) T.drawOutfitExtras(ctx, c, view);
-    if (c.belt && c.outfit !== 'tunic' && c.outfit !== 'surcoat') { ctx.strokeStyle = c.belt; ctx.lineWidth = 16; ctx.beginPath(); ctx.moveTo(-124, -186); ctx.quadraticCurveTo(0, -174, 124, -186); ctx.stroke(); }
+    if (costume) T.paintCostume(ctx, c, view, { path, sway: hem, seed, stage: 'over' }); // fabric weave over the outfit, patches
+    if (c.belt && c.outfit !== 'tunic' && c.outfit !== 'surcoat') {
+      if (T.PAINT && T.paintBelt) T.paintBelt(ctx, c.belt);
+      else { ctx.strokeStyle = c.belt; ctx.lineWidth = 16; ctx.beginPath(); ctx.moveTo(-124, -186); ctx.quadraticCurveTo(0, -174, 124, -186); ctx.stroke(); }
+    }
     if (c.armor) {
       T.outlined(ctx, (k) => { k.moveTo(-104, -320); k.quadraticCurveTo(0, -336, 104, -320); k.lineTo(116, -168); k.quadraticCurveTo(0, -150, -116, -168); k.closePath(); }, c.armor, {
         shade: (k) => { k.fillStyle = T.shade(c.armor, -0.2); k.fillRect(back * 50, -340, 90 * back, 200); k.strokeStyle = T.shade(c.armor, -0.38); k.lineWidth = 6; for (let y = -280; y < -170; y += 30) { k.beginPath(); k.moveTo(-110, y); k.quadraticCurveTo(0, y + 10, 110, y); k.stroke(); } },
@@ -383,111 +405,7 @@
     return { x: e0.cx - e.cx, y: pivot === 'center' ? e0.cy - e.cy : e0.y1 - e.y1 };
   }
 
-  T.layers.bean = (ctx, Ly, lt, env) => {
-    const own = { ...(env.cast[Ly.who] || {}), ...(Ly.look || {}) };
-    // outfit defaults (e.g. suit = dark trousers + shoes) sit between the base look and the cast's own values
-    let c = { skin: P.skin, robe: P.red, hair: 'short', ...((T.OUTFIT_DEFAULTS || {})[own.outfit] || {}), ...own };
-    const B = T.beanBuild(c), G = geomOf(B);
-    if (!B.def) {
-      c = { ...c };
-      if (B.noBeard) { c.beard = null; c.mustache = null; }
-      if (B.hairColor && own.hairColor == null) c.hairColor = B.hairColor;
-      if (B.eyeScale && c.eyeScale == null) c.eyeScale = B.eyeScale;
-    }
-    const seed = (Ly.who || 'bean') + (Ly.id || '') + (Ly.x ?? '');
-    const k = (Ly.size ?? 420) / 600;
-    const phase = (T.hash(seed) % 100) / 16;
-    const gait = gaitState(Ly, lt);
-    const talking = inWin(Ly.talk, lt);
-
-    // hold-and-snap: poses swap in ~2 frames, then the body settles with a small squash (reference: 1-frame swaps + settle)
-    const blend = Ly.poseBlend ?? 0.07;
-    const pt = T.timed(Ly.pose ?? 'idle', lt, blend);
-    const since = lt - pt.at;
-    const settle = since >= 0 && since < 0.2 && pt.at > -1e8 ? Math.sin((since / 0.2) * Math.PI) * 0.045 * (1 - since / 0.2) : 0;
-    const cur = poseOf(pt.cur), prev = poseOf(pt.prev);
-    const bs = bodyState(prev, cur, pt.p);
-    const an = anticState(Ly, lt, pt, blend);
-    const view = Ly.view ?? bs.view ?? c.view ?? '3q';
-    const specs = gait && !Ly.keepArms ? gait.arms : null;
-    const reach = (g, m) => (m === 1 ? g : { ...g, l1: g.l1 * m, l2: g.l2 * m }); // armScale: stretchy reach
-    const gPrev = reach(G, prev.body.armScale), gCur = reach(G, cur.body.armScale), gMix = reach(G, bs.armScale);
-    let arms = [-1, 1].map((side, i) => {
-      const sp = specs ? specs[i] : null;
-      if (sp) return solveArm(sp, side, G);
-      return lerpArm(solveArm(prev.arms[i], side, gPrev), solveArm(cur.arms[i], side, gCur), pt.p, gMix);
-    });
-    if (pt.cur === 'wave') arms[1] = solveArm(A(150, 28 + Math.sin(twos(lt) * 14) * 26), 1, G);
-    if (an.arm) arms = arms.map((j, i) => swingArm(j, an.arm, i ? 1 : -1));
-
-    // wind for the cape: layer velocity (shot time) + running
-    let wind = gait?.run ? 1 : gait ? 0.4 : 0;
-    if (env.st && Ly.move) {
-      const prevSt = T.layerState(Ly, env.lt - 0.1);
-      if (prevSt) wind += T.clamp((env.st.x - prevSt.x) / 0.1 / 700, -1, 1) * (env.st.flip || 1);
-    }
-
-    // leg mode and upper-body drop
-    let legMode = gait ? 'stand' : bs.legs;
-    if (B.legs) legMode = B.legs;
-    if (Ly.legs === false) legMode = 'none'; // riders hide their legs
-    const rot = gait ? 0 : bs.rot * T.DEG;
-    const geom = legMode === 'stand' ? null : legGeom(legMode, B, rot);
-    const dyE = (gait ? 0 : bs.dy) * B.legH + an.dy;
-
-    ctx.scale(k, k);
-    if (rot) { const f = rotFit(hullPoints(B, dyE, geom, legMode === 'stand'), rot, bs.pivot); ctx.translate(f.x, f.y); ctx.rotate(rot); }
-    // idle rock around the feet, tremble on twos, gait bob/lean, settle squash
-    const rock = (Ly.rock ?? 1.6) * Math.sin(lt * Math.PI * 2 / 1.7 + phase);
-    const extraLean = (gait ? 0 : bs.lean) + B.lean + an.tilt;
-    ctx.rotate((rock + (gait ? gait.lean : 0) + (Ly.lean ?? 0) + extraLean) * T.DEG);
-    if (inWin(Ly.tremble, lt)) { const r = T.rng(T.hash(seed + Math.floor(lt * 15))); ctx.translate((r() - 0.5) * 12, (r() - 0.5) * 8); }
-    if (gait) ctx.translate(0, gait.bob);
-    ctx.scale(1 + settle * 0.6, (1 - settle) * (1 + Math.sin(lt * Math.PI * 2 * 0.55 + phase) * 0.012) * an.sy);
-
-    const front = cur.front && !gait;
-    const torso = (fn) => { if (B.def) return fn(); ctx.save(); ctx.translate(0, B.offY); ctx.scale(B.bodyW, B.bodyH); fn(); ctx.restore(); };
-    const hooks = (list) => (list || []).forEach((fn) => fn(ctx, c, view, lt, Ly, B));
-    if (T.BEAN_UNDER.length) { ctx.save(); if (dyE) ctx.translate(0, dyE); torso(() => hooks(T.BEAN_UNDER)); ctx.restore(); }
-    if (legMode === 'stand') {
-      if (B.def) legs(ctx, c, gait);
-      else if (B.legH > 0) { ctx.save(); ctx.scale(B.legW, B.legH); legs(ctx, c, gait); ctx.restore(); }
-    } else if (geom && !LEG_MODES[legMode].over) drawLegMode(ctx, c, geom, B);
-
-    ctx.save();
-    if (dyE) ctx.translate(0, dyE);
-    torso(() => cape(ctx, c, lt, seed, wind));
-    const sleeve = c.sleeve ?? c.robe;
-    const armW = (c.sleeveW ?? ARM_W) * B.armW;
-    const noArms = c.arms === false || (c.age === 'baby' && c.arms !== true); // swaddled babies hide their arms
-    const drawArm = (i) => noArms ? null : arm(ctx, arms[i], sleeve, c.skin, i ? Ly.hold || c.hold : Ly.holdL || c.holdL, lt, armW, B.hand);
-    // back arm (character's left, screen-left in 3/4) goes behind the body unless the pose brings it to the face
-    if (view !== 'front' && !front) drawArm(0);
-    if (view === 'back') drawArm(1);
-    torso(() => { body(ctx, c, view); hooks(T.BEAN_EXTRAS); });
-    if (geom && LEG_MODES[legMode].over) { ctx.save(); if (dyE) ctx.translate(0, -dyE); drawLegMode(ctx, c, geom, B); ctx.restore(); }
-    const drawFrontArms = () => {
-      if (view === 'front' || front) drawArm(0);
-      if (view !== 'back') drawArm(1);
-    };
-    if (!front) drawFrontArms();
-
-    if (T.PAINT) T.contactShadow(ctx, B.headFwd * 300, B.neckY + 24, 120 * B.bodyW, 30, 0.38); // painted: the head's shadow on the torso
-    ctx.save();
-    const tilt = -rock * 1.6 + (talking ? Math.sin(lt * 9) * 1.6 : 0) + (Ly.headTilt ?? 0);
-    ctx.translate(B.headFwd * 300, B.neckY); ctx.rotate(tilt * T.DEG);
-    if (B.head !== 1) ctx.scale(B.head, B.head);
-    ctx.translate(0, 300);
-    const expr = T.timed(Ly.expr ?? 'neutral', lt).cur;
-    const blinkPhase = (lt + (T.hash(seed) % 300) / 100) % (2.8 + (T.hash(seed) % 17) / 10);
-    H().draw(ctx, c, {
-      view, expr, lt, seed,
-      blink: Ly.blink !== false && blinkPhase < 0.09,
-      gazeX: Ly.gaze ?? 0, smear: Ly.smear,
-      mouthKind: talking ? H().talkMouth(expr, lt, seed) : null,
-    });
-    ctx.restore();
-    if (front) drawFrontArms();
-    ctx.restore();
-  };
+  // Parts and motion helpers for the layer assembly in bean.js (T.layers.bean).
+  T.RIG = { A, poseOf, geomOf, solveArm, lerpArm, swingArm, ik, arm, legs, legGeom, drawLegMode, cape, body, gaitState, bodyState,
+    anticState, hullPoints, rotFit, inWin, twos, ARM_W, LEG_W };
 })();

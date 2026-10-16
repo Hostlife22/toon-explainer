@@ -1,0 +1,10 @@
+{
+  "_module": "Characters 2.0: turn.js (views, facing, turn in-betweens), limbs.js (hand shapes, painted tubes), motion.js (acting, squash and stretch, reach, springs), gait.js (walk / run / sneak / march cycles), closeup.js + closeup-mouth.js (close-up faces, new expressions), lipsync.js, costume.js. Field checks: scripts/spec_characters.py. Guide: references/toolkits/01_characters.md, 02_acting.md.",
+  "views": ["profile"],
+  "expr": ["terror", "disgust", "awe", "crying", "laughing", "scheming", "exhausted"],
+  "kinds": {
+    "hand": ["open", "fist", "point", "thumb", "thumbs-up", "grab", "wave", "peace", "one", "two", "three", "four", "five"],
+    "gait": ["walk", "run", "sneak", "march"]
+  },
+  "registry": {"hand": "TOON.HANDS", "gait": "TOON.GAITS"}
+}

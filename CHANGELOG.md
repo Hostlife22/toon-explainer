@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+Painted engine, phase 3: Characters 2.0. Classic specs render as before; the painted look turns acting on.
+
+- Turnarounds: `view` (`front`, `3q`, `side` / `profile`, `back`) and `facing` (`right` / `left`) take timelines; changes turn through the in-between views with a squashed drawing and an automatic hair smear (`turn`). Flips from `move` / `path` get a front-view in-between.
+- Arms: IK `reach` to world points, rig-local points or another layer (`target`), arced hand paths with spring overshoot, `stretch` for rubber-hose reaches; new hand shapes `grab`, `wave`, `peace`, `thumbs-up`, counting `one`..`five` via `hand` / `handL` (registry `T.HANDS`). Painted arms and legs are shaded tapered tubes with cuffs and joint creases.
+- Body acting (`acting`, default on when painted): automatic anticipation before big pose changes, spring overshoot and settle after them, breathing, weight shift, squash & stretch on jumps, landings and `impact` hits.
+- Gaits: new walk / run / `sneak` / `march` cycles with contact, down, passing and up poses, 2-bone legs with planted feet, head nod and counter-swinging arms. `path` (any layer) travels along a smooth curve at constant speed, faces the travel and drives the gait with the stride matched to the speed. `ground` keeps the painted contact shadow on the floor under fliers; upward `bob` now lifts it too.
+- Spring secondary motion in closed form (`T.springLag`): hair, cape, robe hem, helmet crests and ties lag and overshoot; `secondary` scales it.
+- Close-up faces (`detail`, automatic on large painted heads): graded irises with highlights, mood-shaped lids and brows, nose and cheek shading, wrinkles, sweat, tears, veins, blush, stubble, mouths with teeth rows and tongue. New expressions `terror`, `disgust`, `awe`, `crying`, `laughing`, `scheming`, `exhausted`.
+- Lip-sync: `scripts/lipsync.py` writes a per-frame loudness envelope from a voiceover (FFmpeg + standard library); `lipsync: {src}` maps it to five mouth shapes on twos (`render.py` inlines the file).
+- Painted costume detail: fabric weave over robes and outfits, cloth folds that follow the secondary motion, shaded belts with buckles, `patches`.
+- With acting, raised near arms draw over the head (`arms-up`, `point-up` stay visible) and held props get sizes that suit them; `holdScale` scales a held prop in any look.
+- Hardening: gait phase integrates the cadence over speed changes (no re-phasing on eased paths), switching the reaching arm releases instead of snapping, pinned beans can reach world layers, `turn` / `acting.turn` settings apply to motion flips, impacts are clamped, cloth folds respect layer opacity, `--gate 0` keeps silence silent, external lip-sync envelopes are validated, and malformed or non-finite Characters 2.0 values are reported instead of crashing.
+- `examples/characters_v2` (one shot per feature) and livelier face and crowd shots in `examples/painted_bench`.
+
 Painted engine, phases 0 and 1: a density lint and the paint core.
 
 - `style.look: "painted"` (or `look` per shot): light-relative multi-tone shading for every filled `T.outlined` shape (deep band, shadow band, lit base, airbrushed falloff, rim light), heavier ink on the shadow side, contact shadows under characters and under the head, paper tooth in the grain. Classic stays the default and renders as before; lettering and UI stay flat (`painted: true` opts a layer in, `painted: false` out).

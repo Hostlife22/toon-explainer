@@ -18,6 +18,7 @@ from density import lint  # noqa: F401  (re-exported: non-fatal density warnings
 import props_fx  # Props & FX 2.0 field checks (particles, impact language, trail, paper)
 from motion_check import check_motion
 from places_check import check_depth, check_set_bg, check_set_layer
+import spec_characters as SC
 
 KNOWN_LAYERS = {"bean", "image", "label", "title", "date", "era", "counter", "timer", "caption",
                 "prop", "card", "sign", "calendar", "map", "fx", "fg", "crowd"}
@@ -121,6 +122,7 @@ def _check_look(look, where: str, errors: list[str]) -> None:
                          ("build", KNOWN_BUILD), ("age", KNOWN_AGE)):
         if look.get(key) is not None and allowed and look[key] not in allowed:
             errors.append(f"{where}: {key} {look[key]!r} not in {sorted(allowed)}")
+    SC.check_look(look, where, LAYER_KINDS.get("texture", set()), errors)
     flag = look.get("flag")
     if flag is not None:
         if not isinstance(flag, dict):
@@ -330,8 +332,7 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         for hk in ("hold", "holdL"):
             if layer.get(hk) and layer[hk] not in KNOWN_PROPS:
                 errors.append(f"{where}: {hk} {layer[hk]!r} not in {sorted(KNOWN_PROPS)}")
-        if layer.get("view") and layer["view"] not in KNOWN_VIEWS:
-            errors.append(f"{where}: view {layer['view']!r} not in {sorted(KNOWN_VIEWS)}")
+        SC.check_bean(layer, where, KNOWN_VIEWS, LAYER_KINDS.get("hand", set()), LAYER_KINDS.get("gait", set()), errors)
         if layer.get("look") is not None:
             _check_look(layer["look"], f"{where}.look", errors)
         for key in ("walk", "run", "tremble"):
@@ -428,6 +429,7 @@ def _check_common(layer: dict, where: str, cast: dict, errors: list[str]) -> Non
                 if any(kk in entry for kk in ("kind", "pose", "expr", "hold", "holdL", "view", "who")):
                     _check_layer({**merged, "swap": None}, f"{where}.swap[{k}]", cast, errors)
     _check_number_or_timeline(layer.get("blur"), f"{where}: blur", errors)
+    SC.check_path(layer, where, LAYER_KINDS.get("gait", set()), errors)
     for key in ("move", "shake", "jump"):
         if layer.get(key) is not None and not (isinstance(layer[key], list) and all(isinstance(x, dict) for x in layer[key])):
             errors.append(f"{where}: {key} must be a list of objects like [{{\"at\": 1.0, ...}}]")
@@ -629,6 +631,7 @@ def _check_paint_fields(layer: dict, where: str, errors: list[str]) -> None:
 def _check_layer_refs(layer: dict, where: str, ids: set, cast: dict, errors: list[str]) -> None:
     """Cross-references inside one shot (fx target, map refs, doc arrowTo and nested who), shared by layers and pinned."""
     kind = layer.get("type")
+    SC.check_refs(layer, where, ids, errors)
     target = layer.get("target")
     if kind == "fx" and isinstance(target, str) and target not in ids:
         errors.append(f"{where}<fx>: target {target!r} is not the id of a layer in this shot")
@@ -778,6 +781,25 @@ def image_refs(spec: dict) -> list[str]:
     return sorted(set(found))
 
 
+def lipsync_refs(spec: dict) -> list[str]:
+    """Envelope files named by bean lipsync.src fields (render.py inlines them)."""
+    found: list[str] = []
+
+    def walk(value):
+        if isinstance(value, list):
+            for item in value:
+                walk(item)
+        elif isinstance(value, dict):
+            lip = value.get("lipsync")
+            if isinstance(lip, dict) and isinstance(lip.get("src"), str):
+                found.append(lip["src"])
+            for v in value.values():
+                walk(v)
+
+    walk(spec)
+    return sorted(set(found))
+
+
 def load(path: str | Path) -> dict:
     """Load and validate a spec; raise SpecError listing every problem (including missing image files)."""
     path = Path(path)
@@ -788,6 +810,9 @@ def load(path: str | Path) -> dict:
     except json.JSONDecodeError as exc:
         raise SpecError(f"{path}: invalid JSON at line {exc.lineno}: {exc.msg}") from exc
     errors = validate(spec)
+    for ref in lipsync_refs(spec):
+        if not (path.parent / ref).exists():
+            errors.append(f"lipsync envelope not found: {ref} (relative to {path.parent}; make it with scripts/lipsync.py)")
     for ref in image_refs(spec):
         if not ref.startswith(("data:", "http:", "https:")) and not (path.parent / ref).exists():
             errors.append(f"image not found: {ref} (relative to {path.parent})")

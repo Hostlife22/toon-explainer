@@ -187,7 +187,7 @@
 
   // ---- P2 kinds -----------------------------------------------------------------------------------------------------
   H['imperial-helmet'] = (ctx, c, lt, sh) => { // legion helmet: cheek guards both sides, neck flare, transverse crest
-    const m = c.headColor ?? '#a6a6ad', crest = c.crest ?? '#d1262c', fx = sh * HW, sway = Math.sin(lt * 3) * 4;
+    const m = c.headColor ?? '#a6a6ad', crest = c.crest ?? '#d1262c', fx = sh * HW, sway = Math.sin(lt * 3) * 4 + T.swayX(0.5);
     T.outlined(ctx, (k) => { k.moveTo(-150 + fx * 0.2, -690); k.quadraticCurveTo(fx * 0.5 + sway, -820, 150 + fx * 0.6, -690); k.quadraticCurveTo(fx * 0.4, -650, -150 + fx * 0.2, -690); k.closePath(); }, crest, { shade: (k) => { k.strokeStyle = shade(crest, -0.25); k.lineWidth = 5; for (let i = -4; i <= 4; i++) { k.beginPath(); k.moveTo(fx * 0.4 + i * 30, -680); k.lineTo(fx * 0.5 + i * 36 + sway, -790); k.stroke(); } } });
     T.outlined(ctx, (k) => { k.moveTo(-160, -470); k.lineTo(-206, -410); k.lineTo(-150, -420); k.closePath(); }, m, { line: 7 });
     T.outlined(ctx, (k) => { k.moveTo(-170, -440); k.quadraticCurveTo(-176, -660, 0, -664); k.quadraticCurveTo(176, -660, 168, -470); k.lineTo(136 + sh * 20, -490); k.quadraticCurveTo(sh * 60, -556, -136 + sh * 30, -490); k.closePath(); }, m,
@@ -196,7 +196,7 @@
     [fx - 150, fx + 104].forEach((gx, i) => T.outlined(ctx, (k) => T.rrect(k, gx + (i && sh ? -10 : 0), -500, 46, 128, 20), m, { line: 7, shade: (k) => { k.fillStyle = shade(m, -0.15); k.fillRect(gx, -420, 60, 40); } }));
   };
   H['crested-bronze'] = (ctx, c, lt, sh) => { // bronze helm with nose guard and a front-to-back plume
-    const m = c.headColor ?? '#d9a648', pl = c.crest ?? '#c0282d', fx = sh * HW, sway = Math.sin(lt * 2.6) * 5;
+    const m = c.headColor ?? '#d9a648', pl = c.crest ?? '#c0282d', fx = sh * HW, sway = Math.sin(lt * 2.6) * 5 + T.swayX(0.5);
     T.outlined(ctx, (k) => { k.moveTo(fx + 40, -640); k.quadraticCurveTo(fx - 40 + sway, -800, -200, -620); k.quadraticCurveTo(-120, -660, fx + 40, -640); k.closePath(); }, pl, { shade: (k) => { k.strokeStyle = shade(pl, -0.25); k.lineWidth = 5; for (let i = 0; i < 7; i++) { k.beginPath(); k.moveTo(fx - i * 34, -650); k.lineTo(fx - i * 38 + sway, -730 + i * 6); k.stroke(); } } });
     T.outlined(ctx, (k) => { k.moveTo(-170, -380); k.quadraticCurveTo(-186, -664, 0, -668); k.quadraticCurveTo(178, -664, 166, -500); k.lineTo(fx + 100, -508); k.quadraticCurveTo(fx, -540, fx - 110, -500); k.lineTo(fx - 120, -390); k.quadraticCurveTo(-140, -370, -170, -380); k.closePath(); }, m,
       { shade: (k) => { k.fillStyle = shade(m, -0.22); k.beginPath(); k.ellipse(-160, -520, 70, 170, 0, 0, Math.PI * 2); k.fill(); k.fillStyle = shade(m, 0.35); k.beginPath(); k.ellipse(fx, -630, 56, 16, -0.25, 0, Math.PI * 2); k.fill(); } });
