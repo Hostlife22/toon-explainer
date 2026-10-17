@@ -7,7 +7,7 @@
 // A plain list of points is NOT a path here: fx (brawl trail), cursor (keys) and map keep their own list `path` meaning;
 // an object path moves any layer, those included.
 // API: T.pathSpec(L) -> normalised spec | null; T.pathTable(spec) -> samples; T.motionAt(L, t) -> {x, y, ang, tang, dir,
-// dist, vel, speed, curv, bank, turn}; T.layerTravel(L, t) -> {dist (signed distance the rig walked / rolled forward),
+// dist, vel, speed, curv, bank, turn, turnOff, turnDy}; T.layerTravel(L, t) -> {dist (signed distance the rig walked / rolled forward),
 // speed, path} for path and `move` layers; T.layerState is wrapped (enter / exit / bob / jump / jitter still apply on top)
 // and the state gains st.path. All times are shot time.
 (function () {
@@ -101,6 +101,7 @@
     for (let i = 0; i < dir.length; i++) { if (dir[i]) last = dir[i]; else dir[i] = last; }
     const turns = [];
     for (let i = 1; i < dir.length; i++) if (dir[i] !== dir[i - 1]) turns.push((s[i] + s[i - 1]) / 2);
+    if (S.loop && dir.length > 1 && dir[0] !== dir[dir.length - 1]) turns.push(0); // a loop that reverses across its seam
     tb = { pts, s, dir, turns, total: s[s.length - 1] };
     tables.set(S, tb);
     return tb;
@@ -149,9 +150,19 @@
     const tang = angAt(tb, dLap), ang = sg < 0 ? wrapA(tang + Math.PI) : tang;
     const curv = wrapA(angAt(tb, dLap + 14) - angAt(tb, dLap - 14)) / 28; // signed, rad per px
     const speed = Math.abs(vel), bank = S.bank ? Math.tanh((speed * speed * curv) / 900) * S.bank * T.DEG * sg : 0;
-    let turn = 1;
-    for (const tp of tb.turns) turn = Math.min(turn, Math.abs(dLap - tp) / TURN_PX);
-    return { x: p.x, y: p.y, ang, tang, dir: tb.dir[p.i] * sg, dist, vel, speed, curv, bank, turn: Math.max(0.12, turn) };
+    let turn = 1, turnOff = null, turnDy = 1;
+    for (const tp of tb.turns) {
+      let off = dLap - tp; // a loop wraps: the nearest turn may sit across the lap seam
+      if (S.loop) off -= Math.round(off / tb.total) * tb.total;
+      turn = Math.min(turn, Math.abs(off) / TURN_PX);
+      if (turnOff == null || Math.abs(off) < Math.abs(turnOff)) {
+        const a = locate(tb, tp - 6), b = locate(tb, tp + 6);
+        turnOff = off * sg; turnDy = (b.y - a.y) * sg < 0 ? -1 : 1; // +1: the turn swings toward the camera
+      }
+    }
+    // turnOff: signed arc px from the nearest change of direction (negative before it; null without one); turnDy: +1 when the path heads
+    // down the frame (toward the camera) there, -1 when it heads up
+    return { x: p.x, y: p.y, ang, tang, dir: tb.dir[p.i] * sg, dist, vel, speed, curv, bank, turn: Math.max(0.12, turn), turnOff, turnDy };
   };
 
   // Distance the rig walked / rolled forward, integrated over the eased motion (overshoots and reversals stay locked):
@@ -207,11 +218,11 @@
     const move = L.move && L.move.some((m) => m && (m.to || m.by || m.from)) ? L.move.map(({ to, by, from, ...m }) => m) : L.move;
     const st = base({ ...L, x: p.x / T.W, y: p.y / T.H, move, __seed: L.id ? undefined : L.type + (L.x ?? 0) + (L.y ?? 0) }, lt);
     if (!st) return st;
-    if (S.face) { st.flip = p.dir * (L.flip ? -1 : 1); st.sx *= p.turn; }
+    if (S.face) { st.flip = p.dir * (L.flip ? -1 : 1); if (!(T.pathTurnViews && T.pathTurnViews(L))) st.sx *= p.turn; } // rigs with views turn through them instead of squashing
     if (S.orient) {
       let a = !S.face ? p.tang : p.dir < 0 ? wrapA(p.ang - Math.PI) : p.ang;
       if (typeof S.orient === 'number') a = T.clamp(a, -S.orient * T.DEG, S.orient * T.DEG);
-      st.r += a;
+      st.r += a; st.orientR = a;
     }
     if (p.bank) st.r += p.bank * (T.PATH_LEAN[L.type] ?? 0.35) * (S.face ? p.dir : 1);
     st.path = p;

@@ -10,30 +10,45 @@
   const poly = (pts) => (k) => { k.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) k.lineTo(pts[i][0], pts[i][1]); k.closePath(); };
   const shadow = (ctx, L, cx, hw) => CK && CK.shadow(ctx, L, cx, hw, 0);
 
+  // Seated riders (cast ids or rider objects, see T.vehicleRiderBean). S.k: kind scale; S.o: the kind; S.riderSx / riderK
+  // undo a squeezed view; S.riderOff moves the seats (3q: half the car's width in); S.riderView forces the riders' view.
   function riders(ctx, L, S, env, seats, size) {
-    (L.riders || (L.rider ? [L.rider] : [])).forEach((who, i) => {
-      const [x, y] = seats[Math.min(i, seats.length - 1)];
-      ctx.save(); ctx.translate(x + (i >= seats.length ? (i - seats.length + 1) * 40 : 0), y);
-      T.layers.bean(ctx, { type: 'bean', who, size, legs: false, id: (L.id ?? 'veh') + 'r' + i, talk: L.talk, expr: L.riderExpr, pose: L.riderPose, hold: L.riderHold }, S.lt, { ...env, st: null });
+    const px = env && env.st ? Math.abs(env.st.s * env.st.sy) * (S.k ?? 1) * (S.riderK ?? 1) : 1, off = S.riderOff || [0, 0];
+    (L.riders || (L.rider ? [L.rider] : [])).forEach((r, i) => {
+      const [x0, y] = seats[Math.min(i, seats.length - 1)], x = x0 + (i >= seats.length ? (i - seats.length + 1) * 40 : 0);
+      ctx.save(); ctx.translate(x + off[0], y + off[1]);
+      if (S.riderSx) ctx.scale(S.riderSx, S.riderK ?? 1);
+      const anchorOf = VK.seatAnchor && S.o ? (B) => VK.seatAnchor(L, S.o, S.k ?? 1, i, B.size, seats) : null;
+      const B = T.vehicleRiderBean(L, r, { type: 'bean', size, legs: false, id: (L.id ?? 'veh') + 'r' + i, talk: L.talk, expr: L.riderExpr, pose: L.riderPose, hold: L.riderHold }, anchorOf, px);
+      if (S.riderView) B.view = S.riderView;
+      T.layers.bean(ctx, B, S.lt, { ...env, st: null });
       ctx.restore();
     });
   }
-  // Shared car frame: shadow, suspension, wheels, then body(ctx, B) inside the sprung frame.
-  function car(ctx, L, S, env, o) {
-    const k = S.size / o.W, terrain = L.terrain ?? 'road';
+  VK.riders = riders;
+  // Shared car frame: shadow, suspension, wheels, then body(ctx, B) inside the sprung frame. A non-side `S.view`
+  // (front, 3q, back, 3q-back) is drawn by vehicles-views.js from the kind's `face` description.
+  function car(ctx, L, S0, env, o) {
+    const k = S0.size / o.W, S = { ...S0, k, o };
     ctx.scale(k, k);
-    shadow(ctx, L, 0, o.W * 0.48);
+    if (S.view && S.view !== 'side' && o.face && VK.carView) return VK.carView(ctx, L, S, env, o, k);
+    carSide(ctx, L, S, env, o, k);
+  }
+  function carSide(ctx, L, S, env, o, k) {
+    const terrain = L.terrain ?? 'road';
+    if (!S.noShadow) shadow(ctx, L, 0, o.W * 0.48);
     const b = VK.bump(S, k, o.wb, terrain), blur = S.speed / Math.max(1, k * S.px * o.r * 18);
     for (const x of o.wheels) VK.wheel(ctx, x, -o.r, o.r, VK.wheelAng(S, k, o.r), { ...o.wheel, blur });
     ctx.save(); ctx.translate(0, b.dy - o.r * 0.12); ctx.rotate(b.pitch * 0.6);
     o.body(ctx, L, S, env, k);
-    if (L.lights) VK.headlight(ctx, o.lamp[0], o.lamp[1], 520, 0.2);
+    if (L.lights && !S.noLights) VK.headlight(ctx, o.lamp[0], o.lamp[1], 520, 0.2);
     ctx.restore();
     if (o.front) for (const x of o.wheels) o.front(ctx, x);
   }
+  VK.carSide = carSide;
   const trailsCar = (exh, lamp) => (L, S) => {
-    const k = S.size / exh[2], out = [];
-    if (L.exhaust !== false) out.push(['exhaust', exh[0] * k, exh[1] * k, { scaleAt: (te) => k * (1 + (S.moving ? T.vehicleMotion(L, te).speed : 0) / 300) }]);
+    const k = S.size / exh[2], out = [], xAt = VK.viewActive && VK.viewActive(L) ? (te) => VK.viewXAt(L, te) : undefined;
+    if (L.exhaust !== false) out.push(['exhaust', exh[0] * k, exh[1] * k, { scaleAt: (te) => k * (1 + (S.moving ? T.vehicleMotion(L, te).speed : 0) / 300), ...(xAt ? { xAt } : {}) }]);
     if (L.dust ?? (L.terrain === 'dirt' || L.terrain === 'rough')) out.push(['dust', exh[0] * k * 0.6, -4, {}]);
     return out;
   };
@@ -41,6 +56,11 @@
   // ---------- model-t (~1908): tall black tourer, brass radiator and lamps, spoked wheels ----------
   VK.register('model-t', (ctx, L, S, env) => car(ctx, L, S, env, {
     W: 400, wb: 250, r: 46, wheels: [-125, 125], lamp: [190, -150], wheel: { spokes: 12, rim: '#d8c8a0', tyre: '#2a2624' },
+    face: { front: 194, rear: 172, cowl: 100, tailX: -150, hw: 100, track: 88, tyre: 20, col: '#23252b', belt: [-172, -124], apron: true, fender: 'arch', back: 'plain',
+      grille: { kind: 'radiator', hw: 28, top: -178, bot: -84, color: '#d8a838' }, lamps: { x: 64, y: -150, r: 13, color: '#fff2b0', rim: '#d8a838' },
+      tail: { x: 64, y: -140, r: 9 }, cabin: { open: true, top: -312, hw: 108, post: 96, shield: -250 }, seat: { x: 44, y: -110, size: 220 },
+      hull: [{ pts: [[-172, -66], [-172, -172], [-118, -172], [-100, -132], [104, -132], [104, -162], [172, -162], [172, -178], [194, -178], [194, -80], [176, -66]] },
+        { pts: [[-150, -312], [60, -312], [60, -290], [-150, -290]] }] },
     body(ctx2, L2, S2, env2) {
       const col = L2.color ?? '#23252b', brass = '#d8a838';
       for (const x of [-130, 40]) T.outlined(ctx2, (c) => T.rrect(c, x, -300, 10, 140, 4), '#1a1a1e', { line: 5 }); // roof posts
@@ -61,9 +81,14 @@
   // ---------- sedan1920: long hood, closed cabin, wire wheels, spare at the back ----------
   VK.register('sedan1920', (ctx, L, S, env) => car(ctx, L, S, env, {
     W: 440, wb: 280, r: 44, wheels: [-140, 140], lamp: [214, -148], wheel: { spokes: 16, rim: '#c9ced2', tyre: '#262224' },
+    face: { front: 222, rear: 254, cowl: 76, tailX: -186, hw: 104, track: 90, tyre: 20, col: '#6a1e24', col2: '#1e1a1a', belt: [-176, -124], apron: true, fender: 'arch', fenderColor: 'col2', back: 'spare',
+      grille: { kind: 'radiator', hw: 26, top: -160, bot: -72, color: '#c9ced2' }, lamps: { x: 70, y: -146, r: 13, color: '#fff2b0', rim: '#c9ced2' },
+      tail: { x: 74, y: -150, r: 9 }, cabin: { top: -262, hw: 96, topHw: 86, glass: '#a8c8d8', roof: 'col2' }, seat: { x: 44, y: -130, size: 200 },
+      hull: [{ pts: [[-204, -66], [-204, -176], [80, -176], [100, -150], [210, -146], [222, -156], [222, -68]] },
+        { pts: [[-190, -172], [-176, -260], [40, -262], [70, -172]], fill: 'col2', glass: true }] },
     body(ctx2, L2, S2, env2) {
       const col = L2.color ?? '#6a1e24', roof = L2.color2 ?? '#1e1a1a';
-      T.outlined(ctx2, (c) => c.arc(-214, -120, 40, 0, TAU), '#262224', { line: 7 }); // spare tyre
+      if (!S2.noTail) T.outlined(ctx2, (c) => c.arc(-214, -120, 40, 0, TAU), '#262224', { line: 7 }); // spare tyre (the rear face shows it in 3q-back)
       T.outlined(ctx2, poly([[-190, -170], [-176, -260], [40, -262], [70, -170]]), roof, { line: 8 });
       for (const [x0, x1] of [[-166, -70], [-56, 46]]) T.outlined(ctx2, poly([[x0, -176], [x0 + 6, -244], [x1 - 4, -244], [x1, -176]]), '#a8c8d8', { line: 5, paint: false });
       riders(ctx2, L2, S2, env2, [[0, -130], [-110, -130]], 200);
@@ -79,6 +104,12 @@
   // ---------- car1950: rounded fenders, two-tone, chrome, whitewalls, tail fins ----------
   VK.register('car1950', (ctx, L, S, env) => car(ctx, L, S, env, {
     W: 460, wb: 290, r: 40, wheels: [-150, 150], lamp: [222, -110], wheel: { rim: '#e8ecee', tyre: '#1e1c1e', white: true },
+    face: { front: 246, rear: 246, cowl: 96, tailX: -136, hw: 122, track: 98, tyre: 22, col: '#5ab0b8', col2: '#f4efe4', belt: [-156, -44], round: 40, fender: 'skirt', back: 'fins',
+      grille: { kind: 'wide', hw: 64, top: -108, bot: -74, color: '#e8ecee' }, lamps: { x: 92, y: -112, r: 15, color: '#fff6c8', rim: '#e8ecee' },
+      tail: { x: 100, y: -126, r: 12 }, bumper: { y: -70, h: 24, hw: 130, color: '#e8ecee' },
+      cabin: { top: -232, hw: 100, topHw: 78, glass: '#a8d0de', roof: 'col2' }, seat: { x: 48, y: -110, size: 190 },
+      hull: [{ smooth: true, pts: [[-232, -60], [-236, -120], [-210, -168], [-150, -156], [100, -158], [200, -140], [232, -110], [228, -56], [150, -40], [-150, -40]] },
+        { smooth: true, pts: [[-140, -150], [-110, -228], [40, -232], [100, -150]], fill: 'col2', glass: true }] },
     body(ctx2, L2, S2, env2) {
       const col = L2.color ?? '#5ab0b8', roof = L2.color2 ?? '#f4efe4';
       T.outlined(ctx2, blob([[-140, -150], [-110, -228], [40, -232], [100, -150]]), roof, { line: 8 });
@@ -88,9 +119,9 @@
       T.outlined(ctx2, blob([[-232, -60], [-236, -120], [-210, -168], [-150, -156], [100, -158], [200, -140], [232, -110], [228, -56], [150, -40], [-150, -40]]), col, { line: 8,
         shade: (c) => { c.fillStyle = roof; c.beginPath(); c.moveTo(-220, -110); c.quadraticCurveTo(-60, -126, 140, -112); c.lineTo(140, -100); c.quadraticCurveTo(-60, -112, -220, -98); c.closePath(); c.fill(); } });
       T.outlined(ctx2, (c) => T.rrect(c, 200, -72, 44, 22, 10), '#e8ecee', { line: 5 }); // bumper
-      T.outlined(ctx2, (c) => T.rrect(c, -246, -72, 40, 22, 10), '#e8ecee', { line: 5 });
+      if (!S2.noTail) T.outlined(ctx2, (c) => T.rrect(c, -246, -72, 40, 22, 10), '#e8ecee', { line: 5 });
       T.outlined(ctx2, (c) => c.arc(222, -112, 13, 0, TAU), '#fff6c8', { line: 5 });
-      T.outlined(ctx2, (c) => c.ellipse(-226, -130, 8, 14, 0, 0, TAU), '#e8403a', { line: 4 }); // tail light
+      if (!S2.noTail) T.outlined(ctx2, (c) => c.ellipse(-226, -130, 8, 14, 0, 0, TAU), '#e8403a', { line: 4 }); // tail light
       ctx2.strokeStyle = '#e8ecee'; ctx2.lineWidth = 6; ctx2.beginPath(); ctx2.moveTo(-190, -84); ctx2.quadraticCurveTo(0, -94, 190, -86); ctx2.stroke();
     },
     front(ctx2, x) { T.outlined(ctx2, (c) => { c.moveTo(x - 52, -42); c.quadraticCurveTo(x, -102, x + 52, -42); c.closePath(); }, '#1e1c1e', { line: 0, paint: false }); },
@@ -99,6 +130,12 @@
   // ---------- car-modern: low hatch, alloy wheels, tinted glass, LED lamps ----------
   VK.register('car-modern', (ctx, L, S, env) => car(ctx, L, S, env, {
     W: 440, wb: 290, r: 46, wheels: [-145, 145], lamp: [212, -112], wheel: { rim: '#b8bec4', tyre: '#1c1c1e' },
+    face: { front: 224, rear: 222, cowl: 86, tailX: -186, hw: 118, track: 96, tyre: 26, col: '#d8322e', belt: [-152, -42], round: 34, fender: 'flush', back: 'bar',
+      grille: { kind: 'slim', hw: 52, top: -102, bot: -84, color: '#1c1c1e' }, lamps: { x: 84, y: -114, kind: 'led' },
+      tail: { x: 84, y: -128 }, intake: { y: -70, h: 18, hw: 70 }, cabin: { top: -246, hw: 104, topHw: 80, glass: '#3a4a5a', roof: 'col' },
+      seat: { x: 50, y: -120, size: 180 },
+      hull: [{ smooth: true, pts: [[-214, -56], [-222, -150], [-140, -164], [80, -166], [200, -132], [222, -84], [214, -46], [-150, -40]] },
+        { smooth: true, pts: [[-196, -150], [-170, -232], [-20, -246], [90, -160]], glass: true }] },
     body(ctx2, L2, S2, env2) {
       const col = L2.color ?? '#d8322e';
       T.outlined(ctx2, blob([[-196, -150], [-170, -232], [-20, -246], [90, -160]]), col, { line: 8 });
@@ -108,7 +145,7 @@
       T.outlined(ctx2, blob([[-214, -56], [-222, -150], [-140, -164], [80, -166], [200, -132], [222, -84], [214, -46], [-150, -40]]), col, { line: 8,
         shade: (c) => { c.strokeStyle = sh(col, -0.35); c.lineWidth = 4; c.beginPath(); c.moveTo(-40, -150); c.lineTo(-40, -60); c.moveTo(-200, -110); c.quadraticCurveTo(0, -120, 200, -104); c.stroke(); } });
       T.outlined(ctx2, (c) => { c.moveTo(196, -124); c.lineTo(224, -110); c.lineTo(196, -102); c.closePath(); }, '#f6fbff', { line: 4 });
-      T.outlined(ctx2, (c) => T.rrect(c, -224, -138, 16, 24, 6), '#e8303a', { line: 4 });
+      if (!S2.noTail) T.outlined(ctx2, (c) => T.rrect(c, -224, -138, 16, 24, 6), '#e8303a', { line: 4 });
       for (const x of [-145, 145]) { ctx2.fillStyle = '#141416'; ctx2.beginPath(); ctx2.arc(x, -46, 58, Math.PI, 0); ctx2.lineTo(x + 58, -40); ctx2.lineTo(x - 58, -40); ctx2.fill(); }
     },
   }), 440, trailsCar([-214, -46, 440]));

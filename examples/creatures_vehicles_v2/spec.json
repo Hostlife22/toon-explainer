@@ -35,6 +35,13 @@
    "hairColor": "#6a4a2a",
    "beard": "full",
    "beardColor": "#6a4a2a"
+  },
+  "boss": {
+   "robe": "#6c7078",
+   "hair": "bald-sides",
+   "build": "fat",
+   "mustache": true,
+   "mustacheColor": "#8a8a8a"
   }
  },
  "shots": [
@@ -1131,6 +1138,157 @@
     {
      "type": "fg",
      "kind": "rubble",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c13_car_turns",
+   "dur": 4,
+   "bg": {
+    "kind": "street1920"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "kind": "reaper",
+     "id": "reaper",
+     "x": 0.1,
+     "y": 0.9,
+     "size": 340,
+     "hold": "hourglass",
+     "pose": "sign",
+     "expr": "smile",
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "car-modern",
+     "x": 0.42,
+     "y": 0.66,
+     "size": 260,
+     "riders": [
+      "rider"
+     ],
+     "atmos": 0.2,
+     "enter": "none",
+     "view": [
+      {
+       "at": 0,
+       "v": "side"
+      },
+      {
+       "at": 0.8,
+       "v": "front"
+      },
+      {
+       "at": 2.4,
+       "v": "back"
+      }
+     ]
+    },
+    {
+     "type": "vehicle",
+     "kind": "sedan1920",
+     "id": "uturn",
+     "size": 330,
+     "riders": [
+      "driver"
+     ],
+     "path": {
+      "pts": [
+       [
+        0.3,
+        0.76
+       ],
+       [
+        0.74,
+        0.76
+       ],
+       [
+        0.88,
+        0.84
+       ],
+       [
+        0.74,
+        0.92
+       ],
+       [
+        0.3,
+        0.92
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "car1950",
+     "id": "car",
+     "x": 0.66,
+     "y": 1.02,
+     "size": 560,
+     "z": 1.06,
+     "enter": "none",
+     "riders": [
+      {
+       "who": "driver",
+       "expr": [
+        {
+         "at": 0,
+         "v": "happy"
+        },
+        {
+         "at": 1.6,
+         "v": "shock"
+        }
+       ],
+       "lookAt": [
+        {
+         "at": 0,
+         "v": [
+          0.98,
+          0.5
+         ]
+        },
+        {
+         "at": 1.6,
+         "v": "reaper"
+        }
+       ]
+      },
+      {
+       "who": "boss",
+       "expr": [
+        {
+         "at": 0,
+         "v": "smug"
+        },
+        {
+         "at": 2.2,
+         "v": "worried"
+        }
+       ],
+       "talk": [
+        [
+         0.2,
+         1.4
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
      "z": 1.3
     }
    ]
