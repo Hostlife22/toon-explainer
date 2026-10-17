@@ -24,6 +24,7 @@
 - Shot `grade` `out` / `outDur` are documented as the way to end a grade mid-shot and validated (numbers, `out` not before `at`).
 - New `fx` `blackout`: the lights go off (`level`, `color`, `fade`, `dur`, `fadeOut`), with `lights` keeping soft lit holes around a candle or lamp that follow it and the camera.
 - Review fixes: the blackout scratch is cleared each draw (translucent colours no longer build up); only the first `move` step holds a layer at its `from`; the globe backdrop pass resolves `swap`s first; vertical films sample each moment's strip centre for the label shift; a pinned blackout whose `lights` name world layers is drawn in the world pass; `lights` are validated (shape, `r` > 0, ids in the shot; `scripts/spec_blackout.py`); a grade with `at: null` validates; density fits `frame` box zooms to the vertical strip.
+- Integration fixes: the world-label shift samples the layer's own state at each sampled time (a label that slides in is no longer pinned to the frame edge); `T.subShot` frames vertical sources with the same `T.stripFramed` as the film; swap states are validated for refs, blackout lights, riders and rider acting; `scripts/spec.py` vocabulary and map checks moved to `spec_vocab.py` and `spec_maps.py` (re-exported, no behaviour change).
 - `examples/camera_acting` gains `s18_world_labels_pan`, `s19_slide_and_xray` and `s20_lights_out`; tests in `tests/test_backlog_core.py`.
 
 ### Engine backlog: places and props

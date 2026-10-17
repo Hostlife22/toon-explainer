@@ -170,8 +170,8 @@
       const t = T.clamp(opts.t ?? lt, 0, shot.dur), sub = { ...env, noPost: opts.grade === false, cam: undefined, frameX: undefined }; // the cell shows the whole source frame
       if (T.FORMAT === 'vertical') {
         // Vertical film: draw the source as its viewer saw it, with its frame x moved to the centre of the cell's world.
-        const half = T.STRIP_W / 2, fx = T.clamp(T.num(shot.frame, t, 0.5) * T.W, half, T.W - half), cam = shot.camera || {};
-        const framed = cam.focus ? shot : { ...shot, camera: { ...cam, focus: [fx / T.W, 0.5] } };
+        const half = T.STRIP_W / 2, fx = T.clamp(T.num(shot.frame, t, 0.5) * T.W, half, T.W - half);
+        const framed = T.stripFramed(shot, fx); // same framing as core.js frameShot
         // The whole world is drawn (no black margins); panels crop the cell around this frame x (panels.js).
         T.drawShot(k, framed, t, { ...sub, frameX: fx });
         if (T.drawPinned && shot.pinned && shot.pinned.length) {

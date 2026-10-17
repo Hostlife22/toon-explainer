@@ -545,6 +545,12 @@
   // Output formats. "vertical" (9:16) keeps the 1920x1080 world and shows a strip of it STRIP_W wide and the full
   // height, centred on shot.frame (x fraction, number or [{at, v, ease}] keys, default 0.5), scaled to 1080x1920.
   T.FORMATS = { landscape: { w: 1920, h: 1080 }, vertical: { w: 1080, h: 1920 } };
+  // A vertical shot as its viewer sees it: without its own camera.focus, the camera zooms around the strip centre fx
+  // (world px). __stripFocus tells keepInFrame to re-centre the zoom on each sampled moment's strip.
+  T.stripFramed = (shot, fx) => {
+    const cam = shot.camera || {};
+    return cam.focus ? shot : { ...shot, camera: { ...cam, focus: [fx / T.W, 0.5] }, __stripFocus: true };
+  };
   const even = (v) => Math.round(v / 2) * 2; // even sizes: libx264 yuv420p rejects odd dimensions
   // [left, width] of the world span the viewer sees in this draw: the whole width, or the vertical strip at env.frameX.
   T.STRIP_W = T.W;
@@ -591,8 +597,7 @@
       const shot = T.resolvePinned(shot0);
       if (!vertical) { T.drawShot(c, shot, lt, env); drawPinned(c, shot, lt); return; }
       const fx = T.clamp(T.num(shot.frame, lt, 0.5) * T.W, STRIP_W / 2, T.W - STRIP_W / 2);
-      const cam = shot.camera || {};
-      const framed = cam.focus ? shot : { ...shot, camera: { ...cam, focus: [fx / T.W, 0.5] }, __stripFocus: true }; // zoom around the visible strip (keepInFrame re-centres it per sample time)
+      const framed = T.stripFramed(shot, fx); // zoom around the visible strip
       // Draw and pixel-process only the visible strip (plus a 2-px margin): about a third of the world's pixels.
       const sx = Math.max(0, Math.floor((fx - STRIP_W / 2) * wscale) - 2), sw = Math.min(tmp.width - sx, Math.ceil(STRIP_W * wscale) + 4);
       const tctx = tmp.getContext('2d');

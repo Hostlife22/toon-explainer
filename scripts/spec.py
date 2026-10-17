@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import json
 import math
-import re
 import sys
 from pathlib import Path
 
@@ -22,83 +21,16 @@ from places_check import check_depth, check_set_bg, check_set_layer
 import spec_characters as SC
 import camera_check as CC
 import spec_blackout as SB
-
-KNOWN_LAYERS = {"bean", "image", "label", "title", "date", "era", "counter", "timer", "caption",
-                "prop", "card", "sign", "calendar", "map", "fx", "fg", "crowd"}
-KNOWN_BGS = {"sky", "interior", "parchment", "burst", "flat", "image", "forest", "city"}
-KNOWN_TRANSITIONS = {"cut", "dissolve", "fade-white", "fade-black", "zoom-punch", "whip", "iris"}
-KNOWN_ENTER = {"none", "fade", "pop", "drop", "rise", "slide-left", "slide-right", "slide-up", "slide-down", "spin"}
-KNOWN_PROPS = {"coin", "moneybag", "scroll", "sword", "flag", "question", "exclaim", "bread", "temple", "skull",
-               "heart", "book", "hourglass", "shield", "spear", "torch", "bulb"}
-KNOWN_FX = {"rays", "speedlines", "sweat", "anger", "splat", "flash", "dust", "sparkle", "confetti", "spotlight",
-            "fire", "rain", "beam", "birds", "smoke", "puff", "explosion", "blood", "lightning", "arrows"}
-KNOWN_FG = {"bushes", "canopy", "ledge", "grass", "trunk", "ots", "rubble"}
-KNOWN_VIEWS = {"front", "3q", "side", "back"}
-KNOWN_GRADES = {"serious", "storm", "night", "solemn", "warm", "gold"}
-KNOWN_POSES = {"idle", "point", "point-up", "arms-up", "shrug", "facepalm", "think", "wave", "hold", "fist", "hips",
-               "cross", "present", "scared", "hands-face", "thumbs-up", "clutch-head", "sword-up", "reach"}
-KNOWN_EXPR = {"neutral", "happy", "content", "sleepy", "smug", "angry", "rage", "sad", "worried", "shock", "scream",
-              "squint", "cry", "dead"}
-KNOWN_SKY = {"sunset", "day", "dusk", "night", "storm", "teal"}
-KNOWN_HAIR = {"short", "long", "curly", "bun", "bald", "bald-sides"}
-KNOWN_BEARD = {"full", "goatee", "stubble"}
-KNOWN_HEAD = {"crown", "laurel", "helmet", "hood", "headband", "pontifex", "hat"}
-KNOWN_OUTFIT: set[str] = set()
-KNOWN_MASK: set[str] = set()
-KNOWN_HEADSHAPE: set[str] = set()
-KNOWN_FLAG: set[str] = set()
-KNOWN_CROWD_MODE: set[str] = set()
-KNOWN_BUILD: set[str] = set()  # body proportions (rig.js T.BUILDS), filled from scripts/vocab
-KNOWN_AGE: set[str] = set()
-COLOR_KEYS = ("skin", "skinShade", "robe", "robeShade", "sleeve", "trim", "sash", "belt", "cape", "armor", "hairColor",
-              "beardColor", "mustacheColor", "headColor", "crest", "sandal", "legColor")
-HEX_RE = re.compile(r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
-IMAGE_KEYS = ("src", "image", "idle", "talk", "blink")
-
-# ---------- vocabulary extensions ----------
-# Each engine module may ship scripts/vocab/<module>.json, so new layer types, kinds and costume values extend the
-# validator without editing this file:
-#   {"layers": [...], "bgs": [...], "fx": [...], "props": [...], "fg": [...], "transitions": [...], "grades": [...],
-#    "enter": [...], "poses": [...], "expr": [...], "head": [...], "hair": [...], "beard": [...], "sky": [...],
-#    "color_keys": [...],
-#    "kinds": {"<layer type>": ["kind", ...]},            # layer.kind must be one of these for that type
-#    "registry": {"<layer type or set name>": "TOON.<registry>"}}  # checked against the engine by tests
-VOCAB_DIR = Path(__file__).parent / "vocab"
-LAYER_KINDS: dict[str, set[str]] = {}
-REGISTRIES: dict[str, str] = {}
-
-
-# Output formats: width x height of the rendered video. The world is always 1920x1080 (see core.js T.FORMATS).
-FORMATS = {"landscape": (1920, 1080), "vertical": (1080, 1920)}
-
-
-def _load_vocab() -> None:
-    global COLOR_KEYS
-    targets = {"layers": KNOWN_LAYERS, "bgs": KNOWN_BGS, "transitions": KNOWN_TRANSITIONS, "enter": KNOWN_ENTER,
-               "props": KNOWN_PROPS, "fx": KNOWN_FX, "fg": KNOWN_FG, "grades": KNOWN_GRADES, "poses": KNOWN_POSES,
-               "expr": KNOWN_EXPR, "sky": KNOWN_SKY, "hair": KNOWN_HAIR, "beard": KNOWN_BEARD, "head": KNOWN_HEAD,
-               "views": KNOWN_VIEWS, "outfit": KNOWN_OUTFIT, "mask": KNOWN_MASK, "headShape": KNOWN_HEADSHAPE,
-               "flag": KNOWN_FLAG, "crowd_mode": KNOWN_CROWD_MODE,
-               "build": KNOWN_BUILD, "age": KNOWN_AGE}
-    extra_colors: list[str] = []
-    for path in sorted(VOCAB_DIR.glob("*.json")):
-        data = json.loads(path.read_text(encoding="utf-8"))
-        for key, values in data.items():
-            if key in targets:
-                targets[key].update(values)
-            elif key == "color_keys":
-                extra_colors += values
-            elif key == "kinds":
-                for layer_type, kinds in values.items():
-                    LAYER_KINDS.setdefault(layer_type, set()).update(kinds)
-            elif key == "registry":
-                REGISTRIES.update(values)
-            elif not key.startswith("_"):
-                raise ValueError(f"{path.name}: unknown vocabulary key {key!r}")
-    COLOR_KEYS = tuple(dict.fromkeys(list(COLOR_KEYS) + extra_colors))
-
-
-_load_vocab()
+from spec_vocab import (  # noqa: F401  (re-exported: the vocabulary is part of this module's API)
+    COLOR_KEYS, FORMATS, GLITCH_STYLES, HEX_RE, IMAGE_KEYS, ISO_BUILDINGS, KNOWN_AGE, KNOWN_BEARD, KNOWN_BGS,
+    KNOWN_BUILD, KNOWN_CROWD_MODE, KNOWN_ENTER, KNOWN_EXPR, KNOWN_FG, KNOWN_FLAG, KNOWN_FX, KNOWN_GRADES,
+    KNOWN_HAIR, KNOWN_HEAD, KNOWN_HEADSHAPE, KNOWN_LAYERS, KNOWN_MASK, KNOWN_OUTFIT, KNOWN_POSES, KNOWN_PROPS,
+    KNOWN_SKY, KNOWN_TRANSITIONS, KNOWN_VIEWS, LAYER_KINDS, REGISTRIES, TRANSITION_ENUMS, VOCAB_DIR, _ease_names,
+    _load_vocab,
+)
+from spec_maps import (  # noqa: F401
+    ISO3_RE, _check_geo_map, _check_geo_region, _check_map_refs, _geo_peak, _lonlat, _map_icons, _map_path, _map_point,
+)
 
 
 class SpecError(ValueError):
@@ -145,20 +77,6 @@ def _check_look(look, where: str, errors: list[str]) -> None:
             errors.append(f"{where}: {ck} must be a hex colour like #c8323a, got {v!r}")
 
 
-def _ease_names() -> set:
-    src = (Path(__file__).parent / "engine" / "core.js").read_text(encoding="utf-8")
-    block = src[src.index("T.ease = {"):]
-    block = block[:block.index("};")]
-    return set(re.findall(r"^\s*'?([A-Za-z]+)'?\s*:", block, re.M))
-
-
-TRANSITION_ENUMS = {"burn": {"from": {"bottom", "top", "left", "right"}}, "swarm": {"creature": {"bat", "bird"}},
-                    "squeeze": {"axis": {"horizontal", "vertical"}}, "whip": {"dir": {"left", "right", "up", "down"}},
-                    "fg-pass": {"axis": {"horizontal", "vertical"}}}
-GLITCH_STYLES = {"corrupt", "stepped"}
-ISO_BUILDINGS = {"none", "house", "tower"}
-
-
 def _pair(v) -> bool:
     return isinstance(v, list) and len(v) == 2 and all(_is_num(x) for x in v)
 
@@ -184,12 +102,14 @@ def _swap_states(layer: dict) -> list[dict]:
     return states
 
 
-def _map_icons() -> set:
-    icons: set = set()
-    for f in sorted(VOCAB_DIR.glob("*.json")):
-        kinds = json.loads(f.read_text(encoding="utf-8")).get("kinds") or {}
-        icons |= set(kinds.get("map_icon", []) if isinstance(kinds, dict) else [])
-    return icons
+def _per_state(layer: dict, check) -> list[str]:
+    """Run check(state, found) over every swap state of the layer; errors repeated by several states appear once."""
+    out: list[str] = []
+    for state in _swap_states(layer):
+        found: list[str] = []
+        check(state, found)
+        out += [e for e in found if e not in out]
+    return out
 
 
 def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
@@ -300,26 +220,6 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
                     name_in(t.get("icon"), KNOWN_PROPS | _map_icons(), "map throws icon")
 
 
-def _lonlat(v) -> bool:
-    return _pair(v) and -180 <= v[0] <= 180 and -90 <= v[1] <= 90
-
-
-def _map_point(v, geo: bool) -> bool:
-    """[x, y]; with map geo also {ll: [lon, lat]} or {lon, lat} (projected by geo-prep.js)."""
-    if _pair(v):
-        return True
-    if not (geo and isinstance(v, dict)):
-        return False
-    return _lonlat(v.get("ll")) or (_is_num(v.get("lon")) and _is_num(v.get("lat")))
-
-
-def _map_path(v, geo: bool, n: int) -> bool:
-    """n+ points (each a _map_point); with map geo also {ll: [[lon, lat], ...], gc}."""
-    if geo and isinstance(v, dict) and isinstance(v.get("ll"), list):
-        return len(v["ll"]) >= n and all(_lonlat(q) for q in v["ll"])
-    return isinstance(v, list) and len(v) >= n and all(_map_point(q, geo) for q in v)
-
-
 def _check_director(layer: dict, where: str, ids: set, errors: list[str]) -> None:
     """Camera & acting layer fields (camera_check.py) in every state the layer's swaps produce."""
     seen: set[str] = set()
@@ -327,8 +227,10 @@ def _check_director(layer: dict, where: str, ids: set, errors: list[str]) -> Non
         found: list[str] = []
         CC.check_layer(state, where, ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, found)
         errors.extend(e for e in found if not (e in seen or seen.add(e)))
-    for i, acting in rider_acting(layer):  # vehicle rider objects act like beans
-        CC.check_layer(acting, f"{where}.riders[{i}]", ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, errors)
+    def riders(state, found):  # vehicle rider objects act like beans
+        for i, acting in rider_acting(state):
+            CC.check_layer(acting, f"{where}.riders[{i}]", ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, found)
+    errors += _per_state(layer, riders)
 
 
 def _fx_refs(layer: dict) -> list[str]:
@@ -438,8 +340,10 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         props_fx.check_layer(state, where, found, LAYER_KINDS.get("particle_preset", set()))
         props_check.check_layer(state, where, found, KNOWN_PROPS)
         errors.extend(e for e in found if not (e in seen or seen.add(e)))
-    check_motion(layer, where, errors, _ease_names(), LAYER_KINDS.get("creature"))
-    check_riders(layer, where, errors, cast, KNOWN_EXPR, KNOWN_PROPS)
+    def motion(state, found):
+        check_motion(state, where, found, _ease_names(), LAYER_KINDS.get("creature"))
+        check_riders(state, where, found, cast, KNOWN_EXPR, KNOWN_PROPS)
+    errors += _per_state(layer, motion)
     if kind == "set":
         check_set_layer(layer, where, LAYER_KINDS, errors)
     for win in layer.get("talk", []) or []:
@@ -489,86 +393,6 @@ def _check_common(layer: dict, where: str, cast: dict, errors: list[str]) -> Non
     sw = layer.get("swing")
     if sw is not None and not (sw is True or isinstance(sw, dict)):
         errors.append(f"{where}: swing must be an object {{at, amp, period, decay}}")
-
-
-def _check_map_refs(layer: dict, where: str, errors: list[str]) -> None:
-    """Region references inside a map must name a region id (conquer.by may also be a hex colour)."""
-    regions = [r for r in layer.get("regions", []) or [] if isinstance(r, dict)]
-    rids = {r.get("id") for r in regions if r.get("id")}
-    for r in regions:
-        by = (r.get("conquer") or {}).get("by") if isinstance(r.get("conquer"), dict) else None
-        if isinstance(by, str) and by not in rids and not HEX_RE.match(by):
-            errors.append(f"{where}: region {r.get('id', '?')!r} conquer.by {by!r} is neither a region id nor a hex colour")
-    for c in layer.get("crosses", []) or []:
-        if isinstance(c, dict) and isinstance(c.get("region"), str) and c["region"] not in rids:
-            errors.append(f"{where}: crosses region {c['region']!r} is not a region id")
-    _check_geo_map(layer, regions, where, errors)
-
-
-ISO3_RE = re.compile(r"^[A-Z]{3}$")
-
-
-def _check_geo_map(layer: dict, regions: list[dict], where: str, errors: list[str]) -> None:
-    """Geo maps (geo.js): projection and style names, range names, steps and sizes, iso codes, lon/lat rings, origins."""
-    geo = layer.get("geo")
-    style = layer.get("style")
-    styles = LAYER_KINDS.get("map_style", set())
-    if style is not None and not (isinstance(style, str) and style in styles):
-        errors.append(f"{where}: unknown map style {style!r} (known: {sorted(styles)})")
-    if geo is None:
-        return
-    if not isinstance(geo, dict):
-        errors.append(f"{where}: map geo must be an object {{proj, center, span}}")
-        return
-    projs, known_ranges = LAYER_KINDS.get("map_proj", set()), LAYER_KINDS.get("map_range", set())
-    proj = geo.get("proj", "equirect")
-    if not (isinstance(proj, str) and proj in projs):
-        errors.append(f"{where}: unknown map proj {proj!r} (known: {sorted(projs)})")
-    ranges = geo.get("ranges")
-    if ranges is not None and not isinstance(ranges, bool):
-        for name in ranges if isinstance(ranges, list) else [ranges]:
-            if not (isinstance(name, str) and name in known_ranges):
-                errors.append(f"{where}: unknown map range {name!r} (known: {sorted(known_ranges)})")
-    if geo.get("detail") not in (None, "auto", "lo", "hi"):
-        errors.append(f"{where}: map geo detail must be auto, lo or hi")
-    grat = geo.get("graticule")
-    if grat is not None and not isinstance(grat, bool) and not (_is_num(grat) and grat >= 1):
-        errors.append(f"{where}: map geo graticule must be true or a step of at least 1 degree")
-    if geo.get("mountainSize") is not None and not (_is_num(geo["mountainSize"]) and geo["mountainSize"] > 0):
-        errors.append(f"{where}: map geo mountainSize must be a number above 0")
-    peaks = geo.get("mountains")
-    if peaks is not None and not (isinstance(peaks, list) and all(_geo_peak(m) for m in peaks)):
-        errors.append(f"{where}: map geo mountains must be [lon, lat] pairs or {{lon, lat, size > 0, snow}} objects")
-    for i, r in enumerate(regions):
-        _check_geo_region(r, f"{where}: region {r.get('id', i)!r}", errors)
-
-
-def _geo_peak(m) -> bool:
-    if _pair(m):
-        return True
-    return (isinstance(m, dict) and _is_num(m.get("lon")) and _is_num(m.get("lat"))
-            and (m.get("size") is None or (_is_num(m["size"]) and m["size"] > 0)))
-
-
-def _check_geo_region(r: dict, rw: str, errors: list[str]) -> None:
-    isos = r.get("iso")
-    if isinstance(isos, list) and not isos:
-        errors.append(f"{rw} iso must name at least one country")
-    for iso in (isos if isinstance(isos, list) else [isos] if isos is not None else []):
-        if not (isinstance(iso, str) and ISO3_RE.match(iso)):
-            errors.append(f"{rw} iso {iso!r} must be an ISO 3166 alpha-3 code like FRA")
-    cont = r.get("continent")
-    if cont is not None and not (isinstance(cont, str) or (isinstance(cont, list) and cont and all(isinstance(c, str) for c in cont))):
-        errors.append(f"{rw} continent must be a name or a list of names")
-    ll = r.get("lonlat")
-    if ll is not None:
-        rings = [ll] if isinstance(ll, list) and ll and _pair(ll[0]) else ll if isinstance(ll, list) else [None]
-        if not rings or not all(isinstance(q, list) and len(q) >= 3 and all(_pair(p) for p in q) for q in rings):
-            errors.append(f"{rw} lonlat must be a ring of 3+ [lon, lat] points (or a list of rings)")
-    for key in ("flood", "wipe", "conquer"):
-        cover = r.get(key)
-        if isinstance(cover, dict) and cover.get("from") is not None and not _pair(cover["from"]):
-            errors.append(f"{rw} {key} from must be [lon, lat] in a geo map")
 
 
 def _nested_whos(value):
@@ -679,7 +503,12 @@ def _check_paint_fields(layer: dict, where: str, errors: list[str]) -> None:
 
 
 def _check_layer_refs(layer: dict, where: str, ids: set, cast: dict, errors: list[str]) -> None:
-    """Cross-references inside one shot (fx target, map refs, doc arrowTo and nested who), shared by layers and pinned."""
+    """Cross-references inside one shot (fx target, map refs, doc arrowTo and nested who, blackout lights), shared by
+    layers and pinned, checked for every state the layer's swaps produce."""
+    errors += _per_state(layer, lambda state, found: _state_refs(state, where, ids, cast, found))
+
+
+def _state_refs(layer: dict, where: str, ids: set, cast: dict, errors: list[str]) -> None:
     kind = layer.get("type")
     SC.check_refs(layer, where, ids, errors)
     SB.check_blackout(layer, where, ids, errors)

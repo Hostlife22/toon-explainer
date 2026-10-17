@@ -260,3 +260,40 @@ def test_density_box_zoom_accounts_for_the_vertical_strip():
     shots = [{"id": f"v{i}", "dur": 2, "camera": {"frame": {"box": [0.4, 0.3, w, 0.3]}}, "layers": dense} for i, w in enumerate((0.09, 0.16, 0.24))]
     assert not any("same camera zoom" in w for w in lint({"format": "vertical", "shots": shots}))
     assert any("same camera zoom" in w for w in lint({"shots": shots})), "landscape: all three fit the 0.3 height"
+
+
+# ---------- integration review ----------
+SHIFT_PROBE = """([t0, t1, dt, sub]) => { const T = window.TOON, orig = T.keepInFrame, out = []; let shift = null;
+  T.keepInFrame = (ctx, L, env, h) => { const a = ctx.getTransform(); orig(ctx, L, env, h); const b = ctx.getTransform();
+    if (L.id === 'lab') shift = Math.round((b.e - a.e) / a.a); };
+  const env = { dpr: T.DPR, seed: 1, spec: T.film.spec, cast: T.film.spec.cast || {}, style: T.film.spec.style || {} };
+  for (let t = t0; t <= t1 + 1e-9; t += dt) { shift = null; if (sub) T.subShot(sub, t, env); else window.renderFrame(t); out.push(shift); }
+  T.keepInFrame = orig; return out; }"""
+
+
+def test_moving_world_label_samples_its_own_position_over_time():
+    label = {"type": "label", "id": "lab", "text": "ARRIVING", "x": -0.2, "y": 0.4, "hud": False, "size": 60, "enter": "none",
+             "move": [{"at": 0, "dur": 2, "to": [0.7, 0.4], "ease": "linear"}]}
+    spec = _spec(_shot([*BEANS, label], dur=3, camera={"zoom": [1, 1]}))
+    shifts = [s for s in _page_run(spec, lambda page: page.evaluate(SHIFT_PROBE, [0, 2.8, 0.4, None])) if s is not None]
+    assert shifts and all(s == 0 for s in shifts), ("a label that ends fully in frame slides in unclamped", shifts)
+
+
+def test_subshot_vertical_world_label_shift_matches_core():
+    label = {"type": "label", "id": "lab", "text": "MARKET", "x": 0.3, "y": 0.4, "hud": False, "size": 60, "enter": "none"}
+    src = _shot([*BEANS, label], id="src", dur=3, camera={"zoom": [2, 2]}, frame=[{"at": 0, "v": 0.3}, {"at": 3, "v": 0.7}])
+    other = _shot(BEANS, id="other", dur=1)
+    spec = {**_spec(src, other), "format": "vertical"}
+    assert validate(spec) == []
+    shifts = [s for s in _page_run(spec, lambda page: page.evaluate(SHIFT_PROBE, [0, 2.8, 0.4, "src"])) if s is not None]
+    assert shifts and max(shifts) - min(shifts) <= 1, shifts
+
+
+def test_swapped_states_are_validated_for_refs_blackout_and_riders():
+    fx = {"type": "fx", "kind": "blackout", "swap": [{"at": 1, "lights": ["missing"]}]}
+    errs = "\n".join(validate(_spec(_shot([*BEANS, fx], dur=2))))
+    assert "missing" in errs, errs
+    car = {"type": "vehicle", "id": "car", "kind": "model-t", "x": 0.5, "y": 0.9, "riders": ["a"],
+           "swap": [{"at": 1, "riders": [{"who": "nobody"}, {"who": "a", "lookAt": [{"at": 1.2, "v": "ghost"}]}]}]}
+    errs = "\n".join(validate(_spec(_shot([*BEANS, car], dur=2))))
+    assert "nobody" in errs and "riders[1]: lookAt" in errs, errs

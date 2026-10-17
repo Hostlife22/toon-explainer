@@ -15,15 +15,16 @@
   // Text wider than the visible frame (a long name in a vertical film) is first shrunk to fit; fit:false keeps the size.
   // World-placed text (hud false) takes one fixed shift for its whole life, so it stays glued to its world position
   // while the camera pans or zooms: the camera is sampled over the layer's time on screen and the smallest shift that
-  // keeps it inside the frame at one of those moments wins (none when it is fully visible at some point).
+  // keeps it inside the frame at one of those moments wins (none when it is fully visible at some point). Each sample
+  // uses the layer's own state at that time (move, path, scale), so the result is a pure function of the layer.
   const KEEP_SAMPLES = 8;
-  function fitShift(L, env, halfW, c, span, f) {
+  function fitShift(L, st, halfW, c, span, f) {
     const z = c ? 1 + (c.z - 1) * f : 1;
-    const bx = env.st.bx ?? env.st.x; // anchor without slide-in offsets, so entrances are not cancelled
+    const bx = st.bx ?? st.x; // anchor without slide-in offsets, so entrances are not cancelled
     const sx = (c && f ? c.fx + (bx - c.fx - c.px * f) * z : bx) + (c ? c.sx : 0);
     const [lo, vw] = span; // the whole width, or in vertical films the strip centred on env.frameX
     const m = vw * 0.035;
-    let s = Math.abs(env.st.s) * z, k = 1;
+    let s = Math.abs(st.s) * z, k = 1;
     if (L.fit !== false && halfW * s * 2 > vw - 2 * m && halfW > 0) { k = (vw - 2 * m) / (halfW * s * 2); s *= k; }
     const left = sx - halfW * s, right = sx + halfW * s;
     const dx = left < lo + m ? (lo + m - left) / s : right > lo + vw - m ? (lo + vw - m - right) / s : 0;
@@ -31,23 +32,24 @@
   }
   function worldShift(L, env, halfW) {
     const shot = env.shot, f = L.z ?? 1;
-    if (!shot) return fitShift(L, env, halfW, env.cam, T.visibleSpan(env), f);
+    if (!shot) return fitShift(L, env.st, halfW, env.cam, T.visibleSpan(env), f);
     const a = L.at ?? 0, b = Math.max(a, Math.min(L.out ?? shot.dur, shot.dur));
     let best = null;
     for (let i = 0; i < KEEP_SAMPLES && !(best && !best.dx); i++) {
-      const t = a + ((b - a) * i) / (KEEP_SAMPLES - 1);
+      const t = a + ((b - a) * i) / (KEEP_SAMPLES - 1), st = T.layerState(L, t);
+      if (!st) continue;
       const span = env.frameX != null && T.frameStrip ? T.frameStrip(shot, t) : T.visibleSpan(env);
-      // vertical films zoom around the strip centre of that moment (core.js frameShot), not the current one
+      // vertical films zoom around the strip centre of that moment (T.stripFramed), not the current one
       const cam = shot.__stripFocus ? { ...shot.camera, focus: [(span[0] + span[1] / 2) / T.W, 0.5] } : shot.camera;
-      const r = fitShift(L, env, halfW, T.cameraAt(cam, t, shot.dur, shot), span, f);
+      const r = fitShift(L, st, halfW, T.cameraAt(cam, t, shot.dur, shot), span, f);
       if (!best || Math.abs(r.dx) < Math.abs(best.dx) - 1e-6) best = r;
     }
-    return best;
+    return best || fitShift(L, env.st, halfW, env.cam, T.visibleSpan(env), f);
   }
   T.keepInFrame = (ctx, L, env, halfW) => {
     if (L.keepInFrame === false || !env.st) return;
     const hud = L.hud ?? (L.type === 'era' || L.type === 'timer');
-    const { k, dx } = hud || !env.cam ? fitShift(L, env, halfW, env.cam, T.visibleSpan(env), 0) : worldShift(L, env, halfW);
+    const { k, dx } = hud || !env.cam ? fitShift(L, env.st, halfW, env.cam, T.visibleSpan(env), 0) : worldShift(L, env, halfW);
     if (k !== 1) ctx.scale(k, k);
     if (dx) ctx.translate(dx * env.st.flip, 0);
   };
