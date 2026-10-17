@@ -263,6 +263,9 @@
   // ---------- swap: instant mid-shot field changes ----------
   // swap: [{at, ...fields}] (shot time). Entries with at <= lt merge in order; `look` merges into L.look (null values
   // stay and override the cast entry); a top-level null deletes the field. Hard swap = 1 frame, as in the reference.
+  // The authored layer behind a swapped copy sits under an enumerable symbol key: every later spread ({...L}) keeps
+  // it, while JSON and Object.keys / entries skip it.
+  const SWAP_BASE = Symbol('swapBase');
   T.effLayer = (L, lt) => {
     if (!L.swap || !L.swap.length) return L;
     let E = null;
@@ -276,11 +279,13 @@
         else E[k] = v;
       }
     }
-    if (E) Object.defineProperty(E, '__swapBase', { value: L.__swapBase || L }); // the authored layer (T.swapBase), hidden from JSON
+    if (E) E[SWAP_BASE] = T.swapBase(L);
     return E || L;
   };
   // The authored layer behind a swapped copy (pure functions of time, such as rider anchors, resolve swaps per time).
-  T.swapBase = (L) => (L && L.__swapBase) || L;
+  T.swapBase = (L) => (L && L[SWAP_BASE]) || L;
+  // A copy of a layer with some fields changed that still resolves to the authored layer (focus, blur, distance).
+  T.layerWith = (L, fields) => ({ ...L, ...fields, [SWAP_BASE]: T.swapBase(L) });
 
   // ---------- layer modifiers ----------
   // T.LAYER_MODS[name] = { order, apply?(src, L, lt, env) -> canvas, under?(ctx, src, L, lt, env), filter?(L, lt, env) -> css }
@@ -341,7 +346,7 @@
 
   // Paint one layer (already swapped) with its motion state; shared by shots and persistent overlays.
   T.drawLayer = (ctx, L, lt, shotEnv, cam) => {
-    if (Array.isArray(L.blur)) L = { ...L, blur: T.num(L.blur, lt) };
+    if (Array.isArray(L.blur)) L = T.layerWith(L, { blur: T.num(L.blur, lt) });
     const draw = T.layers[L.type];
     if (!draw) throw new Error(`Unknown layer type "${L.type}"` + (shotEnv.shot ? ` in shot ${shotEnv.shot.id}` : ''));
     const st = T.layerState(L, lt);
@@ -429,7 +434,7 @@
       if (!streaked && (L.hud || HUD_DEFAULT[L.type] || FOCUS_EXEMPT.has(L.type)) && L.type !== 'fx') { T.camStreak(ctx, cam, shotEnv); streaked = true; }
       if (focus && L.id && !L.sharp && (L.focusable || !FOCUS_EXEMPT.has(L.type))) {
         const fb = focus(L.id), own = T.num ? T.num(L.blur, lt) || 0 : 0;
-        if (fb >= 0.3 || own) L = { ...L, blur: Math.max(fb, own) };
+        if (fb >= 0.3 || own) L = T.layerWith(L, { blur: Math.max(fb, own) });
       }
       if (L.dist != null && T.distLayer) L = T.distLayer(L);
       T.drawLayer(ctx, L, T.twosLt ? T.twosLt(L, lt, shot, env) : lt, shotEnv, cam);

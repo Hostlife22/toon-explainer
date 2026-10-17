@@ -97,7 +97,7 @@
   };
 
   // ---------- layer dist: parallax 1 / dist (core T.layerZ) and atmospheric haze for far layers ----------
-  T.distLayer = (L) => (L.dist > 1 && L.atmos == null ? { ...L, atmos: T.clamp((L.dist - 1) * 0.2, 0, 0.6) } : L);
+  T.distLayer = (L) => (L.dist > 1 && L.atmos == null ? T.layerWith(L, { atmos: T.clamp((L.dist - 1) * 0.2, 0, 0.6) }) : L);
 
   // ---------- on twos ----------
   // style.onTwos / shot.onTwos (true = 12 fps, or a rate) samples character layers on a coarser clock while the camera

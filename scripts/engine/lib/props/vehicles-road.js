@@ -158,7 +158,7 @@
 
   // car1910 in the painted look / with path: the model-t drawing with the classic colour
   VK.register('car1910', (ctx, L, S, env) => {
-    const L2 = Object.defineProperty({ ...L, color: L.color ?? '#2f3e5a' }, '__swapBase', { value: T.swapBase(L) }); // riders anchor on the authored layer
+    const L2 = T.layerWith(L, { color: L.color ?? '#2f3e5a' }); // riders anchor on the authored layer
     return VK.FN['model-t'](ctx, L2, { ...S, size: S.size * 1.05 }, env);
   }, 380, (L, S) => VK.TRAILS['model-t'](L, S));
 
