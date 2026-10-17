@@ -1489,6 +1489,137 @@
      "size": 24
     }
    ]
+  },
+  {
+   "id": "v17_grips",
+   "_note": "the fist closes on each prop's grip point; a near hand's prop draws over the head and keeps the face clear (grip.js)",
+   "dur": 2.5,
+   "bg": {
+    "kind": "interior"
+   },
+   "camera": {
+    "zoom": [
+     1.03,
+     1.0
+    ]
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "GRIP, NOT HEAD",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.1,
+     "y": 0.9,
+     "size": 400,
+     "pose": "hold",
+     "view": "front",
+     "hold": "flag",
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "flag / hold",
+     "x": 0.1,
+     "y": 0.96,
+     "size": 24
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.26,
+     "y": 0.9,
+     "size": 400,
+     "pose": "think",
+     "view": "3q",
+     "hold": "placard",
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "placard / think",
+     "x": 0.26,
+     "y": 0.96,
+     "size": 24
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.42,
+     "y": 0.9,
+     "size": 400,
+     "pose": "wave",
+     "view": "3q",
+     "hold": "mug",
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "mug / wave",
+     "x": 0.42,
+     "y": 0.96,
+     "size": 24
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.58,
+     "y": 0.9,
+     "size": 400,
+     "pose": "point-up",
+     "view": "3q",
+     "hold": "newspaper",
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "newspaper / point-up",
+     "x": 0.58,
+     "y": 0.96,
+     "size": 24
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 400,
+     "pose": "present",
+     "view": "3q",
+     "hold": "broom",
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "broom / present",
+     "x": 0.74,
+     "y": 0.96,
+     "size": 24
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.9,
+     "y": 0.9,
+     "size": 400,
+     "pose": "offer",
+     "view": "3q",
+     "hold": "moneybag",
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "moneybag / offer",
+     "x": 0.9,
+     "y": 0.96,
+     "size": 24
+    }
+   ]
   }
  ]
 }

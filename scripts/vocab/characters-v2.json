@@ -3,7 +3,7 @@
   "views": ["profile", "3q-back"],
   "expr": ["terror", "disgust", "awe", "crying", "laughing", "scheming", "exhausted"],
   "kinds": {
-    "hand": ["open", "fist", "point", "thumb", "thumbs-up", "grab", "wave", "peace", "one", "two", "three", "four", "five"],
+    "hand": ["open", "fist", "point", "thumb", "thumbs-up", "grab", "wave", "pinch", "peace", "one", "two", "three", "four", "five"],
     "gait": ["walk", "run", "sneak", "march"]
   },
   "registry": {"hand": "TOON.HANDS", "gait": "TOON.GAITS"}

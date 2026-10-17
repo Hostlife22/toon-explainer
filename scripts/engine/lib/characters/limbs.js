@@ -55,6 +55,10 @@
       thumbOut(ctx, skin, 1.45);
       palm(ctx, skin);
     },
+    pinch: (ctx, skin) => { // thumb and index meet at the tip (a coin, a key, a cup handle), the rest folded
+      finger(ctx, skin, 8, 16, 30, 0.42); finger(ctx, skin, -20, 4, 28, -0.5);
+      palm(ctx, skin); knuckles(ctx, [-2, 10]);
+    },
     peace: (ctx, skin) => {
       finger(ctx, skin, -9, 16, 58, -0.34); finger(ctx, skin, 6, 16, 58, 0.3);
       thumbIn(ctx, skin); palm(ctx, skin); knuckles(ctx, [10, 18]);
