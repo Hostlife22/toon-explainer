@@ -103,6 +103,13 @@
     }
     return out;
   }
+  // Front pass (set-front.js): the dust lies where the newest live landing happened (lt: shot time), not where the
+  // target stands now; without a target landing the layer's own position applies (null).
+  (T.FX_ANCHOR = T.FX_ANCHOR || {}).dustkick = (L, lt, shot) => {
+    let y = null;
+    for (const hit of landings(L, { shot })) if (hit.y != null && lt - hit.t >= 0 && lt - hit.t <= 1.6) y = hit.y;
+    return y;
+  };
   FX.dustkick = (ctx, L, lt, env) => {
     const P = T.paintedState(env, L), k = L.size ?? 1, me = env && env.st;
     for (const [n, hit] of landings(L, env).entries()) {

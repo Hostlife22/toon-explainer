@@ -88,6 +88,17 @@
     ctx.lineWidth = s * 0.07; ctx.beginPath(); for (const gx of [-0.2, 0.2]) { ctx.moveTo(x + gx * s, y + s * 0.4); ctx.lineTo(x + gx * s, y + s * 0.82); } ctx.stroke();
     ctx.restore();
   }
+  // Point of a brawl's own `path` ([[x, y], ...] frame fractions, pts in px) at layer time lt.
+  function brawlAt(L, pts, lt) {
+    const dur = L.dur ?? Infinity, u = T.clamp(lt / (L.travel ?? (Number.isFinite(dur) ? dur : 1.5))) * (pts.length - 1);
+    const i = Math.min(pts.length - 2, Math.floor(u)), q = u - i;
+    return [T.lerp(pts[i][0], pts[i + 1][0], q), T.lerp(pts[i][1], pts[i + 1][1], q)];
+  }
+  // Front pass (set-front.js): the brawl stands where its path has taken it (lt: shot time; st: the layer state).
+  (T.FX_ANCHOR = T.FX_ANCHOR || {}).brawl = (L, lt, shot, st) => {
+    if (!(Array.isArray(L.path) && L.path.length > 1)) return null;
+    return st.y + brawlAt(L, L.path.map((p) => fp(p)), lt - (L.at ?? 0))[1] - (L.y ?? 0.5) * H;
+  };
   // brawl fx: {size 480, path [[x,y],...] (frame coords), dur (travel + end), end pop|puffs, limbs, skins (hex or cast
   // names), stars 5, haze false, dust true}
   FX.brawl = (ctx, L, lt, env) => {
@@ -95,9 +106,8 @@
     const skins = (L.skins || []).map((s) => (String(s).startsWith('#') ? s : (cast[s] && (cast[s].robe ?? cast[s].sleeve)) ?? P.red));
     let x = 0, y = 0;
     if (L.path && L.path.length > 1) {
-      const pts = L.path.map((p) => fp(p)), ox = (L.x ?? 0.5) * W, oy = (L.y ?? 0.5) * H;
-      const u = T.clamp(lt / (L.travel ?? (Number.isFinite(dur) ? dur : 1.5))) * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(u)), q = u - i;
-      x = T.lerp(pts[i][0], pts[i + 1][0], q) - ox; y = T.lerp(pts[i][1], pts[i + 1][1], q) - oy;
+      const pts = L.path.map((p) => fp(p)), ox = (L.x ?? 0.5) * W, oy = (L.y ?? 0.5) * H, at = brawlAt(L, pts, lt);
+      x = at[0] - ox; y = at[1] - oy;
       if (L.haze) { // dust haze trailing the travelled path, growing with time
         const g = ctx.createLinearGradient(pts[0][0] - ox, 0, x, 0);
         g.addColorStop(0, 'rgba(120,100,60,0)'); g.addColorStop(1, `rgba(120,100,60,${0.5 * T.clamp(lt / 1.5)})`);

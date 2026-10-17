@@ -328,7 +328,7 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         errors.append(f"{where}: prop kind {layer.get('kind')!r} not in {sorted(KNOWN_PROPS)}")
     if kind == "fx" and layer.get("kind") not in KNOWN_FX:
         errors.append(f"{where}: fx kind {layer.get('kind')!r} not in {sorted(KNOWN_FX)}")
-    if kind == "fx" and layer.get("front") is not None and layer.get("front") not in ("over", "depth"):
+    if kind == "fx" and any(s.get("front") is not None and s.get("front") not in ("over", "depth") for s in _swap_states(layer)):
         errors.append(f'{where}: fx front must be "over" (above set front parts) or "depth" (slotted by its y)')
     if kind in ("label", "title", "caption", "sign", "date") and not str(layer.get("text", "")).strip():
         errors.append(f"{where}: {kind} needs non-empty text")

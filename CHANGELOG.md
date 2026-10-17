@@ -8,6 +8,7 @@
 - Fix: ground fx placed at a spot (`dust`, `dustkick`, `poof`, `puff`, `smoke`, `fire`, `blood`, `pool`, `spill`, `toxic-cloud`; registry `T.FX_GROUND`) are slotted among `set` front parts by their `y` like actors, so dust at the judge's feet stays behind the bench; screen-wide fx (flash, blackout, rain, ...) stay over. New fx field `front`: `"over"` keeps the old order, `"depth"` slots any placed fx by its `y`.
 - Fix: front parts come from every `set` in the shot's `bg` list that no covering background follows; a parts-only set (`wall: false, floor: false`) does not cover, so a room plus a set of extra front benches, or a landscape plus a parts-only set with a front desk, both work (`T.bgCovers`, `T.frontSources`).
 - New bg field `frontY` on `room`, `cell`, `antique`, `palace` and `studio`: their front plane joins the automatic front pass (redrawn over layers standing above `frontY`), so a judge stays behind a `studio` `courtroom` bench without a hand-placed `bg-front` layer.
+- Front pass review fixes: an fx is slotted where it renders (`T.FX_ANCHOR`: a targeted `dustkick` at its landing point, a `brawl` along its own `path`); only positional `move` steps place an fx; an explicit `set-front` layer also places `frontY` planes; a `frontY` plane is left out of the background pass (drawn once, also under a rack-focus blur); fx `front` is validated across swaps.
 - `examples/painted_places` gains `set_front_layers` and `set_front_plane`; `examples/props_fx_v2` gains `v16_held`.
 
 ### Engine backlog: characters

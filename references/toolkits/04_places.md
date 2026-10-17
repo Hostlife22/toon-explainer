@@ -284,7 +284,7 @@ Common rules: put `fg` after the characters and before the lettering. Leave `x`,
 | `window-frame` | Looking out through a window: textured wall, a deep reveal in three tones, a stone sill, open shutters (rocking slightly) and a flower pot | `hole` [0.2, 0.12, 0.6, 0.62] (frame fractions), `wall` `#cdbb98`, `frame` `#6a4428`, `depth` 46 (px), `shutters` true, `shutter` `#3a6a4a`, `pot` true |
 | `silhouettes` | Backs of heads and shoulders along the bottom edge (an audience, a crowd in front of a speaker), darkened, bobbing | `count` 3, `who` (cast names, one per figure), `look` (overrides for all), `tone` 0.55 (darkening), `size` 1, `id` (layout seed) |
 | `bg-front` | Redraws the shot background's front plane over everything drawn so far | none; ignores `x`, `y`, `scale`, `z` (the plane keeps its background parallax) |
-| `set-front` | Draws only the `front: true` parts of a `set` background here (the automatic front pass, placed by hand) | none; ignores `x`, `y`, `scale`, `z` |
+| `set-front` | Draws every automatic front piece here: the `front: true` parts of visible `set` backgrounds and the `frontY` planes (the automatic front pass, placed by hand) | none; ignores `x`, `y`, `scale`, `z` |
 
 `bg-front` front planes:
 
@@ -297,7 +297,7 @@ Common rules: put `fg` after the characters and before the lettering. Leave `x`,
 | `antique` | the `balcony` balustrade |
 | `set` | parts with `front: true` (the `courtroom` preset's judge's desk); these are left out of the background itself |
 
-The background also draws its front plane itself, so a shot without `bg-front` still looks complete. `frontY` (a number, the plane's ground y in frame fractions) on `room`, `cell`, `antique`, `palace` or `studio` puts the whole front plane into the automatic front pass instead: it is redrawn over every layer standing above `frontY` (ground y smaller) and stays under the ones standing lower, slotted per frame like `set` front parts (`{"kind": "studio", "variant": "courtroom", "frontY": 0.8}` keeps a judge at `y` 0.72 behind the bench and a witness at 0.98 in front). `office` desk, `bar` counter and `olympus` throne have no front plane: they always stay behind the characters.
+The background also draws its front plane itself, so a shot without `bg-front` still looks complete. `frontY` (a number, the plane's ground y in frame fractions) on `room`, `cell`, `antique`, `palace` or `studio` puts the whole front plane into the automatic front pass instead (the background pass then leaves it out, so it is drawn once, also under a rack-focus blur): it is redrawn over every layer standing above `frontY` (ground y smaller) and stays under the ones standing lower, slotted per frame like `set` front parts (`{"kind": "studio", "variant": "courtroom", "frontY": 0.8}` keeps a judge at `y` 0.72 behind the bench and a witness at 0.98 in front). `office` desk, `bar` counter and `olympus` throne have no front plane: they always stay behind the characters.
 
 ### Places 2.0: sets, depth planes and painted places
 

@@ -71,8 +71,8 @@
     ctx.drawImage(src, 0, 0); ctx.restore();
   }
   const setGroups = (shot) => frontSources(shot).filter((g) => !g.plane);
-  // fg set-front: every set front part here; the automatic pass carries its own piece in __front.
-  T.FG['set-front'] = (ctx, L, lt, env) => draw(ctx, L.__front || setGroups(env.shot), lt, env);
+  // fg set-front: every front piece here (set parts and frontY planes); the automatic pass carries its own in __front.
+  T.FG['set-front'] = (ctx, L, lt, env) => draw(ctx, L.__front || frontSources(env.shot), lt, env);
   const bgFront = T.FG['bg-front']; // draws every background's front plane (opted in or not)
   T.FG['bg-front'] = (ctx, L, lt, env) => { bgFront(ctx, L, lt, env); draw(ctx, setGroups(env.shot), lt, env); };
 
@@ -83,17 +83,21 @@
     return st ? { L, st } : null;
   };
   // An fx stands in the world (slotted by its y) when it is a ground kind placed at a spot, or when it asks for depth.
-  const placed = (L) => L.y != null || !!(L.move && L.move.length) || !!L.path || typeof L.target === 'string';
+  // Placed: a y, a positional move step, a path (the common one, or the brawl's own point list) or a target layer.
+  const placed = (L) => L.y != null || (L.move || []).some((m) => m && (m.to || m.by || m.from)) ||
+    !!(L.path && (Array.isArray(L.path) ? L.path.length : L.path.pts)) || typeof L.target === 'string';
   const fxInWorld = (L) => (L.front === 'over' ? false : L.front === 'depth' ? placed(L) : T.FX_GROUND.has(L.kind) && placed(L));
-  // Ground y of a layer state; a targeted ground fx (dustkick on a walker) stands where its target stands.
-  const groundY = ({ L, st }, byId) => {
-    const s = L.type === 'fx' && L.y == null && typeof L.target === 'string' ? byId.get(L.target) || { st } : { st };
-    return (s.st.by ?? s.st.y) + (s.st.jy || 0);
+  // Ground y of a layer state (px). An fx kind that draws away from its layer position (a dustkick at its target's
+  // landing point, a brawl along its path) reports where it renders through T.FX_ANCHOR[kind](L, lt, shot, st).
+  T.FX_ANCHOR = T.FX_ANCHOR || {};
+  const groundY = ({ L, st }, lt, shot) => {
+    const an = L.type === 'fx' && T.FX_ANCHOR[L.kind], y = an ? an(L, lt, shot, st) : null;
+    return y ?? (st.by ?? st.y) + (st.jy || 0);
   };
-  const inFront = (s, y, byId) => {
+  const inFront = (s, y, lt, shot) => {
     const { L } = s;
     if (L.type === 'fx' && !fxInWorld(L)) return true;
-    return OVER.has(L.type) || L.hud === true || (L.hud == null && !!T.HUD_DEFAULT[L.type]) || T.layerZ(L) > 1 || groundY(s, byId) > y * H + 1e-6;
+    return OVER.has(L.type) || L.hud === true || (L.hud == null && !!T.HUD_DEFAULT[L.type]) || T.layerZ(L) > 1 || groundY(s, lt, shot) > y * H + 1e-6;
   };
   const passes = new WeakMap(); // one stable pass layer per front piece
   const passOf = (src, it) => {
@@ -107,11 +111,9 @@
     if (!srcs.length) return list;
     const states = list.map((L0) => active(L0, lt, shot, env));
     if (states.some((s) => s && s.L.type === 'fg' && (s.L.kind === 'bg-front' || s.L.kind === 'set-front'))) return list;
-    const byId = new Map();
-    states.forEach((s) => { if (s && s.L.id != null) byId.set(s.L.id, s); });
     const slots = [];
     srcs.forEach((src, si) => src.items.forEach((it) => {
-      const y = it.p.y ?? 0.78, j = states.findIndex((s) => s && inFront(s, y, byId));
+      const y = it.p.y ?? 0.78, j = states.findIndex((s) => s && inFront(s, y, lt, shot));
       slots.push({ src, it, y, si, at: j < 0 ? list.length : j });
     }));
     slots.sort((a, b) => a.at - b.at || a.y - b.y || a.si - b.si || (a.it.i === 'plane' ? 0 : a.it.i) - (b.it.i === 'plane' ? 0 : b.it.i));
