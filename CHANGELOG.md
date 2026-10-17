@@ -12,6 +12,7 @@
 - `move` steps take `by: [dx, dy]` (relative slide) and `from: [x, y]` (start point; held until the step starts; alone it slides the layer in to its `x`/`y`). Steps without them behave as before.
 - Shot `grade` `out` / `outDur` are documented as the way to end a grade mid-shot and validated (numbers, `out` not before `at`).
 - New `fx` `blackout`: the lights go off (`level`, `color`, `fade`, `dur`, `fadeOut`), with `lights` keeping soft lit holes around a candle or lamp that follow it and the camera.
+- Review fixes: the blackout scratch is cleared each draw (translucent colours no longer build up); only the first `move` step holds a layer at its `from`; the globe backdrop pass resolves `swap`s first; vertical films sample each moment's strip centre for the label shift; a pinned blackout whose `lights` name world layers is drawn in the world pass; `lights` are validated (shape, `r` > 0, ids in the shot; `scripts/spec_blackout.py`); a grade with `at: null` validates; density fits `frame` box zooms to the vertical strip.
 - `examples/camera_acting` gains `s18_world_labels_pan`, `s19_slide_and_xray` and `s20_lights_out`; tests in `tests/test_backlog_core.py`.
 
 Painted engine, phase 8: directing rules.

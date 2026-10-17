@@ -184,3 +184,79 @@ def test_blackout_darkens_the_frame_keeps_lights_and_comes_back():
     assert dark < before * 0.4, (before, dark)
     assert abs(after - before) < 1.0, ("lights back on after dur + fadeOut", before, after)
     assert lit > unlit * 3, ("the light keeps a bright hole around the lamp", lit, unlit)
+
+
+# ---------- review follow-ups ----------
+def test_blackout_is_render_order_independent_with_a_translucent_colour():
+    lamp = {"type": "prop", "id": "lamp", "kind": "candle", "x": 0.7, "y": 0.6, "size": 200, "enter": "none"}
+    fx = {"type": "fx", "kind": "blackout", "color": "#00000080", "fade": 0.01, "lights": ["lamp"]}
+    spec = _spec(_shot([*BEANS, lamp, fx], dur=2))
+    assert validate(spec) == []
+    first = _page_run(spec, lambda page: [page.evaluate(GRAB, t) for t in (0.5, 0.5, 0.5)])
+    assert first[0] == first[1] == first[2], "the blackout scratch must not accumulate across renders"
+
+
+def test_a_later_from_step_does_not_hold_before_earlier_steps():
+    L = {"type": "prop", "id": "p", "kind": "crate", "x": 0.5, "y": 0.5, "enter": "none",
+         "move": [{"at": 1, "dur": 1, "to": [0.7, 0.5], "ease": "linear"}, {"at": 3, "dur": 1, "from": [0.9, 0.5], "to": [0.1, 0.5], "ease": "linear"}]}
+    spec = _spec(_shot([L], dur=5))
+    probe = """() => { const T = window.TOON, L = T.film.spec.shots[0].layers[0];
+      return [0, 1.5, 2.5, 3.0, 3.5].map((t) => Math.round(T.layerState(L, t).x)); }"""
+    xs = _page_run(spec, lambda page: page.evaluate(probe))
+    assert xs == [960, 1152, 1344, 1344, 960], xs  # held where the first step ended until the from step begins
+
+
+def test_globe_backdrop_follows_swaps_to_ortho():
+    flat = {"type": "map", "id": "m", "x": 0.6, "geo": {"proj": "equirect", "center": [10, 40], "span": 60},
+            "swap": [{"at": 0.5, "geo": {"proj": "ortho", "radius": 0.35, "center": [10, 40]}}]}
+    spec = _spec(_shot([flat], dur=2, bg={"kind": "flat", "color": "#e8dcc0"}))
+    assert validate(spec) == []
+    corner = [0.0, 0.0, 0.12, 0.12]
+    before, after = _page_run(spec, lambda page: [page.evaluate(LUMA, [t, corner]) for t in (0.2, 1.2)])
+    assert after < 80, ("the swapped-in globe paints its starfield", before, after)
+
+
+def test_vertical_world_label_shift_uses_each_samples_frame_centre():
+    label = {"type": "label", "id": "lab", "text": "MARKET SQUARE", "x": 0.5, "y": 0.4, "hud": False, "size": 60, "enter": "none"}
+    shot = _shot([*BEANS, label], dur=3, camera={"zoom": [2, 2]}, frame=[{"at": 0, "v": 0.2}, {"at": 3, "v": 0.8}])
+    spec = {**_spec(shot), "format": "vertical"}
+    assert validate(spec) == []
+    probe = """() => { const T = window.TOON, orig = T.keepInFrame, out = []; let shift = null;
+      T.keepInFrame = (ctx, L, env, h) => { const a = ctx.getTransform(); orig(ctx, L, env, h); const b = ctx.getTransform();
+        if (L.id === 'lab') shift = (b.e - a.e) / a.a; };
+      for (let t = 0; t < 3; t += 0.3) { shift = null; window.renderFrame(t); out.push(shift); }
+      T.keepInFrame = orig; return out; }"""
+    shifts = [s for s in _page_run(spec, lambda page: page.evaluate(probe)) if s is not None]
+    assert shifts and max(abs(s - shifts[0]) for s in shifts) < 0.5, shifts
+
+
+def test_pinned_blackout_lights_a_world_layer():
+    lamp = {"type": "prop", "id": "lamp", "kind": "candle", "x": 0.75, "y": 0.6, "size": 200, "enter": "none"}
+    fx = {"type": "fx", "kind": "blackout", "fade": 0.01, "lights": [{"id": "lamp", "r": 260}]}
+    spec = _spec(_shot([*BEANS, lamp], dur=2, pinned=[fx]))
+    assert validate(spec) == []
+    lit, unlit = _page_run(spec, lambda page: [page.evaluate(LUMA, [1.0, b]) for b in ([0.7, 0.5, 0.1, 0.15], [0.2, 0.3, 0.1, 0.2])])
+    assert lit > unlit * 3, (lit, unlit)
+
+
+def test_blackout_lights_are_validated():
+    def errs(lights):
+        fx = {"type": "fx", "kind": "blackout", "lights": lights}
+        return "\n".join(validate(_spec(_shot([*BEANS, fx], dur=2))))
+    assert "lights" in errs(True)
+    assert "r must be" in errs([{"x": 0.5, "y": 0.5, "r": -1}])
+    assert "not the id" in errs(["nobody"])
+    assert "lights" in errs([{"r": 100}])
+    assert errs(["a", {"id": "b", "r": 200, "dy": -40}, {"x": 0.2, "y": 0.3}]) == ""
+
+
+def test_grade_with_null_at_validates():
+    spec = _spec(_shot(BEANS, dur=2, grade={"preset": "horror", "at": None, "out": 1}))
+    assert validate(spec) == []
+
+
+def test_density_box_zoom_accounts_for_the_vertical_strip():
+    dense = [{"type": "prop", "kind": "coin"}] * 3 + [{"type": "fg", "kind": "grass"}]
+    shots = [{"id": f"v{i}", "dur": 2, "camera": {"frame": {"box": [0.4, 0.3, w, 0.3]}}, "layers": dense} for i, w in enumerate((0.09, 0.16, 0.24))]
+    assert not any("same camera zoom" in w for w in lint({"format": "vertical", "shots": shots}))
+    assert any("same camera zoom" in w for w in lint({"shots": shots})), "landscape: all three fit the 0.3 height"

@@ -37,7 +37,9 @@
     for (let i = 0; i < KEEP_SAMPLES && !(best && !best.dx); i++) {
       const t = a + ((b - a) * i) / (KEEP_SAMPLES - 1);
       const span = env.frameX != null && T.frameStrip ? T.frameStrip(shot, t) : T.visibleSpan(env);
-      const r = fitShift(L, env, halfW, T.cameraAt(shot.camera, t, shot.dur, shot), span, f);
+      // vertical films zoom around the strip centre of that moment (core.js frameShot), not the current one
+      const cam = shot.__stripFocus ? { ...shot.camera, focus: [(span[0] + span[1] / 2) / T.W, 0.5] } : shot.camera;
+      const r = fitShift(L, env, halfW, T.cameraAt(cam, t, shot.dur, shot), span, f);
       if (!best || Math.abs(r.dx) < Math.abs(best.dx) - 1e-6) best = r;
     }
     return best;

@@ -325,6 +325,7 @@
   // Layers listed after the blackout stay fully lit (lettering, a glowing prop). Screen effect: ignores the layer position.
   const lightPoint = (ctx, s, q, env) => {
     const o = typeof q === 'string' ? { id: q } : q || {};
+    if (!(o.r == null || o.r > 0)) throw new Error(`blackout: light r must be > 0 (got ${o.r})`);
     let x = (o.x ?? 0.5) * W, y = (o.y ?? 0.5) * H, z = 1, hud = !o.id;
     if (o.id) {
       const L0 = T.findShotLayer && T.findShotLayer(env.shot, o.id);
@@ -344,10 +345,12 @@
     const a = T.clamp(L.level ?? 0.94) * T.ease.inOut(T.prog(lt, 0, fade)) * out;
     if (a <= 0) return;
     const cw = ctx.canvas.width, ch = ctx.canvas.height, s = cw / W;
+    if (L.lights != null && !Array.isArray(L.lights)) throw new Error('blackout: lights must be a list of layer ids, {id, r, dx, dy} or {x, y, r}');
     const holes = (L.lights || []).map((q) => lightPoint(ctx, s, q, env)).filter(Boolean);
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha *= a;
     if (!holes.length) { ctx.fillStyle = L.color ?? '#020203'; ctx.fillRect(0, 0, cw, ch); ctx.restore(); return; }
     const [c, k] = T.scratch('fxblackout', cw, ch);
+    k.clearRect(0, 0, cw, ch); // a translucent colour must not build up over earlier renders
     k.fillStyle = L.color ?? '#020203'; k.fillRect(0, 0, cw, ch);
     k.globalCompositeOperation = 'destination-out';
     for (const h of holes) {

@@ -112,7 +112,7 @@ Parallax: every layer has a `z` (default 1). At 0 the layer is pinned to the scr
 ## Common layer fields
 `type`, `id`, `x`, `y`, `scale`, `rot` (degrees), `alpha`, `flip`, `z`, `hud` (ignores the camera), `at`, `out`,
 `enter`, `exit` (`none|fade|pop|drop|rise|slide-left|slide-right|slide-up|slide-down|spin|drop-squash|pop-tilt|slam` and the gag kinds in [02 Acting](toolkits/02_acting.md)), `enterDur`, `exitDur`,
-`move: [{at,dur,to:[x,y],by:[dx,dy],from:[x,y],scale,rot,alpha,flip,ease}]` (steps run in order, each from where the last one ended: `to` is an absolute frame point, `by` an offset in frame fractions (a curtain slides `by: [0, -0.9]`), `from` the point the step starts at; a `from` step with no earlier move holds the layer there until it starts, and without `to`/`by` it ends at the layer's `x`/`y`, so `from` alone slides a layer in), `bob` (px), `bobHz`, `sway` (deg), `swayHz`, `wobble` (px),
+`move: [{at,dur,to:[x,y],by:[dx,dy],from:[x,y],scale,rot,alpha,flip,ease}]` (steps run in order, each from where the last one ended: `to` is an absolute frame point, `by` an offset in frame fractions (a curtain slides `by: [0, -0.9]`), `from` the point the step starts at; the first positional step, if it has a `from`, holds the layer there until it starts (a later `from` step jumps there when it begins), and without `to`/`by` it ends at the layer's `x`/`y`, so `from` alone slides a layer in), `bob` (px), `bobHz`, `sway` (deg), `swayHz`, `wobble` (px),
 `shake: [{at,dur,amp}]`, `jump: [{at,dur,h}]`, `floorY` (normalised floor y: keeps the painted contact shadow of a bean or contact layer on the floor while it flies), `path` (table below).
 
 More fields accepted by every layer:

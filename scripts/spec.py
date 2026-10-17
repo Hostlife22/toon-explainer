@@ -20,6 +20,7 @@ from motion_check import check_motion
 from places_check import check_depth, check_set_bg, check_set_layer
 import spec_characters as SC
 import camera_check as CC
+import spec_blackout as SB
 
 KNOWN_LAYERS = {"bean", "image", "label", "title", "date", "era", "counter", "timer", "caption",
                 "prop", "card", "sign", "calendar", "map", "fx", "fg", "crowd"}
@@ -330,6 +331,7 @@ def _check_director(layer: dict, where: str, ids: set, errors: list[str]) -> Non
 def _fx_refs(layer: dict) -> list[str]:
     swaps = layer.get("swap") if isinstance(layer.get("swap"), list) else []
     vals = [layer.get("target"), layer.get("follow")] + [x for sw in swaps if isinstance(sw, dict) for x in (sw.get("target"), sw.get("follow"))]
+    vals += [i for src in [layer] + swaps if isinstance(src, dict) for i in SB.light_ids(src.get("lights"))]  # blackout lights
     return [v for v in vals if isinstance(v, str)]
 
 
@@ -671,6 +673,7 @@ def _check_layer_refs(layer: dict, where: str, ids: set, cast: dict, errors: lis
     """Cross-references inside one shot (fx target, map refs, doc arrowTo and nested who), shared by layers and pinned."""
     kind = layer.get("type")
     SC.check_refs(layer, where, ids, errors)
+    SB.check_blackout(layer, where, ids, errors)
     target = layer.get("target")
     if kind == "fx" and isinstance(target, str) and target not in ids:
         errors.append(f"{where}<fx>: target {target!r} is not the id of a layer in this shot")
@@ -743,8 +746,8 @@ def validate(spec: dict) -> list[str]:
                 errors.append(f"{where}: grade target {g.get('target')!r} must be 'frame' or 'bg'")
             if isinstance(g, dict) and any(g.get(k) is not None and not (_is_num(g[k]) and g[k] >= 0) for k in ("at", "dur", "out", "outDur")):
                 errors.append(f"{where}: grade at / dur / out / outDur must be numbers >= 0 (seconds; out ends the grade)")
-            elif isinstance(g, dict) and g.get("out") is not None and g["out"] < g.get("at", 0):
-                errors.append(f"{where}: grade out ({g['out']}) must not be before its at ({g.get('at', 0)})")
+            elif isinstance(g, dict) and g.get("out") is not None and g["out"] < (g.get("at") or 0):  # null at = 0, as in the engine
+                errors.append(f"{where}: grade out ({g['out']}) must not be before its at ({g.get('at') or 0})")
             g = g.get("preset") if isinstance(g, dict) else g
             if g not in KNOWN_GRADES:
                 errors.append(f"{where}: grade {g!r} not in {sorted(KNOWN_GRADES)}")

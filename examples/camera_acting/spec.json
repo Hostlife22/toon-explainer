@@ -1133,20 +1133,22 @@
     {
      "type": "label",
      "text": "THE CONSUL",
-     "x": 0.24,
-     "y": 0.4,
+     "x": 0.47,
+     "y": 0.48,
      "size": 52,
      "hud": false,
-     "arrow": "down"
+     "arrow": "left",
+     "arrowLen": 60
     },
     {
      "type": "label",
      "text": "THE TRADER",
-     "x": 0.76,
-     "y": 0.4,
+     "x": 0.53,
+     "y": 0.62,
      "size": 52,
      "hud": false,
-     "arrow": "down",
+     "arrow": "right",
+     "arrowLen": 60,
      "at": 1.6
     },
     {

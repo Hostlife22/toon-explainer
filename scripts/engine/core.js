@@ -203,7 +203,7 @@
   }
   // Positional segment of a move step, [x0, y0, x1, y1] in px, starting from the current position (x, y), or null.
   // to: [x, y] absolute frame fractions; by: [dx, dy] relative to the start; from: [x, y] where the step starts (the layer
-  // holds there until the step begins when no earlier step has moved it). Without to / by a `from` step ends at (x, y).
+  // holds there until the step begins when it is the first positional step). Without to / by a `from` step ends at (x, y).
   T.moveSeg = (m, x, y) => {
     if (!m || !(m.to || m.by || m.from)) return null;
     const x0 = m.from ? m.from[0] * T.W : x, y0 = m.from ? m.from[1] * T.H : y;
@@ -219,11 +219,12 @@
     const xd = L.exitDur ?? T.ENTER_DUR[L.exit] ?? 0.25;
     if (lt < at || lt > out + xd) return null;
     const st = { x: (L.x ?? 0.5) * T.W, y: (L.y ?? 0.5) * T.H, s: L.scale ?? 1, r: (L.rot ?? 0) * T.DEG, a: L.alpha ?? 1, flip: L.flip ? -1 : 1, sx: 1, sy: 1 };
-    let moved = false; // a positional step has started (a `from` step later in the list does not hold its start before it)
+    let first = true; // only the first positional step may hold the layer at its `from` before it starts
     for (const m of L.move || []) {
-      const p = T.easeBy(m.ease || 'inOut')(T.prog(lt, m.at ?? 0, m.dur ?? 0.6)), seg = T.moveSeg(m, st.x, st.y);
-      if (p <= 0) { if (seg && m.from && !moved) { st.x = seg[0]; st.y = seg[1]; } if (seg) moved = moved || !!m.from; continue; }
-      if (seg) { st.x = T.lerp(seg[0], seg[2], p); st.y = T.lerp(seg[1], seg[3], p); moved = true; }
+      const p = T.easeBy(m.ease || 'inOut')(T.prog(lt, m.at ?? 0, m.dur ?? 0.6)), seg = T.moveSeg(m, st.x, st.y), lead = first;
+      if (seg) first = false;
+      if (p <= 0) { if (seg && m.from && lead) { st.x = seg[0]; st.y = seg[1]; } continue; }
+      if (seg) { st.x = T.lerp(seg[0], seg[2], p); st.y = T.lerp(seg[1], seg[3], p); }
       if (m.scale != null) st.s = T.lerp(st.s, m.scale, p);
       if (m.rot != null) st.r = T.lerp(st.r, m.rot * T.DEG, p);
       if (m.alpha != null) st.a = T.lerp(st.a, m.alpha, p);
@@ -517,7 +518,8 @@
     if (!shot.pinned || !shot.pinned.length) return shot;
     if (pinSplit.has(shot)) return pinSplit.get(shot);
     const ids = new Set((shot.layers || []).map((L) => L && L.id).filter(Boolean)), moved = new Set();
-    const refs = (L) => [L.target, L.follow, ...(L.swap || []).flatMap((s) => [s.target, s.follow])].filter((v) => typeof v === 'string');
+    const lightIds = (v) => (Array.isArray(v) ? v.map((q) => (q && typeof q === 'object' ? q.id : q)) : []); // blackout lights
+    const refs = (L) => [L.target, L.follow, ...lightIds(L.lights), ...(L.swap || []).flatMap((s) => [s.target, s.follow, ...lightIds(s.lights)])].filter((v) => typeof v === 'string');
     // propagate until stable: an fx that targets an fx already moved to the world pass moves too
     for (let changed = true; changed;) {
       changed = false;
@@ -590,7 +592,7 @@
       if (!vertical) { T.drawShot(c, shot, lt, env); drawPinned(c, shot, lt); return; }
       const fx = T.clamp(T.num(shot.frame, lt, 0.5) * T.W, STRIP_W / 2, T.W - STRIP_W / 2);
       const cam = shot.camera || {};
-      const framed = cam.focus ? shot : { ...shot, camera: { ...cam, focus: [fx / T.W, 0.5] } }; // zoom around the visible strip
+      const framed = cam.focus ? shot : { ...shot, camera: { ...cam, focus: [fx / T.W, 0.5] }, __stripFocus: true }; // zoom around the visible strip (keepInFrame re-centres it per sample time)
       // Draw and pixel-process only the visible strip (plus a 2-px margin): about a third of the world's pixels.
       const sx = Math.max(0, Math.floor((fx - STRIP_W / 2) * wscale) - 2), sw = Math.min(tmp.width - sx, Math.ceil(STRIP_W * wscale) + 4);
       const tctx = tmp.getContext('2d');

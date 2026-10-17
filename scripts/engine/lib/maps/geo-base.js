@@ -57,8 +57,8 @@
   T.AFTER_BG.push((ctx, shot, lt, env, cam) => {
     env.geoSpaceDone = true;
     for (const L0 of shot.layers || []) {
-      if (!orthoMap(L0)) continue;
-      let L = T.effLayer(L0, lt);
+      if (!L0 || L0.type !== 'map') continue;
+      let L = T.effLayer(L0, lt); // swaps first: a map may swap to (or away from) an ortho globe or its backdrop
       if (!orthoMap(L)) continue;
       if (L.dist != null && T.distLayer) L = T.distLayer(L);
       const llt = T.twosLt ? T.twosLt(L, lt, shot, env) : lt;
