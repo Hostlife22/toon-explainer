@@ -169,7 +169,7 @@ On by default in the painted look (`style.look: "painted"`), opt-in with `acting
 | `turn` | Front-view in-between when a `move` / `path` flip turns the character around. |
 | secondary motion | Hair (shear from the crown), cape, robe hem, helmet crests / plumes and ties lag behind the body: a damped spring (1.4 Hz, damping 0.32) driven by the layer's acceleration over the last 1.2 s plus drag on its speed (`T.springLag`), turn impulses and the gait. The bean field `secondary` scales it (the common `sway` field is a different thing: a rotation). |
 
-`path` (any layer, shot time) moves a layer along a Catmull-Rom curve through `pts` at constant speed and faces it along the travel; beans walk it with a gait cycle (see [01 Characters](01_characters.md#characters-20-fields-bean)). `ground` (any layer, normalised floor y) keeps the painted contact shadow on the floor under a flying or hovering layer; jumps and upward `bob` lift it automatically.
+Travel along a curve is the common `path` field ([spec reference](../03-spec-reference.md#common-layer-fields)); beans walk it with a gait cycle (see [01 Characters](01_characters.md#characters-20-fields-bean)). `floorY` (any layer, normalised floor y) keeps the painted contact shadow on the floor under a flying or hovering bean or contact layer; jumps and upward `bob` lift it automatically.
 
 ## ④ Timing
 

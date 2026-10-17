@@ -71,7 +71,7 @@ Coordinates: (`x`, `y`) is the point between the feet. All times inside the laye
 
 ### Characters 2.0 fields (`bean`)
 
-Modules: `turn.js`, `limbs.js`, `gait.js`, `motion.js`, `bean.js`, `closeup.js`, `closeup-mouth.js`, `lipsync.js`, `costume.js` in `scripts/engine/lib/characters/`, travel paths in `lib/base/motion-path.js`. Vocabulary: `scripts/vocab/characters-v2.json`; field checks: `scripts/spec_characters.py`. Catalog: [`examples/characters_v2/spec.json`](../../examples/characters_v2/spec.json) (one shot per feature). The classic look draws exactly as before unless one of these fields is used; the painted look turns **acting** on by default.
+Modules: `turn.js`, `limbs.js`, `gait.js`, `motion.js`, `bean.js`, `closeup.js`, `closeup-mouth.js`, `lipsync.js`, `costume.js` in `scripts/engine/lib/characters/`, travel paths in `lib/creatures/motion-path.js` (shared with creatures and vehicles). Vocabulary: `scripts/vocab/characters-v2.json`; field checks: `scripts/spec_characters.py`. Catalog: [`examples/characters_v2/spec.json`](../../examples/characters_v2/spec.json) (one shot per feature). The classic look draws exactly as before unless one of these fields is used; the painted look turns **acting** on by default.
 
 | Field | Default | Effect |
 |---|---|---|
@@ -82,7 +82,7 @@ Modules: `turn.js`, `limbs.js`, `gait.js`, `motion.js`, `bean.js`, `closeup.js`,
 | `hand`, `handL` | pose hand | Right / left hand shape, constant or timeline: `open` `fist` `point` `thumb` `thumbs-up` `grab` `wave` `peace` and counting `one` `two` `three` `four` `five` (registry `T.HANDS`). |
 | `acting` | painted: on · classic: off | `true` / `false` or `{antic, overshoot, breathe, shift, squash, turn: false}` to drop one part. See [02 Acting](02_acting.md#body-acting-acting). |
 | `sneak`, `march` | – | Gait windows like `walk` / `run` (see the gait table in ④). |
-| `path` | – | Common field (any layer): `{pts: [[x, y], ...] (2+), at 0, dur, ease linear, face true, gait walk}` travels along a smooth curve at constant speed (shot time), faces the direction of travel (`face: false` keeps the flip) and, for beans, runs `gait` (`walk` `run` `sneak` `march`, `false` = glide) during the travel with the stride matched to the speed. A plain list of points stays the own `path` of `fx` / game layers. |
+| `path` | – | The common travel field (one definition: [spec reference](../03-spec-reference.md#common-layer-fields)): a bean on an object `path` walks it with `path.gait` (`walk` default, `run`, `sneak`, `march`, `false` = glide), the stride matched to its speed and the leg phase integrated over speed changes, with a front-view in-between when it reverses. Use `"ease": "linear"` for a steady walk. |
 | `impact` | – | `[t, ...]` or `[{at, dir 1 \| -1, amount 1 (0..3)}]` (layer time): a squash and a recoil lean when hit. |
 | `holdScale` | 1 (acting: per prop) | Scale of the `hold` / `holdL` prop against the classic size (170 units; shield 260, spear 420); also a look field. With acting on, small props get their own size (coin 80, bulb 100, scroll / book 120, moneybag 140; table `T.HOLD_SIZE`); classic keeps 170. With acting, a near arm raised above the shoulders is drawn over the head, so `arms-up` / `point-up` hands stay visible. |
 | `secondary` | 1 | Strength 0..3 of the spring secondary motion (hair, cape, robe hem, crests and plumes, tie) while acting; 0 = rigid. |

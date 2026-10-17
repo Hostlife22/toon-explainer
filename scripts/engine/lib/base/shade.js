@@ -259,8 +259,8 @@
     if (!c) return;
     const o = typeof c === 'object' ? c : { w: c === true ? 1 : c };
     const size = (L.size ?? (L.type === 'bean' || L.type === 'topbean' ? 420 : 200)) * (o.w ?? 1);
-    // airborne (jump, upward bob, or above `ground` = the normalised floor y under a flier): shadow stays down, shrinks
-    const above = st && typeof L.ground === 'number' ? Math.max(0, L.ground * T.H - st.y) : 0;
+    // airborne (jump, upward bob, or above `floorY` = the normalised floor y under a flier): shadow stays down, shrinks
+    const above = st && typeof L.floorY === 'number' ? Math.max(0, L.floorY * T.H - st.y) : 0;
     const lift = Math.max(0, (st && st.jy) || 0, above) / Math.max(0.05, st ? st.s : 1);
     const k = 1 / (1 + lift / (size * 0.6));
     const dy = o.dy ?? (T.CONTACT_DEFAULT[L.type] ? 0 : 0.5); // centred layers (props) stand on their lower edge

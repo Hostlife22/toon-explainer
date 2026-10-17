@@ -53,7 +53,7 @@
         poseBlend: 0.07, look: tinted(m.who, m.depth) || undefined,
       };
       const tl = lt + (L.march ? (L.inStep ? 0 : m.off * 0.05) : m.off);
-      if (T.PAINT && !L.silhouette && L.contact !== false) T.layerContact(ctx, { type: 'bean', size: bean.size, contact: L.contact }, null); // painted look
+      if (T.PAINT && !L.silhouette && L.contact !== false && !L.creature) T.layerContact(ctx, { type: 'bean', size: bean.size, contact: L.contact }, null); // painted look (creature members draw their own)
       if (L.creature) T.layers.creature(ctx, { type: 'creature', kind: L.creature, id: bean.id, size: size * m.s, walk: bean.walk, run: L.gallop ? [[0, 1e6]] : undefined, rider: m.who, riderHold: L.hold, color: L.color }, tl, { ...env, st: null });
       else T.layers.bean(ctx, bean, tl, { ...env, st: null });
       ctx.restore();

@@ -293,6 +293,25 @@ def test_catalog_validates_and_renders_deterministically():
     assert first == again, "characters_v2 frames depend on render order"
 
 
+# ---------- integration with the shared path motion (creatures/motion-path.js) ----------
+def test_floor_y_is_validated_and_fx_keep_their_own_ground_field():
+    assert "floorY" in "\n".join(validate(_spec([_bean(floorY="low")])))
+    spec = _spec([_bean(floorY=0.9), {"type": "fx", "kind": "dust", "x": 0.5, "y": 0.8, "ground": True}])
+    assert validate(spec) == []
+
+
+def test_one_path_implementation_drives_beans_creatures_and_props():
+    layers = [{"type": "bean", "id": "w", "who": "hero", "x": 0.1, "y": 0.9, "size": 300,
+               "path": {"pts": [[0.1, 0.9], [0.9, 0.9]], "at": 0, "dur": 2, "ease": "linear", "gait": "walk"}},
+              {"type": "prop", "id": "p", "kind": "coin", "x": 0.1, "y": 0.5, "path": {"pts": [[0.1, 0.5], [0.9, 0.5]], "dur": 2, "ease": "linear"}}]
+    js = """() => ({ travel: typeof TOON.travelAt, motion: typeof TOON.motionAt,
+      w: TOON.layerState(window.FILM_SPEC.shots[0].layers[0], 1).x, p: TOON.layerState(window.FILM_SPEC.shots[0].layers[1], 1).x })"""
+    out = _page_eval(_spec(layers), lambda page: page.evaluate(js))
+    assert out["travel"] == "undefined" and out["motion"] == "function"
+    assert abs(out["w"] - 0.5 * 1920) < 2 and abs(out["p"] - 0.5 * 1920) < 2, out
+    assert _probe(_spec(layers), [1.0])[0]["w"]["gait"] == "walk"
+
+
 # ---------- review fixes ----------
 @pytest.mark.parametrize("field,value,needle", [
     ("hand", [], "hand"),

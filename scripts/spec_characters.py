@@ -12,7 +12,6 @@ DETAIL = {"auto"}
 LIP_ALIGN = {"film", "layer"}
 LIP_DIGITS = set("0123456789")
 ACTING_KEYS = {"antic", "overshoot", "breathe", "shift", "squash", "turn"}
-PATH_EASES = {"linear", "inOut", "in", "out"}
 
 
 def _num(v) -> bool:
@@ -73,31 +72,15 @@ def check_lipsync(lip, where: str, errors: list[str]) -> None:
         errors.append(f"{where}: lipsync align {lip['align']!r} not in {sorted(LIP_ALIGN)}")
 
 
-def check_path(layer: dict, where: str, gaits: set[str], errors: list[str]) -> None:
-    """path: {pts: [[x, y], ...] (2+), at, dur > 0, ease, face (auto flip), gait} on any layer."""
-    g = layer.get("ground")
+def check_travel(layer: dict, where: str, gaits: set[str], errors: list[str]) -> None:
+    """Any layer: floorY (normalised floor y for the painted contact shadow) and the bean gait name of an object `path`
+    (the path shape itself is checked by motion_check.py)."""
+    g = layer.get("floorY")
     if g is not None and not (_num(g) and -1 <= g <= 3):
-        errors.append(f"{where}: ground must be the normalised y of the floor under the layer (a number)")
+        errors.append(f"{where}: floorY must be the normalised y of the floor under the layer (a number)")
     p = layer.get("path")
-    if p is None or isinstance(p, list):  # a list is the layer type's own point path (fx, game-ui), not travel
-        return
-    if not isinstance(p, dict):
-        errors.append(f"{where}: path must be {{pts, at, dur, ease, face, gait}}")
-        return
-    pts = p.get("pts")
-    if not (isinstance(pts, list) and len(pts) >= 2 and all(isinstance(q, list) and len(q) == 2 and all(_num(v) for v in q) for q in pts)):
-        errors.append(f"{where}: path pts must be a list of 2+ [x, y] points (normalised)")
-    if not (_num(p.get("dur")) and p["dur"] > 0):
-        errors.append(f"{where}: path dur must be a number of seconds above 0")
-    if p.get("at") is not None and not _num(p["at"]):
-        errors.append(f"{where}: path at must be a number")
-    if p.get("ease") is not None and not _in(p["ease"], PATH_EASES):
-        errors.append(f"{where}: path ease {p['ease']!r} not in {sorted(PATH_EASES)}")
-    if p.get("face") is not None and not isinstance(p["face"], bool):
-        errors.append(f"{where}: path face must be true or false")
-    g = p.get("gait")
-    if g is not None and g is not False and not _in(g, gaits):
-        errors.append(f"{where}: path gait {g!r} not in {sorted(gaits)} (or false)")
+    if isinstance(p, dict) and "gait" in p and p["gait"] is not False and not _in(p["gait"], gaits):
+        errors.append(f"{where}: path gait {p['gait']!r} not in {sorted(gaits)} (or false)")
 
 
 def check_bean(layer: dict, where: str, views: set[str], hands: set[str], gaits: set[str], errors: list[str]) -> None:

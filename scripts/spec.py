@@ -429,7 +429,7 @@ def _check_common(layer: dict, where: str, cast: dict, errors: list[str]) -> Non
                 if any(kk in entry for kk in ("kind", "pose", "expr", "hold", "holdL", "view", "who")):
                     _check_layer({**merged, "swap": None}, f"{where}.swap[{k}]", cast, errors)
     _check_number_or_timeline(layer.get("blur"), f"{where}: blur", errors)
-    SC.check_path(layer, where, LAYER_KINDS.get("gait", set()), errors)
+    SC.check_travel(layer, where, LAYER_KINDS.get("gait", set()), errors)
     for key in ("move", "shake", "jump"):
         if layer.get(key) is not None and not (isinstance(layer[key], list) and all(isinstance(x, dict) for x in layer[key])):
             errors.append(f"{where}: {key} must be a list of objects like [{{\"at\": 1.0, ...}}]")

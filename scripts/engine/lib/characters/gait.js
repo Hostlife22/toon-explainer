@@ -21,12 +21,21 @@
   const twos = (lt) => Math.floor(lt * 15) / 15;
   const inWin = (wins, lt) => (wins || []).some(([a, b]) => lt >= a && lt <= b);
 
+  // The layer's travel path spec (creatures/motion-path.js), or null: a plain list of points is a layer type's own
+  // `path` (fx, cursor, map figures), never travel.
+  T.travelPath = (L) => (L && L.path && typeof L.path === 'object' && !Array.isArray(L.path) && T.pathSpec ? T.pathSpec(L) : null);
+  // Travel window of a path in layer time: [start, end] (a looping path travels until its laps end).
+  const travelSpan = (L, S) => {
+    const a = S.at - (L.at ?? 0), laps = S.loop === true ? Infinity : S.loop || 1;
+    return [a, a + S.dur * laps];
+  };
+
   // Which gait runs at layer time lt (path gait during its window, then run > walk > sneak > march windows).
   T.gaitKind = (L, lt) => {
-    const p = T.travelPath(L);
-    if (p && p.gait !== false && T.GAITS[p.gait || 'walk']) {
-      const a = (p.at ?? 0) - (L.at ?? 0); // path times are shot time, gait windows layer time
-      if (lt >= a && lt <= a + (p.dur ?? 1)) return p.gait || 'walk';
+    const S = T.travelPath(L), g = L.path && L.path.gait;
+    if (S && g !== false && T.GAITS[g || 'walk']) {
+      const [a, b] = travelSpan(L, S); // path times are shot time, gait windows layer time
+      if (lt >= a && lt <= b) return g || 'walk';
     }
     for (const k of ['run', 'walk', 'sneak', 'march']) if (inWin(L[k], lt)) return k;
     return null;
@@ -38,15 +47,15 @@
     const st = T.layerState(L, t);
     if (!st) return 0;
     const s = Math.abs(st.s || 1) * k;
-    if (T.travelPath(L)) return T.travelSpeed(L.path, t) / s;
+    if (T.travelPath(L)) { const m = T.motionAt(L, t); return m ? m.speed / s : 0; }
     if (!L.move) return 0;
     const a = T.layerState(L, t - 1 / 60), b = T.layerState(L, t + 1 / 60);
     return a && b ? Math.hypot(b.x - a.x, b.y - a.y) * 30 / s : 0;
   }
   // Start (layer time) of the gait span running at lt.
   function spanStart(L, lt) {
-    const p = T.travelPath(L);
-    if (p && p.gait !== false) { const a = (p.at ?? 0) - (L.at ?? 0); if (lt >= a && lt <= a + (p.dur ?? 1)) return a; }
+    const S = T.travelPath(L);
+    if (S && !(L.path.gait === false)) { const [a, b] = travelSpan(L, S); if (lt >= a && lt <= b) return a; }
     for (const k of ['run', 'walk', 'sneak', 'march']) for (const [a, b] of L[k] || []) if (lt >= a && lt <= b) return a;
     return 0;
   }
