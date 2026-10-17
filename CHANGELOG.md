@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Engine gaps: face-maps-split
+
+- Fix: both cold sweat beads of a `sick` face read in every view and with every hair kind: they are drawn over the hair, sit just inside the hairline in the front view and both on the visible face side in `3q` / `side` (a back view shows none).
+- Fix: an `ortho` map's layer modifiers (`blur`, keyed blur, rack `focus`, `material` and the other `T.LAYER_MODS`) apply to its star backdrop again, which still paints behind layers listed before the map; a blurred backdrop is laid over a sharp copy so the frame edges stay dark.
+- `lib/acting/gags.js` is split into `gags.js` (helpers in `T.GAG`, the arm), `gags-fx.js` and `gags-enter.js`, and `lib/game/game-ui.js` into `game-ui.js` and `game-docs.js` (helpers in `T.GAME_UI`), so every engine file stays under 800 lines; frames of every example are byte-identical.
+
 ### Engine backlog: characters
 
 - Fix: poses `flail` / `flail-b` stand upright (panicked arms thrown up at odd angles) instead of rendering the character upside down; the old head-over-heels flip is the new pose pair `upended` / `upended-b` (`story_banana_caper` uses it for its slips).

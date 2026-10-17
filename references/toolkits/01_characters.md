@@ -239,7 +239,7 @@ An outfit draws over the bell body and brings defaults (robe, trousers, shoes, `
 
 ### Expressions (`expr`)
 
-35 expressions in `T.EXPR`; each is eyes / brows / rest mouth / talk set, and all snap in one frame. `rage` adds an anger vein, `worried` a sweat drop, `cry` tear streams, `sick` a pale green face and cold sweat beads.
+35 expressions in `T.EXPR`; each is eyes / brows / rest mouth / talk set, and all snap in one frame. `rage` adds an anger vein, `worried` a sweat drop, `cry` tear streams, `sick` a pale green face and two cold sweat beads (drawn over the hair, both on the visible face side in turned views).
 
 | `expr` | Eyes / brows / mouth | Talk set | Use |
 |---|---|---|---|
