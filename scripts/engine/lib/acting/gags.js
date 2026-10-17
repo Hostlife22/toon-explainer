@@ -79,11 +79,12 @@
     ctx.restore();
   }
   // Headwear sprite in rig units (head centre (0,-450)); sx / sy squash about the brim line.
+  // `view` is the wearer's bean view, mapped as the bean maps it (T.headwearView: 3q-back draws as back).
   function hatSprite(ctx, kind, look, lt, view = '3q', sx = 1, sy = 1) {
     const fn = T.HEADWEAR && T.HEADWEAR[kind];
     if (!fn) throw new Error(`hat: unknown headwear "${kind}" (see T.HEADWEAR)`);
     ctx.save(); ctx.translate(0, -560); ctx.scale(sx, sy); ctx.translate(0, 560);
-    fn(ctx, look, lt, VIEW_SHIFT[view] ?? 0.24, view);
+    fn(ctx, look, lt, T.headwearShift(view), T.headwearView(view));
     ctx.restore();
   }
   // Head opening of a loose hat [brim y, rx, ry] in rig units: without a head inside, the hollow must read as dark
@@ -94,7 +95,7 @@
   function hatAt(ctx, kind, look, lt, cx, cy, k, rot = 0, flip = 1, sx = 1, sy = 1, view = '3q', loose = false) {
     ctx.save(); ctx.translate(cx, cy - 150 * k); ctx.rotate(rot); ctx.scale(k * flip, k); ctx.translate(0, 600);
     if (loose) {
-      const [y, rx, ry] = rimOf(kind), ox = (VIEW_SHIFT[view] ?? 0.24) * 30;
+      const [y, rx, ry] = rimOf(kind), ox = T.headwearShift(view) * 30;
       ctx.save(); ctx.translate(0, -560); ctx.scale(sx, sy); ctx.translate(0, 560);
       if (kind === 'helmet') T.outlined(ctx, (c) => c.ellipse(-ox, -640, 128, 36, 0, 0, Math.PI * 2), look.headColor ?? '#a9aeb4', { line: 6 }); // crest seat (worn, the head hides the gap)
       T.outlined(ctx, (c) => c.ellipse(ox, y, rx, ry, 0, 0, Math.PI * 2), '#3a2a22', { line: 7, shade: (c) => { c.fillStyle = '#1e1511'; c.fillRect(ox - rx, y - ry, rx * 2, ry); } });

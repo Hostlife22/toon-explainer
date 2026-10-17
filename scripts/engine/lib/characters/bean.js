@@ -101,7 +101,7 @@
     const ft = (act ? act.turn : T.travelPath(Ly)) ? T.flipTurn(Ly, env, ts.view) : null;
     // 3q-back (back3q.js): body, outfit, hair and headwear draw as in the back view, the arms as in 3/4, the head turns
     const shownView = ft ? ft.view : ts.view, qb = shownView === '3q-back';
-    const view = qb ? 'back' : shownView, armView = qb ? '3q' : view;
+    const view = T.headwearView(shownView), armView = qb ? '3q' : view;
     const specs = moving && !Ly.keepArms ? (gait2 || gait).arms : null;
     const reachS = (g, m) => (m === 1 ? g : { ...g, l1: g.l1 * m, l2: g.l2 * m }); // armScale: stretchy reach
     const gPrev = reachS(G, prev.body.armScale), gCur = reachS(G, cur.body.armScale), gMix = reachS(G, bs.armScale);

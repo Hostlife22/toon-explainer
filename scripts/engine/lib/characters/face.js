@@ -7,6 +7,10 @@
   const HW = 150, TOP = -604, BOT = -300, CY = -450;
   const VIEW_SHIFT = { front: 0, '3q': 0.24, side: 0.42, back: 0 };
   const SHADOW = '#c4c1cd';
+  // The view (and face shift) the head masses, hair and headwear draw with for a bean view: the rear three-quarter
+  // view draws them as the back view (back3q.js). Shared by the bean and every loose headwear (gag hats).
+  T.headwearView = (view) => (view === '3q-back' ? 'back' : view);
+  T.headwearShift = (view) => VIEW_SHIFT[T.headwearView(view)] ?? 0.24;
 
   // Head outline, optionally inflated around its centre (s > 1) — used to give hair volume past the skull.
   const headPathS = (k, s = 1) => {

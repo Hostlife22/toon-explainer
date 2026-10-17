@@ -86,3 +86,42 @@ def test_swap_base_survives_spreads_and_stays_out_of_json():
     assert out[:4] == [True] * 4, out
     assert out[4] is True and out[5] == "blur,kind,swap,type,x", out
     assert out[6] is True, out
+
+
+# ---------- 2. gag hats on a rear three-quarter bean ----------
+# every hood-dark call: [view, shift] (bean and fx alike)
+HOOD = """(t) => { const T = TOON, base = T.HEADWEAR['hood-dark'], seen = [];
+  T.HEADWEAR['hood-dark'] = (ctx, c, lt, sh, view) => { seen.push([view, sh]); return base(ctx, c, lt, sh, view); };
+  try { window.renderFrame(t); } finally { T.HEADWEAR['hood-dark'] = base; } return seen; }"""
+
+
+def test_hat_landing_on_a_rear_three_quarter_bean_uses_the_bean_headwear_view():
+    bean = {"type": "bean", "id": "m", "who": "monk", "x": 0.5, "y": 0.9, "view": "3q-back",
+            "swap": [{"at": 0.6 + 2 / 30, "look": {"head": "hood-dark"}}]}
+    hat = {"type": "fx", "kind": "hat", "id": "h", "target": "m", "at": 0.6, "head": "hood-dark"}
+    falling, worn = _page(film([bean, hat]), lambda p: [p.evaluate(HOOD, 0.6 + 1 / 30), p.evaluate(HOOD, 1.2)])
+    assert falling and worn, (falling, worn)
+    assert {tuple(x) for x in falling} == {tuple(x) for x in worn} == {("back", 0)}, (falling, worn)
+
+
+@pytest.mark.parametrize("mode", ["fly", "flat"])
+def test_loose_hat_modes_use_the_bean_headwear_view(mode):
+    bean = {"type": "bean", "id": "m", "who": "monk", "x": 0.5, "y": 0.9, "view": "3q-back"}
+    hat = {"type": "fx", "kind": "hat", "id": "h", "target": "m", "at": 0.2, "head": "hood-dark", "mode": mode}
+    seen = _page(film([bean, hat]), lambda p: p.evaluate(HOOD, 0.4))
+    assert seen and {tuple(x) for x in seen} == {("back", 0)}, seen
+
+
+def test_detached_headwear_on_a_rear_three_quarter_bean_uses_the_bean_headwear_view():
+    bean = {"type": "bean", "id": "m", "who": "monk", "x": 0.5, "y": 0.9, "view": "3q-back", "look": {"head": "hood-dark"},
+            "out": 1, "exit": "tumble", "exitDur": 0.7, "tumble": {"dir": 1, "detach": "head"}}
+    worn, loose = _page(film([bean]), lambda p: [p.evaluate(HOOD, 0.5), p.evaluate(HOOD, 1.2)])
+    assert worn and loose, (worn, loose)
+    assert {tuple(x) for x in worn} == {tuple(x) for x in loose} == {("back", 0)}, (worn, loose)
+
+
+def test_classic_hat_views_keep_their_shift():
+    bean = {"type": "bean", "id": "m", "who": "monk", "x": 0.5, "y": 0.9, "view": "side"}
+    hat = {"type": "fx", "kind": "hat", "id": "h", "target": "m", "at": 0.2, "head": "hood-dark", "mode": "fly"}
+    seen = _page(film([bean, hat], look=None), lambda p: p.evaluate(HOOD, 0.4))
+    assert seen and {tuple(x) for x in seen} == {("side", 0.42)}, seen

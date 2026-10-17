@@ -5,6 +5,7 @@
 ### Engine gaps: integration
 
 - Fix: vehicle riders keep the authored vehicle behind shot focus, keyed `blur` and `dist` copies (`T.swapBase` now rides on every layer copy, new `T.layerWith`), so a rider's `lookAt` / `takes` plan no longer starts from an already-swapped vehicle.
+- Fix: gag hats (`fx` kind `hat`, every mode) and tumble-detached headwear on a `view: "3q-back"` bean draw with the bean's own headwear view (the back view, no face shift; shared `T.headwearView` / `T.headwearShift`), so a falling hood no longer shows its face opening before the swap.
 
 ### Engine gaps: face-maps-split
 
