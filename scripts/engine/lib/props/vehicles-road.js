@@ -10,36 +10,33 @@
   const poly = (pts) => (k) => { k.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) k.lineTo(pts[i][0], pts[i][1]); k.closePath(); };
   const shadow = (ctx, L, cx, hw) => CK && CK.shadow(ctx, L, cx, hw, 0);
 
-  // Seated riders (cast ids or rider objects, see T.vehicleRiderBean). S.k: kind scale; S.sg: mirror; S.riderSx undoes a
-  // squeezed view; S.riderView forces the riders' view (front / back views of the car).
+  // Seated riders (cast ids or rider objects, see T.vehicleRiderBean). S.k: kind scale; S.o: the kind; S.riderSx / riderK
+  // undo a squeezed view; S.riderOff moves the seats (3q: half the car's width in); S.riderView forces the riders' view.
   function riders(ctx, L, S, env, seats, size) {
+    const px = env && env.st ? Math.abs(env.st.s * env.st.sy) * (S.k ?? 1) * (S.riderK ?? 1) : 1, off = S.riderOff || [0, 0];
     (L.riders || (L.rider ? [L.rider] : [])).forEach((r, i) => {
       const [x0, y] = seats[Math.min(i, seats.length - 1)], x = x0 + (i >= seats.length ? (i - seats.length + 1) * 40 : 0);
-      ctx.save(); ctx.translate(x, y);
+      ctx.save(); ctx.translate(x + off[0], y + off[1]);
       if (S.riderSx) ctx.scale(S.riderSx, S.riderK ?? 1);
-      const B = T.vehicleRiderBean(L, r, { type: 'bean', size, legs: false, id: (L.id ?? 'veh') + 'r' + i, talk: L.talk, expr: L.riderExpr, pose: L.riderPose, hold: L.riderHold }, seatAnchor(L, S, x, y, size));
+      const anchorOf = VK.seatAnchor && S.o ? (B) => VK.seatAnchor(L, S.o, S.k ?? 1, i, B.size, seats) : null;
+      const B = T.vehicleRiderBean(L, r, { type: 'bean', size, legs: false, id: (L.id ?? 'veh') + 'r' + i, talk: L.talk, expr: L.riderExpr, pose: L.riderPose, hold: L.riderHold }, anchorOf, px);
       if (S.riderView) B.view = S.riderView;
       T.layers.bean(ctx, B, S.lt, { ...env, st: null });
       ctx.restore();
     });
   }
   VK.riders = riders;
-  // The rider's head in the world at shot time t (seat in kind units; ignores the suspension and view squeeze).
-  const seatAnchor = (L, S, x, y, size) => (t) => {
-    const k = S.k ?? 1, sg = S.sg ?? 1, w = VK.worldPt(L, t, x * k * sg, (y - (450 * size) / 600) * k);
-    return w ? { x: w[0], y: w[1], flip: (w[2].flip || 1) * sg } : null;
-  };
   // Shared car frame: shadow, suspension, wheels, then body(ctx, B) inside the sprung frame. A non-side `S.view`
   // (front, 3q, back, 3q-back) is drawn by vehicles-views.js from the kind's `face` description.
   function car(ctx, L, S0, env, o) {
-    const k = S0.size / o.W, S = { ...S0, k };
+    const k = S0.size / o.W, S = { ...S0, k, o };
     ctx.scale(k, k);
     if (S.view && S.view !== 'side' && o.face && VK.carView) return VK.carView(ctx, L, S, env, o, k);
     carSide(ctx, L, S, env, o, k);
   }
   function carSide(ctx, L, S, env, o, k) {
     const terrain = L.terrain ?? 'road';
-    shadow(ctx, L, 0, o.W * 0.48);
+    if (!S.noShadow) shadow(ctx, L, 0, o.W * 0.48);
     const b = VK.bump(S, k, o.wb, terrain), blur = S.speed / Math.max(1, k * S.px * o.r * 18);
     for (const x of o.wheels) VK.wheel(ctx, x, -o.r, o.r, VK.wheelAng(S, k, o.r), { ...o.wheel, blur });
     ctx.save(); ctx.translate(0, b.dy - o.r * 0.12); ctx.rotate(b.pitch * 0.6);
@@ -61,7 +58,9 @@
     W: 400, wb: 250, r: 46, wheels: [-125, 125], lamp: [190, -150], wheel: { spokes: 12, rim: '#d8c8a0', tyre: '#2a2624' },
     face: { front: 194, rear: 172, cowl: 100, tailX: -150, hw: 100, track: 88, tyre: 20, col: '#23252b', belt: [-172, -124], apron: true, fender: 'arch', back: 'plain',
       grille: { kind: 'radiator', hw: 28, top: -178, bot: -84, color: '#d8a838' }, lamps: { x: 64, y: -150, r: 13, color: '#fff2b0', rim: '#d8a838' },
-      tail: { x: 64, y: -140, r: 9 }, cabin: { open: true, top: -312, hw: 108, post: 96, shield: -250 }, seat: { x: 44, y: -110, size: 220 } },
+      tail: { x: 64, y: -140, r: 9 }, cabin: { open: true, top: -312, hw: 108, post: 96, shield: -250 }, seat: { x: 44, y: -110, size: 220 },
+      hull: [{ pts: [[-172, -66], [-172, -172], [-118, -172], [-100, -132], [104, -132], [104, -162], [172, -162], [172, -178], [194, -178], [194, -80], [176, -66]] },
+        { pts: [[-150, -312], [60, -312], [60, -290], [-150, -290]] }] },
     body(ctx2, L2, S2, env2) {
       const col = L2.color ?? '#23252b', brass = '#d8a838';
       for (const x of [-130, 40]) T.outlined(ctx2, (c) => T.rrect(c, x, -300, 10, 140, 4), '#1a1a1e', { line: 5 }); // roof posts
@@ -84,7 +83,9 @@
     W: 440, wb: 280, r: 44, wheels: [-140, 140], lamp: [214, -148], wheel: { spokes: 16, rim: '#c9ced2', tyre: '#262224' },
     face: { front: 222, rear: 254, cowl: 76, tailX: -186, hw: 104, track: 90, tyre: 20, col: '#6a1e24', col2: '#1e1a1a', belt: [-176, -124], apron: true, fender: 'arch', fenderColor: 'col2', back: 'spare',
       grille: { kind: 'radiator', hw: 26, top: -160, bot: -72, color: '#c9ced2' }, lamps: { x: 70, y: -146, r: 13, color: '#fff2b0', rim: '#c9ced2' },
-      tail: { x: 74, y: -150, r: 9 }, cabin: { top: -262, hw: 96, topHw: 86, glass: '#a8c8d8', roof: 'col2' }, seat: { x: 44, y: -130, size: 200 } },
+      tail: { x: 74, y: -150, r: 9 }, cabin: { top: -262, hw: 96, topHw: 86, glass: '#a8c8d8', roof: 'col2' }, seat: { x: 44, y: -130, size: 200 },
+      hull: [{ pts: [[-204, -66], [-204, -176], [80, -176], [100, -150], [210, -146], [222, -156], [222, -68]] },
+        { pts: [[-190, -172], [-176, -260], [40, -262], [70, -172]], fill: 'col2', glass: true }] },
     body(ctx2, L2, S2, env2) {
       const col = L2.color ?? '#6a1e24', roof = L2.color2 ?? '#1e1a1a';
       T.outlined(ctx2, (c) => c.arc(-214, -120, 40, 0, TAU), '#262224', { line: 7 }); // spare tyre
@@ -106,7 +107,9 @@
     face: { front: 246, rear: 246, cowl: 96, tailX: -136, hw: 122, track: 98, tyre: 22, col: '#5ab0b8', col2: '#f4efe4', belt: [-156, -44], round: 40, fender: 'skirt', back: 'fins',
       grille: { kind: 'wide', hw: 64, top: -108, bot: -74, color: '#e8ecee' }, lamps: { x: 92, y: -112, r: 15, color: '#fff6c8', rim: '#e8ecee' },
       tail: { x: 100, y: -126, r: 12 }, bumper: { y: -70, h: 24, hw: 130, color: '#e8ecee' },
-      cabin: { top: -232, hw: 100, topHw: 78, glass: '#a8d0de', roof: 'col2' }, seat: { x: 48, y: -110, size: 190 } },
+      cabin: { top: -232, hw: 100, topHw: 78, glass: '#a8d0de', roof: 'col2' }, seat: { x: 48, y: -110, size: 190 },
+      hull: [{ smooth: true, pts: [[-232, -60], [-236, -120], [-210, -168], [-150, -156], [100, -158], [200, -140], [232, -110], [228, -56], [150, -40], [-150, -40]] },
+        { smooth: true, pts: [[-140, -150], [-110, -228], [40, -232], [100, -150]], fill: 'col2', glass: true }] },
     body(ctx2, L2, S2, env2) {
       const col = L2.color ?? '#5ab0b8', roof = L2.color2 ?? '#f4efe4';
       T.outlined(ctx2, blob([[-140, -150], [-110, -228], [40, -232], [100, -150]]), roof, { line: 8 });
@@ -130,7 +133,9 @@
     face: { front: 224, rear: 222, cowl: 86, tailX: -186, hw: 118, track: 96, tyre: 26, col: '#d8322e', belt: [-152, -42], round: 34, fender: 'flush', back: 'bar',
       grille: { kind: 'slim', hw: 52, top: -102, bot: -84, color: '#1c1c1e' }, lamps: { x: 84, y: -114, kind: 'led' },
       tail: { x: 84, y: -128 }, intake: { y: -70, h: 18, hw: 70 }, cabin: { top: -246, hw: 104, topHw: 80, glass: '#3a4a5a', roof: 'col' },
-      seat: { x: 50, y: -120, size: 180 } },
+      seat: { x: 50, y: -120, size: 180 },
+      hull: [{ smooth: true, pts: [[-214, -56], [-222, -150], [-140, -164], [80, -166], [200, -132], [222, -84], [214, -46], [-150, -40]] },
+        { smooth: true, pts: [[-196, -150], [-170, -232], [-20, -246], [90, -160]], glass: true }] },
     body(ctx2, L2, S2, env2) {
       const col = L2.color ?? '#d8322e';
       T.outlined(ctx2, blob([[-196, -150], [-170, -232], [-20, -246], [90, -160]]), col, { line: 8 });

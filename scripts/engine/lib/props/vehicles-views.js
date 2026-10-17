@@ -3,13 +3,13 @@
 // constants or [{at, v}] timelines (layer time): a change turns the car through the views in between, `turn.frames`
 // drawings each (default 2 at 30 fps), squashed a little and with a smear. A car on a `path` that reverses (face: true)
 // turns through 3q and front (path heading down the frame) or 3q-back and back (heading up) around the reversal instead
-// of the squash other layers get; `turn: false` keeps the squash. The 3q views are the side drawing squeezed and
-// sheared, joined to a squeezed front / back face; the face comes from the kind's `face` description (vehicles-road.js).
-// Without `view` / `facing` and without a reversal the side drawing is unchanged. Pure functions of (layer, time).
+// of the squash other layers get; `turn: false` keeps the squash. Front and back views are drawn here from the kind's
+// `face` description (vehicles-road.js); the 3q views are an oblique projection in vehicles-3q.js. Without `view` /
+// `facing` (or with view "side") and without a reversal the side drawing is unchanged. Pure functions of (layer, time).
 (function () {
   'use strict';
   const T = window.TOON, VK = T.VK, P = T.PAL, TAU = Math.PI * 2, sh = VK.sh;
-  const FPS = 30, Q_SIDE = 0.7, Q_FACE = 0.62, SH_SIDE = 0.07, SH_FACE = 0.1;
+  const FPS = 30;
   VK.VIEW_KINDS = new Set(['model-t', 'car1910', 'sedan1920', 'car1950', 'car-modern']);
   VK.VIEW_COL = { 'model-t': '#23252b', car1910: '#2f3e5a', sedan1920: '#6a1e24', car1950: '#5ab0b8', 'car-modern': '#d8322e' };
   const ANG = { front: 0, '3q': 45, side: 90, '3q-back': 135, back: 180 };
@@ -58,9 +58,15 @@
     if (f <= n && cfg.smear !== false) out.smear = 1 - f / (n + 1);
     return out;
   }
+  // Authored views: a timeline, or a constant other than side / right (view: "side" is the plain drawing).
+  const plainView = (v) => v == null || v === 'side' || v === 'profile';
+  const explicit = (L) => !!L && (!plainView(L.view) || (L.facing != null && L.facing !== 'right'));
+  VK.viewExplicit = (L) => VK.VIEW_KINDS.has(L.kind) && explicit(L);
   // Path reversals: the view from the arc distance to the nearest change of direction.
   const hasTurns = (L) => { const S = T.pathSpec(L); return !!S && S.face && T.pathTable(S).turns.length > 0; };
-  T.pathTurnViews = (L) => !!L && L.type === 'vehicle' && L.turn !== false && VK.VIEW_KINDS.has(L.kind) && hasTurns(L);
+  // a reversing car turns through its views only when it can draw them (v2 rig, no authored view / facing)
+  T.pathTurnViews = (L) => !!L && L.type === 'vehicle' && L.turn !== false && VK.VIEW_KINDS.has(L.kind) && !explicit(L) &&
+    T.vehicleRig(L, false) === 'v2' && hasTurns(L);
   function pathView(L, t) {
     const p = T.motionAt(L, t), cfg = cfgOf(L) || {};
     if (!p || !Number.isFinite(p.turnOff)) return 'side';
@@ -69,10 +75,9 @@
     const toward = cfg.via ? cfg.via !== 'back' : p.turnDy > 0;
     return phi < 0.8 ? (toward ? '3q' : '3q-back') : toward ? 'front' : 'back';
   }
-  const explicit = (L) => L.view != null || L.facing != null;
   // {view, facing (+1 / -1, on top of dir / path flip), sx, sy (in-between squash), smear (0..1), dir} or null (plain side)
   VK.viewOf = (L, lt, slt) => {
-    if (!VK.VIEW_KINDS.has(L.kind)) return null;
+    if (!VK.VIEW_KINDS.has(L.kind) || L.rig === 'classic') return null;
     if (explicit(L)) return explicitView(L, lt);
     if (!T.pathTurnViews(L)) return null;
     const view = pathView(L, slt), out = { view, facing: 1, sx: 1, sy: 1, smear: 0, dir: 1 };
@@ -121,10 +126,10 @@
     }
     for (const sx of [-1, 1]) T.outlined(ctx, (c) => (back === 'fins' ? c.ellipse(sx * tl.x, tl.y, tl.r * 0.7, tl.r * 1.5, 0, 0, TAU) : c.arc(sx * tl.x, tl.y, tl.r, 0, TAU)), '#e8403a', { line: 4 });
   }
-  function cabin(ctx, L, S, env, o, back, col, col2, withRiders) {
+  function cabin(ctx, L, S, env, o, back, col, col2) {
     const f = o.face, cb = f.cabin, b0 = f.belt[0], roof = pick(cb.roof ?? 'col', col, col2);
     const seats = f.seat, front = back ? [[-seats.x, seats.y], [seats.x, seats.y]] : [[seats.x, seats.y], [-seats.x, seats.y]];
-    const rid = () => withRiders && VK.riders(ctx, L, { ...S, riderView: back ? 'back' : 'front' }, env, front, seats.size);
+    const rid = () => VK.riders(ctx, L, { ...S, riderView: back ? 'back' : 'front' }, env, front, seats.size);
     if (cb.open) { // posts, riders, windscreen, canopy
       for (const sx of [-1, 1]) T.outlined(ctx, (c) => T.rrect(c, sx * cb.post - 5, cb.top + 10, 10, b0 - cb.top - 10, 4), '#1a1a1e', { line: 5 });
       rid();
@@ -139,18 +144,13 @@
       const t = cb.top + inset, w0 = cb.hw - inset, w1 = cb.topHw - inset;
       c.moveTo(-w0, b0); c.lineTo(-w1, t + 14); c.quadraticCurveTo(-w1, t, -w1 + 14, t); c.lineTo(w1 - 14, t); c.quadraticCurveTo(w1, t, w1, t + 14); c.lineTo(w0, b0); c.closePath();
     };
-    if (withRiders) { // full front / back view: roof frame and the dark interior the riders sit in
-      T.outlined(ctx, shape(0), roof, { line: 8 });
-      T.outlined(ctx, shape(13), sh(roof, -0.6), { line: 0, paint: false });
-      rid();
-    } else { // 3q: the riders of the side drawing show through a framed pane (the side roof sits behind them)
-      ctx.strokeStyle = roof; ctx.lineWidth = 10; ctx.lineJoin = 'round'; ctx.beginPath(); shape(8)(ctx); ctx.stroke();
-    }
+    T.outlined(ctx, shape(0), roof, { line: 8 }); // roof frame and the dark interior the riders sit in
+    T.outlined(ctx, shape(13), sh(roof, -0.6), { line: 0, paint: false });
+    rid();
     ctx.save(); ctx.globalAlpha *= 0.32; T.outlined(ctx, shape(13), cb.glass, { line: 0, paint: false }); ctx.restore();
     ctx.save(); ctx.globalAlpha *= 0.5; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 9; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(-cb.topHw * 0.55, cb.top + 30); ctx.lineTo(-cb.hw * 0.2, b0 - 16); ctx.stroke(); ctx.restore();
-    ctx.strokeStyle = P.ink; ctx.lineWidth = 5; ctx.beginPath(); shape(withRiders ? 13 : 3)(ctx); ctx.stroke();
-    if (!withRiders) { ctx.beginPath(); shape(13)(ctx); ctx.stroke(); }
+    ctx.strokeStyle = P.ink; ctx.lineWidth = 5; ctx.beginPath(); shape(13)(ctx); ctx.stroke();
   }
   function frontEnd(ctx, f, col, glow) {
     const g = f.grille;
@@ -177,23 +177,21 @@
     const py = f.bumper ? f.bumper.y - 26 : f.belt[1] - 34;
     T.outlined(ctx, (c) => T.rrect(c, -30, py, 60, 22, 3), '#f2ecd8', { line: 4 }); // plate
   }
-  // One face (front or back) centred on x = 0; skip: 'left' / 'right' hides the near tyre in a 3q view; cab: null (no
-  // cabin) or {off (x offset of the windscreen / rear window plane, face units), riders}.
-  function drawFace(ctx, L, S, env, o, back, skip, cab, tone = 0) { // tone: shade of the face plane in a 3q view
-    const f = o.face, col = tone ? sh(L.color ?? f.col, tone) : L.color ?? f.col, col2 = L.color2 ?? f.col2 ?? sh(col, -0.5), r = o.r;
+  // The full front or back view, centred on x = 0: tyres, cabin with the riders, body, fenders, face details.
+  function drawFace(ctx, L, S, env, o, back) {
+    const f = o.face, col = L.color ?? f.col, col2 = L.color2 ?? f.col2 ?? sh(col, -0.5), r = o.r;
     const tyreC = (o.wheel && o.wheel.tyre) || '#242224', ang = VK.wheelAng(S, S.k, r) * (back ? -1 : 1);
     if (T.CK) T.CK.shadow(ctx, L, 0, f.hw * 1.12, 0);
     const b = VK.bump(S, S.k, o.wb, L.terrain ?? 'road');
-    for (const sx of [-1, 1]) if (!((sx < 0 && skip === 'left') || (sx > 0 && skip === 'right'))) tyre(ctx, sx * f.track, r, f.tyre, tyreC, ang);
+    for (const sx of [-1, 1]) tyre(ctx, sx * f.track, r, f.tyre, tyreC, ang);
     ctx.save(); ctx.translate(0, b.dy - r * 0.12); ctx.rotate((b.f - b.r) * 0.002);
-    if (cab) { ctx.save(); ctx.translate(cab.off, 0); cabin(ctx, L, S, env, o, back, col, col2, cab.riders); ctx.restore(); }
+    cabin(ctx, L, S, env, o, back, col, col2);
     if (f.apron) T.outlined(ctx, (c) => T.rrect(c, -f.track + f.tyre, f.belt[1] - 4, 2 * (f.track - f.tyre), r * 0.9, 6), sh(col, -0.55), { line: 5 });
     T.outlined(ctx, (c) => T.rrect(c, -f.hw, f.belt[0], 2 * f.hw, f.belt[1] - f.belt[0], f.round ?? 12), col, { line: 8,
       shade: (c) => { c.fillStyle = sh(col, -0.22); c.fillRect(-f.hw, f.belt[1] - (f.belt[1] - f.belt[0]) * 0.32, 2 * f.hw, 60); } });
     if (f.fender === 'arch') {
       const fc = pick(f.fenderColor ?? 'col', col, col2);
       for (const sx of [-1, 1]) {
-        if ((sx < 0 && skip === 'left') || (sx > 0 && skip === 'right')) continue;
         const x = sx * f.track, w = f.tyre + 14, y0 = -r * 0.95, top = -2 * r - 26;
         T.outlined(ctx, (c) => { c.moveTo(x - w, y0); c.quadraticCurveTo(x - w, top, x, top); c.quadraticCurveTo(x + w, top, x + w, y0); c.lineTo(x + w - 9, y0); c.quadraticCurveTo(x + w - 9, top + 14, x, top + 14); c.quadraticCurveTo(x - w + 9, top + 14, x - w + 9, y0); c.closePath(); }, fc, { line: 6 });
       }
@@ -204,21 +202,33 @@
     ctx.restore();
   }
   VK.drawFace = drawFace;
+  VK.frontEnd = frontEnd; VK.rearEnd = rearEnd;
 
   // Draws a car in S.view (front, back, 3q, 3q-back) in kind units (ctx already scaled by k).
   VK.carView = (ctx, L, S, env, o, k) => {
-    const f = o.face, v = S.view;
-    if (v === 'front' || v === 'back') return drawFace(ctx, L, S, env, o, v === 'back', null, { off: 0, riders: true });
-    const fwd = v === '3q', dirF = fwd ? 1 : -1, sideLen = (f.front + f.rear) * Q_SIDE, faceW = 2 * f.hw * Q_FACE, lap = sideLen * 0.09;
-    const jx = (dirF * (sideLen - faceW)) / 2 + dirF * lap / 2; // centres the drawing on the layer origin
-    // the windscreen (rear window) stands at the cowl (tail) of the side drawing, set back from the face plane
-    const cabX = fwd ? (f.cowl - f.front) * Q_SIDE + lap : (f.tailX + f.rear) * Q_SIDE - lap;
-    ctx.save(); ctx.translate(jx, 0); ctx.transform(1, SH_SIDE * dirF, 0, 1, 0, 0); ctx.scale(Q_SIDE, 1); ctx.translate(fwd ? -f.front : f.rear, 0);
-    VK.carSide(ctx, L, { ...S, riderSx: 0.9 / Q_SIDE, riderK: 0.9, noLights: !fwd }, env, o, k);
-    ctx.restore();
-    ctx.save(); ctx.translate(jx - dirF * lap, 0); ctx.transform(1, -SH_FACE * dirF, 0, 1, 0, 0); ctx.scale(Q_FACE, 1); ctx.translate(dirF * f.hw, 0);
-    drawFace(ctx, L, S, env, o, !fwd, fwd ? 'left' : 'right', { off: cabX / Q_FACE, riders: false }, -0.1);
-    ctx.restore();
+    const v = S.view;
+    if (v === 'front' || v === 'back') return drawFace(ctx, L, S, env, o, v === 'back');
+    return VK.car3q(ctx, L, S, env, o, k);
+  };
+
+  // Seat of rider i in kind units for a view: [x, y, rider scale]. Side seats come from the kind's body drawing.
+  VK.seatAt = (o, view, i, seats, size) => {
+    const [x0, y0] = seats[Math.min(i, seats.length - 1)], x = x0 + (i >= seats.length ? (i - seats.length + 1) * 40 : 0);
+    const f = o && o.face;
+    if (!f || view === 'side') return [x, y0, 1];
+    if (view === 'front' || view === 'back') {
+      const sx = f.seat.x * (view === 'front' ? 1 : -1), xs = i === 0 ? sx : i === 1 ? -sx : -sx + (i - 1) * 40;
+      return [xs, f.seat.y, 1]; // the face seats use the side rider size
+    }
+    const g = VK.geo3q(o, view === '3q');
+    return [(x + g.offX) * g.cx - g.centre, y0 + g.offY, g.rk];
+  };
+  // Pure anchor for a rider's acting: its head in the world at shot time t, through the view and facing at t.
+  VK.seatAnchor = (L, o, k, i, size, seats) => (t) => {
+    const vs = VK.viewOf(L, t - (L.at ?? 0), t), view = vs ? vs.view : 'side';
+    const sg = (!L.path && L.dir === -1 ? -1 : 1) * (vs ? vs.facing : 1), [x, y, rk] = VK.seatAt(o, view, i, seats, size);
+    const w = VK.worldPt(L, t, x * k * sg, (y - ((450 * size) / 600) * rk) * k);
+    return w ? { x: w[0], y: w[1], flip: (w[2].flip || 1) * sg } : null;
   };
 
   // Turn smear: streaks trailing the body for the in-between frames (layer units, after the facing mirror).
