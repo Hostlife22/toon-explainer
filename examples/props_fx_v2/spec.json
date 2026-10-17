@@ -1333,6 +1333,162 @@
      ]
     }
    ]
+  },
+  {
+   "id": "v16_held",
+   "_note": "held props without holdScale take their natural size (T.HOLD_SIZE)",
+   "dur": 2.5,
+   "bg": {
+    "kind": "interior"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "label",
+     "text": "HELD AT NATURAL SIZE",
+     "x": 0.5,
+     "y": 0.09,
+     "size": 54
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.11,
+     "y": 0.9,
+     "size": 400,
+     "pose": "hold",
+     "view": "3q",
+     "hold": "newspaper",
+     "flip": false,
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "newspaper",
+     "x": 0.11,
+     "y": 0.96,
+     "size": 24
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.24,
+     "y": 0.9,
+     "size": 400,
+     "pose": "hold",
+     "view": "3q",
+     "hold": "paintbrush",
+     "flip": false,
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "paintbrush",
+     "x": 0.24,
+     "y": 0.96,
+     "size": 24
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.37,
+     "y": 0.9,
+     "size": 400,
+     "pose": "hold",
+     "view": "3q",
+     "hold": "scales",
+     "flip": false,
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "scales",
+     "x": 0.37,
+     "y": 0.96,
+     "size": 24
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.5,
+     "y": 0.9,
+     "size": 400,
+     "pose": "hold",
+     "view": "3q",
+     "hold": "microscope",
+     "flip": false,
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "microscope",
+     "x": 0.5,
+     "y": 0.96,
+     "size": 24
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.63,
+     "y": 0.9,
+     "size": 400,
+     "pose": "hold",
+     "view": "3q",
+     "hold": "spray-can",
+     "flip": true,
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "spray-can",
+     "x": 0.63,
+     "y": 0.96,
+     "size": 24
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.76,
+     "y": 0.9,
+     "size": 400,
+     "pose": "hold",
+     "view": "3q",
+     "hold": "rope",
+     "flip": true,
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "rope",
+     "x": 0.76,
+     "y": 0.96,
+     "size": 24
+    },
+    {
+     "type": "bean",
+     "who": "chemist",
+     "x": 0.89,
+     "y": 0.9,
+     "size": 400,
+     "pose": "hold",
+     "view": "3q",
+     "hold": "broom",
+     "flip": true,
+     "z": 1.0
+    },
+    {
+     "type": "label",
+     "text": "broom",
+     "x": 0.89,
+     "y": 0.96,
+     "size": 24
+    }
+   ]
   }
  ]
 }

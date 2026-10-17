@@ -328,6 +328,8 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         errors.append(f"{where}: prop kind {layer.get('kind')!r} not in {sorted(KNOWN_PROPS)}")
     if kind == "fx" and layer.get("kind") not in KNOWN_FX:
         errors.append(f"{where}: fx kind {layer.get('kind')!r} not in {sorted(KNOWN_FX)}")
+    if kind == "fx" and any(s.get("front") is not None and s.get("front") not in ("over", "depth") for s in _swap_states(layer)):
+        errors.append(f'{where}: fx front must be "over" (above set front parts) or "depth" (slotted by its y)')
     if kind in ("label", "title", "caption", "sign", "date") and not str(layer.get("text", "")).strip():
         errors.append(f"{where}: {kind} needs non-empty text")
     if kind == "image" and not (layer.get("src") or (layer.get("frames") or {}).get("idle")):
@@ -411,6 +413,8 @@ def _nested_whos(value):
 # Backgrounds that paint a sky behind themselves and pass `preset` to it (other kinds use `preset` for their own variants).
 SKY_BACKED_BGS = {"sky", "city", "battlefield", "desert", "eastcity", "factory", "graveyard", "karst", "mountains",
                   "street1920", "trench", "hills", "woods", "river", "dunes", "ancient", "castle"}  # + Places 2.0 landscapes
+# Backgrounds with a front plane (T.BG_FRONT) that can join the automatic front pass with `frontY` (set-front.js).
+FRONT_PLANE_BGS = {"room", "cell", "antique", "palace", "studio"}
 
 
 def _check_bg(bg, where: str, errors: list[str]) -> None:
@@ -443,6 +447,9 @@ def _check_bg(bg, where: str, errors: list[str]) -> None:
     if kind == "interior" and bg.get("windowSky", "day") not in KNOWN_SKY:
         errors.append(f"{where}: windowSky {bg.get('windowSky')!r} not in {sorted(KNOWN_SKY)}")
     check_depth(bg, where, errors)
+    fy = bg.get("frontY")
+    if fy is not None and not (_is_num(fy) and 0 <= fy <= 1.5 and kind in FRONT_PLANE_BGS):
+        errors.append(f"{where}: frontY (the front plane's ground y, 0..1.5) works on {sorted(FRONT_PLANE_BGS)}")
     if kind == "set":
         check_set_bg(bg, where, LAYER_KINDS, errors)
 

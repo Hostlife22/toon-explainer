@@ -181,7 +181,7 @@
     const v = variantOf(bg, Object.keys(ROOM), 'gamer', 'room');
     ROOM[v](ctx, bg, lt, env, seedOf(env, 'room', bg));
     vignette(ctx, bg.vignette ?? 0.35);
-    if (ROOM_FRONT[v]) ROOM_FRONT[v](ctx, bg, lt, env);
+    if (ROOM_FRONT[v] && !T.frontRouted(bg)) ROOM_FRONT[v](ctx, bg, lt, env);
   };
   T.BG_FRONT.room = (ctx, bg, lt, env) => { const f = ROOM_FRONT[bg.variant ?? 'gamer']; if (f) f(ctx, bg, lt, env); };
 
@@ -279,7 +279,7 @@
       for (let i = 1; i < 4; i++) { const f = i / 4; ctx.beginPath(); ctx.moveTo(x - 70 + f * 140 - 4, y - 60 + f * 120); ctx.lineTo(x - 70 + f * 140 + 4, y - 60 + f * 120); ctx.lineTo(ex - 220 + f * 380 + 10, ey - 30 + f * 70); ctx.lineTo(ex - 220 + f * 380 - 14, ey - 30 + f * 70); ctx.closePath(); ctx.fill(); }
     });
     vignette(ctx, 0.6);
-    cellBars(ctx, bg, lt, env);
+    if (!T.frontRouted(bg)) cellBars(ctx, bg, lt, env);
   };
   function cellBars(ctx, bg, lt, env) {
     if (bg.bars !== false) cam(ctx, env, 1.3, () => {
@@ -444,7 +444,7 @@
     const v = variantOf(bg, Object.keys(ANTIQUE), 'colonnade', 'antique');
     ANTIQUE[v](ctx, bg, lt, env, seedOf(env, 'antique', bg));
     vignette(ctx, bg.vignette ?? 0.3);
-    if (ANTIQUE_FRONT[v]) ANTIQUE_FRONT[v](ctx, bg, lt, env);
+    if (ANTIQUE_FRONT[v] && !T.frontRouted(bg)) ANTIQUE_FRONT[v](ctx, bg, lt, env);
   };
   T.BG_FRONT.antique = (ctx, bg, lt, env) => { const f = ANTIQUE_FRONT[bg.variant ?? 'colonnade']; if (f) f(ctx, bg, lt, env); };
 

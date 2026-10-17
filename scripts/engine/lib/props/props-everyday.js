@@ -160,5 +160,5 @@
 
   Object.assign(T.PROPS, { scales, microscope, paintbrush, newspaper, 'spray-can': sprayCan });
   Object.assign(T.PROP_FOOT || (T.PROP_FOOT = {}), { scales: 0.3, microscope: 0.32, 'spray-can': 0.17 });
-  Object.assign(T.HOLD_SIZE || (T.HOLD_SIZE = {}), { paintbrush: 150, newspaper: 160, 'spray-can': 110 });
+  Object.assign(T.HOLD_SIZE || (T.HOLD_SIZE = {}), { scales: 270, microscope: 260, paintbrush: 250, newspaper: 280, 'spray-can': 190 });
 })();

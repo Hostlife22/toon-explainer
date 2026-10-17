@@ -72,7 +72,7 @@
       T.plane(ctx, env, { f: 0.6, live: true }, (g) => d.live(g, env, lt, bg));
     }
     PL.vignette(ctx, bg.vignette ?? 0.35);
-    T.BG_FRONT.room(ctx, bg, lt, env);
+    if (!T.frontRouted(bg)) T.BG_FRONT.room(ctx, bg, lt, env);
   });
 
   T.richBg('studio', (ctx, bg, lt, env) => {
@@ -93,7 +93,7 @@
       T.dustMotes(g, W * 0.2, 0, W * 0.6, H * 0.9, lt, seed + 'st', { n: 28, alpha: 0.55 });
     });
     PL.vignette(ctx, bg.vignette ?? 0.3);
-    T.STUDIO[v].front(ctx, bg, lt, env, seed);
+    if (!T.frontRouted(bg)) T.STUDIO[v].front(ctx, bg, lt, env, seed);
   });
 
   // ---------- corkboard ----------

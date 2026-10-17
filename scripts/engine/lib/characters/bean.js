@@ -49,9 +49,14 @@
     return out;
   }
 
-  // Held prop sizes (rig units) used with acting; classic keeps 170 for everything but shields and spears.
+  // Natural held sizes (rig units: the prop's longest side, the classic default is 170), used with acting when the layer
+  // sets no holdScale; classic keeps 170 for everything but shields and spears. Small things shrink; long tools, signs,
+  // flags and broadsheets grow to read against the hand and body. Prop modules add their own (props-everyday.js, ...).
   T.HOLD_SIZE = { coin: 80, bulb: 100, heart: 100, question: 110, exclaim: 110, bread: 110, scroll: 120, book: 120,
-    skull: 120, hourglass: 120, moneybag: 140 };
+    skull: 120, hourglass: 120, moneybag: 140,
+    broom: 330, shovel: 320, pitchfork: 340, pickaxe: 280, axe: 260, hammer: 220, wrench: 240, saw: 250,
+    placard: 260, flag: 260, 'white-flag': 260, banner: 260, 'paper-stack': 240, rifle: 330, musket: 330,
+    megaphone: 230, magnifier: 220, bow: 250, scissors: 200 };
   const over = (m) => !!(T.LEG_MODES[m] && T.LEG_MODES[m].over); // leg modes drawn over the robe (sit, tuck)
 
   T.layers.bean = (ctx, Ly, lt, env) => {

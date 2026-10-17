@@ -25,13 +25,13 @@ k68 and k89 changed, all as intended; k48's panel was moved up behind the now-oc
 - Both `sick` sweat beads read in every view and hair kind (drawn over the hair, on the visible face side); an `ortho`
   map's modifiers (blur, focus, material) reach its starfield again; `gags.js` and `game-ui.js` split under 800 lines
   (`gags-fx.js`, `gags-enter.js`, `game-docs.js`; example frames byte-identical).
+- Props and front pass: held props get a natural size (`T.HOLD_SIZE`: newspaper, paintbrush, scales, microscope,
+  spray-can, rope, long tools, signs) without `holdScale`; ground fx (`dust` at the judge's feet, `T.FX_GROUND`) slot
+  among front parts by `y` (`front: "over"` / `"depth"` override); every visible `set` contributes front parts (a
+  parts-only set does not cover), and `frontY` opts `room` / `cell` / `antique` / `palace` / `studio` front planes in.
 
 ## Remaining gaps
 
-- Held props draw at the default size 170, so a held `newspaper` or `paintbrush` needs `holdScale` 1.3-1.8.
-- Any `fx` layer is slotted above `front` set parts, so a local effect placed behind a bench (dust at the judge's feet)
-  draws over the bench.
-- Only the last background contributes `front` parts, and only when it is a `set`.
 - `dump-truck` has no turn views; the 3/4 car views are a stylized extrusion, and the bean rig has no back three-quarter view
   (riders in `3q-back` use the back view).
 - A rider's `lookAt` aims from its seat but ignores the suspension bounce; vehicle riders don't take `riderLook`.

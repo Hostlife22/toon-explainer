@@ -8,6 +8,15 @@
 - Fix: an `ortho` map's layer modifiers (`blur`, keyed blur, rack `focus`, `material` and the other `T.LAYER_MODS`) apply to its star backdrop again, which still paints behind layers listed before the map; a blurred backdrop is laid over a sharp copy so the frame edges stay dark.
 - `lib/acting/gags.js` is split into `gags.js` (helpers in `T.GAG`, the arm), `gags-fx.js` and `gags-enter.js`, and `lib/game/game-ui.js` into `game-ui.js` and `game-docs.js` (helpers in `T.GAME_UI`), so every engine file stays under 800 lines; frames of every example are byte-identical.
 
+### Engine gaps: props-front
+
+- Fix: held props take a natural size with acting on (the painted default) when no `holdScale` is set: `T.HOLD_SIZE` now also grows long tools, signs and broadsheets (`newspaper` 280, `paintbrush` 250, `scales` 270, `microscope` 260, `spray-can` 190, `rope` 230, `broom` 330, `shovel` 320, `pitchfork` 340, `rifle` / `musket` 330, `placard` / flags 260 and more), so they read against the hand and body without tuning. Classic keeps 170; an explicit `holdScale` still multiplies the classic size; props that already read right (mug, teacup, bottle, mallet, scroll, ...) are unchanged.
+- Fix: ground fx placed at a spot (`dust`, `dustkick`, `poof`, `puff`, `smoke`, `fire`, `blood`, `pool`, `spill`, `toxic-cloud`; registry `T.FX_GROUND`) are slotted among `set` front parts by their `y` like actors, so dust at the judge's feet stays behind the bench; screen-wide fx (flash, blackout, rain, ...) stay over. New fx field `front`: `"over"` keeps the old order, `"depth"` slots any placed fx by its `y`.
+- Fix: front parts come from every `set` in the shot's `bg` list that no covering background follows; a parts-only set (`wall: false, floor: false`) does not cover, so a room plus a set of extra front benches, or a landscape plus a parts-only set with a front desk, both work (`T.bgCovers`, `T.frontSources`).
+- New bg field `frontY` on `room`, `cell`, `antique`, `palace` and `studio`: their front plane joins the automatic front pass (redrawn over layers standing above `frontY`), so a judge stays behind a `studio` `courtroom` bench without a hand-placed `bg-front` layer.
+- Front pass review fixes: an fx is slotted where it renders (`T.FX_ANCHOR`: a targeted `dustkick` at its landing point, a `brawl` along its own `path`); only positional `move` steps place an fx; an explicit `set-front` layer also places `frontY` planes; a `frontY` plane is left out of the background pass (drawn once, also under a rack-focus blur); fx `front` is validated across swaps.
+- `examples/painted_places` gains `set_front_layers` and `set_front_plane`; `examples/props_fx_v2` gains `v16_held`.
+
 ### Engine backlog: characters
 
 - Fix: poses `flail` / `flail-b` stand upright (panicked arms thrown up at odd angles) instead of rendering the character upside down; the old head-over-heels flip is the new pose pair `upended` / `upended-b` (`story_banana_caper` uses it for its slips).
