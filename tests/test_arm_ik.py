@@ -132,3 +132,14 @@ def test_hold_props_pass_fields_to_the_held_prop():
     a, b = _frames(pour, [0.1, 0.9])
     (c,) = _frames(still, [0.9])
     assert a != b and b != c  # the held bottle tips and pours
+
+
+def test_hold_props_grip_the_prop_centre():
+    import copy
+
+    a = copy.deepcopy(HOLD)
+    a["shots"][0]["layers"][0].update(pose="hold")
+    b = copy.deepcopy(a)
+    b["shots"][0]["layers"][0]["holdProps"] = {}
+    x, y = _frames(a, [0.5])[0], _frames(b, [0.5])[0]
+    assert x != y  # the grip point moves from the prop's base to its centre

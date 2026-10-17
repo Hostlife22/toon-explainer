@@ -227,7 +227,10 @@
       if (holdRot) ctx.rotate(holdRot * T.DEG * (j.sx < 0 ? -1 : 1)); // holdRot: tilt the prop in the grip (deg)
       if (hold === 'sword') ctx.rotate(Math.PI - j.dir); // blade follows the forearm
       else if (hold === 'spear' || hold === 'torch') { ctx.rotate(T.clamp(-Math.sin(j.dir) * 0.35, -0.35, 0.35)); ctx.translate(0, hold === 'spear' ? 160 : 40); } // shafts stay upright
-      else ctx.translate(0, hold === 'shield' ? 0 : -60 * (holdSize ? Math.min(1, holdSize / 170) : 1));
+      else if (holdOpts) { // holdProps: the hand stays on the grip point (prop-size fractions), also while the prop tips itself
+        const sz = holdSize ?? 170, [gx, gy] = holdOpts.grip ?? [0, 0.32], tl = T.PROP_TILT?.[hold] ? T.PROP_TILT[hold](holdOpts, lt) : 0;
+        ctx.translate(-(gx * Math.cos(tl) - gy * Math.sin(tl)) * sz, -(gx * Math.sin(tl) + gy * Math.cos(tl)) * sz);
+      } else ctx.translate(0, hold === 'shield' ? 0 : -60 * (holdSize ? Math.min(1, holdSize / 170) : 1));
       T.drawProp(ctx, hold, holdSize ?? (hold === 'shield' ? 260 : hold === 'spear' ? 420 : 170), lt, holdOpts || {}); ctx.restore();
     }
     hand(ctx, j.hx, j.hy, j.dir, j.hand, skin, hs);

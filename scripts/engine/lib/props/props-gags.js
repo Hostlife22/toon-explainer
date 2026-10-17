@@ -15,6 +15,9 @@
   const O = (ctx, s, path, fill, shade) => T.outlined(ctx, path, fill, { line: LW(s), shade });
   const fillR = (col, x, y, w, h) => (k) => { k.fillStyle = col; k.fillRect(x, y, w, h); };
   const evt = (v) => (v == null || v === false ? null : v === true ? {} : typeof v === 'number' ? { at: v } : v);
+  // Rotation a prop applies to itself at time lt (radians), so a hand holding it can follow the grip point.
+  T.PROP_TILT = T.PROP_TILT || {};
+  T.PROP_TILT.bottle = (o, lt) => { const pr = evt(o.pour); return pr ? T.ease.inOut(T.prog(lt, pr.at ?? 0, pr.dur ?? 0.5)) * 110 * D : 0; };
   const inWin = (wins, lt) => (wins || []).some(([a, b]) => lt >= a && lt <= b);
   const ell = (k, x, y, rx, ry, r = 0) => k.ellipse(x, y, Math.abs(rx), Math.abs(ry), r, 0, TAU);
 

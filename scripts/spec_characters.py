@@ -139,6 +139,8 @@ def _check_hold_size(obj: dict, where: str, errors: list[str]) -> None:
     hp = obj.get("holdProps")
     if hp is not None and not isinstance(hp, dict):
         errors.append(f"{where}: holdProps must be an object of prop fields for the held prop (e.g. {{pour: {{at, dur}}}})")
+    elif hp is not None and hp.get("grip") is not None and not (isinstance(hp["grip"], list) and len(hp["grip"]) == 2 and all(_num(v) for v in hp["grip"])):
+        errors.append(f"{where}: holdProps.grip must be [x, y] in fractions of the prop size")
     r = obj.get("holdRot")
     if r is not None:
         keys = r if isinstance(r, list) else None
