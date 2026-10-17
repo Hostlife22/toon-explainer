@@ -157,8 +157,13 @@
   VK.SIZE = {};
   VK.LEGACY_V2 = new Set(['tank', 'train', 'biplane', 'submarine', 'car1910']);
   const NEW_FIELDS = ['path', 'terrain', 'lights', 'dust', 'exhaust', 'wake', 'contrail', 'spray', 'animal', 'team'];
+  // kinds whose v2 drawing only adds the turn views (dump-truck, vehicles-truck.js): v2 while a view / facing is authored
+  // or a path reverses, else the classic drawing in both looks
+  VK.VIEW_ONLY = new Set();
+  const viewsWanted = (L) => !!VK.viewExplicit && (VK.viewExplicit(L) || (L.turn !== false && VK.hasTurns(L)));
   T.vehicleRig = (L, painted) => {
     if (!VK.FN[L.kind]) return 'legacy';
+    if (VK.VIEW_ONLY.has(L.kind)) return L.rig !== 'classic' && (L.rig === 'v2' || viewsWanted(L)) ? 'v2' : 'legacy';
     if (!VK.LEGACY_V2.has(L.kind)) return 'v2';
     if (L.rig === 'classic') return 'legacy';
     if (L.rig === 'v2' || painted || NEW_FIELDS.some((f) => L[f] != null) || (VK.viewExplicit && VK.viewExplicit(L))) return 'v2';

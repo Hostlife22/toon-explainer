@@ -42,7 +42,8 @@
   }
 
   // A seated rider's bean layer: `r` is a cast id or {who, expr, lookAt, pose, hold, holdL, talk, takes, gaze, look, view,
-  // facing, scale}; its own fields win over the vehicle-wide ones in `base`. A rider that acts (lookAt / takes) gets
+  // facing, scale}; its own fields win over the vehicle-wide ones in `base`; the vehicle's `riderLook` (look fields, as on
+  // creatures) sits under a rider's own `look`. A rider that acts (lookAt / takes) gets
   // __anchor = anchorOf(B): (shot time t) -> {x, y, flip} of its head in the world, a pure function of t, so the acting
   // director aims from the seat; __px (screen px per seat unit) scales its hops; `at` = the vehicle's (layer -> shot
   // time); its id carries the vehicle's identity so two vehicles never share a director plan.
@@ -53,6 +54,7 @@
       for (const [key, v] of Object.entries(r)) if (!RIDER_OWN.has(key)) B[key] = v;
       if (r.scale != null) B.size = base.size * r.scale;
     } else B.who = r;
+    if (L.riderLook) B.look = { ...L.riderLook, ...((r && typeof r === 'object' && r.look) || {}) }; // riderLook under the rider's own look
     if ((B.lookAt != null || B.takes) && anchorOf) {
       B.__anchor = anchorOf(B);
       B.__px = px || 1;
@@ -92,8 +94,9 @@
       const sg = L.dir === -1 ? -1 : 1, px = env && env.st ? Math.abs(env.st.s * env.st.sy) * k : k;
       (L.riders || []).forEach((r, i) => {
         const base = { type: 'bean', size: 250, legs: false, id: 'car' + i, talk: L.talk, ...(L.riderExpr != null ? { expr: L.riderExpr } : {}) };
-        const anchorOf = (B) => (t) => { // the seat's head in the world at shot time t
-          const w = T.VK && T.VK.worldPt(L, t, (-70 + i * 110) * k * sg, (-40 - (450 * B.size) / 600) * k);
+        const anchorOf = (B) => (t) => { // the seat's head in the world at shot time t, with the layer's driving bob
+          const lt = t - (L.at ?? 0), bob = inWin(L.drive, lt) ? -Math.abs(Math.sin(lt * Math.PI * 3)) * (L.bobAmp ?? 4) : 0;
+          const w = T.VK && T.VK.worldPt(L, t, (-70 + i * 110) * k * sg, (-40 - (450 * B.size) / 600) * k + bob);
           return w ? { x: w[0], y: w[1], flip: (w[2].flip || 1) * sg } : null;
         };
         ctx.save(); ctx.translate(-70 + i * 110, -40); T.layers.bean(ctx, T.vehicleRiderBean(L, r, base, anchorOf, px), s.lt, { ...env, st: null }); ctx.restore();
@@ -197,7 +200,7 @@
     rowboat(ctx, L, s, env) {
       const k = s.size / 300;
       ctx.scale(k, k);
-      (L.riders || []).forEach((who, i) => { ctx.save(); ctx.translate(-40 + i * 90, -40); T.layers.bean(ctx, { type: 'bean', who, size: 220, legs: false, id: 'row' + i, talk: L.talk }, s.lt, { ...env, st: null }); ctx.restore(); });
+      (L.riders || []).forEach((who, i) => { ctx.save(); ctx.translate(-40 + i * 90, -40); T.layers.bean(ctx, { type: 'bean', who, size: 220, legs: false, id: 'row' + i, talk: L.talk, look: L.riderLook }, s.lt, { ...env, st: null }); ctx.restore(); });
       const oar = Math.sin(s.dist * 5) * 0.5;
       ctx.strokeStyle = '#8a5a32'; ctx.lineWidth = 9;
       for (const d of [-1, 1]) { ctx.save(); ctx.translate(d * 30, -70); ctx.rotate(0.9 * d + oar * d); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 120); ctx.stroke(); ctx.restore(); }

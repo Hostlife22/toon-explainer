@@ -343,6 +343,8 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
     def motion(state, found):
         check_motion(state, where, found, _ease_names(), LAYER_KINDS.get("creature"))
         check_riders(state, where, found, cast, KNOWN_EXPR, KNOWN_PROPS)
+        if state.get("type") in ("vehicle", "creature") and state.get("riderLook") is not None:  # look fields over the riders' casts
+            _check_look(state["riderLook"], f"{where}.riderLook", found)
     errors += _per_state(layer, motion)
     if kind == "set":
         check_set_layer(layer, where, LAYER_KINDS, errors)

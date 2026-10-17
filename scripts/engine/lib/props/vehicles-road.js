@@ -10,14 +10,17 @@
   const poly = (pts) => (k) => { k.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) k.lineTo(pts[i][0], pts[i][1]); k.closePath(); };
   const shadow = (ctx, L, cx, hw) => CK && CK.shadow(ctx, L, cx, hw, 0);
 
-  // Seated riders (cast ids or rider objects, see T.vehicleRiderBean). S.k: kind scale; S.o: the kind; S.riderSx / riderK
-  // undo a squeezed view; S.riderOff moves the seats (3q: half the car's width in); S.riderView forces the riders' view.
+  // Seated riders (cast ids or rider objects, see T.vehicleRiderBean). S.k: kind scale; S.o: the kind; S.riderXf (a linear
+  // map) or S.riderSx / riderK undo a squeezed or sheared view; S.riderOff moves the seats (3q: to the centre line);
+  // S.riderView forces the riders' view.
   function riders(ctx, L, S, env, seats, size) {
+    if (S.noRiders) return; // the 3q view draws them in its own passes
     const px = env && env.st ? Math.abs(env.st.s * env.st.sy) * (S.k ?? 1) * (S.riderK ?? 1) : 1, off = S.riderOff || [0, 0];
     (L.riders || (L.rider ? [L.rider] : [])).forEach((r, i) => {
       const [x0, y] = seats[Math.min(i, seats.length - 1)], x = x0 + (i >= seats.length ? (i - seats.length + 1) * 40 : 0);
       ctx.save(); ctx.translate(x + off[0], y + off[1]);
-      if (S.riderSx) ctx.scale(S.riderSx, S.riderK ?? 1);
+      if (S.riderXf) ctx.transform(S.riderXf[0], S.riderXf[1], S.riderXf[2], S.riderXf[3], 0, 0); // 3q: upright, undoing the side plane
+      else if (S.riderSx) ctx.scale(S.riderSx, S.riderK ?? 1);
       const anchorOf = VK.seatAnchor && S.o ? (B) => VK.seatAnchor(L, S.o, S.k ?? 1, i, B.size, seats) : null;
       const B = T.vehicleRiderBean(L, r, { type: 'bean', size, legs: false, id: (L.id ?? 'veh') + 'r' + i, talk: L.talk, expr: L.riderExpr, pose: L.riderPose, hold: L.riderHold }, anchorOf, px);
       if (S.riderView) B.view = S.riderView;
@@ -55,7 +58,7 @@
 
   // ---------- model-t (~1908): tall black tourer, brass radiator and lamps, spoked wheels ----------
   VK.register('model-t', (ctx, L, S, env) => car(ctx, L, S, env, {
-    W: 400, wb: 250, r: 46, wheels: [-125, 125], lamp: [190, -150], wheel: { spokes: 12, rim: '#d8c8a0', tyre: '#2a2624' },
+    W: 400, wb: 250, seats: [[-30, -110], [-110, -110]], riderSize: 220, r: 46, wheels: [-125, 125], lamp: [190, -150], wheel: { spokes: 12, rim: '#d8c8a0', tyre: '#2a2624' },
     face: { front: 194, rear: 172, cowl: 100, tailX: -150, hw: 100, track: 88, tyre: 20, col: '#23252b', belt: [-172, -124], apron: true, fender: 'arch', back: 'plain',
       grille: { kind: 'radiator', hw: 28, top: -178, bot: -84, color: '#d8a838' }, lamps: { x: 64, y: -150, r: 13, color: '#fff2b0', rim: '#d8a838' },
       tail: { x: 64, y: -140, r: 9 }, cabin: { open: true, top: -312, hw: 108, post: 96, shield: -250 }, seat: { x: 44, y: -110, size: 220 },
@@ -65,7 +68,7 @@
       const col = L2.color ?? '#23252b', brass = '#d8a838';
       for (const x of [-130, 40]) T.outlined(ctx2, (c) => T.rrect(c, x, -300, 10, 140, 4), '#1a1a1e', { line: 5 }); // roof posts
       T.outlined(ctx2, (c) => T.rrect(c, -150, -312, 210, 22, 8), col, { line: 7 }); // canopy
-      riders(ctx2, L2, S2, env2, [[-30, -110], [-110, -110]], 220);
+      riders(ctx2, L2, S2, env2, S2.o.seats, S2.o.riderSize);
       T.outlined(ctx2, poly([[-170, -70], [-170, -170], [-120, -170], [-100, -130], [60, -130], [80, -180], [104, -180], [104, -130], [170, -130], [178, -70]]), col, { line: 8,
         shade: (c) => { c.strokeStyle = sh(col, 0.3); c.lineWidth = 4; c.beginPath(); c.moveTo(-160, -100); c.lineTo(170, -100); c.stroke(); } });
       T.outlined(ctx2, (c) => T.rrect(c, 104, -160, 74, 70, 8), col, { line: 7 }); // hood
@@ -80,7 +83,7 @@
 
   // ---------- sedan1920: long hood, closed cabin, wire wheels, spare at the back ----------
   VK.register('sedan1920', (ctx, L, S, env) => car(ctx, L, S, env, {
-    W: 440, wb: 280, r: 44, wheels: [-140, 140], lamp: [214, -148], wheel: { spokes: 16, rim: '#c9ced2', tyre: '#262224' },
+    W: 440, wb: 280, seats: [[0, -130], [-110, -130]], riderSize: 200, r: 44, wheels: [-140, 140], lamp: [214, -148], wheel: { spokes: 16, rim: '#c9ced2', tyre: '#262224' },
     face: { front: 222, rear: 254, cowl: 76, tailX: -186, hw: 104, track: 90, tyre: 20, col: '#6a1e24', col2: '#1e1a1a', belt: [-176, -124], apron: true, fender: 'arch', fenderColor: 'col2', back: 'spare',
       grille: { kind: 'radiator', hw: 26, top: -160, bot: -72, color: '#c9ced2' }, lamps: { x: 70, y: -146, r: 13, color: '#fff2b0', rim: '#c9ced2' },
       tail: { x: 74, y: -150, r: 9 }, cabin: { top: -262, hw: 96, topHw: 86, glass: '#a8c8d8', roof: 'col2' }, seat: { x: 44, y: -130, size: 200 },
@@ -91,7 +94,7 @@
       if (!S2.noTail) T.outlined(ctx2, (c) => c.arc(-214, -120, 40, 0, TAU), '#262224', { line: 7 }); // spare tyre (the rear face shows it in 3q-back)
       T.outlined(ctx2, poly([[-190, -170], [-176, -260], [40, -262], [70, -170]]), roof, { line: 8 });
       for (const [x0, x1] of [[-166, -70], [-56, 46]]) T.outlined(ctx2, poly([[x0, -176], [x0 + 6, -244], [x1 - 4, -244], [x1, -176]]), '#a8c8d8', { line: 5, paint: false });
-      riders(ctx2, L2, S2, env2, [[0, -130], [-110, -130]], 200);
+      riders(ctx2, L2, S2, env2, S2.o.seats, S2.o.riderSize);
       T.outlined(ctx2, poly([[-200, -66], [-204, -176], [80, -176], [100, -150], [210, -146], [220, -70]]), col, { line: 8,
         shade: (c) => { c.fillStyle = sh(col, 0.25); c.fillRect(-200, -172, 420, 8); c.strokeStyle = sh(col, -0.35); c.lineWidth = 4; for (let x = 120; x < 200; x += 14) { c.beginPath(); c.moveTo(x, -140); c.lineTo(x, -96); c.stroke(); } } });
       T.outlined(ctx2, (c) => T.rrect(c, 204, -156, 18, 88, 5), '#c9ced2', { line: 6 });
@@ -103,7 +106,7 @@
 
   // ---------- car1950: rounded fenders, two-tone, chrome, whitewalls, tail fins ----------
   VK.register('car1950', (ctx, L, S, env) => car(ctx, L, S, env, {
-    W: 460, wb: 290, r: 40, wheels: [-150, 150], lamp: [222, -110], wheel: { rim: '#e8ecee', tyre: '#1e1c1e', white: true },
+    W: 460, wb: 290, seats: [[30, -110], [-70, -110]], riderSize: 190, r: 40, wheels: [-150, 150], lamp: [222, -110], wheel: { rim: '#e8ecee', tyre: '#1e1c1e', white: true },
     face: { front: 246, rear: 246, cowl: 96, tailX: -136, hw: 122, track: 98, tyre: 22, col: '#5ab0b8', col2: '#f4efe4', belt: [-156, -44], round: 40, fender: 'skirt', back: 'fins',
       grille: { kind: 'wide', hw: 64, top: -108, bot: -74, color: '#e8ecee' }, lamps: { x: 92, y: -112, r: 15, color: '#fff6c8', rim: '#e8ecee' },
       tail: { x: 100, y: -126, r: 12 }, bumper: { y: -70, h: 24, hw: 130, color: '#e8ecee' },
@@ -115,7 +118,7 @@
       T.outlined(ctx2, blob([[-140, -150], [-110, -228], [40, -232], [100, -150]]), roof, { line: 8 });
       T.outlined(ctx2, blob([[-120, -156], [-98, -214], [-24, -216], [-24, -156]]), '#a8d0de', { line: 5, paint: false });
       T.outlined(ctx2, blob([[-10, -156], [-10, -216], [34, -214], [84, -156]]), '#a8d0de', { line: 5, paint: false });
-      riders(ctx2, L2, S2, env2, [[30, -110], [-70, -110]], 190);
+      riders(ctx2, L2, S2, env2, S2.o.seats, S2.o.riderSize);
       T.outlined(ctx2, blob([[-232, -60], [-236, -120], [-210, -168], [-150, -156], [100, -158], [200, -140], [232, -110], [228, -56], [150, -40], [-150, -40]]), col, { line: 8,
         shade: (c) => { c.fillStyle = roof; c.beginPath(); c.moveTo(-220, -110); c.quadraticCurveTo(-60, -126, 140, -112); c.lineTo(140, -100); c.quadraticCurveTo(-60, -112, -220, -98); c.closePath(); c.fill(); } });
       T.outlined(ctx2, (c) => T.rrect(c, 200, -72, 44, 22, 10), '#e8ecee', { line: 5 }); // bumper
@@ -129,7 +132,7 @@
 
   // ---------- car-modern: low hatch, alloy wheels, tinted glass, LED lamps ----------
   VK.register('car-modern', (ctx, L, S, env) => car(ctx, L, S, env, {
-    W: 440, wb: 290, r: 46, wheels: [-145, 145], lamp: [212, -112], wheel: { rim: '#b8bec4', tyre: '#1c1c1e' },
+    W: 440, wb: 290, seats: [[10, -120], [-100, -120]], riderSize: 180, r: 46, wheels: [-145, 145], lamp: [212, -112], wheel: { rim: '#b8bec4', tyre: '#1c1c1e' },
     face: { front: 224, rear: 222, cowl: 86, tailX: -186, hw: 118, track: 96, tyre: 26, col: '#d8322e', belt: [-152, -42], round: 34, fender: 'flush', back: 'bar',
       grille: { kind: 'slim', hw: 52, top: -102, bot: -84, color: '#1c1c1e' }, lamps: { x: 84, y: -114, kind: 'led' },
       tail: { x: 84, y: -128 }, intake: { y: -70, h: 18, hw: 70 }, cabin: { top: -246, hw: 104, topHw: 80, glass: '#3a4a5a', roof: 'col' },
@@ -141,7 +144,7 @@
       T.outlined(ctx2, blob([[-196, -150], [-170, -232], [-20, -246], [90, -160]]), col, { line: 8 });
       T.outlined(ctx2, blob([[-170, -158], [-150, -220], [-40, -228], [-40, -158]]), '#3a4a5a', { line: 5, paint: false });
       T.outlined(ctx2, blob([[-26, -158], [-26, -226], [20, -222], [74, -158]]), '#3a4a5a', { line: 5, paint: false });
-      riders(ctx2, L2, S2, env2, [[10, -120], [-100, -120]], 180);
+      riders(ctx2, L2, S2, env2, S2.o.seats, S2.o.riderSize);
       T.outlined(ctx2, blob([[-214, -56], [-222, -150], [-140, -164], [80, -166], [200, -132], [222, -84], [214, -46], [-150, -40]]), col, { line: 8,
         shade: (c) => { c.strokeStyle = sh(col, -0.35); c.lineWidth = 4; c.beginPath(); c.moveTo(-40, -150); c.lineTo(-40, -60); c.moveTo(-200, -110); c.quadraticCurveTo(0, -120, 200, -104); c.stroke(); } });
       T.outlined(ctx2, (c) => { c.moveTo(196, -124); c.lineTo(224, -110); c.lineTo(196, -102); c.closePath(); }, '#f6fbff', { line: 4 });
@@ -209,7 +212,7 @@
     ctx.strokeStyle = '#5a3a20'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-110, -90); ctx.quadraticCurveTo(0, -120, 120, -186); ctx.stroke(); // pole to the yoke
     const b = VK.bump(S, k, 60, L.terrain ?? 'dirt'), a = VK.wheelAng(S, k, 72);
     ctx.save(); ctx.translate(0, b.dy);
-    if (L.rider) { ctx.save(); ctx.translate(-190, -90); T.layers.bean(ctx, { type: 'bean', who: L.rider, size: 300, legs: false, id: (L.id ?? 'ch') + 'drv', pose: L.riderPose ?? 'point', expr: L.riderExpr, hold: L.riderHold }, S.lt, { ...env, st: null }); ctx.restore(); }
+    if (L.rider) { ctx.save(); ctx.translate(-190, -90); T.layers.bean(ctx, { type: 'bean', who: L.rider, size: 300, legs: false, id: (L.id ?? 'ch') + 'drv', pose: L.riderPose ?? 'point', expr: L.riderExpr, hold: L.riderHold, look: L.riderLook }, S.lt, { ...env, st: null }); ctx.restore(); }
     T.outlined(ctx, (c) => { c.moveTo(-250, -80); c.lineTo(-250, -150); c.quadraticCurveTo(-200, -230, -100, -200); c.quadraticCurveTo(-90, -130, -100, -80); c.closePath(); }, col, { line: 8,
       shade: (c) => { c.strokeStyle = trim; c.lineWidth = 12; c.beginPath(); c.moveTo(-250, -112); c.quadraticCurveTo(-180, -120, -100, -116); c.stroke(); c.fillStyle = '#e8c860'; c.beginPath(); c.arc(-170, -160, 16, 0, TAU); c.fill(); } });
     ctx.restore();
@@ -225,7 +228,7 @@
     const b = VK.bump(S, k, 300, L.terrain ?? 'dirt');
     ctx.save(); ctx.translate(0, b.dy); ctx.rotate(b.pitch * 0.7);
     VK.wheel(ctx, -230, -66, 62, VK.wheelAng(S, k, 62), { spokes: 10, rim: '#b88a52', tyre: '#3a2a20', spokeColor: '#4a3020' }); // far wheels peek out
-    if (L.rider) { ctx.save(); ctx.translate(-30, -150); T.layers.bean(ctx, { type: 'bean', who: L.rider, size: 260, legs: false, id: (L.id ?? 'wg') + 'drv', pose: L.riderPose ?? 'hold', expr: L.riderExpr, hold: L.riderHold }, S.lt, { ...env, st: null }); ctx.restore(); }
+    if (L.rider) { ctx.save(); ctx.translate(-30, -150); T.layers.bean(ctx, { type: 'bean', who: L.rider, size: 260, legs: false, id: (L.id ?? 'wg') + 'drv', pose: L.riderPose ?? 'hold', expr: L.riderExpr, hold: L.riderHold, look: L.riderLook }, S.lt, { ...env, st: null }); ctx.restore(); }
     if (L.cover !== false) T.outlined(ctx, (c) => { c.moveTo(-330, -150); c.quadraticCurveTo(-340, -330, -250, -320); c.quadraticCurveTo(-160, -360, -70, -320); c.quadraticCurveTo(10, -330, -10, -150); c.closePath(); }, canvas, { line: 8,
       shade: (c) => { c.strokeStyle = sh(canvas, -0.3); c.lineWidth = 5; for (const x of [-250, -170, -90]) { c.beginPath(); c.moveTo(x, -330); c.quadraticCurveTo(x + 6, -240, x, -150); c.stroke(); } } });
     else if (L.load && T.drawProp) { ctx.save(); ctx.translate(-170, -200); T.drawProp(ctx, L.load, 150, S.lt, {}); ctx.restore(); }

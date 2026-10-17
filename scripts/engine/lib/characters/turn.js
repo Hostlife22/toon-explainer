@@ -1,5 +1,5 @@
-// turn.js — bean turnarounds. `view` (front | 3q | side | profile | back) and `facing` (right | left) are constants or
-// [{at, v}] timelines (layer time). A change turns the character through the views in between, one drawing each
+// turn.js — bean turnarounds. `view` (front | 3q | side | profile | 3q-back | back) and `facing` (right | left) are
+// constants or [{at, v}] timelines (layer time). A change turns the character through the views in between, one drawing each
 // (`turn.frames`, default 1 frame at 30 fps), squashed sideways and with an automatic hair smear; adjacent views get one
 // squashed drawing of the new view. A flip from `move` / `path` gets the same treatment through the front view.
 // T.turnState(L, lt) -> {view, facing (+1 right / -1 left), inBetween, sx, sy, changeAt, dir}. Pure function of (L, lt).
@@ -7,7 +7,7 @@
   'use strict';
   const T = window.TOON;
   T.VIEW_ALIAS = { profile: 'side' };
-  const ANG = { front: 0, '3q': 45, side: 90, back: 180 };
+  const ANG = { front: 0, '3q': 45, side: 90, '3q-back': 135, back: 180 };
   const FPS = 30, SQUASH = 0.9, STRETCH = 1.04;
   const normView = (v) => T.VIEW_ALIAS[v] || v;
   const faceNum = (v) => (v === 'left' || v === -1 ? -1 : 1);
@@ -25,9 +25,10 @@
 
   const angleOf = (view, f) => (view === 'front' ? 0 : view === 'back' ? 180 : ANG[view] * f);
   const wrap = (a) => { let x = ((a % 360) + 360) % 360; if (x > 180) x -= 360; return x; };
-  function viewOfAngle(a, fallbackFacing) {
+  // qb: the turn starts or ends in 3q-back, so it passes through it; other turns keep their side / back stops
+  function viewOfAngle(a, fallbackFacing, qb) {
     const x = wrap(a), m = Math.abs(x);
-    const view = m < 22.5 ? 'front' : m < 67.5 ? '3q' : m < 135 ? 'side' : 'back';
+    const view = m < 22.5 ? 'front' : m < 67.5 ? '3q' : qb ? (m <= 112.5 ? 'side' : m < 157.5 ? '3q-back' : 'back') : m < 135 ? 'side' : 'back';
     return { view, facing: x > 0 && m < 180 ? 1 : x < 0 ? -1 : fallbackFacing };
   }
 
@@ -48,9 +49,9 @@
     let d = wrap(a1 - a0);
     if (Math.abs(d) >= 180) d = 180 * cur.facing;
     if (prev.view === cur.view && prev.facing === cur.facing) return out;
-    const sign = d >= 0 ? 1 : -1, stops = [];
+    const sign = d >= 0 ? 1 : -1, stops = [], qb = prev.view === '3q-back' || cur.view === '3q-back';
     for (let k = 1; k * 45 < Math.abs(d) - 1e-6; k++) {
-      const s = viewOfAngle(a0 + sign * k * 45, cur.facing);
+      const s = viewOfAngle(a0 + sign * k * 45, cur.facing, qb);
       const last = stops[stops.length - 1] || prev;
       if ((s.view === last.view && s.facing === last.facing) || (s.view === cur.view && s.facing === cur.facing)) continue;
       if (s.view === 'back' && (last.view === 'back' || cur.view === 'back')) continue;
@@ -67,8 +68,8 @@
     return out;
   };
 
-  // In-between for a flip that comes from the layer's motion (move flip, path facing): returns a turnState-like object
-  // when the flip changed within the last `frames` frames (shot time), else null. env.lt = shot time.
+  // In-between for a flip that comes from the layer's motion (move flip, path facing; from 3q-back through the back view):
+  // a turnState-like object when the flip changed within the last `frames` frames (shot time), else null. env.lt = shot time.
   T.flipTurn = (L, env, view) => {
     if (!env || !env.st || !(L.move || T.travelPath(L)) || L.turn === false || view === 'front' || view === 'back') return null;
     const cfg = typeof L.turn === 'object' && L.turn ? L.turn : {};
@@ -77,7 +78,7 @@
     const per = frames + 1, now = env.st.flip, sq = cfg.squash !== false;
     for (let k = 1; k <= per; k++) {
       const st = T.layerState(L, env.lt - k / FPS);
-      if (st && st.flip !== now) return { view: k <= per - 1 ? 'front' : view, inBetween: true, sx: sq ? SQUASH : 1, sy: sq ? STRETCH : 1, dir: now };
+      if (st && st.flip !== now) return { view: k <= per - 1 ? (view === '3q-back' ? 'back' : 'front') : view, inBetween: true, sx: sq ? SQUASH : 1, sy: sq ? STRETCH : 1, dir: now };
     }
     return null;
   };

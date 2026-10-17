@@ -40,7 +40,7 @@
     T.outlined(ctx, (c) => T.rrect(c, ex, -292, 110, 236, 10), red, { line: 8 });
     T.outlined(ctx, (c) => T.rrect(c, ex - 10, -306, 130, 22, 8), col, { line: 7 });
     T.outlined(ctx, (c) => T.rrect(c, ex + 22, -262, 62, 58, 6), '#f2e2b0', { line: 5, paint: false });
-    if (L.rider) { ctx.save(); ctx.translate(ex + 56, -150); T.layers.bean(ctx, { type: 'bean', who: L.rider, size: 170, legs: false, id: (L.id ?? 'loco') + 'drv' }, S.lt, { ...env, st: null }); ctx.restore(); T.outlined(ctx, (c) => T.rrect(c, ex, -204, 110, 30, 4), red, { line: 6 }); }
+    if (L.rider) { ctx.save(); ctx.translate(ex + 56, -150); T.layers.bean(ctx, { type: 'bean', who: L.rider, size: 170, legs: false, id: (L.id ?? 'loco') + 'drv', look: L.riderLook }, S.lt, { ...env, st: null }); ctx.restore(); T.outlined(ctx, (c) => T.rrect(c, ex, -204, 110, 30, 4), red, { line: 6 }); }
     T.outlined(ctx, (c) => T.rrect(c, ex + 100, -222, 250, 116, 52), col, { line: 8, shade: (c) => { c.fillStyle = sh(col, 0.25); c.fillRect(ex + 100, -212, 250, 18); c.strokeStyle = '#c9a24a'; c.lineWidth = 6; for (const bx of [ex + 170, ex + 250]) { c.beginPath(); c.moveTo(bx, -222); c.lineTo(bx, -106); c.stroke(); } } });
     T.outlined(ctx, (c) => T.rrect(c, ex + 320, -236, 60, 136, 14), sh(col, -0.15), { line: 7 });
     T.outlined(ctx, (c) => { c.moveTo(ex + 326, -236); c.lineTo(ex + 316, -306); c.lineTo(ex + 378, -306); c.lineTo(ex + 366, -236); c.closePath(); }, col, { line: 7 });

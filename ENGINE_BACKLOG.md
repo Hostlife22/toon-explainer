@@ -22,6 +22,9 @@ k68 and k89 changed, all as intended; k48's panel was moved up behind the now-oc
 - Creatures and vehicles: the reaper holds props beside the body; cars draw `front`, `3q`, `back`, `3q-back` views and turn
   through them (view / facing timelines, path reversals); rider objects take `expr`, `lookAt`, `takes`, `talk` and more.
 - `scripts/spec.py` split (`spec_vocab.py`, `spec_maps.py`) to stay under 800 lines.
+- Vehicles and riders: `dump-truck` turns through `front` / `3q` / `3q-back` / `back`; the 3/4 car views are a real
+  projection (perspective faces, elliptical wheels on both sides, glass, lights, painted shading); beans take
+  `view: "3q-back"` (also riders in 3q-back); rider anchors follow the suspension; vehicles take `riderLook`.
 
 ## Remaining gaps
 
@@ -29,9 +32,9 @@ k68 and k89 changed, all as intended; k48's panel was moved up behind the now-oc
 - Any `fx` layer is slotted above `front` set parts, so a local effect placed behind a bench (dust at the judge's feet)
   draws over the bench.
 - Only the last background contributes `front` parts, and only when it is a `set`.
-- `dump-truck` has no turn views; the 3/4 car views are a stylized extrusion, and the bean rig has no back three-quarter view
-  (riders in `3q-back` use the back view).
-- A rider's `lookAt` aims from its seat but ignores the suspension bounce; vehicle riders don't take `riderLook`.
+- Other road vehicles without turn views: `tank` (treads and sponsons would need their own front / back drawings), and the
+  animal-drawn or pushed `cart`, `chariot`, `wagon`, `bicycle` and `cannon` (they keep the squash on a reversal). There is
+  no bus, van or lorry kind besides `dump-truck`.
 - In a 3/4 view the back sweat bead of a `sick` face can hide under the hair.
 - An `ortho` map layer with a modifier (blur, material) no longer applies it to its starfield.
 - `lib/acting/gags.js` is over the 800-line limit (836 lines).

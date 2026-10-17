@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Engine gaps: vehicles-riders
+
+- Fix: the three-quarter car views (`view: "3q"` / `"3q-back"`) are a real projection instead of a stylized extrusion: the car turned 36° toward (away from) the viewer, seen from slightly above with a mild perspective. The side drawing sits on the near side plane (wheels become ellipses, lines run down toward the near end), bonnet, roof and boot tops are lit, the front (rear) face is in shade with its grille, lamps, tail lights, spare and bumper on the body's own end, the four tyres are cylinders (the far pair peeks out under the body) and riders sit upright on the centre line behind the near side, seen through its glass. Painted and classic looks; side, front and back views are unchanged.
+- Fix: a rider's `lookAt` / `takes` aim from its head as drawn: the anchor follows the suspension bounce and pitch (side and 3q), the roll (front / back) and the classic `car1910` `drive` bob.
+- `dump-truck` turns like the cars: `view` (`front`, `3q`, `side`, `3q-back`, `back`) and `facing` timelines, `turn`, and path reversals. Front: cab, grille, lamps, bumper, the tipped bed rising behind the cab; 3q: the projected views with the bed tipping in them; back: tailgate, tail lights, plate, riders over the tailgate who slide back and land behind the truck. Without `view` / `facing` / a reversing path the classic drawing is unchanged in both looks.
+- Beans take `view: "3q-back"` (rear three-quarter): body, outfit, hair and headwear as in the back view, the arms as in 3/4, and the cheek, jaw and ear of the face side past the hairline. Usable for standing characters (constant, timeline, `look.view`); turns to or from it pass through it; riders of a car in `3q-back` use it (they used the back view).
+- Vehicles take `riderLook` (look fields over the riders' cast looks, as on creatures; a rider object's own `look` wins field by field; `swap` entries can change it): cars, `car1910`, `dump-truck`, `bicycle`, `rowboat`, chariot, wagon, locomotive, plane and balloon. `riderLook` is validated on vehicles and creatures.
+- `examples/creatures_vehicles_v2` gains `c14_truck_turns` and `c15_three_quarter_riders`; tests in `tests/test_vehicle_gaps.py`.
+
 ### Engine backlog: characters
 
 - Fix: poses `flail` / `flail-b` stand upright (panicked arms thrown up at odd angles) instead of rendering the character upside down; the old head-over-heels flip is the new pose pair `upended` / `upended-b` (`story_banana_caper` uses it for its slips).
