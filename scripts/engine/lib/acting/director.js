@@ -198,6 +198,7 @@
   T.layers.bean = (ctx, Ly, lt, env) => {
     const { L, hop } = T.directBean(Ly, lt, env);
     if (hop && env.st) { const s = Math.abs(env.st.s * env.st.sy) || 1; ctx.translate(0, -hop / s); }
+    else if (hop && Ly.__px) ctx.translate(0, -hop / Ly.__px); // a nested rider: px per seat unit from its vehicle
     base(ctx, L, lt, env);
     if (T.RIG_PROBE && Ly.id && T.RIG_PROBE[Ly.id]) T.RIG_PROBE[Ly.id].hop = hop;
   };

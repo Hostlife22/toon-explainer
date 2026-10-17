@@ -81,6 +81,7 @@
     for (let i = 0; i < dir.length; i++) { if (dir[i]) last = dir[i]; else dir[i] = last; }
     const turns = [];
     for (let i = 1; i < dir.length; i++) if (dir[i] !== dir[i - 1]) turns.push((s[i] + s[i - 1]) / 2);
+    if (S.loop && dir.length > 1 && dir[0] !== dir[dir.length - 1]) turns.push(0); // a loop that reverses across its seam
     tb = { pts, s, dir, turns, total: s[s.length - 1] };
     tables.set(S, tb);
     return tb;
@@ -131,10 +132,12 @@
     const speed = Math.abs(vel), bank = S.bank ? Math.tanh((speed * speed * curv) / 900) * S.bank * T.DEG * sg : 0;
     let turn = 1, turnOff = null, turnDy = 1;
     for (const tp of tb.turns) {
-      turn = Math.min(turn, Math.abs(dLap - tp) / TURN_PX);
-      if (turnOff == null || Math.abs(dLap - tp) < Math.abs(turnOff)) {
+      let off = dLap - tp; // a loop wraps: the nearest turn may sit across the lap seam
+      if (S.loop) off -= Math.round(off / tb.total) * tb.total;
+      turn = Math.min(turn, Math.abs(off) / TURN_PX);
+      if (turnOff == null || Math.abs(off) < Math.abs(turnOff)) {
         const a = locate(tb, tp - 6), b = locate(tb, tp + 6);
-        turnOff = (dLap - tp) * sg; turnDy = (b.y - a.y) * sg < 0 ? -1 : 1; // +1: the turn swings toward the camera
+        turnOff = off * sg; turnDy = (b.y - a.y) * sg < 0 ? -1 : 1; // +1: the turn swings toward the camera
       }
     }
     // turnOff: signed arc px from the nearest change of direction (negative before it; null without one); turnDy: +1 when the path heads
@@ -198,7 +201,7 @@
     if (S.orient) {
       let a = !S.face ? p.tang : p.dir < 0 ? wrapA(p.ang - Math.PI) : p.ang;
       if (typeof S.orient === 'number') a = T.clamp(a, -S.orient * T.DEG, S.orient * T.DEG);
-      st.r += a;
+      st.r += a; st.orientR = a;
     }
     if (p.bank) st.r += p.bank * (T.PATH_LEAN[L.type] ?? 0.35) * (S.face ? p.dir : 1);
     st.path = p;

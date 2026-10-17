@@ -110,9 +110,10 @@
       if (p.min >= 0 && T.vehicleMotion(L, te).speed < p.min) continue;
       const rr = T.rng(T.hash(seed + ':' + i)), r = rr();
       if (o.keep && r > o.keep(te)) continue;
-      const w = worldPt(L, te, o.xAt ? lx * o.xAt(te) : lx, ly); // xAt: the emitter's x factor at its emission time (car views)
+      // xAt / sgAt: the emitter's x factor and mirror at its own emission time (car views and facing turns)
+      const w = worldPt(L, te, lx * (o.xAt ? o.xAt(te) : 1) * (o.sgAt ? o.sgAt(te) : 1), ly);
       if (!w) continue;
-      out.push({ i, te, age, f: age / p.life, bx: w[0], by: w[1], s: Math.abs(w[2].s), r, rr, scale: o.scaleAt ? o.scaleAt(te) : o.scale ?? 1 });
+      out.push({ i, te, age, f: age / p.life, bx: w[0], by: w[1], s: Math.abs(w[2].s), r, rr, scale: o.scaleAt ? o.scaleAt(te) : o.scale ?? 1, sg: o.sgAt ? o.sgAt(te) : 1 });
     }
     return out;
   };
@@ -121,7 +122,7 @@
     const p = { ...PUFF[kind], ...o }, a0 = ctx.globalAlpha, wind = o.wind ?? -30;
     for (const q of VK.puffList(L, slt, kind, lx, ly, o)) {
       const { age, f, s: sc, rr: r } = q;
-      const x = q.bx + (wind * age + (r() - 0.5) * (20 + 50 * f)) * sc, y = q.by - (p.rise * (1 - (1 - f) * (1 - f)) + (r() - 0.5) * 10) * sc;
+      const x = q.bx + (wind * q.sg * age + (r() - 0.5) * (20 + 50 * f)) * sc, y = q.by - (p.rise * (1 - (1 - f) * (1 - f)) + (r() - 0.5) * 10) * sc;
       const rad = p.size * (1 + f * p.grow) * (0.8 + r() * 0.4) * sc * q.scale;
       ctx.globalAlpha = a0 * p.alpha * (1 - f) * (f < 0.1 ? f / 0.1 : 1);
       if (p.flat) T.outlined(ctx, (k) => k.ellipse(x, y, rad * 1.8, rad * 0.35, 0, 0, TAU), p.color, { line: 0, paint: false });
@@ -155,12 +156,12 @@
   VK.FN = {}; // kind -> v2 draw(ctx, L, S, env)
   VK.SIZE = {};
   VK.LEGACY_V2 = new Set(['tank', 'train', 'biplane', 'submarine', 'car1910']);
-  const NEW_FIELDS = ['path', 'terrain', 'lights', 'dust', 'exhaust', 'wake', 'contrail', 'spray', 'animal', 'team', 'view', 'facing'];
+  const NEW_FIELDS = ['path', 'terrain', 'lights', 'dust', 'exhaust', 'wake', 'contrail', 'spray', 'animal', 'team'];
   T.vehicleRig = (L, painted) => {
     if (!VK.FN[L.kind]) return 'legacy';
     if (!VK.LEGACY_V2.has(L.kind)) return 'v2';
     if (L.rig === 'classic') return 'legacy';
-    if (L.rig === 'v2' || painted || NEW_FIELDS.some((f) => L[f] != null)) return 'v2';
+    if (L.rig === 'v2' || painted || NEW_FIELDS.some((f) => L[f] != null) || (VK.viewExplicit && VK.viewExplicit(L))) return 'v2';
     return 'legacy';
   };
   // S: {size, lt (layer), slt (shot), dist (px travelled, forward), speed (px/s), driving, engine, path, bank, px (layer scale), seed}
@@ -182,16 +183,22 @@
   T.layers.vehicle = (ctx, L, lt, env) => {
     if (T.vehicleRig(L, !!T.PAINT) !== 'v2') return legacyLayer(ctx, L, lt, env);
     const S = VK.state(L, lt, env, L.size ?? VK.SIZE[L.kind] ?? 480), vs = VK.viewOf ? VK.viewOf(L, lt, S.slt) : null; // car views (vehicles-views.js)
-    const sg = (!L.path && L.dir === -1 ? -1 : 1) * (vs ? vs.facing : 1);
-    S.sg = sg; // mirror of the drawing (riders aim lookAt through it)
+    const base = !L.path && L.dir === -1 ? -1 : 1, sg = base * (vs ? vs.facing : 1);
+    S.sg = sg; // mirror of the drawing
     if (vs) S.view = vs.view;
+    // an authored facing turn mirrors each puff by the facing at its own emission time, so smoke already out stays put
+    const sgAt = vs && VK.viewExplicit && VK.viewExplicit(L) ? (te) => { const v = VK.viewOf(L, te - (L.at ?? 0), te); return v ? v.facing : 1; } : null;
     const tr = VK.TRAILS[L.kind] && env && env.st ? VK.TRAILS[L.kind](L, S) : null;
     if (tr && tr.length) VK.inWorld(ctx, env, (c) => { // trails stay where they were emitted: drawn in the world, behind the body
       for (const [kind, lx, ly, o] of tr) {
         if (kind === 'contrail') VK.contrail(c, L, S.slt, lx * sg, ly, o);
+        else if (sgAt) VK.puffs(c, L, S.slt, kind, lx * base, ly, { wind: -30 * base, ...o, sgAt });
         else VK.puffs(c, L, S.slt, kind, lx * sg, ly, { wind: -30 * sg, ...o });
       }
     });
+    // path orient tilts the side drawing along the road; a car seen from the front, back or 3q stands up instead
+    const orientR = vs && vs.view !== 'side' && env && env.st && env.st.orientR ? env.st.orientR * (vs.view === 'front' || vs.view === 'back' ? 1 : 0.5) : 0;
+    if (orientR) ctx.rotate(-orientR * (env.st.flip || 1));
     if (sg < 0) ctx.scale(-1, 1);
     if (vs && (vs.sx !== 1 || vs.sy !== 1)) ctx.scale(vs.sx, vs.sy);
     VK.FN[L.kind](ctx, L, S, env || {});

@@ -185,7 +185,7 @@ def test_rider_objects_take_their_own_expr_and_look_at_a_target():
       return out;
     }"""
     out = _page(spec, lambda p: p.evaluate(js))
-    car = out["carr0"]
+    car = next(v for k, v in out.items() if k.startswith("carr0:"))
     assert car["start"] == 1 and car["end"] == -1, f"the driver turns from the road ahead to the ghost behind: {car}"
     assert car["expr"][1]["v"] == "shock"
     anon = [v for k, v in out.items() if k.startswith("vehr0:")]

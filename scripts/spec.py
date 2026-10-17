@@ -16,7 +16,7 @@ from pathlib import Path
 
 from density import lint  # noqa: F401  (re-exported: non-fatal density warnings, printed by the CLI)
 import props_fx  # Props & FX 2.0 field checks (particles, impact language, trail, paper)
-from motion_check import check_motion, check_riders
+from motion_check import check_motion, check_riders, rider_acting
 from places_check import check_depth, check_set_bg, check_set_layer
 import spec_characters as SC
 import camera_check as CC
@@ -325,6 +325,8 @@ def _check_director(layer: dict, where: str, ids: set, errors: list[str]) -> Non
         found: list[str] = []
         CC.check_layer(state, where, ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, found)
         errors.extend(e for e in found if not (e in seen or seen.add(e)))
+    for i, acting in rider_acting(layer):  # vehicle rider objects act like beans
+        CC.check_layer(acting, f"{where}.riders[{i}]", ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, errors)
 
 
 def _fx_refs(layer: dict) -> list[str]:

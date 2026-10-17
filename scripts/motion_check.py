@@ -132,8 +132,20 @@ def _check_vehicle_views(layer: dict, where: str, errors: list[str]) -> None:
             errors.append(f"{where}: turn.{key} must be true or false")
 
 
+def _names_ok(value, names: set) -> bool:
+    """A name in `names`, or a nonempty [{at (number), v: name}] timeline."""
+    if isinstance(value, list):
+        return bool(value) and all(isinstance(k, dict) and _num(k.get("at", 0)) and _name_in(k.get("v"), names) for k in value)
+    return _name_in(value, names)
+
+
+def _windows_ok(value) -> bool:
+    return isinstance(value, list) and all(_pair(w) and w[0] <= w[1] for w in value)
+
+
 def check_riders(layer: dict, where: str, errors: list[str], cast: dict, expr_names: set, prop_names: set) -> None:
-    """Vehicle `riders`: cast ids or rider objects {who, expr, lookAt, pose, hold, talk, takes, ...}."""
+    """Vehicle `riders`: cast ids or rider objects {who, expr, lookAt, pose, hold, talk, takes, ...}; lookAt and takes
+    are checked against the shot's layer ids by spec._check_director (camera_check.check_layer)."""
     if layer.get("type") != "vehicle" or layer.get("riders") is None:
         return
     riders = layer["riders"]
@@ -142,22 +154,36 @@ def check_riders(layer: dict, where: str, errors: list[str], cast: dict, expr_na
         return
     for i, r in enumerate(riders):
         at = f"{where}.riders[{i}]"
+        who = r.get("who") if isinstance(r, dict) else r
         if isinstance(r, dict):
-            who = r.get("who")
-            unknown = sorted(set(r) - RIDER_FIELDS)
+            unknown = sorted(str(k) for k in set(r) - RIDER_FIELDS)
             if unknown:
                 errors.append(f"{at}: unknown rider fields {unknown} (known: {sorted(RIDER_FIELDS)})")
-            if r.get("expr") is not None:
-                values = [k.get("v") for k in r["expr"] if isinstance(k, dict)] if isinstance(r["expr"], list) else [r["expr"]]
-                bad = [v for v in values if v not in expr_names]
-                if bad:
-                    errors.append(f"{at}: expr {bad[0]!r} not in the expression set")
+            if r.get("expr") is not None and not _names_ok(r["expr"], expr_names):
+                errors.append(f"{at}: expr must be an expression name or a [{{at, v}}] timeline of names")
             for hk in ("hold", "holdL"):
-                if r.get(hk) is not None and r[hk] not in prop_names:
+                if r.get(hk) is not None and not _name_in(r[hk], prop_names):
                     errors.append(f"{at}: {hk} {r[hk]!r} is not a prop kind")
+            if r.get("talk") is not None and not _windows_ok(r["talk"]):
+                errors.append(f"{at}: talk must be windows [[start, end], ...]")
             if r.get("scale") is not None and not (_num(r["scale"]) and r["scale"] > 0):
                 errors.append(f"{at}: scale must be a number > 0")
-        else:
-            who = r
+            if r.get("gaze") is not None and not _num(r["gaze"]):
+                errors.append(f"{at}: gaze must be a number")
+            if r.get("look") is not None and not isinstance(r["look"], dict):
+                errors.append(f"{at}: look must be an object of cast look fields")
+            if r.get("pose") is not None and not (isinstance(r["pose"], str) or isinstance(r["pose"], list)):
+                errors.append(f"{at}: pose must be a pose name or a [{{at, v}}] timeline")
+        elif not isinstance(r, str):
+            errors.append(f"{at}: a rider is a cast id or a {{who, ...}} object")
+            continue
         if not isinstance(who, str) or (cast and who not in cast):
             errors.append(f"{at}: rider who {who!r} is not defined in spec.cast")
+
+
+def rider_acting(layer: dict) -> list[tuple[int, dict]]:
+    """(index, {lookAt, takes}) of the rider objects that act, for the shot-level lookAt / takes checks."""
+    if layer.get("type") != "vehicle" or not isinstance(layer.get("riders"), list):
+        return []
+    return [(i, {k: r[k] for k in ("lookAt", "takes") if k in r}) for i, r in enumerate(layer["riders"])
+            if isinstance(r, dict) and ("lookAt" in r or "takes" in r)]
