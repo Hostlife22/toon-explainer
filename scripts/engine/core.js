@@ -320,6 +320,7 @@
   // ramp to px blur, `on` ramps sharp; the background gets `bg` px (default px unless on === "bg").
   // Lettering and screen furniture stay sharp during rack focus unless they opt in with focusable: true.
   const FOCUS_EXEMPT = new Set(['label', 'title', 'caption', 'date', 'era', 'counter', 'timer', 'doc', 'hud', 'cursor', 'fx']);
+  T.focusBlur = (shot, lt) => focusBlur(shot, lt); // (shot, lt) -> null | (id or '@bg') -> blur px
   function focusBlur(shot, lt) {
     const keys = T.focusKeysOf ? T.focusKeysOf(shot) : shot.focus;
     if (!keys || !keys.length) return null;
@@ -418,7 +419,7 @@
     for (const hook of T.AFTER_BG) hook(ctx, shot, lt, shotEnv, cam); // backdrops that layers paint behind every layer (globe stars)
     if (T.gradeBg && !env.noPost) T.gradeBg(ctx, shot, lt, shotEnv); // panel cells with grade:false stay ungraded
     // modules may add or hide layers (over-the-shoulder framing) and step characters on twos (camera-grammar.js)
-    const layers = T.shotLayers ? T.shotLayers(shot, lt) : shot.layers || [];
+    const layers = T.shotLayers ? T.shotLayers(shot, lt, env) : shot.layers || [];
     let streaked = !cam.streak; // whip pan motion blur goes under the lettering and screen furniture
     for (const L0 of layers) {
       let L = T.effLayer(L0, lt);

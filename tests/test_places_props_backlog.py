@@ -302,3 +302,40 @@ def test_obj_contact_true_uses_the_wider_obj_shadow():
     one, wide, true = (_frames(_rock(contact=c), [1.0])[0] for c in ({"w": 1}, {"w": 1.3}, True))
     assert _diff(wide, true, (0, 0, 1, 1)) == 0, "contact: true uses the obj default width 1.3 (CONTACT_W)"
     assert _diff(one, true, (0, 0, 1, 1)) > 0
+
+
+# ---------- integration fixes: the front pass inside the rest of the shot pipeline ----------
+def test_screen_fx_stay_above_front_parts():
+    blackout = {"type": "fx", "kind": "blackout", "at": 0, "fade": 0.01}
+    img = _frames(_court([JUDGE, blackout]), [1.0])[0]
+    assert _region(img, *DESK_BOX).mean() < 25, "a blackout listed after the actors must cover the bench too"
+
+
+def test_front_parts_render_in_a_pinned_sub_shot_replay():
+    def film(layers):
+        view = {"id": "view", "dur": 2, "bg": {"kind": "flat", "color": "#202020"},
+                "layers": [{"type": "label", "text": "X", "x": 0.02, "y": 0.02, "size": 10, "alpha": 0}],
+                "pinned": [{"type": "panel", "hud": True, "layout": "grid", "cols": 1, "gutterColor": "none", "cells": [{"shot": "court", "t": 1}]}]}
+        return _spec([{"id": "court", "dur": 2, "bg": COURT, "layers": layers}, view])
+    empty, judge = (_frames(film(layers), [3.0])[0] for layers in ([], [JUDGE]))
+    assert _diff(empty, judge, (0.44, 0.67, 0.56, 0.73)) < 1.5, "a courtroom replayed in a pinned panel keeps its bench"
+
+
+def _table_bg(front):
+    return {"kind": "set", "wall": "plaster", "floor": "wood", "parts": [{"kind": "table", "x": 0.5, "y": 0.84, "w": 700, "front": front}]}
+
+
+@pytest.mark.parametrize("extra", [{"grade": {"preset": "mono-red", "target": "bg"}},
+                                   {"focus": [{"at": 0, "on": "j", "px": 10, "bg": 14, "dur": 0.01}]}], ids=["grade-bg", "rack-focus"])
+def test_front_parts_get_the_background_grade_and_blur(extra):
+    shots = [{"id": "s", "dur": 2, "bg": _table_bg(front), "layers": [{**JUDGE, "id": "j", "x": 0.15}], **extra} for front in (False, True)]
+    back, front = (_frames(_spec([sh]), [1.0])[0] for sh in shots)
+    assert _diff(back, front, (0.35, 0.66, 0.65, 0.84)) < 2, "a front table looks like the same table drawn in the background"
+
+
+def test_slotting_uses_the_time_the_layer_is_drawn_at_on_twos():
+    walker = {**JUDGE, "move": [{"at": 0, "dur": 1, "to": [0.5, 0.97], "ease": "linear"}]}
+    spec = _court([walker])
+    spec["shots"][0]["onTwos"] = True
+    drawn, sampled = _frames(spec, [0.25, 0.27])
+    assert _diff(drawn, sampled, DESK_BOX) < 1.5, "on twos the judge is still drawn behind the bench at 0.27 s"
