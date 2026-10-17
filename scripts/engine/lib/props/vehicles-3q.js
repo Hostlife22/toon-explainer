@@ -96,14 +96,17 @@
     ctx.restore();
     // near side, foreshortened; riders half the width in, behind the glass
     ctx.save(); ctx.scale(g.cx, 1);
-    VK.carSide(ctx, L, { ...S, noShadow: true, riderSx: g.rk / g.cx, riderK: g.rk, riderOff: [g.offX, g.offY], noLights: !fwd }, env, o, k);
+    // 3q-back: the rear face replaces the side's tail end (lights, bumper end, spare) and the riders are seen from behind
+    VK.carSide(ctx, L, { ...S, noShadow: true, riderSx: g.rk / g.cx, riderK: g.rk, riderOff: [g.offX, g.offY], noLights: !fwd, noTail: !fwd,
+      ...(fwd ? {} : { riderView: 'back' }) }, env, o, k);
     ctx.restore();
     // glass over the riders: tint, a highlight, pillars in the cabin colour
     ctx.save(); ctx.translate(0, lift);
     for (const p of glass) {
       ctx.save(); ctx.globalAlpha *= 0.24; T.outlined(ctx, poly(p.pts), f.cabin.glass ?? '#a8c8d8', { line: 0, paint: false }); ctx.restore();
-      ctx.strokeStyle = p.fill; ctx.lineWidth = 6; ctx.beginPath(); poly(p.pts)(ctx); ctx.stroke();
-      ctx.strokeStyle = P.ink; ctx.lineWidth = 3; ctx.beginPath(); poly(p.pts)(ctx); ctx.stroke();
+      const [a, b] = [p.near[0], p.near[p.near.length - 1]]; // a highlight across the pane
+      ctx.save(); ctx.globalAlpha *= 0.45; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.beginPath();
+      ctx.moveTo(T.lerp(a[0], b[0], 0.3) + g.dx * 0.25, T.lerp(a[1], b[1], 0.3) + g.dy * 0.25); ctx.lineTo(T.lerp(a[0], b[0], 0.6) + g.dx * 0.55, T.lerp(a[1], b[1], 0.6) + g.dy * 0.55); ctx.stroke(); ctx.restore();
     }
     ctx.restore();
     ctx.restore();

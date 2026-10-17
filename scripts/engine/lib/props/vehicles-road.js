@@ -88,7 +88,7 @@
         { pts: [[-190, -172], [-176, -260], [40, -262], [70, -172]], fill: 'col2', glass: true }] },
     body(ctx2, L2, S2, env2) {
       const col = L2.color ?? '#6a1e24', roof = L2.color2 ?? '#1e1a1a';
-      T.outlined(ctx2, (c) => c.arc(-214, -120, 40, 0, TAU), '#262224', { line: 7 }); // spare tyre
+      if (!S2.noTail) T.outlined(ctx2, (c) => c.arc(-214, -120, 40, 0, TAU), '#262224', { line: 7 }); // spare tyre (the rear face shows it in 3q-back)
       T.outlined(ctx2, poly([[-190, -170], [-176, -260], [40, -262], [70, -170]]), roof, { line: 8 });
       for (const [x0, x1] of [[-166, -70], [-56, 46]]) T.outlined(ctx2, poly([[x0, -176], [x0 + 6, -244], [x1 - 4, -244], [x1, -176]]), '#a8c8d8', { line: 5, paint: false });
       riders(ctx2, L2, S2, env2, [[0, -130], [-110, -130]], 200);
@@ -119,9 +119,9 @@
       T.outlined(ctx2, blob([[-232, -60], [-236, -120], [-210, -168], [-150, -156], [100, -158], [200, -140], [232, -110], [228, -56], [150, -40], [-150, -40]]), col, { line: 8,
         shade: (c) => { c.fillStyle = roof; c.beginPath(); c.moveTo(-220, -110); c.quadraticCurveTo(-60, -126, 140, -112); c.lineTo(140, -100); c.quadraticCurveTo(-60, -112, -220, -98); c.closePath(); c.fill(); } });
       T.outlined(ctx2, (c) => T.rrect(c, 200, -72, 44, 22, 10), '#e8ecee', { line: 5 }); // bumper
-      T.outlined(ctx2, (c) => T.rrect(c, -246, -72, 40, 22, 10), '#e8ecee', { line: 5 });
+      if (!S2.noTail) T.outlined(ctx2, (c) => T.rrect(c, -246, -72, 40, 22, 10), '#e8ecee', { line: 5 });
       T.outlined(ctx2, (c) => c.arc(222, -112, 13, 0, TAU), '#fff6c8', { line: 5 });
-      T.outlined(ctx2, (c) => c.ellipse(-226, -130, 8, 14, 0, 0, TAU), '#e8403a', { line: 4 }); // tail light
+      if (!S2.noTail) T.outlined(ctx2, (c) => c.ellipse(-226, -130, 8, 14, 0, 0, TAU), '#e8403a', { line: 4 }); // tail light
       ctx2.strokeStyle = '#e8ecee'; ctx2.lineWidth = 6; ctx2.beginPath(); ctx2.moveTo(-190, -84); ctx2.quadraticCurveTo(0, -94, 190, -86); ctx2.stroke();
     },
     front(ctx2, x) { T.outlined(ctx2, (c) => { c.moveTo(x - 52, -42); c.quadraticCurveTo(x, -102, x + 52, -42); c.closePath(); }, '#1e1c1e', { line: 0, paint: false }); },
@@ -145,7 +145,7 @@
       T.outlined(ctx2, blob([[-214, -56], [-222, -150], [-140, -164], [80, -166], [200, -132], [222, -84], [214, -46], [-150, -40]]), col, { line: 8,
         shade: (c) => { c.strokeStyle = sh(col, -0.35); c.lineWidth = 4; c.beginPath(); c.moveTo(-40, -150); c.lineTo(-40, -60); c.moveTo(-200, -110); c.quadraticCurveTo(0, -120, 200, -104); c.stroke(); } });
       T.outlined(ctx2, (c) => { c.moveTo(196, -124); c.lineTo(224, -110); c.lineTo(196, -102); c.closePath(); }, '#f6fbff', { line: 4 });
-      T.outlined(ctx2, (c) => T.rrect(c, -224, -138, 16, 24, 6), '#e8303a', { line: 4 });
+      if (!S2.noTail) T.outlined(ctx2, (c) => T.rrect(c, -224, -138, 16, 24, 6), '#e8303a', { line: 4 });
       for (const x of [-145, 145]) { ctx2.fillStyle = '#141416'; ctx2.beginPath(); ctx2.arc(x, -46, 58, Math.PI, 0); ctx2.lineTo(x + 58, -40); ctx2.lineTo(x - 58, -40); ctx2.fill(); }
     },
   }), 440, trailsCar([-214, -46, 440]));

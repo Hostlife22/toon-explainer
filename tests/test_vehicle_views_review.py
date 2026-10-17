@@ -188,3 +188,18 @@ def test_bad_rider_fields_are_reported_without_crashing(rider, needle):
     spec = film([{"type": "vehicle", "kind": "car1950", "x": 0.5, "y": 0.9, "riders": [rider]}])
     errors = validate(spec)
     assert any(needle in e for e in errors), errors
+
+
+def test_rear_three_quarter_shows_one_tail_end_and_riders_from_behind():
+    js = """(view) => { const T = TOON, base = T.layers.bean, out = T.outlined; const views = [], tails = [0];
+      T.layers.bean = (ctx, Ly, lt, env) => { views.push(Ly.view || '3q'); return base(ctx, Ly, lt, env); };
+      T.outlined = (ctx, fn, fill, o) => { if (fill === '#e8403a') tails[0]++; return out(ctx, fn, fill, o); };
+      const c = document.createElement('canvas'); c.width = 800; c.height = 500; const ctx = c.getContext('2d'); ctx.translate(400, 450);
+      const F = T.film, env = {spec: F.spec, cast: F.spec.cast, style: {}, shot: F.timeline.shots[0], seed: 3, dpr: 1, lt: 1,
+                               st: {x: 400, y: 450, s: 1, flip: 1, sx: 1, sy: 1, r: 0, a: 1}};
+      T.layers.vehicle(ctx, {type: 'vehicle', kind: 'car1950', size: 600, riders: ['driver', 'boss'], view}, 1, env);
+      T.layers.bean = base; T.outlined = out; return {views, tails: tails[0]}; }"""
+    spec = film([{"type": "vehicle", "kind": "car1950", "x": 0.5, "y": 0.9}])
+    back, fwd = _page(spec, lambda p: [p.evaluate(js, "3q-back"), p.evaluate(js, "3q")])
+    assert set(back["views"]) == {"back"} and set(fwd["views"]) != {"back"}
+    assert back["tails"] == 2, "the rear face's two tail lights, not the side drawing's as well"
