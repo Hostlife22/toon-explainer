@@ -210,3 +210,75 @@ def test_vehicle_rider_look_validates_merges_and_swaps():
     pairs = _page(film([{**layers[0], "x": 0.5, "y": 0.8}]), lambda p: [[p.evaluate(DRAW, L), p.evaluate(DRAW, {**L, "riderLook": {"age": "child"}})] for L in layers])
     for L, (x, y) in zip(layers, pairs):
         assert x != y, f"{L['kind']}: riderLook reaches the rider"
+
+
+# ---------- review follow-ups ----------
+# the drawn head of every anchored rider (the bean's own head transform: build / age) minus its anchor, per frame
+HEAD = """(times) => { const T = TOON, base = T.layers.bean, got = {};
+  T.layers.bean = (ctx, Ly, lt, env) => { if (Ly.__anchor) { const own = {...(env.cast[Ly.who] || {}), ...(Ly.look || {})};
+      const B = T.beanBuild({...((T.OUTFIT_DEFAULTS || {})[own.outfit] || {}), ...own}), k = Ly.size / 600, m = ctx.getTransform(), s = ctx.canvas.width / 1920;
+      const y = (B.neckY - 150 * B.head) * k;
+      got[Ly.id] = {draw: [(m.c * y + m.e) / s, (m.d * y + m.f) / s], anchor: Ly.__anchor(window.__t)}; } return base(ctx, Ly, lt, env); };
+  const out = [];
+  for (const t of times) { window.__t = t; window.renderFrame(t); out.push(Object.values(got).map((g) => [g.draw[0] - g.anchor.x, g.draw[1] - g.anchor.y])); }
+  T.layers.bean = base; return out; }"""
+
+
+def test_rider_plan_does_not_depend_on_render_order_across_a_terrain_swap():
+    cars = [{"type": "vehicle", "kind": "sedan1920", "id": "car%d" % i, "x": 0.5, "y": 0.85, "size": 700, "view": "side", "drive": [[0, 4]],
+             "terrain": "smooth", "swap": [{"at": 2, "terrain": "rough"}], "riders": [{"who": "driver", "lookAt": [(962 + 3 * i) / 1920, 0.5]}]}
+            for i in range(12)]
+    spy = """() => { const T = TOON, base = T.directBean; window.__seen = {};
+      T.directBean = (Ly, lt, env) => { const r = base(Ly, lt, env); if (Ly.__anchor && lt < 1) window.__seen[Ly.id.split(':')[0]] = JSON.stringify(r.L.facing); return r; }; }"""
+    def run(order):
+        def go(page):
+            page.evaluate(spy)
+            for t in order:
+                page.evaluate(GRAB, t)
+            return page.evaluate("() => window.__seen")
+        return go
+    spec = film(cars, look=None, dur=4)
+    assert _page(spec, run((0.1, 2.5))) == _page(spec, run((2.5, 0.1)))
+    # the anchor is a pure function of shot time: the same whichever frame (before or after the swap) built it
+    probe = """(t) => { const T = TOON, base = T.layers.bean; let a = null;
+      T.layers.bean = (ctx, Ly, lt, env) => { if (Ly.__anchor && !a) a = [0.3, 1.0, 1.7, 2.6, 3.4].map((u) => { const p = Ly.__anchor(u); return [p.x, p.y]; }); return base(ctx, Ly, lt, env); };
+      window.renderFrame(t); T.layers.bean = base; return a; }"""
+    early, late = _page(film(cars[:1], look=None, dur=4), lambda p: [p.evaluate(probe, 0.1), p.evaluate(probe, 2.5)])
+    assert early == late, (early, late)
+
+
+def test_projected_views_honour_contact_shadow_fields():
+    car = {"type": "vehicle", "kind": "car1950", "size": 600, "view": "3q", "x": 0.5, "y": 0.85, "exhaust": False}
+    faint, big, off, default = (_page(film([{**car, **({"contact": c} if c is not None else {})}]), lambda p: p.evaluate(GRAB, 0.5))
+                                for c in ({"alpha": 0, "w": 0.1}, {"alpha": 1, "w": 4}, False, None))
+    assert faint == off, "alpha 0 draws no shadow"
+    assert big != default and default != off, "w and alpha change the shadow"
+
+
+@pytest.mark.parametrize("case", ["child", "turn", "slope"])
+def test_rider_anchor_uses_the_drawn_head(case):
+    car = {"type": "vehicle", "kind": "sedan1920", "id": "car", "x": 0.5, "y": 0.85, "size": 700,
+           "riders": [{"who": "driver", "lookAt": [0.98, 0.3]}, {"who": "boss", "lookAt": [0.02, 0.3]}]}
+    if case == "child":
+        car.update(view="side", riderLook={"age": "child"})
+        times = [0.5, 1.5]
+    elif case == "turn":
+        car.update(view=[{"at": 0, "v": "side"}, {"at": 1, "v": "front"}], turn={"frames": 3})
+        times = [1.02, 1.1, 1.2, 1.35]
+    else:
+        car.pop("x")
+        car.pop("y")
+        car.update(path={"pts": [[0.2, 0.95], [0.8, 0.6]], "dur": 3, "orient": True}, view="3q")
+        times = [0.8, 1.6]
+    out = _page(film([car], look=None), lambda p: p.evaluate(HEAD, times))
+    errs = [abs(v) for frame in out for d in frame for v in d]
+    assert errs and max(errs) < 0.6, out
+
+
+@pytest.mark.parametrize("bad", [[], {}, [1], 3.5])
+def test_rider_look_with_odd_types_reports_errors(bad):
+    for key in ("hair", "beard", "head", "view", "outfit", "age", "build", "hold", "fabric", "patches", "flag", "robe", "mask", "headShape"):
+        for layer in ({"type": "vehicle", "kind": "car1950", "x": 0.5, "y": 0.9, "riders": ["driver"]},
+                      {"type": "creature", "kind": "horse", "x": 0.5, "y": 0.9, "rider": "driver"}):
+            errors = validate(film([{**layer, "riderLook": {key: bad}}]))
+            assert isinstance(errors, list), key

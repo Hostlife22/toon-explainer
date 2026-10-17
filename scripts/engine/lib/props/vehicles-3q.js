@@ -121,8 +121,9 @@
     if (T.CK && T.PAINT && L.contact !== false) { // ground shadow under the footprint
       const fp = [[f.front, hw], [f.front, -hw], [-f.rear, -hw], [-f.rear, hw]].map(([x, z]) => g.proj(x, 0, z));
       const xs = fp.map((q) => q[0]), ys = fp.map((q) => q[1]);
+      const co = typeof L.contact === 'object' && L.contact ? L.contact : { w: typeof L.contact === 'number' ? L.contact : 1 }; // as CK.shadow
       T.contactShadow(ctx, (Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...ys) + Math.max(...ys)) / 2 + r * 0.1,
-        (Math.max(...xs) - Math.min(...xs)) * 0.55, Math.max(18, (Math.max(...ys) - Math.min(...ys)) * 0.6), 0.5);
+        (Math.max(...xs) - Math.min(...xs)) * 0.55 * (co.w ?? 1), Math.max(18, (Math.max(...ys) - Math.min(...ys)) * 0.6) * ((co.h ?? 0.13) / 0.13), co.alpha ?? 0.5);
     }
     // far tyres (inner face toward us), behind the body
     for (const x of o.wheels) {

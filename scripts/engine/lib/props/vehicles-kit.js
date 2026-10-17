@@ -193,7 +193,7 @@
     if (vs) S.view = vs.view;
     // an authored facing turn mirrors each puff by the facing at its own emission time, so smoke already out stays put
     const sgAt = vs && VK.viewExplicit && VK.viewExplicit(L) ? (te) => { const v = VK.viewOf(L, te - (L.at ?? 0), te); return v ? v.facing : 1; } : null;
-    const tr = VK.TRAILS[L.kind] && env && env.st ? VK.TRAILS[L.kind](L, S) : null;
+    const tr = VK.TRAILS[L.kind] && env && env.st && !T.RIDER_PROBE ? VK.TRAILS[L.kind](L, S) : null; // no trails in an anchor probe
     if (tr && tr.length) VK.inWorld(ctx, env, (c) => { // trails stay where they were emitted: drawn in the world, behind the body
       for (const [kind, lx, ly, o] of tr) {
         if (kind === 'contrail') VK.contrail(c, L, S.slt, lx * sg, ly, o);

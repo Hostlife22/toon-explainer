@@ -276,8 +276,11 @@
         else E[k] = v;
       }
     }
+    if (E) Object.defineProperty(E, '__swapBase', { value: L.__swapBase || L }); // the authored layer (T.swapBase), hidden from JSON
     return E || L;
   };
+  // The authored layer behind a swapped copy (pure functions of time, such as rider anchors, resolve swaps per time).
+  T.swapBase = (L) => (L && L.__swapBase) || L;
 
   // ---------- layer modifiers ----------
   // T.LAYER_MODS[name] = { order, apply?(src, L, lt, env) -> canvas, under?(ctx, src, L, lt, env), filter?(L, lt, env) -> css }

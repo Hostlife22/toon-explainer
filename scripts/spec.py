@@ -47,6 +47,14 @@ def _timed_values(value):
         yield value
 
 
+def _known(v, names) -> bool:
+    """Membership that never raises on unhashable values (a list or dict where a name belongs)."""
+    try:
+        return v in names
+    except TypeError:
+        return False
+
+
 def _check_look(look, where: str, errors: list[str]) -> None:
     """Validate a character look (cast entry or a layer's `look` override)."""
     if not isinstance(look, dict):
@@ -55,7 +63,7 @@ def _check_look(look, where: str, errors: list[str]) -> None:
     for key, allowed in (("hair", KNOWN_HAIR), ("beard", KNOWN_BEARD), ("head", KNOWN_HEAD), ("view", KNOWN_VIEWS),
                          ("outfit", KNOWN_OUTFIT), ("mask", KNOWN_MASK), ("headShape", KNOWN_HEADSHAPE),
                          ("build", KNOWN_BUILD), ("age", KNOWN_AGE)):
-        if look.get(key) is not None and allowed and look[key] not in allowed:
+        if look.get(key) is not None and allowed and not _known(look[key], allowed):
             errors.append(f"{where}: {key} {look[key]!r} not in {sorted(allowed)}")
     SC.check_look(look, where, LAYER_KINDS.get("texture", set()), errors)
     flag = look.get("flag")
@@ -63,13 +71,13 @@ def _check_look(look, where: str, errors: list[str]) -> None:
         if not isinstance(flag, dict):
             errors.append(f"{where}: flag must be an object like {{\"pattern\": \"h3\", \"colors\": [...]}}")
         else:
-            if KNOWN_FLAG and flag.get("pattern") not in KNOWN_FLAG:
+            if KNOWN_FLAG and not _known(flag.get("pattern"), KNOWN_FLAG):
                 errors.append(f"{where}: flag pattern {flag.get('pattern')!r} not in {sorted(KNOWN_FLAG)}")
-            for c in flag.get("colors", []) or []:
+            for c in (flag.get("colors") if isinstance(flag.get("colors"), list) else [flag.get("colors")] if flag.get("colors") else []):
                 if not (isinstance(c, str) and HEX_RE.match(c)):
                     errors.append(f"{where}: flag colors must be hex, got {c!r}")
     for hk in ("hold", "holdL"):
-        if look.get(hk) is not None and look[hk] not in KNOWN_PROPS:
+        if look.get(hk) is not None and not _known(look[hk], KNOWN_PROPS):
             errors.append(f"{where}: {hk} {look[hk]!r} not in {sorted(KNOWN_PROPS)}")
     for ck in COLOR_KEYS:
         v = look.get(ck)

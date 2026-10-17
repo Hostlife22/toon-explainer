@@ -21,10 +21,13 @@
       ctx.save(); ctx.translate(x + off[0], y + off[1]);
       if (S.riderXf) ctx.transform(S.riderXf[0], S.riderXf[1], S.riderXf[2], S.riderXf[3], 0, 0); // 3q: upright, undoing the side plane
       else if (S.riderSx) ctx.scale(S.riderSx, S.riderK ?? 1);
-      const anchorOf = VK.seatAnchor && S.o ? (B) => VK.seatAnchor(L, S.o, S.k ?? 1, i, B.size, seats) : null;
-      const B = T.vehicleRiderBean(L, r, { type: 'bean', size, legs: false, id: (L.id ?? 'veh') + 'r' + i, talk: L.talk, expr: L.riderExpr, pose: L.riderPose, hold: L.riderHold }, anchorOf, px);
-      if (S.riderView) B.view = S.riderView;
-      T.layers.bean(ctx, B, S.lt, { ...env, st: null });
+      const base = { type: 'bean', size, legs: false, id: (L.id ?? 'veh') + 'r' + i, talk: L.talk, expr: L.riderExpr, pose: L.riderPose, hold: L.riderHold };
+      if (T.RIDER_PROBE) T.riderProbe(ctx, i, T.vehicleRiderBean(L, r, base, null, px)); // an anchor probing the drawing
+      else {
+        const B = T.vehicleRiderBean(L, r, base, () => T.riderAnchor(L, env, i), px);
+        if (S.riderView) B.view = S.riderView;
+        T.layers.bean(ctx, B, S.lt, { ...env, st: null });
+      }
       ctx.restore();
     });
   }
@@ -154,7 +157,10 @@
   }), 440, trailsCar([-214, -46, 440]));
 
   // car1910 in the painted look / with path: the model-t drawing with the classic colour
-  VK.register('car1910', (ctx, L, S, env) => VK.FN['model-t'](ctx, { ...L, color: L.color ?? '#2f3e5a' }, { ...S, size: S.size * 1.05 }, env), 380, (L, S) => VK.TRAILS['model-t'](L, S));
+  VK.register('car1910', (ctx, L, S, env) => {
+    const L2 = Object.defineProperty({ ...L, color: L.color ?? '#2f3e5a' }, '__swapBase', { value: T.swapBase(L) }); // riders anchor on the authored layer
+    return VK.FN['model-t'](ctx, L2, { ...S, size: S.size * 1.05 }, env);
+  }, 380, (L, S) => VK.TRAILS['model-t'](L, S));
 
   // ---------- tank: WW1 lozenge, tread links and road wheels driven by the distance ----------
   function along(pts, step, phase) {

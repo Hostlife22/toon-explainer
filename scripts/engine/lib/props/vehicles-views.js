@@ -212,34 +212,6 @@
     return VK.car3q(ctx, L, S, env, o, k);
   };
 
-  // Head of rider i in kind units for a view: [x, y, rider scale]; h = the head's height above the seat in rider units.
-  // Side seats come from the kind's body drawing. `b` (VK.bump) moves the seat with the sprung body as the drawing does
-  // (side and 3q lift and pitch, front / back roll), and the head turns with it.
-  const sprung = (x, y, rot, lift) => [x * Math.cos(rot) - y * Math.sin(rot), x * Math.sin(rot) + y * Math.cos(rot) + lift];
-  VK.seatAt = (o, view, i, seats, b, h = 0) => {
-    const [x0, y0] = seats[Math.min(i, seats.length - 1)], x = x0 + (i >= seats.length ? (i - seats.length + 1) * 40 : 0);
-    const f = o && o.face, lift = b ? b.dy - o.r * 0.12 : 0;
-    if (!f || view === 'side') return [...sprung(x, y0 - h, b ? b.pitch * 0.6 : 0, lift), 1];
-    if (view === 'front' || view === 'back') {
-      const sx = f.seat.x * (view === 'front' ? 1 : -1), xs = i === 0 ? sx : i === 1 ? -sx : -sx + (i - 1) * 40;
-      return [...sprung(xs, f.seat.y - h, b ? (b.f - b.r) * 0.002 : 0, lift), 1]; // the face seats use the side rider size
-    }
-    // 3q: the seat on the side plane (moved to the centre line), the upright rider's head turned by the plane's pitch
-    const g = VK.geo3q(o, view === '3q'), m = g.side, rot = b ? b.pitch * 0.6 : 0, [qx, qy] = sprung(x + g.off[0], y0 + g.off[1], rot, lift);
-    const det = m[0] * m[3] - m[1] * m[2], hx = (m[2] * h * g.rk) / det, hy = (-m[0] * h * g.rk) / det; // A^-1 (0, -h rk)
-    const [rx, ry] = sprung(hx, hy, rot, 0);
-    return [m[0] * (qx + rx) + m[2] * (qy + ry) + m[4], m[1] * (qx + rx) + m[3] * (qy + ry) + m[5], g.rk];
-  };
-  // Pure anchor for a rider's acting: its head in the world at shot time t, through the view, facing and suspension at t.
-  VK.seatAnchor = (L, o, k, i, size, seats) => (t) => {
-    const lt = t - (L.at ?? 0), vs = VK.viewOf(L, lt, t), view = vs ? vs.view : 'side', st = T.layerState(L, t);
-    if (!st) return null;
-    const S = VK.state(L, lt, { lt: t, st: { s: st.s } }, k * o.W), b = VK.bump(S, k, o.wb, L.terrain ?? 'road');
-    const sg = (!L.path && L.dir === -1 ? -1 : 1) * (vs ? vs.facing : 1), [x, y] = VK.seatAt(o, view, i, seats, b, (450 * size) / 600);
-    const w = VK.worldPt(L, t, x * k * sg, y * k);
-    return w ? { x: w[0], y: w[1], flip: (w[2].flip || 1) * sg } : null;
-  };
-
   // Turn smear: streaks trailing the body for the in-between frames (layer units, after the facing mirror).
   VK.turnSmear = (ctx, L, S, vs) => {
     const w = S.size, col = L.color ?? VK.VIEW_COL[L.kind] ?? '#888888';
