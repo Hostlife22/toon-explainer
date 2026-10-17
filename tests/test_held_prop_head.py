@@ -226,3 +226,119 @@ def test_prop_shapes_do_not_depend_on_render_order():
     alone = _render(spec, [1.5])[0][0]
     after = _render(spec, [0.5, 1.5])[1][0]
     assert np.array_equal(alone, after)
+
+
+# ---------- review follow-ups ----------
+INVERT = """() => { const T = TOON; if (!T.__inv) { const o = T.drawProp; T.__inv = true;
+  T.drawProp = (ctx, ...a) => { if (!window.__invert) return o(ctx, ...a); ctx.save(); ctx.filter = 'invert(1)';
+    try { return o(ctx, ...a); } finally { ctx.restore(); } }; } }"""
+
+
+def _frames_js(spec: dict, setups: list[str], probe: bool = False):
+    """One frame (t 0.5) per setup script run before it, in one page."""
+    def run(open_page):
+        browser, page, errors = open_page(spec)
+        page.evaluate(INVERT)
+        out = []
+        for js in setups:
+            page.evaluate(js)
+            out.append(_grab(page, 0.5, probe))
+        browser.close()
+        assert errors == [], errors
+        return out
+    return _session(run)
+
+
+@pytest.mark.parametrize("look", ["painted", None])
+@pytest.mark.parametrize("prop", ["flag", "placard", "broom", "axe", "mug", "moneybag", "newspaper"])
+def test_the_drawn_fist_touches_the_drawn_handle(prop, look):
+    """Independent of the grip table: the prop's own pixels (found by drawing it inverted) reach into or right next to
+    the fist's pixels (found by recolouring the skin), so the hand really holds the pole, stick, handle or neck."""
+    held = _bean(hold=prop)
+    plain, inverted = "() => { window.__invert = false; }", "() => { window.__invert = true; }"
+    (n, probe), (inv, _) = _frames_js(_spec([[held]], look), [plain, inverted], probe=True)
+    ((s, _),) = _frames_js(_spec([[{**held, "look": {"skin": "#1fbf3f"}}]], look), [plain])
+    px, py = (v * SCALE for v in probe["b"]["hands"][1])  # the wrist, from the solved arm
+    r = int(40 * K * SCALE)
+    win = (slice(int(py) - r, int(py) + r), slice(int(px) - r, int(px) + r))
+    fist = np.abs(n[win] - s[win]).sum(-1) > 90
+    ys, xs = np.nonzero(fist)
+    assert len(ys) > 20, "the fist is drawn at the palm"
+    prop_px = np.abs(n[win] - inv[win]).sum(-1) > 90
+    y0, y1, x0, x1 = ys.min() - 4, ys.max() + 5, xs.min() - 4, xs.max() + 5
+    near = int(prop_px[max(0, y0):y1, max(0, x0):x1].sum())
+    assert near > 4, f"the {prop} is drawn at the fist ({near} px next to it)"
+
+
+def test_prop_shapes_ignore_render_order_of_sizes_and_light():
+    js = """(order) => { const T = TOON, out = [];
+      for (const [size, dir] of order) {
+        T.PAINT = T.paintState({ style: { look: 'painted', light: { dir } } }, { bg: { kind: 'flat' } });
+        out.push(JSON.stringify(T.heldShape('placard', size))); }
+      T.PAINT = null; return out; }"""
+
+    def run(open_page):
+        res = []
+        for order in ([[250.49, 20], [250.01, 160]], [[250.01, 160], [250.49, 20]]):
+            browser, page, _ = open_page(_spec([[]]))
+            res.append(page.evaluate(js, order))
+            browser.close()
+        return res
+    (a49, a01), (b01, b49) = _session(run)
+    assert a01 == b01 and a49 == b49, "a prop's measured shape does not depend on what was measured before"
+    assert a01 != a49, "250.01 and 250.49 are measured at their own size"
+
+
+def test_an_inactive_or_other_arm_reach_keeps_the_holding_hand_closed():
+    layers = [[_bean(pose="point", hold="coin", reach=[{"at": 0, "v": None}])],
+              [_bean(pose="point", hold="coin", reach={"x": 0.3, "y": 0.5, "arm": "left"})],
+              [_bean(pose="point", hold="coin", reach={"x": 0.8, "y": 0.5, "hand": "open"})]]
+    shapes = [r[1]["b"]["handShapes"][1] for r in _each(layers, probe=True)]
+    assert shapes == ["pinch", "pinch", "open"], shapes
+
+
+FIT_JS = """([pose, hold, size]) => { const T = TOON, R = T.RIG, B = T.beanBuild({}), G = R.geomOf(B);
+  const arm = R.poseOf(pose).arms[1], j = { ...R.solveArm(arm, 1, G), hand: 'fist' };
+  const f = T.gripFit(j, hold, size, B, 1, '3q', G, R.ik, 1, false);
+  const g = T.gripOf(hold, size, 1, f.dir, f.gripTilt || 0, !!f.gripAlt);
+  return { moved: f.hx !== j.hx || f.hy !== j.hy, ext: Math.hypot(f.hx - f.sx, f.hy - f.sy),
+    cap: (G.l1 + G.l2) * 0.88, rot: g.rot }; }"""
+
+
+def _fit(cases):
+    def run(open_page):
+        browser, page, _ = open_page(_spec([[]]))
+        out = [page.evaluate(FIT_JS, list(c)) for c in cases]
+        browser.close()
+        return out
+    return _session(run)
+
+
+def test_a_fitted_hand_keeps_the_elbow_bent():
+    cases = [("point-up", "placard", 260), ("wave", "placard", 260), ("hold", "flag", 260), ("point-up", "newspaper", 280)]
+    fits = _fit(cases)
+    assert any(f["moved"] for f in fits), fits
+    for c, f in zip(cases, fits):
+        if f["moved"]:
+            assert f["ext"] <= f["cap"] + 1e-6, (c, f)
+
+
+def test_a_fitted_spear_or_torch_stays_near_upright():
+    for f in _fit([("hold", "spear", 420), ("point-up", "spear", 420), ("hold", "torch", 170), ("wave", "torch", 170)]):
+        assert abs(f["rot"]) <= 0.35 + 1e-9, f
+
+
+def test_a_tilted_head_keeps_its_mouth_clear():
+    """The face box turns with the head (headTilt, nods): a placard fits beside the mouth where the head draws it."""
+    tilt = np.radians(45)
+
+    def feat(img):
+        out = []
+        for u, v in [(x, -466) for x in EYES["3q"]] + [(MOUTH["3q"], -383)]:
+            dv = v + 300  # around the neck pivot (0, -300)
+            ru, rv = u * np.cos(tilt) - dv * np.sin(tilt), u * np.sin(tilt) + dv * np.cos(tilt) - 300
+            out.append(_rig_box(img, ru - 22, rv - 22, ru + 22, rv + 22).reshape(-1, 3))
+        return np.concatenate(out)
+    layers = [[_bean(headTilt=45, look={"arms": False})], [_bean(headTilt=45, hold="placard")]]
+    bare, held = (r[0] for r in _each(layers))
+    assert np.abs(feat(held) - feat(bare)).mean() < 3.0, "the placard stays off the tilted face"
