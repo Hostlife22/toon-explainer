@@ -97,6 +97,13 @@ centre unless the table says otherwise. Three placement families:
 
 `fx` layers stay sharp under a shot's rack `focus` unless they set `"focusable": true`.
 
+**Fx among front set pieces** (a courtroom bench, see [04_places.md](04_places.md)). Ground fx placed at a spot
+(`dust`, `dustkick`, `poof`, `puff`, `smoke`, `fire`, `blood`, `pool`, `spill`, `toxic-cloud` with a `y`, `move`,
+`path` or `target`; registry `T.FX_GROUND`) stand at their `y` like actors: dust at the judge's feet (`y` 0.74) draws
+behind the bench, dust in front of it (`y` 0.9) over it. Every other fx (flash, blackout, rain, vignette-like tones,
+explosions, speech emphasis) stays over the front pieces. `front`: `"over"` keeps a ground fx over them (the old
+order), `"depth"` slots any placed fx by its `y`.
+
 ### Emphasis (`emphasis.js`)
 
 | `kind` | Fields (defaults) | Look and timing |

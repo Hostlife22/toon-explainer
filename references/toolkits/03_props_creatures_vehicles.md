@@ -217,7 +217,9 @@ centred (`size` = height; long tools and guns: `size` = length) and drawn with s
 | Machines | `gears`, `piston`, `gauge`, `valve`, `fuel-pump` | `gears`: `count` (1..5), `speed` (turns/s), meshing at the tooth ratio; `piston`: `speed`, `exhaust` (false = no puffs); `gauge`: `value` (0..1 timeline; the needle shivers while it moves and in the red zone), `danger` (0.8), `label`; `valve`: `open` (timeline, the wheel turns 1.5 turns per unit); `fuel-pump`: `brand` (globe), `price`, `running` (the counter rolls), `text` (fixed counter) |
 
 **Everyday props.** Original designs, centred (`size` = height; `paintbrush`: length). `paintbrush`, `newspaper`,
-`spray-can` and `rope` are handheld (bean `hold` with `holdProps` for their fields; `holdScale` 1.3 to 1.8 reads well).
+`spray-can` and `rope` are handheld (bean `hold` with `holdProps` for their fields). With acting on (the painted
+default) a held prop takes its natural size from `T.HOLD_SIZE` (newspaper 280, paintbrush 250, scales 270, microscope 260,
+spray-can 190, rope 230), so no `holdScale` is needed.
 
 | Kind | Fields (defaults) | Look and motion |
 |---|---|---|

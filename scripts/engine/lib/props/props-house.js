@@ -124,5 +124,5 @@
 
   Object.assign(T.PROPS, { fridge, rope, pulley });
   Object.assign(T.PROP_FOOT || (T.PROP_FOOT = {}), { fridge: 0.32, rope: 0.36 });
-  Object.assign(T.HOLD_SIZE || (T.HOLD_SIZE = {}), { rope: 130 });
+  Object.assign(T.HOLD_SIZE || (T.HOLD_SIZE = {}), { rope: 230 });
 })();

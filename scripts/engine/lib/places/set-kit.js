@@ -103,7 +103,7 @@
     if (d.floor !== false) base.push({ kind: 'floor', material: d.floor ?? 'wood', color: d.floorColor, colors: d.floorColors, y: fy });
     const items = [...base, ...(pre.parts || []), ...(bg.parts || [])].map((p, i) => ({ p, i }));
     const back = items.filter(({ p }) => !p.front), front = items.filter(({ p }) => p.front);
-    return { fy, dark: T.clamp(d.dark ?? 0), z0, planes: toPlanes(back, z0), front };
+    return { fy, dark: T.clamp(d.dark ?? 0), z0, planes: toPlanes(back, z0), front, covers: d.wall !== false || d.floor !== false };
   }
   const resolved = new WeakMap();
   const resolvedOf = (bg) => { let R = resolved.get(bg); if (!R) { R = resolve(bg); resolved.set(bg, R); } return R; };
@@ -127,6 +127,7 @@
   // Front parts of a set background ([{p, i}] in list order) and the drawing of some of them (each part keeps its own
   // cached plane), used by the front pass in set-front.js. Full-frame context: each plane applies its own camera.
   T.setFrontParts = (bg) => (bg && bg.kind === 'set' ? resolvedOf(bg).front : []);
+  T.setCovers = (bg) => resolvedOf(bg).covers; // false for a parts-only set (no wall, no floor): earlier backgrounds show
   T.drawSetFront = (ctx, bg, items, lt, env) => {
     const R = resolvedOf(bg);
     for (const it of items) drawPlanes(ctx, bg, [[it.p.z ?? R.z0, [it]]], lt, env, R, 'setfront' + it.i);
