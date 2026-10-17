@@ -4,7 +4,8 @@
 // curves (bank). Pure functions of (layer, time): samples are cached per path object, nothing depends on render order.
 //   path: {pts: [[x, y], ...] (normalised frame coords), at: 0, dur: 3, ease: 'inOut', curve: 'smooth' | 'linear' |
 //          'bezier' (3n+1 points), orient: false | true | maxDeg, face: true, bank: 0 (deg at a full turn), loop: false | true | laps}
-// A plain list of points is NOT a path here: fx (brawl trail), cursor (keys) and map keep their own `path` meaning.
+// A plain list of points is NOT a path here: fx (brawl trail), cursor (keys) and map keep their own list `path` meaning;
+// an object path moves any layer, those included.
 // API: T.pathSpec(L) -> normalised spec | null; T.pathTable(spec) -> samples; T.motionAt(L, t) -> {x, y, ang, tang, dir,
 // dist, vel, speed, curv, bank, turn}; T.layerTravel(L, t) -> {dist (signed distance the rig walked / rolled forward),
 // speed, path} for path and `move` layers; T.layerState is wrapped (enter / exit / bob / jump / jitter still apply on top)
@@ -21,7 +22,7 @@
   const specs = new WeakMap();
   T.pathSpec = (L) => {
     const p = L && L.path;
-    if (!p || typeof p !== 'object' || T.PATH_OWNERS.has(L.type)) return null;
+    if (!p || typeof p !== 'object' || (Array.isArray(p) && T.PATH_OWNERS.has(L.type))) return null; // fx / cursor / map lists are theirs
     let s = specs.get(p);
     if (s) return s;
     if (Array.isArray(p)) throw new Error('path must be an object {pts: [[x, y], ...], ...} (a plain list is fx / cursor / map only)');
@@ -180,7 +181,10 @@
     const S = T.pathSpec(L);
     if (!S) return base(L, lt);
     const p = T.motionAt(L, lt);
-    const st = base({ ...L, x: p.x / T.W, y: p.y / T.H }, lt);
+    // the path owns the position: move keeps its scale / rot / alpha / flip but not `to`; an anonymous layer keeps the
+    // noise seed of its authored anchor (bob, wobble, jitter) instead of one derived from the moving point
+    const move = L.move && L.move.some((m) => m && m.to) ? L.move.map(({ to, ...m }) => m) : L.move;
+    const st = base({ ...L, x: p.x / T.W, y: p.y / T.H, move, __seed: L.id ? undefined : L.type + (L.x ?? 0) + (L.y ?? 0) }, lt);
     if (!st) return st;
     if (S.face) { st.flip = p.dir * (L.flip ? -1 : 1); st.sx *= p.turn; }
     if (S.orient) {

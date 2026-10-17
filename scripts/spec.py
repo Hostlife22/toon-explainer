@@ -227,8 +227,8 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
                 movers += [m for m in val if isinstance(m, dict)]
             fights = entry.get("fights")
             for f in ([fights] if isinstance(fights, dict) else fights if isinstance(fights, list) else []):
-                if not (isinstance(f, dict) and isinstance(f.get("path"), list) and len(f["path"]) >= 2 and all(_pair(q) for q in f["path"])):
-                    errors.append(f"{where}: map fights need a path of 2+ [x, y] points")
+                if not (isinstance(f, dict) and _map_path(f.get("path"), bool(entry.get("geo")), 2)):
+                    errors.append(f"{where}: map fights need a path of 2+ [x, y] points (or lon/lat forms with geo)")
                     continue
                 if f.get("dur") is not None and not (_is_num(f["dur"]) and f["dur"] > 0):
                     errors.append(f"{where}: map fights dur must be above 0")
@@ -280,13 +280,34 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
                     name_in(it.get("prop"), KNOWN_PROPS, "tierlist item prop")
         if ltype == "map":
             morphs, throws = entry.get("morphs", []) or [], entry.get("throws", []) or []
-            if not isinstance(morphs, list) or not all(isinstance(m, dict) and all(isinstance(m.get(k), list) and len(m[k]) >= 2 and all(_pair(q) for q in m[k]) for k in ("from", "to")) for m in morphs):
-                errors.append(f"{where}: map morphs need from and to as lists of [x, y] points")
-            if not isinstance(throws, list) or not all(isinstance(t, dict) and _pair(t.get("from")) and _pair(t.get("to")) for t in throws):
-                errors.append(f"{where}: map throws need from and to as [x, y]")
+            geo = bool(entry.get("geo"))
+            if not isinstance(morphs, list) or not all(isinstance(m, dict) and all(_map_path(m.get(k), geo, 2) for k in ("from", "to")) for m in morphs):
+                errors.append(f"{where}: map morphs need from and to as lists of [x, y] points (or lon/lat forms with geo)")
+            if not isinstance(throws, list) or not all(isinstance(t, dict) and _map_point(t.get("from"), geo) and _map_point(t.get("to"), geo) for t in throws):
+                errors.append(f"{where}: map throws need from and to as [x, y] (or lon/lat forms with geo)")
             else:
                 for t in throws:
                     name_in(t.get("icon"), KNOWN_PROPS | _map_icons(), "map throws icon")
+
+
+def _lonlat(v) -> bool:
+    return _pair(v) and -180 <= v[0] <= 180 and -90 <= v[1] <= 90
+
+
+def _map_point(v, geo: bool) -> bool:
+    """[x, y]; with map geo also {ll: [lon, lat]} or {lon, lat} (projected by geo-prep.js)."""
+    if _pair(v):
+        return True
+    if not (geo and isinstance(v, dict)):
+        return False
+    return _lonlat(v.get("ll")) or (_is_num(v.get("lon")) and _is_num(v.get("lat")))
+
+
+def _map_path(v, geo: bool, n: int) -> bool:
+    """n+ points (each a _map_point); with map geo also {ll: [[lon, lat], ...], gc}."""
+    if geo and isinstance(v, dict) and isinstance(v.get("ll"), list):
+        return len(v["ll"]) >= n and all(_lonlat(q) for q in v["ll"])
+    return isinstance(v, list) and len(v) >= n and all(_map_point(q, geo) for q in v)
 
 
 def _fx_refs(layer: dict) -> list[str]:

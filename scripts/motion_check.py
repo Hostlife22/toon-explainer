@@ -72,8 +72,9 @@ def check_path(path, where: str, errors: list[str], ease_names: set) -> None:
 
 def check_motion(layer: dict, where: str, errors: list[str], ease_names: set, creature_kinds: set | None) -> None:
     kind = layer.get("type")
-    if layer.get("path") is not None and kind not in PATH_OWNERS:
-        check_path(layer["path"], where, errors, ease_names)
+    path = layer.get("path")
+    if path is not None and not (kind in PATH_OWNERS and isinstance(path, list)):  # lists are the owners' own paths
+        check_path(path, where, errors, ease_names)
     if kind in ("creature", "vehicle"):
         if layer.get("gait") is not None:
             _check_names(layer["gait"], GAITS, "gait", where, errors)
