@@ -150,7 +150,10 @@
     const dx = tx - sx, dy = ty - sy, d = T.clamp(Math.hypot(dx, dy), 10, l1 + l2 - 1);
     const base = Math.atan2(dx, dy); // 0 = down, + toward +x
     const k = Math.acos(T.clamp((l1 * l1 + d * d - l2 * l2) / (2 * l1 * d), -1, 1));
-    const a1 = base + k * outward;
+    // two elbow solutions; keep the one on the outer side (away from the body), so raised hands do not fold the
+    // elbow across the chest (base + k flips inward once the target is above the shoulder)
+    const ca = base + k * outward, cb = base - k * outward;
+    const a1 = Math.sin(ca) * outward >= Math.sin(cb) * outward - 1e-9 ? ca : cb;
     const ex = sx + Math.sin(a1) * l1, ey = sy + Math.cos(a1) * l1;
     const a2 = Math.atan2(tx - ex, ty - ey);
     return { ex, ey, hx: ex + Math.sin(a2) * l2, hy: ey + Math.cos(a2) * l2, dir: a2 };
