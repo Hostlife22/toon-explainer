@@ -11,7 +11,7 @@
 (function () {
   'use strict';
   const T = window.TOON, P = T.PAL, TAU = Math.PI * 2, D = T.DEG;
-  const U = T.PROP3, { words, evt } = U;
+  const U = T.PROP3, { words } = U;
   const LW = (s) => Math.max(3, s * 0.02);
   const rgba = (hex, a) => { const n = parseInt(T.hex6(hex).slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${T.clamp(a).toFixed(3)})`; };
   const h32 = T.h32;
@@ -109,8 +109,8 @@
   };
 
   OVER.bottle = (ctx, s, lt, o) => {
-    const pr = evt(o.pour), p = pr ? T.ease.inOut(T.prog(lt, pr.at ?? 0, pr.dur ?? 0.5)) : 0, a = p * 110 * D, tint = o.color ?? '#7a5226';
-    const liq = o.liquid ?? T.mix(T.hex6(tint), '#2a1206', 0.25), fill = T.clamp(T.num ? T.num(o.fill ?? 0.72, lt) : 0.72) * (1 - p * 0.7);
+    const p = T.pourAmount(o.pour, lt), a = p * 110 * D, tint = o.color ?? '#7a5226';
+    const liq = o.liquid ?? T.mix(T.hex6(tint), '#2a1206', 0.25), fill = T.clamp(T.num ? T.num(o.fill ?? 0.72, lt) : 0.72) * (1 - T.pourSpent(o.pour, lt) * 0.7);
     if (p > 0.6) { const mx = Math.sin(a) * s * 0.5, my = -Math.cos(a) * s * 0.5; ctx.strokeStyle = liq; ctx.lineWidth = s * 0.05; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(mx, my); ctx.quadraticCurveTo(mx + s * 0.08, my + s * 0.4, mx + s * 0.06 + Math.sin(lt * 30) * 2, my + s * 0.9); ctx.stroke(); }
     ctx.rotate(a);
     const level = s * 0.48 - fill * s * 0.6;

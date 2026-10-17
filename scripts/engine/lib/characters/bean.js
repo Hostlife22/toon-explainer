@@ -10,6 +10,9 @@
   T.swayX = (k = 1) => (T.CHAR_SWAY ? T.CHAR_SWAY.x * k : 0);
 
   // Arm targets from `reach` in the current (arm) frame: replaces the solved pose arms with IK arms.
+  // A target above the shoulder and out of reach lengthens the arm up to REACH_UP x (straight up; the armScale of
+  // hold-high), so a raised hand clears the big head; `stretch: true` reaches any distance, `stretch: false` never extends.
+  const REACH_UP = 1.9;
   function applyReach(ctx, Ly, lt, env, base, dyE, arms, G, act) {
     const r = T.reachOf(Ly, lt);
     if (!r) return arms;
@@ -33,8 +36,12 @@
       const a = at(r.prev, inPrev), b = at(r.cur, inCur), ref = will ? r.cur : r.prev;
       const [tx, ty] = T.arcPoint(a, b, p, ref.arc ?? 0.25);
       let l1 = G.l1, l2 = G.l2;
-      const d = Math.hypot(tx - G.sx * side, ty - G.sy);
-      if (ref.stretch && d > (l1 + l2) * 0.98) { const s = d / ((l1 + l2) * 0.98); l1 *= s; l2 *= s; } // rubber-hose reach
+      const d = Math.hypot(tx - G.sx * side, ty - G.sy), full = (l1 + l2) * 0.98;
+      if (ref.stretch && d > full) { const s = d / full; l1 *= s; l2 *= s; } // rubber-hose reach
+      else if (ref.stretch !== false && d > full && ty < G.sy) { // high target: the arm extends like the hands-up poses
+        const s = Math.min(d / full, 1 + (REACH_UP - 1) * T.clamp((G.sy - ty) / d, 0, 1)); // more the steeper it points
+        l1 *= s; l2 *= s;
+      }
       const j = R().ik(G.sx * side, G.sy, tx, ty, side, l1, l2);
       const hand = will ? r.cur.hand || (r.cur.target ? 'grab' : arms[i].hand) : p < 0.5 ? r.prev.hand || (r.prev.target ? 'grab' : arms[i].hand) : arms[i].hand;
       out[i] = { sx: G.sx * side, sy: G.sy, ...j, hand };
@@ -188,7 +195,9 @@
       const holdRot = T.num(Ly.holdRot ?? c.holdRot ?? 0, lt) || 0; // tilt of held props in the grip, degrees
       const drawArm = (i) => noArms ? null : RG.arm(ctx, arms[i], sleeve, c.skin, holdOf(i), lt, armW, B.hand, holdSz(i), holdRot, Ly.holdProps ?? c.holdProps ?? null);
       // acting: a near arm raised above the shoulders is drawn over the head, so arms-up / point-up stay visible
-      const raised = (i) => !!act && !front && view !== 'back' && arms[i].hy < B.neckY - 40;
+      // (front view: an arm whose hand ends over the head's width would cross the face, so it stays behind the head)
+      const overFace = (i) => view === 'front' && Math.abs(arms[i].hx) < 110 * B.head;
+      const raised = (i) => !!act && !front && view !== 'back' && arms[i].hy < B.neckY - 40 && !overFace(i);
       const late = [];
       // back arm (character's left, screen-left in 3/4) goes behind the body unless the pose brings it to the face
       if (view !== 'front' && !front) drawArm(0);

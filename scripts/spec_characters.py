@@ -132,6 +132,16 @@ def check_bean(layer: dict, where: str, views: set[str], hands: set[str], gaits:
         check_lipsync(layer["lipsync"], where, errors)
 
 
+def _pour_ok(v) -> bool:
+    """A bottle `pour`: true, a start time, an event {at, dur, back, backDur} or a [{at, v 0..1}] timeline."""
+    if v is True or v is False or _num(v):
+        return True
+    if isinstance(v, dict):
+        return all(v.get(k) is None or (_num(v[k]) and v[k] >= 0) for k in ("at", "dur", "back", "backDur"))
+    return isinstance(v, list) and len(v) > 0 and all(
+        isinstance(k, dict) and _num(k.get("v")) and 0 <= k["v"] <= 1 and _num(k.get("at", 0)) for k in v)
+
+
 def _check_hold_size(obj: dict, where: str, errors: list[str]) -> None:
     v = obj.get("holdScale")
     if v is not None and not (_num(v) and 0 < v <= 5):
@@ -141,6 +151,9 @@ def _check_hold_size(obj: dict, where: str, errors: list[str]) -> None:
         errors.append(f"{where}: holdProps must be an object of prop fields for the held prop (e.g. {{pour: {{at, dur}}}})")
     elif hp is not None and hp.get("grip") is not None and not (isinstance(hp["grip"], list) and len(hp["grip"]) == 2 and all(_num(v) for v in hp["grip"])):
         errors.append(f"{where}: holdProps.grip must be [x, y] in fractions of the prop size")
+    if isinstance(hp, dict) and hp.get("pour") is not None and not _pour_ok(hp["pour"]):
+        errors.append(f"{where}: holdProps.pour must be true, a time, {{at, dur, back, backDur}} (seconds) "
+                      "or a [{at, v}] timeline of tip fractions 0..1")
     r = obj.get("holdRot")
     if r is not None:
         keys = r if isinstance(r, list) else None

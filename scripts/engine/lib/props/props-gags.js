@@ -17,7 +17,7 @@
   const evt = (v) => (v == null || v === false ? null : v === true ? {} : typeof v === 'number' ? { at: v } : v);
   // Rotation a prop applies to itself at time lt (radians), so a hand holding it can follow the grip point.
   T.PROP_TILT = T.PROP_TILT || {};
-  T.PROP_TILT.bottle = (o, lt) => { const pr = evt(o.pour); return pr ? T.ease.inOut(T.prog(lt, pr.at ?? 0, pr.dur ?? 0.5)) * 110 * D : 0; };
+  T.PROP_TILT.bottle = (o, lt) => T.pourAmount(o.pour, lt) * 110 * D;
   const inWin = (wins, lt) => (wins || []).some(([a, b]) => lt >= a && lt <= b);
   const ell = (k, x, y, rx, ry, r = 0) => k.ellipse(x, y, Math.abs(rx), Math.abs(ry), r, 0, TAU);
 
@@ -455,7 +455,7 @@
       else words(ctx, o.text, 0, s * 0.14, s * 0.56, s * 0.16, o.textColor ?? '#3a2414', { maxH: s * 0.3 });
     },
     bottle(ctx, s, lt, o) {
-      const pr = evt(o.pour), p = pr ? T.ease.inOut(T.prog(lt, pr.at ?? 0, pr.dur ?? 0.5)) : 0, a = p * 110 * D, col = o.color ?? '#5a3a22';
+      const p = T.pourAmount(o.pour, lt), a = p * 110 * D, col = o.color ?? '#5a3a22';
       if (p > 0.6) { const mx = Math.sin(a) * s * 0.5, my = -Math.cos(a) * s * 0.5; ctx.strokeStyle = o.liquid ?? '#d9b84a'; ctx.lineWidth = s * 0.05; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(mx, my); ctx.quadraticCurveTo(mx + s * 0.08, my + s * 0.4, mx + s * 0.06 + Math.sin(lt * 30) * 2, my + s * 0.9); ctx.stroke(); }
       ctx.rotate(a);
       O(ctx, s, (k) => { k.moveTo(-s * 0.06, -s * 0.42); k.lineTo(-s * 0.06, -s * 0.22); k.quadraticCurveTo(-s * 0.18, -s * 0.16, -s * 0.18, -s * 0.04); k.lineTo(-s * 0.18, s * 0.46); k.quadraticCurveTo(0, s * 0.52, s * 0.18, s * 0.46); k.lineTo(s * 0.18, -s * 0.04); k.quadraticCurveTo(s * 0.18, -s * 0.16, s * 0.06, -s * 0.22); k.lineTo(s * 0.06, -s * 0.42); k.closePath(); }, col, fillR(sh(col), s * 0.07, -s, s, s * 2));

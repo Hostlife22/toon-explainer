@@ -139,7 +139,7 @@ Times inside a layer are layer-local (they count from the layer's `at`). A field
 | Kind | Fields (defaults) | Motion |
 |---|---|---|
 | `sack` | `text`, `textColor`, `dollar` (green `$` instead of text), `color` (`#c9a06a`) | |
-| `bottle` | `text`, `textColor`, `label` (`#efe6cf`), `color` (`#5a3a22`), `liquid` (`#d9b84a`), `pour` (event, `dur` 0.5) | Tips to 110° (ease.inOut) and pours a stream after 60 % |
+| `bottle` | `text`, `textColor`, `label` (`#efe6cf`), `color` (`#5a3a22`), `liquid` (`#d9b84a`), `pour` (event `{at, dur 0.5, back, backDur}` or a `[{at, v}]` timeline of tip fractions 0..1) | Tips to 110° (ease.inOut) and pours a stream after 60 %; with `back` it tips upright again from that time over `backDur` (default `dur`); the painted liquid stays poured |
 | `candle` | `color` (`#efe6cf`) | Flame flickers ±6 % on twos, warm glow |
 | `key` | `color` (`#e8c040`), `hook` | `hook` hangs the key on a brass wall hook at the anchor, so `swing` pivots on the hook |
 | `broom` | `sweep` (event, `dur` 1.2), `color` (handle) | ±20°, one sweep every 6 frames, dust puffs |

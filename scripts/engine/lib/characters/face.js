@@ -38,10 +38,11 @@
     dead: { eyes: 'x', mouth: 'o', talk: ['o'] },
     mad: { eyes: 'spiral', mouth: 'grin', talk: ['grin', 'wide'] }, // madness: rotating spirals + wobbly grin (Horror 12:20)
     evil: { eyes: 'slit', brows: 'angry', mouth: 'smirk', talk: ['smirk', 'wide'] }, // glowing red slits
-    sick: { eyes: 'ringed', brows: 'worried', mouth: 'frown', talk: ['frown', 'mid'], blood: true },
+    sick: { eyes: 'ringed', brows: 'worried', mouth: 'queasy', talk: ['queasy', 'mid'], queasy: true }, // green, clammy
   };
   // Registries. All are read at draw time, so modules loaded after face.js can add entries.
-  // T.EXPR[name] = { eyes, brows, mouth, talk: [...], vein, tears, blood, sweat } (built-ins above stay).
+  // T.EXPR[name] = { eyes, brows, mouth, talk: [...], vein, tears, blood, sweat, queasy } (built-ins above stay).
+  // queasy: a pale green face tint and cold sweat beads (sick).
   T.EXPR = EXPR;
   Object.defineProperty(T, 'BEAN_EXPR', { get: () => Object.keys(T.EXPR), enumerable: true, configurable: true });
   T.EYE_KINDS = T.EYE_KINDS || {}; // kind -> fn(ctx, x, y, side, lt, c), drawn once per eye (side -1 | +1)
@@ -53,6 +54,7 @@
   T.BEARD_KINDS = T.BEARD_KINDS || {}; // kind -> fn(ctx, c, fx, view)
   T.HEAD_EXTRAS = T.HEAD_EXTRAS || []; // fn(ctx, c, s, {view, sh, fx, HW, CY}) after the headwear, every view (horns, labels)
   const exprOf = (name) => T.EXPR[name] || T.EXPR.neutral || EXPR.neutral;
+  const QUEASY = { tint: '#b4dc9c', tintAlpha: 0.55 }; // sick face tint (multiply over the head)
   const isolated = (ctx, fn) => { ctx.save(); try { fn(); } finally { ctx.restore(); } };
   const isolatedR = (ctx, fn) => { ctx.save(); try { return fn(); } finally { ctx.restore(); } }; // same, returns fn's value
 
@@ -135,6 +137,10 @@
       case 'frown': return line(() => { ctx.moveTo(mx - 26, my + 12); ctx.quadraticCurveTo(mx, my - 12, mx + 26, my + 12); });
       case 'smirk': return line(() => { ctx.moveTo(mx - 24, my + 4); ctx.quadraticCurveTo(mx + 10, my + 14, mx + 34, my - 10); });
       case 'small': return line(() => { ctx.moveTo(mx - 12, my); ctx.lineTo(mx + 12, my); });
+      case 'queasy': // tight wavy line, corners pulled down, with a pale puffed cheek bulge under it (about to be sick)
+        line(() => { ctx.moveTo(mx - 30, my + 12); ctx.bezierCurveTo(mx - 18, my - 4, mx - 8, my + 10, mx, my + 2); ctx.bezierCurveTo(mx + 8, my - 6, mx + 18, my + 8, mx + 30, my + 12); });
+        ctx.save(); ctx.globalAlpha *= 0.5; ctx.strokeStyle = P.ink; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(mx - 16, my + 24); ctx.quadraticCurveTo(mx, my + 32, mx + 16, my + 24); ctx.stroke(); ctx.restore();
+        return;
       case 'grin':
         T.outlined(ctx, (k) => { k.moveTo(mx - 56, my - 14); for (let i = 1; i <= 8; i++) k.lineTo(mx - 56 + i * 14, my - 14 + (i % 2 ? -6 : 4)); k.quadraticCurveTo(mx, my + 56, mx - 56, my - 14); k.closePath(); }, '#fff', { line: 7 });
         return;
@@ -159,6 +165,15 @@
     if (e.blood) { // trickle from the mouth corner
       ctx.fillStyle = '#a01020'; ctx.beginPath(); ctx.moveTo(fx + 30, -380); ctx.quadraticCurveTo(fx + 40, -350, fx + 34, -326); ctx.quadraticCurveTo(fx + 24, -350, fx + 22, -378); ctx.closePath(); ctx.fill();
       ctx.beginPath(); ctx.arc(fx + 34, -326, 8, 0, Math.PI * 2); ctx.fill();
+    }
+    if (e.queasy) { // cold sweat: two pale beads on the brow, sliding slowly (never red)
+      const ph = (lt * 0.5) % 1;
+      [[-HW * 0.72 + fx * 0.4, -494, 0], [HW * 0.68 + fx * 0.4, -506, 0.5]].forEach(([x, y, o]) => {
+        const q = (ph + o) % 1;
+        ctx.save(); ctx.globalAlpha *= 1 - q * 0.5; ctx.translate(x, y + q * 30); ctx.scale(0.85, 0.85);
+        T.outlined(ctx, (k) => { k.moveTo(0, -26); k.quadraticCurveTo(20, 0, 0, 14); k.quadraticCurveTo(-20, 0, 0, -26); }, '#dff2f6', { line: 6, ink: '#6a9aa8' });
+        ctx.restore();
+      });
     }
     if (e.sweat) {
       const ph = (lt * 0.8) % 1;
@@ -309,6 +324,7 @@
     });
     beard(ctx, c, fx, view);
     if (c.tint && T.drawFaceTint) T.drawFaceTint(ctx, c, headPath, s.lt);
+    else if (e.queasy && T.drawFaceTint && !c.flag) T.drawFaceTint(ctx, QUEASY, headPath, s.lt); // sick: pale green face
     if (c.mask === 'gas' && T.drawGasMask) T.drawGasMask(ctx, c, fx, view);
     else if (view !== 'back') {
       ctx.save(); ctx.translate(fx, 0);
@@ -338,7 +354,7 @@
       if (D) isolated(ctx, () => D.extras(ctx, c, s, da));
       if (a) extrasPass(false);
       ctx.restore();
-      extras(ctx, D ? { blood: e.blood } : e, fx, s.lt);
+      extras(ctx, D ? { blood: e.blood, queasy: e.queasy } : e, fx, s.lt);
     }
     swayed(ctx, s.sway, c.hair === 'long' || view === 'back' ? 0.45 : 0.18, () => hairFront(ctx, c, s.seed, sh, view));
     headwear(ctx, c, s.lt, sh, view);

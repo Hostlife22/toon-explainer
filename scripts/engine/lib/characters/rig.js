@@ -85,8 +85,12 @@
     prostrate: BP([A(-150, 0), A(150, 0)], { legs: 'kneel', rot: 72, dy: 30, armScale: 1.6 }),
     crawl: BP([A(-44, 0), A(56, 0)], { legs: 'kneel', rot: 48, dy: 20 }),
     fly: BP([A(165, 0), A(172, 0)], { rot: 75, pivot: 'center', armScale: 1.7 }),
-    flail: BP([A(150, 30), A(110, 60)], { rot: 160, pivot: 'center', armScale: 1.4 }),
-    'flail-b': BP([A(110, 60), A(150, 30)], { rot: 160, pivot: 'center', armScale: 1.4 }),
+    // panicked flailing, upright: both arms thrown high and bent at odd angles; alternate flail / flail-b every 2-5 f
+    flail: BP([A(125, 15), A(78, 72)], { lean: -5, armScale: 1.35 }),
+    'flail-b': BP([A(82, 62), A(150, -15)], { lean: 5, armScale: 1.35 }),
+    // upended: flipped head over heels with flailing arms (a slip on a banana peel); alternate upended / upended-b
+    upended: BP([A(150, 30), A(110, 60)], { rot: 160, pivot: 'center', armScale: 1.4 }),
+    'upended-b': BP([A(110, 60), A(150, 30)], { rot: 160, pivot: 'center', armScale: 1.4 }),
     hang: BP([A(158, 4, 'fist'), A(158, 4, 'fist')], { legs: 'dangle', armScale: 2 }),
     carry: BP([A(150, 14), A(150, 14)], { legs: 'squat', dy: 30, armScale: 1.9 }),
   };

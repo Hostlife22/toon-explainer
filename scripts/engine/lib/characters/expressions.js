@@ -255,10 +255,15 @@
     if (c.build === 'fat') line(ctx, T.shade(c.skin ?? P.skin, -0.3), 5, (k) => { k.moveTo(-60, -318); k.quadraticCurveTo(0, -298, 60, -318); });
   });
   FX.push((ctx, c, s, a) => { // glasses and monocle (side view: one lens + an arm to the ear)
-    const g = c.glasses;
+    const g = c.glasses === true || c.glasses === 'spectacles' ? 'clear' : c.glasses; // true = plain spectacles
     if (g) {
-      const col = c.glassesColor ?? (g === 'shutter' ? '#2a6ad0' : g === 'round' ? INK : '#141414');
+      const col = c.glassesColor ?? (g === 'shutter' ? '#2a6ad0' : g === 'round' || g === 'clear' ? INK : '#141414');
       const lens = (x, y) => {
+        if (g === 'clear') { // clear spectacles: thin rounded frames, a faint glass sheen and a glint; the eyes show through
+          const rim = (k) => T.rrect(k, x - 36, y - 26, 72, 54, 20);
+          T.outlined(ctx, rim, 'rgba(214,236,246,0.22)', { line: 6, ink: col, paint: false, shade: (k) => line(k, 'rgba(255,255,255,0.75)', 4, (q) => { q.moveTo(x - 22, y + 10); q.lineTo(x - 8, y - 14); }) });
+          return;
+        }
         if (g === 'round') T.outlined(ctx, (k) => circ(k, x, y, 32), c.opaque ? '#f6f6f6' : null, { line: 6, shade: c.opaque ? (k) => { k.fillStyle = '#c8ccd2'; k.beginPath(); k.moveTo(x - 30, y + 10); k.lineTo(x + 6, y - 32); k.lineTo(x + 22, y - 24); k.lineTo(x - 18, y + 26); k.closePath(); k.fill(); } : null });
         else T.outlined(ctx, (k) => { k.moveTo(x - 38, y - 22); k.lineTo(x + 38, y - 22); k.quadraticCurveTo(x + 36, y + 24, x, y + 24); k.quadraticCurveTo(x - 36, y + 24, x - 38, y - 22); k.closePath(); }, col, { line: 5, shade: (k) => {
           if (g === 'shutter') { k.fillStyle = '#ffffff'; for (let j = 0; j < 5; j++) k.fillRect(x - 40, y - 18 + j * 9, 80, 4); }

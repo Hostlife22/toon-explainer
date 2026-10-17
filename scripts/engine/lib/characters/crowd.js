@@ -1,7 +1,8 @@
 // crowd.js — crowds and army rows the way the reference builds them: one design duplicated N times with phase offsets,
 // back rows smaller / desaturated, optional march cycle, raised arms, or black silhouettes for audiences.
 // Layer: { type:'crowd', who | who:[...], count, rows, spread, size, march, pose, expr, view, silhouette, flipAlt,
-//          mode:'lineup' (diagonal overlapping faces, 40% overlap, 5% scale step), creature:'horse' (animal members) }
+//          mode:'lineup' (diagonal overlapping faces, 40% overlap, 5% scale step), creature:'horse' (animal members),
+//          look (merged over every member's cast look, e.g. {age:'child'}; works with swap) }
 (function () {
   'use strict';
   const T = window.TOON;
@@ -12,10 +13,11 @@
     const r = T.rng(T.hash(L.id ?? 'crowd' + count + who.join(',') + (L.x ?? '') + (L.y ?? '')));
     // Depth tint is baked into the colours (ctx.filter per draw call is ~10x slower at 1080p).
     const COLOR_KEYS = ['skin', 'skinShade', 'robe', 'robeShade', 'sleeve', 'trim', 'sash', 'belt', 'cape', 'armor', 'hairColor', 'beardColor', 'mustacheColor', 'headColor', 'crest', 'sandal', 'legColor'];
+    const own = L.look && typeof L.look === 'object' ? L.look : null; // crowd-wide look (also from a swap)
     const tinted = (name, depth) => {
-      const base = { skin: T.PAL.skin, skinShade: '#c4c1cd', robe: T.PAL.red, hairColor: T.PAL.hair, ...(env.cast[name] || {}) };
-      if (!L.silhouette && depth <= 0) return null;
-      const fog = L.fog ?? '#8f9a9c', look = {};
+      if (!L.silhouette && depth <= 0) return own;
+      const base = { skin: T.PAL.skin, skinShade: '#c4c1cd', robe: T.PAL.red, hairColor: T.PAL.hair, ...(env.cast[name] || {}), ...(own || {}) };
+      const fog = L.fog ?? '#8f9a9c', look = { ...(own || {}) };
       for (const k of COLOR_KEYS) {
         const v = base[k];
         if (typeof v !== 'string' || v[0] !== '#') continue;
