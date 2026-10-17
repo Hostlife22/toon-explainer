@@ -41,6 +41,23 @@
     return out;
   }
 
+  // A seated rider's bean layer: `r` is a cast id or {who, expr, lookAt, pose, hold, holdL, talk, takes, gaze, look, view,
+  // facing, scale}; its own fields win over the vehicle-wide ones in `base`. anchor(t) -> {x, y, flip} (the rider's head in
+  // the world at shot time t) lets lookAt / takes aim from the seat; an anonymous vehicle gets a rider id unique to it.
+  const RIDER_OWN = new Set(['x', 'y', 'size', 'type', 'legs', 'id', 'scale']);
+  T.vehicleRiderBean = (L, r, base, anchor) => {
+    const B = { ...base };
+    if (r && typeof r === 'object') {
+      for (const [key, v] of Object.entries(r)) if (!RIDER_OWN.has(key)) B[key] = v;
+      if (r.scale != null) B.size = base.size * r.scale;
+    } else B.who = r;
+    if ((B.lookAt != null || B.takes) && anchor) {
+      B.__anchor = anchor;
+      if (L.id == null) B.id = B.id + ':' + T.hash(JSON.stringify([L.kind, L.x, L.y, L.path, L.move, L.at]));
+    }
+    return B;
+  };
+
   const V = {
     tank(ctx, L, s) {
       const k = s.size / 540, col = L.color ?? '#7d6a52', tread = '#4a3b2c';
@@ -68,7 +85,10 @@
     car1910(ctx, L, s, env) {
       const k = s.size / 380, col = L.color ?? '#2f3e5a';
       ctx.scale(k, k);
-      (L.riders || []).forEach((who, i) => { ctx.save(); ctx.translate(-70 + i * 110, -40); T.layers.bean(ctx, { type: 'bean', who, size: 250, legs: false, id: 'car' + i, talk: L.talk }, s.lt, { ...env, st: null }); ctx.restore(); });
+      (L.riders || []).forEach((r, i) => {
+        const base = { type: 'bean', size: 250, legs: false, id: 'car' + i, talk: L.talk, ...(L.riderExpr != null ? { expr: L.riderExpr } : {}) };
+        ctx.save(); ctx.translate(-70 + i * 110, -40); T.layers.bean(ctx, T.vehicleRiderBean(L, r, base, null), s.lt, { ...env, st: null }); ctx.restore();
+      });
       T.outlined(ctx, (c) => { c.moveTo(-180, -60); c.lineTo(-150, -150); c.lineTo(40, -150); c.lineTo(70, -110); c.lineTo(175, -100); c.lineTo(190, -60); c.closePath(); }, col, {
         line: 8, shade: (c) => { c.fillStyle = T.shade(col, -0.25); c.fillRect(-200, -90, 420, 40); c.fillStyle = P.gold; c.fillRect(-180, -118, 360, 6); },
       });

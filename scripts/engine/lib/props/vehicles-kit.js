@@ -110,7 +110,7 @@
       if (p.min >= 0 && T.vehicleMotion(L, te).speed < p.min) continue;
       const rr = T.rng(T.hash(seed + ':' + i)), r = rr();
       if (o.keep && r > o.keep(te)) continue;
-      const w = worldPt(L, te, lx, ly);
+      const w = worldPt(L, te, o.xAt ? lx * o.xAt(te) : lx, ly); // xAt: the emitter's x factor at its emission time (car views)
       if (!w) continue;
       out.push({ i, te, age, f: age / p.life, bx: w[0], by: w[1], s: Math.abs(w[2].s), r, rr, scale: o.scaleAt ? o.scaleAt(te) : o.scale ?? 1 });
     }
@@ -155,7 +155,7 @@
   VK.FN = {}; // kind -> v2 draw(ctx, L, S, env)
   VK.SIZE = {};
   VK.LEGACY_V2 = new Set(['tank', 'train', 'biplane', 'submarine', 'car1910']);
-  const NEW_FIELDS = ['path', 'terrain', 'lights', 'dust', 'exhaust', 'wake', 'contrail', 'spray', 'animal', 'team'];
+  const NEW_FIELDS = ['path', 'terrain', 'lights', 'dust', 'exhaust', 'wake', 'contrail', 'spray', 'animal', 'team', 'view', 'facing'];
   T.vehicleRig = (L, painted) => {
     if (!VK.FN[L.kind]) return 'legacy';
     if (!VK.LEGACY_V2.has(L.kind)) return 'v2';
@@ -181,7 +181,10 @@
   const legacyLayer = T.layers.vehicle;
   T.layers.vehicle = (ctx, L, lt, env) => {
     if (T.vehicleRig(L, !!T.PAINT) !== 'v2') return legacyLayer(ctx, L, lt, env);
-    const S = VK.state(L, lt, env, L.size ?? VK.SIZE[L.kind] ?? 480), sg = !L.path && L.dir === -1 ? -1 : 1;
+    const S = VK.state(L, lt, env, L.size ?? VK.SIZE[L.kind] ?? 480), vs = VK.viewOf ? VK.viewOf(L, lt, S.slt) : null; // car views (vehicles-views.js)
+    const sg = (!L.path && L.dir === -1 ? -1 : 1) * (vs ? vs.facing : 1);
+    S.sg = sg; // mirror of the drawing (riders aim lookAt through it)
+    if (vs) S.view = vs.view;
     const tr = VK.TRAILS[L.kind] && env && env.st ? VK.TRAILS[L.kind](L, S) : null;
     if (tr && tr.length) VK.inWorld(ctx, env, (c) => { // trails stay where they were emitted: drawn in the world, behind the body
       for (const [kind, lx, ly, o] of tr) {
@@ -190,7 +193,9 @@
       }
     });
     if (sg < 0) ctx.scale(-1, 1);
+    if (vs && (vs.sx !== 1 || vs.sy !== 1)) ctx.scale(vs.sx, vs.sy);
     VK.FN[L.kind](ctx, L, S, env || {});
+    if (vs && vs.smear > 0) VK.turnSmear(ctx, L, S, vs);
   };
   VK.D = D; VK.P = P;
 })();

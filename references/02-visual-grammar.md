@@ -169,6 +169,12 @@ A street establisher with life: the hero car on a `path` with `ease: "out"` so i
   {"type":"fg","kind":"lamp-post","side":"left"}]}
 ```
 
+**Turning cars and drivers who react.** The cars (`model-t`, `car1910`, `sedan1920`, `car1950`, `car-modern`) have front, `3q`, back and `3q-back` drawings: a path that doubles back (a U-turn heading down the frame) turns the car through 3q and front instead of squashing it, and a `view` timeline swings a parked car to face the camera. A rider object gives the driver a reaction:
+```json
+{"type":"vehicle","kind":"car1950","id":"car","x":0.6,"y":0.95,"size":560,
+ "riders":[{"who":"driver","expr":[{"at":0,"v":"happy"},{"at":1.6,"v":"shock"}],"lookAt":[{"at":1.6,"v":"reaper"}]},"boss"]}
+```
+
 ### V. The insert that matters (ECU on an object)
 `camera.frame` keys from `ms` on the character to a `box` around the hands or the object (`overshoot` 0.08), or straight to a prop layer; the prop acts (`bottle` `pour`; the glassware fields `boil`, `fumes`, `fill`), `particles` carry the substance (`splash`, `gas`, `steam`), and the label is `hud`. End the beat with a cut back to a face.
 

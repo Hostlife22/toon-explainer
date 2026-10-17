@@ -43,6 +43,7 @@
   }
   const optsOf = (v) => (v && typeof v === 'object' && !Array.isArray(v) ? v : {});
   function selfHead(Ly, t) {
+    if (Ly.__anchor) return Ly.__anchor(t); // a nested bean (vehicle rider): its head in the world, from its parent
     const st = T.layerState(Ly, t);
     if (!st) return null;
     const k = ((Ly.size ?? 420) / 600) * Math.abs(st.s);
@@ -85,7 +86,7 @@
     return plan;
   }
   // The layer's flip at shot time t (move / path flips change it during the shot).
-  const flipAt = (Ly, t) => { const st = T.layerState(Ly, t); return (st && st.flip) || 1; };
+  const flipAt = (Ly, t) => { const st = Ly.__anchor ? Ly.__anchor(t) : T.layerState(Ly, t); return (st && st.flip) || 1; };
   function compile(Ly, shot, env) {
     const at0 = Ly.at ?? 0, end = (shot && shot.dur) || 10, look = Ly.lookAt == null ? null : toKeys(Ly.lookAt);
     const S = (lt) => lt + at0; // layer time -> shot time

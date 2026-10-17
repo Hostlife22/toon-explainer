@@ -16,7 +16,7 @@ from pathlib import Path
 
 from density import lint  # noqa: F401  (re-exported: non-fatal density warnings, printed by the CLI)
 import props_fx  # Props & FX 2.0 field checks (particles, impact language, trail, paper)
-from motion_check import check_motion
+from motion_check import check_motion, check_riders
 from places_check import check_depth, check_set_bg, check_set_layer
 import spec_characters as SC
 import camera_check as CC
@@ -429,6 +429,7 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         props_fx.check_layer(state, where, found, LAYER_KINDS.get("particle_preset", set()))
         errors.extend(e for e in found if not (e in seen or seen.add(e)))
     check_motion(layer, where, errors, _ease_names(), LAYER_KINDS.get("creature"))
+    check_riders(layer, where, errors, cast, KNOWN_EXPR, KNOWN_PROPS)
     if kind == "set":
         check_set_layer(layer, where, LAYER_KINDS, errors)
     for win in layer.get("talk", []) or []:

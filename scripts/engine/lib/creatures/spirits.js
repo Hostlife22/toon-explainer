@@ -42,22 +42,28 @@
     });
     ctx.beginPath(); ctx.ellipse(0, -424, 14, 18, 0, 0, Math.PI * 2); ctx.fill();
     if (expr === 'smile') { ctx.beginPath(); ctx.moveTo(-50, -410); ctx.quadraticCurveTo(0, -372, 50, -410); ctx.stroke(); }
-    // long-fingered gloves
+    // long-fingered gloves; a held prop sits in the right glove, out beside the body (the glove drawn over its edge)
     const pose = T.timed(L.pose ?? 'idle', lt).cur;
     const hands = pose === 'reach' ? [[-210, -470, -0.6], [210, -470, 0.6]] : pose === 'sign' ? [[-150, -260, 0], [170, -420, 0.4]] : [[-160, -250, -0.2], [160, -250, 0.2]];
+    const [hx, hy] = hands[1];
+    if (L.hold === 'scythe') {
+      ctx.save(); ctx.translate(hx, hy); ctx.rotate(0.1);
+      T.outlined(ctx, (c) => T.rrect(c, -10, -420, 20, 560, 10), '#6b4423', { line: 7 });
+      T.outlined(ctx, (c) => { c.moveTo(0, -420); c.quadraticCurveTo(-200, -470, -280, -330); c.quadraticCurveTo(-190, -410, 0, -380); c.closePath(); }, '#cfd5da', { line: 7 });
+      ctx.restore();
+    } else if (L.hold && T.drawProp) {
+      const [ox, oy] = T.REAPER_HOLD_OFFSET;
+      ctx.save(); ctx.translate(hx + ox, hy + oy); T.drawProp(ctx, L.hold, L.holdSize ?? 200, lt, L); ctx.restore();
+    }
     hands.forEach(([x, y, a], i) => {
       ctx.save(); ctx.translate(x, y); ctx.rotate(a + (pose === 'reach' ? Math.sin(lt * 2 + i) * 0.05 : 0));
       for (let f = 0; f < 4; f++) T.outlined(ctx, (c) => T.rrect(c, -30 + f * 18, -96, 16, 80, 8), '#f4f2ee', { line: 6 });
       T.outlined(ctx, (c) => c.ellipse(0, -10, 40, 36, 0, 0, Math.PI * 2), '#f4f2ee', { line: 7 });
       ctx.restore();
     });
-    if (L.hold === 'scythe') {
-      ctx.save(); ctx.translate(160, -250); ctx.rotate(0.1);
-      T.outlined(ctx, (c) => T.rrect(c, -10, -420, 20, 560, 10), '#6b4423', { line: 7 });
-      T.outlined(ctx, (c) => { c.moveTo(0, -420); c.quadraticCurveTo(-200, -470, -280, -330); c.quadraticCurveTo(-190, -410, 0, -380); c.closePath(); }, '#cfd5da', { line: 7 });
-      ctx.restore();
-    } else if (L.hold && T.drawProp) { ctx.save(); ctx.translate(170, -470); T.drawProp(ctx, L.hold, 200, lt, L); ctx.restore(); }
   }
+  // Centre of a held (non-scythe) prop relative to the right glove: out and up, clear of the skull mask (x within +-150).
+  T.REAPER_HOLD_OFFSET = [110, -50];
 
   // Bird rig shared by raven and dove. Fields: flap (windows) or fly (bool), headTurn (bool, snaps every ~1.7 s), perch.
   function bird(ctx, L, lt, colors) {

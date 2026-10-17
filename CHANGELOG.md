@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Engine backlog: creatures and vehicles
+
+- Fix: the reaper's `hold` prop sits in its right glove, out beside the body, in every pose (it covered the skull mask); the scythe follows the glove too; `holdSize` sets the prop size (`tests/test_vehicle_views.py`).
+- Car views: `model-t`, `car1910`, `sedan1920`, `car1950` and `car-modern` draw `front`, `3q`, `back` and `3q-back` views (`lib/props/vehicles-views.js`) from a per-kind face description. A vehicle `view` / `facing` timeline turns the car through the views in between (`turn: {frames, via, squash, smear}`), and a car whose `path` doubles back turns through 3q and front (or back) instead of squashing. Cars without `view`, `facing` or a reversal render exactly as before.
+- Riders can be objects `{who, expr, lookAt, talk, pose, hold, takes, ...}`: a seated driver changes expression on its own timeline and looks at a layer or point from its seat (the acting director aims from the seat in the world).
+- `examples/creatures_vehicles_v2` shot `c13_car_turns` (a U-turn toward the camera, a car turning to face the camera and away, a driver reacting to a reaper holding an hourglass); recipe note in `02-visual-grammar.md` (U).
+
 Painted engine, phase 8: directing rules.
 
 - `SKILL.md` makes the painted look the default for new films and routes to Places 2.0, real `geo` maps and globes, shot-size framing, acting, path motion and particles; production rules gain "one continuous motion per shot", shot-size quotas and a per-shot density checklist.
