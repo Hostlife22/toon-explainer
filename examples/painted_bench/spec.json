@@ -60,7 +60,13 @@
     "kind": "set",
     "preset": "study",
     "parts": [
-     {"kind": "column", "x": 0.04, "y": 0.78, "h": 0.76, "color": "#c8b89a"}
+     {
+      "kind": "column",
+      "x": 0.04,
+      "y": 0.78,
+      "h": 0.76,
+      "color": "#c8b89a"
+     }
     ]
    },
    "camera": {
@@ -125,7 +131,10 @@
    "bg": {
     "kind": "street1920",
     "obelisk": 0.5,
-    "lamps": [0.22, 0.8]
+    "lamps": [
+     0.22,
+     0.8
+    ]
    },
    "camera": {
     "zoom": [
@@ -186,8 +195,16 @@
     "preset": "sunset",
     "clouds": 5,
     "trees": [
-     [0.1, 0.88, 0.55],
-     [0.9, 0.86, 0.45]
+     [
+      0.1,
+      0.88,
+      0.55
+     ],
+     [
+      0.9,
+      0.86,
+      0.45
+     ]
     ]
    },
    "camera": {
@@ -432,18 +449,33 @@
     "kind": "palace"
    },
    "camera": {
-    "zoom": [
-     1.0,
-     1.0
-    ]
+    "frame": [
+     {
+      "at": 0,
+      "target": "senator",
+      "size": "mcu",
+      "ots": "merchant"
+     },
+     {
+      "at": 1.2,
+      "target": "senator",
+      "size": "ecu",
+      "dur": 0.3,
+      "overshoot": 0.15
+     }
+    ],
+    "letterbox": {
+     "h": 0.1,
+     "at": 1.2
+    }
    },
    "layers": [
     {
      "type": "bean",
      "who": "senator",
-     "x": 0.46,
-     "y": 1.6,
-     "size": 1350,
+     "x": 0.4,
+     "y": 0.92,
+     "size": 460,
      "pose": [
       {
        "at": 0,
@@ -479,7 +511,18 @@
        "at": 1.2,
        "v": "front"
       }
-     ]
+     ],
+     "id": "senator"
+    },
+    {
+     "type": "bean",
+     "id": "merchant",
+     "who": "merchant",
+     "x": 0.78,
+     "y": 0.92,
+     "size": 460,
+     "flip": true,
+     "expr": "worried"
     },
     {
      "type": "prop",
@@ -495,12 +538,6 @@
      "y": 0.3,
      "size": 130,
      "spin": true
-    },
-    {
-     "type": "fg",
-     "kind": "ots",
-     "who": "merchant",
-     "side": "right"
     }
    ]
   },
@@ -515,14 +552,11 @@
     "clouds": 4
    },
    "camera": {
-    "zoom": [
-     1.04,
-     1.1
-    ],
-    "focus": [
-     0.45,
-     0.75
-    ]
+    "follow": {
+     "target": "car",
+     "lag": 0.35,
+     "size": "ms"
+    }
    },
    "layers": [
     {
@@ -605,9 +639,10 @@
    },
    "camera": {
     "zoom": [
-     1.0,
-     1.04
-    ]
+     1.05,
+     1.1
+    ],
+    "angle": "low"
    },
    "layers": [
     {

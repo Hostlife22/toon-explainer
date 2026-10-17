@@ -21,6 +21,18 @@
     out: (p) => 1 - (1 - p) * (1 - p),
     inOut: (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2),
     outCubic: (p) => 1 - Math.pow(1 - p, 3),
+    inCubic: (p) => p * p * p,
+    // anticipation: backs up first (about -10 %), then goes
+    inBack: (p) => { const c = 1.7; return (c + 1) * p * p * p - c * p * p; },
+    // anticipation and overshoot: backs up, travels, passes the end (about 10 %) and returns
+    inOutBack: (p) => {
+      const c = 1.7 * 1.525;
+      return p < 0.5 ? (Math.pow(2 * p, 2) * ((c + 1) * 2 * p - c)) / 2 : (Math.pow(2 * p - 2, 2) * ((c + 1) * (p * 2 - 2) + c) + 2) / 2;
+    },
+    // spring settle: passes the end by about 13 %, swings back and lands exactly on it
+    outSettle: (p) => (p >= 1 ? 1 : 1 - Math.exp(-5 * p) * Math.cos(2.5 * Math.PI * p)),
+    // looser spring: two visible swings before it lands
+    outElastic: (p) => (p >= 1 ? 1 : 1 - Math.exp(-3.2 * p) * Math.cos(4.5 * Math.PI * p)),
     outBack: (p) => {
       const c = 1.9;
       return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2);
@@ -83,13 +95,20 @@
 
   // ---------- camera ----------
   // camera: { zoom:[from,to], pan:[[x0,y0],[x1,y1]] (px), focus:[nx,ny], ease, punch:[{at,amount}], shake:[{at,dur,amp}], rot:[from,to] }
-  T.cameraAt = (cam, lt, dur) => {
+  // zoom / pan may also be [{at, v, ease}] keys. `shot` (optional) lets camera modules frame layers of the shot
+  // (T.CAM_EXT: frame, follow, handheld, dolly zoom, orbit, roll, angle; lens/camera-grammar.js).
+  T.CAM_KEYS = (keys, lt) => T.num(keys, lt); // replaced by lens/camera-moves.js (eased keys)
+  T.cameraAt = (cam, lt, dur, shot) => {
     const c = cam || {};
     const e = T.easeBy(c.ease || 'linear')(T.prog(lt, c.at ?? 0, c.dur ?? dur));
     const zoom = c.zoom || [1, 1.04];
-    let z = T.lerp(zoom[0], zoom[1], e);
+    const keyed = (v) => Array.isArray(v) && v.length > 0 && v[0] !== null && typeof v[0] === 'object' && !Array.isArray(v[0]);
+    let z = keyed(zoom) ? T.CAM_KEYS(zoom, lt) : T.lerp(zoom[0], zoom[1], e);
+    const z0 = z;
     const pan = c.pan || [[0, 0], [0, 0]];
-    const px = T.lerp(pan[0][0], pan[1][0], e), py = T.lerp(pan[0][1], pan[1][1], e);
+    let px, py;
+    if (keyed(pan)) [px, py] = T.CAM_KEYS(pan, lt);
+    else { px = T.lerp(pan[0][0], pan[1][0], e); py = T.lerp(pan[0][1], pan[1][1], e); }
     for (const k of c.punch || []) {
       const d = lt - k.at;
       if (d >= 0) z *= 1 + (k.amount ?? 0.15) * (d < 0.08 ? d / 0.08 : Math.exp(-(d - 0.08) * 7));
@@ -112,7 +131,8 @@
       z *= j.zoom ?? 1.3;
       if (j.focus) focus = j.focus;
     }
-    return { z, px, py, sx, sy, rot, fx: focus[0] * T.W, fy: focus[1] * T.H };
+    const out = { z, px, py, sx, sy, rot, fx: focus[0] * T.W, fy: focus[1] * T.H };
+    return T.CAM_EXT && T.CAM_EXT.wants(c) ? T.CAM_EXT.apply(out, c, lt, dur, shot, z / z0) : out;
   };
   // [{at, v}] number keys: holds each value, blending into the next over `blend` seconds (hold-and-snap).
   T.snapTimeline = (keys, lt, blend = 0.067) => {
@@ -126,10 +146,14 @@
   // `parallax` multiplier draws, T.BG_DEPTH scales every plane's distance from the camera plane (f = 1).
   T.BG_DEPTH = null;
   T.depthF = (f) => (T.BG_DEPTH == null || T.BG_DEPTH === 1 ? f : 1 - (1 - f) * T.BG_DEPTH);
+  // Zoom of a plane at factor f. Framed cameras (camera.frame) push far in: a deep background (f < 0 through a large
+  // bg.parallax) must not shrink below the frame there.
+  T.planeZoom = (cam, f) => { const z = 1 + (cam.z - 1) * f; return cam.framed ? Math.max(1, z) : z; };
   T.applyCam = (ctx, cam, f = 1) => {
     if (!cam || f === 0) return;
     f = T.depthF(f);
-    const z = 1 + (cam.z - 1) * f;
+    if (cam.ext && T.applyCamExt) { T.applyCamExt(ctx, cam, f); return; } // dolly zoom, orbit, low / high angle
+    const z = T.planeZoom(cam, f);
     ctx.translate(cam.fx + cam.sx, cam.fy + cam.sy);
     ctx.rotate(cam.rot * f);
     ctx.scale(z, z);
@@ -285,7 +309,7 @@
   // Lettering and screen furniture stay sharp during rack focus unless they opt in with focusable: true.
   const FOCUS_EXEMPT = new Set(['label', 'title', 'caption', 'date', 'era', 'counter', 'timer', 'doc', 'hud', 'cursor', 'fx']);
   function focusBlur(shot, lt) {
-    const keys = shot.focus;
+    const keys = T.focusKeysOf ? T.focusKeysOf(shot) : shot.focus;
     if (!keys || !keys.length) return null;
     const under = (e, id) => {
       if (!e) return 0;
@@ -309,7 +333,7 @@
     const hud = L.hud ?? HUD_DEFAULT[L.type] ?? false;
     const paint = (c) => {
       c.save();
-      if (!hud && cam) T.applyCam(c, cam, L.z ?? 1);
+      if (!hud && cam) T.applyCam(c, cam, T.layerZ(L));
       c.translate(st.x, st.y);
       c.rotate(st.r);
       c.scale(st.s * st.flip * st.sx, st.s * st.sy);
@@ -330,6 +354,9 @@
     } finally { ctx.restore(); T.PAINT = saved; }
   };
 
+  // Parallax factor of a layer: z, else 1 / dist (camera distance relative to the subject plane), else 1.
+  T.layerZ = (L) => L.z ?? (L.dist > 0 ? 1 / L.dist : 1);
+
   // ---------- drawing a shot ----------
   // Layer types drawn in screen space by default (modules may add their own, e.g. T.HUD_DEFAULT.hud = true).
   T.HUD_DEFAULT = { era: true, timer: true, date: false, title: false };
@@ -345,7 +372,7 @@
     ctx.setTransform(env.dpr, 0, 0, env.dpr, 0, 0);
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, T.W, T.H);
-    const cam = T.cameraAt(shot.camera, lt, shot.dur);
+    const cam = T.cameraAt(shot.camera, lt, shot.dur, shot);
     const shotEnv = { ...env, cam, shot, seed: (env.seed || 1) + ':' + shot.id };
     const bgs = Array.isArray(shot.bg) ? shot.bg : [shot.bg || { kind: 'sky' }];
     const drawBgs = (c) => {
@@ -367,14 +394,20 @@
     const bgBlur = focus ? focus('@bg') : 0;
     if (bgBlur >= 0.3) T.filtered(ctx, `blur(${(bgBlur * env.dpr).toFixed(2)}px) brightness(0.96)`, drawBgs); // blurred copy over the sharp one: no dark edges
     if (T.gradeBg && !env.noPost) T.gradeBg(ctx, shot, lt, shotEnv); // panel cells with grade:false stay ungraded
-    for (const L0 of shot.layers || []) {
+    // modules may add or hide layers (over-the-shoulder framing) and step characters on twos (camera-grammar.js)
+    const layers = T.shotLayers ? T.shotLayers(shot, lt) : shot.layers || [];
+    let streaked = !cam.streak; // whip pan motion blur goes under the lettering and screen furniture
+    for (const L0 of layers) {
       let L = T.effLayer(L0, lt);
+      if (!streaked && (L.hud || HUD_DEFAULT[L.type] || FOCUS_EXEMPT.has(L.type)) && L.type !== 'fx') { T.camStreak(ctx, cam, shotEnv); streaked = true; }
       if (focus && L.id && !L.sharp && (L.focusable || !FOCUS_EXEMPT.has(L.type))) {
         const fb = focus(L.id), own = T.num ? T.num(L.blur, lt) || 0 : 0;
         if (fb >= 0.3 || own) L = { ...L, blur: Math.max(fb, own) };
       }
-      T.drawLayer(ctx, L, lt, shotEnv, cam);
+      if (L.dist != null && T.distLayer) L = T.distLayer(L);
+      T.drawLayer(ctx, L, T.twosLt ? T.twosLt(L, lt, shot, env) : lt, shotEnv, cam);
     }
+    if (!streaked) T.camStreak(ctx, cam, shotEnv);
     if (T.post && !env.noPost) T.post(ctx, lt, shotEnv);
     const lb = shot.camera && shot.camera.letterbox;
     if (lb) drawLetterbox(ctx, lb === true ? {} : lb, lt);
@@ -480,7 +513,7 @@
     c.save();
     c.setTransform(env.dpr, 0, 0, env.dpr, 0, 0);
     const own = { ...shot, layers: shot.pinned };
-    const sEnv = { ...env, cam: null, shot: own, outerShot: shot, outerCam: T.cameraAt(shot.camera, lt, shot.dur), seed: (env.seed ?? 1) + ':' + shot.id + ':pinned' };
+    const sEnv = { ...env, cam: null, shot: own, outerShot: shot, outerCam: T.cameraAt(shot.camera, lt, shot.dur, shot), seed: (env.seed ?? 1) + ':' + shot.id + ':pinned' };
     const prevPaint = T.PAINT;
     T.PAINT = T.paintState ? T.paintState(env.spec, shot) : null;
     try { for (const L0 of shot.pinned) T.drawLayer(c, T.effLayer(L0, lt), lt, sEnv, null); } finally { T.PAINT = prevPaint; c.restore(); }

@@ -11,7 +11,7 @@ REACH_SPACES = {"world", "local"}
 DETAIL = {"auto"}
 LIP_ALIGN = {"film", "layer"}
 LIP_DIGITS = set("0123456789")
-ACTING_KEYS = {"antic", "overshoot", "breathe", "shift", "squash", "turn"}
+ACTING_KEYS = {"antic", "overshoot", "breathe", "shift", "squash", "turn", "blink", "fidget", "react"}
 
 
 def _num(v) -> bool:

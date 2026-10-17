@@ -121,7 +121,7 @@ A viewer-stand-in character `who:"you"` (neutral clothing), `expr:"worried"`, th
 `city` (`style: stone` or `wood`) + `crowd` (2 rows, `armsUp`, `expr: "happy"`, `flipAlt`) + `fx: confetti` + `fg: grass`.
 
 ### P. Over-the-shoulder conversation
-`fg: ots` (`who` is the listener, `side` opposite the speaker) + the speaker in 3/4 view with `talk`, pose changes, and a caption. Put the caption **after** `ots` in the layer list so the back of the head doesn't cover it.
+Both characters in the shot with ids, then `camera.frame` keys `{"target": "<speaker>", "size": "mcu", "ots": "<listener>"}` and a second key that swaps them on the reply (shot-reverse-shot in one shot). The listener becomes a blurred dark shoulder at the frame edge, the speaker sits opposite; a final key at `ecu` with `overshoot` punches into the line that matters. Hand-placed alternative: `fg: ots` (`who` is the listener, `side` opposite the speaker), with the caption **after** it in the layer list.
 
 ### Q. Lived-in room (painted look)
 `bg: set` with a `preset` (`study`, `library`, `office`, `tavern`, `lab`, `throne`, `courtroom`) or your own `parts`; a `window` with `light: true` gives a shaft with dust, a `lamp` or `fireplace` gives a warm pool (raise `dark` for a night scene). Put the speaker in the light, add a `set` layer (`table` with a `candle`, `z` 1.1) in front of the characters, and frame with `fg: column` or `fg: curtains`.
@@ -131,6 +131,13 @@ A viewer-stand-in character `who:"you"` (neutral clothing), `expr:"worried"`, th
 
 ### S. Looking out / listening audience
 Through a window: `fg: window-frame` over a `castle` or `street1920`, a character's shoulder at `z` 1.3 in a corner. A speech or verdict: `fg: silhouettes` (`who` = cast backs) under a speaker on a `stage` or in a `set` `courtroom`.
+
+### T. Shot-size grammar (vary the size every cut or two)
+Frame the subject instead of zooming by hand: `camera.frame: {"target": "<id>", "size": "ecu" | "cu" | "mcu" | "ms" | "ws" | "ews"}`.
+Establish at `ws` / `ews` (a `high` angle makes the figure small and lost), cut to `ms` for the gesture, `mcu` / `cu`
+for the reaction, `ecu` + `letterbox` for the stare or the scream. Power and triumph: `angle: "low"` at `ms` over a
+crowd. Panic: `handheld` + `shake`. Chase: `follow` the runner (`onTwos` for snappier legs), `whip` to the pursuer.
+Dread: `dollyzoom` on a `cu`. Reveal of a second character: `rack` focus from the foreground one to the far one.
 
 ## Tone: cold vs. comedic
 

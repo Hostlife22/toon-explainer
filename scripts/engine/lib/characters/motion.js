@@ -14,7 +14,8 @@
     if (L.acting === false || (L.acting == null && !T.PAINT)) return null;
     const o = typeof L.acting === 'object' && L.acting ? L.acting : {};
     const on = (k) => o[k] !== false;
-    return { antic: on('antic'), overshoot: on('overshoot'), breathe: on('breathe'), shift: on('shift'), squash: on('squash'), turn: on('turn') };
+    return { antic: on('antic'), overshoot: on('overshoot'), breathe: on('breathe'), shift: on('shift'), squash: on('squash'), turn: on('turn'),
+      blink: on('blink'), fidget: on('fidget'), react: on('react') }; // the last three: acting/director.js
   };
 
   // Under-damped step response (overshoots ~16 %, settles in ~0.3 s); poseBlend scales the speed.

@@ -301,7 +301,7 @@
     let ox = T.noise(lt * 4, id + ':hx') * amp, oy = T.noise(lt * 4 + 9, id + ':hy') * amp;
     const shot = env.shot, lag = L.lag ?? 0.2;
     if (shot && shot.camera && lag > 0 && env.lt != null) { // mask trails camera pans by `lag` seconds
-      const c0 = T.cameraAt(shot.camera, env.lt, shot.dur), c1 = T.cameraAt(shot.camera, env.lt - lag, shot.dur);
+      const c0 = T.cameraAt(shot.camera, env.lt, shot.dur, shot), c1 = T.cameraAt(shot.camera, env.lt - lag, shot.dur, shot);
       ox += T.clamp((c1.px - c0.px) * 0.6, -120, 120); oy += T.clamp((c1.py - c0.py) * 0.6, -120, 120);
     }
     return [ox, oy];

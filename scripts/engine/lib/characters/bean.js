@@ -210,13 +210,14 @@
       ctx.translate(0, 300);
       const expr = T.timed(Ly.expr ?? 'neutral', lt).cur;
       const blinkPhase = (lt + (T.hash(seed) % 300) / 100) % (2.8 + (T.hash(seed) % 17) / 10);
+      const blinkNow = Ly.blink !== false && (blinkPhase < 0.09 || (!!Ly.blinkAt && T.forcedBlink(Ly, lt))); // director blinks (director.js)
       const detail = T.closeupWanted(ctx, Ly.detail);
       let smear = Ly.smear;
       if (ts.inBetween && ts.changeAt != null && !(Ly.turn && Ly.turn.smear === false)) smear = [...(smear ? (Array.isArray(smear) ? smear : [smear]) : []), { at: ts.changeAt, dur: 0.23, dir: 1, strength: 0.7 }];
       const mouthKind = lipOn ? T.LIP_SHAPES[lipRank] : talking ? H().talkMouth(expr, lt, seed) : null;
       H().draw(ctx, c, {
         view, expr, lt, seed,
-        blink: Ly.blink !== false && blinkPhase < 0.09,
+        blink: blinkNow,
         gazeX: Ly.gaze ?? 0, smear,
         mouthKind, detail, mood: detail ? T.closeupMood(expr, T.EXPR[expr]) : null, sway,
       });
@@ -226,7 +227,7 @@
       if (probe) record(probe, ctx, base, arms, { view, facing: ts.facing, inBetween: !!(ts.inBetween || ft), sx: sq.sx * tsx, sy: sq.sy * tsy * anticSy,
         antic, overshoot: act && pt.at > -1e8 && since < 0.6 ? pp - 1 : 0, gait: gait2 ? gait2.kind : gait ? (gait.run ? 'run' : 'walk') : null,
         feet: geom && legMode === 'gait' ? geom.map((L) => L.ft.map((v) => Math.round(v))) : gait ? gait.legs.map((l) => [Math.round(l.dx), Math.round(l.dy)]) : null,
-        detail, mouth: mouthKind, sway });
+        detail, mouth: mouthKind, sway, tilt: Ly.headTilt ?? 0, gaze: Ly.gaze ?? 0, blink: blinkNow });
       ctx.restore();
     } finally { T.CHAR_SWAY = prevSway; }
     if (probe) T.RIG_PROBE[Ly.id] = probe;

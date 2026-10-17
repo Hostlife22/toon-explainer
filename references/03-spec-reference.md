@@ -51,6 +51,30 @@ In vertical films `keepInFrame` (labels, titles, counters) clamps to the visible
 | `rot` | `[0, -2]` or `[{"at":0,"v":0},{"at":1.2,"v":-6}]` | Tilt in degrees. Key form = dutch-angle snaps (2-frame blend) |
 | `letterbox` | `{"h":0.12,"at":0.3,"dur":0.2,"out":2.5}` or `true` | Cinematic bars slide in (and out at `out`) for extreme close-ups and stares |
 | `jump` | `[{"at":1.4,"zoom":1.35,"focus":[0.4,0.35]}]` | Cut-in without a cut: the zoom jumps in 1 frame on a pose snap or key word; entries stack |
+| `zoom` / `pan` keys | `[{"at":0,"v":1},{"at":1,"v":1.5,"ease":"outSettle"}]` | Keyed form: each segment eases with the later key's `ease` (default `inOut`); `pan` key values are `[x, y]` px |
+| `frame` | `{"target":"hero","size":"cu"}` or a list of keys | Shot-size framing of a layer: zoom and centre come from the target's extents (a bean's head and body, or a layer's `size`). Fields below |
+| `follow` | `"car"` or `{"target":"car","lag":0.35,"size":"ms","axis":"x"}` | Follows a moving layer with a critically damped lag (`lag` s, default 0.3; zoom 1.35 unless `size` / `zoom`). Not together with `frame` |
+| `handheld` | `true`, `8` or `{"amp":8,"hz":0.6,"rot":0.4,"at":1,"dur":2}` | Handheld drift: three octaves of seeded noise (px and degrees), fades in and out of an `at`/`dur` window |
+| `dollyzoom` | `{"at":0.4,"dur":2,"amount":0.6,"target":"hero"}` | Vertigo move: the subject plane keeps its size while farther planes shrink and nearer ones grow (`amount` < 0: the world looms). Centred on `target` |
+| `orbit` | `{"amount":220,"dur":3}` | Orbit-lite parallax slide: planes behind the subject slide one way, planes in front the other, by `amount` px at full depth |
+| `roll` | `-4` or `[{"at":0,"v":0},{"at":2,"v":-8,"ease":"inOut"}]` | Smooth camera roll in degrees (eased keys; `rot` keys snap) |
+| `angle` | `"low"`, `"high"`, `"eye"`, a number -1..1 or `[{at, v}]` | Low angle: far planes drop (lower horizon), near planes rise and the subject looms; high angle the reverse |
+
+`frame` keys: `at` (shot time; before the first key the plain camera holds), `target` (layer id) or `point` `[x, y]`
+or `box` `[x, y, w, h]` (fractions), `size` (`ecu` extreme close-up: eyes and mouth; `cu` close-up: the head; `mcu`
+head and shoulders; `ms` medium: to the waist; `ws` wide: the whole figure; `ews` extreme wide: a small figure),
+`zoom` (overrides `size`), `place` (`[x, y]` frame fractions where the target lands, default centre), `dur` (0.6 s
+move from the previous key), `ease`, `overshoot` (0..0.9: a spring push that passes the framing and settles),
+`whip` (a fast pan, `dur` 0.25, with a motion streak), `rack` (`true` or px: rack focus to the target as the key
+starts), `ots` (the listener's id or `{id, side, blur, tone}`: over-the-shoulder, the listener becomes a blurred dark
+shoulder at the frame edge and the speaker is placed opposite), `lag` (follow), `axis` (`x` / `y`: follow one axis),
+`clamp` (default true: the framing never shows past the world edge). Easings: `linear`, `in`, `out`, `inOut`,
+`inCubic`, `outCubic`, `outBack`, `outBounce`, `inBack` (anticipation), `inOutBack`, `outSettle` (spring, 13 %
+overshoot), `outElastic`. Times and the full lens guide: [09 Transitions and lens](toolkits/09_transitions_and_lens.md#camera-20-shot-sizes-and-moves).
+
+`onTwos` (`style`, shot or layer: `true` = 12 fps, or a rate): character layers (`bean`, `crowd`, `creature`, `obj`,
+`arm`, or any layer with its own `onTwos: true`) are sampled on the coarser clock while the camera stays smooth;
+a layer's `onTwos: false` opts out.
 
 Parallax: every layer has a `z` (default 1). At 0 the layer is pinned to the screen; at 0.5 it moves at half the camera speed. Backgrounds lay out their own planes: sky 0.15, clouds 0.3, hills 0.45–0.8, ground 1.
 
@@ -104,6 +128,7 @@ More fields accepted by every layer:
 | `contact` | `true`, `1.4` or `{"w":1.2,"h":0.05,"alpha":0.6,"dy":0.5}` | Painted look: soft contact shadow (ambient occlusion) on the ground under the layer. On by default for `bean` (and crowd members); `false` turns it off. `w` scales the width, `dy` is the offset below the anchor as a fraction of `size` (0.5 for centred props) |
 | `painted` | `false` | Painted look: keep this layer flat (`false`), or shade a lettering / UI layer that is flat by default (`true`) |
 | `trail` | `true` or `{"frames":4,"length":0.12,"alpha":0.5,"min":6}` | Motion smear: while the layer moves (more than `min` px over `length` s, rotation counts too), `frames` ghost copies of it at earlier times are drawn under it, fading out. Thrown coins, a swung hammer, a flying prop. Works on any layer type and in both looks ([08 Impact](toolkits/08_fx_and_tone.md#particles-impact-and-painted-fx)) |
+| `dist` | `2` | Camera distance relative to the subject plane: parallax `1 / dist` (unless `z` is set); farther layers (`dist` > 1) also get atmospheric haze (`atmos` default `(dist - 1) × 0.2`, at most 0.6). Below 1 is foreground |
 | `path` | `{"pts":[[0.1,0.8],[0.5,0.6],[0.9,0.8]],"at":0,"dur":3,"ease":"inOut","curve":"smooth","orient":true,"face":true,"bank":30,"loop":false}` | Moves the layer along a curve at constant speed (arc-length), eased over shot time `at`..`at + dur` (like `move`). `curve`: `smooth` (through the points), `linear`, `bezier` (3n+1 points: start, control, control, end per segment). `face` (default true) flips the layer to face the direction of travel and squashes it through a reversal; `orient` rotates it to the tangent (`true`, or a max tilt in degrees); `bank` leans it into curves (planes roll their wings instead); `loop`: `true` or a lap count. Creatures and vehicles lock their gait and wheels to the distance travelled, beans walk it (`gait`: `walk` default, `run`, `sneak`, `march`, `false` = glide; stride matched to the speed, phase integrated over speed changes, a front-view in-between on reversals); trails and contact shadows follow. Always an object: a plain list of points is the type-specific `path` of `fx`, `cursor` and `map` only. Reversing eases (`outBack`, `outBounce`) turn the layer round and run the gait / wheels backward correctly; with `face: false` the rig keeps its facing and walks or rolls backward. Details: [03 Props, creatures and vehicles](toolkits/03_props_creatures_vehicles.md#motion-20-path-gaits-and-trails) |
 
 Shot-level `focus` (rack focus; not the same as `camera.focus`, which is only the zoom target point): `"focus": [{"at":0,"on":"king","px":10},{"at":2.2,"on":"bg","dur":0.5}]`. From `at`, every layer **with an `id`** other than `on` ramps to `px` of blur and `on` ramps sharp over `dur` (0.4 s, ease in-out); the background gets `bg` px (default `px`, or 0 when `on` is `"bg"`). Pull focus on the word that names the new subject.
@@ -143,6 +168,7 @@ Default entrance:
   - `rage` adds an anger vein, `worried` a sweat drop, `cry` streams of tears.
   - `dead` gives X eyes; combine with `rot: -88`, `rock: 0`, `blink: false` and `fx: blood`.
 - `talk`: the mouth switches between the expression's 3 shapes every ~3 frames (10 Hz, no repeats); the head bobs ±1.6°.
+- `lookAt` (a layer id, `[x, y]`, `{target | x, y, turn, head, eyes}` or a `[{at, v}]` timeline, `null` = stop): the body turns toward the target, the head tilts up or down with a spring snap and the eyes lead; `takes` (`[{at, kind: double | snap | jolt | blink, target, expr}]`, layer time): reaction takes. See [02 Acting](toolkits/02_acting.md#acting-director-lookat-takes-blinks-fidgets).
 - `pose` (arms): `idle point point-up arms-up shrug facepalm think wave hold fist hips cross present scared hands-face thumbs-up clutch-head sword-up reach`.
   - Arms are two bendable tubes (shoulder → elbow → hand; some poses use IK).
   - Glove hands: `open`, `fist`, `point`, `thumb`.

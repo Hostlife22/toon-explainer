@@ -1,0 +1,8 @@
+{
+  "_module": "Camera & acting: lens/camera-grammar.js (shot-size framing, over-the-shoulder, follow, whip, rack keys), lens/camera-moves.js (handheld, dolly zoom, orbit, roll, low / high angle, depth planes, whip streak, on twos), acting/director.js (lookAt, reaction takes, blink on cut, fidgets, expression kicks). Field checks: scripts/camera_check.py. Guide: references/toolkits/09_transitions_and_lens.md, 02_acting.md.",
+  "kinds": {
+    "shot_size": ["ecu", "cu", "mcu", "ms", "ws", "ews"],
+    "take": ["double", "snap", "jolt", "blink"]
+  },
+  "registry": {"shot_size": "TOON.SHOT_SIZES", "take": "TOON.TAKES"}
+}

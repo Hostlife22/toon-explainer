@@ -41,15 +41,29 @@ def is_title_card(shot: dict) -> bool:
     return any(L.get("type") in LETTERING_TYPES for L in layers) and all(b.get("kind") in CARD_BGS for b in _bgs(shot))
 
 
+def _frame_keys(shot: dict) -> list[dict]:
+    cam = shot.get("camera") if isinstance(shot.get("camera"), dict) else {}
+    f = cam.get("frame") or cam.get("follow")
+    keys = f if isinstance(f, list) else [f] if f else []
+    return [k if isinstance(k, dict) else {"target": k} for k in keys]
+
+
 def _has_foreground(shot: dict) -> bool:
+    if any(k.get("ots") for k in _frame_keys(shot)):  # over-the-shoulder framing adds a foreground shoulder
+        return True
     for L in _layers(shot):
         z = L.get("z")
-        if L.get("type") == "fg" or L.get("fg") is True or (isinstance(z, (int, float)) and not isinstance(z, bool) and z > 1):
+        dist = L.get("dist")
+        near = isinstance(dist, (int, float)) and not isinstance(dist, bool) and 0 < dist < 1
+        if L.get("type") == "fg" or L.get("fg") is True or near or (isinstance(z, (int, float)) and not isinstance(z, bool) and z > 1):
             return True
     return False
 
 
 def _zoom_key(shot: dict):
+    keys = _frame_keys(shot)
+    if keys:  # shot-size framing: the sizes (or zooms) of its keys
+        return tuple(str(k.get("size") or k.get("zoom") or "follow") for k in keys)
     cam = shot.get("camera") if isinstance(shot.get("camera"), dict) else {}
     zoom = cam.get("zoom")
     if not (isinstance(zoom, list) and len(zoom) == 2 and all(isinstance(z, (int, float)) for z in zoom)):

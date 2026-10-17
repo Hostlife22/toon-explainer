@@ -28,7 +28,7 @@
     if (!shot) return 1;
     if (zooms.has(shot)) return zooms.get(shot);
     let z = 1;
-    for (let i = 0; i <= 24; i++) { const c = T.cameraAt(shot.camera, (shot.dur * i) / 24, shot.dur); if (c && c.z > z) z = c.z; }
+    for (let i = 0; i <= 24; i++) { const c = T.cameraAt(shot.camera, (shot.dur * i) / 24, shot.dur, shot); if (c && c.z > z) z = c.z; }
     zooms.set(shot, z);
     return z;
   };

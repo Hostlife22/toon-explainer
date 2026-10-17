@@ -157,7 +157,7 @@ Bean-only acting fields (`pose` / `expr` keys, `antic`, `snapTilt`, `tremble`, `
 
 ### Body acting (`acting`)
 
-On by default in the painted look (`style.look: "painted"`), opt-in with `acting: true` in classic, off with `acting: false`; `{antic, overshoot, breathe, shift, squash, turn: false}` drops single parts. All of it is a pure function of time (`motion.js`).
+On by default in the painted look (`style.look: "painted"`), opt-in with `acting: true` in classic, off with `acting: false`; `{antic, overshoot, breathe, shift, squash, turn, blink, react, fidget: false}` drops single parts (the last three are the [acting director](#acting-director-lookat-takes-blinks-fidgets)). All of it is a pure function of time (`motion.js`).
 
 | Part | Effect |
 |---|---|
@@ -168,6 +168,21 @@ On by default in the painted look (`style.look: "painted"`), opt-in with `acting
 | `squash` | Jumps (`jump`): 4-frame crouch (to 0.8), launch stretch 1.16, falling stretch 1.07, landing squash 0.78 that bounces back in 0.35 s; volume kept by the width. `impact` entries squash sideways and lean back. |
 | `turn` | Front-view in-between when a `move` / `path` flip turns the character around. |
 | secondary motion | Hair (shear from the crown), cape, robe hem, helmet crests / plumes and ties lag behind the body: a damped spring (1.4 Hz, damping 0.32) driven by the layer's acceleration over the last 1.2 s plus drag on its speed (`T.springLag`), turn impulses and the gait. The bean field `secondary` scales it (the common `sway` field is a different thing: a rotation). |
+
+### Acting director (`lookAt`, `takes`, blinks, fidgets)
+
+`acting/director.js`, on beans. All times are layer time; everything is a pure function of time.
+
+| Field | Default | Effect |
+|---|---|---|
+| `lookAt` | none | A layer id (aims at a bean's head), `[x, y]`, `{target \| x, y, turn, head, eyes}` or `[{at, v}]` keys (`v: null` lets go). The body turns toward the target (facing sampled at 6 Hz, with the usual turn in-between and hair smear; an explicit `facing` wins), the head tilts up or down (up to 15°) with a spring snap that overshoots, the eyes lead (`gaze` ±12), and the character blinks on each new key. `turn` / `head` / `eyes: false` drop one part |
+| `takes` | none | `double`: glance at `target` (0.22 s), back (to 0.6 s), then snap round with `expr` (`shock`) for 0.9 s, a 26 px hop and a head kick. `snap`: turn to the target with a head kick. `jolt`: a 34 px hop, a short tremble and an optional `expr`. `blink`: a blink. Without a `target`, `double` and `snap` look at the camera (`view: front`) |
+| `acting.blink` | on with acting | A blink 2 frames after the cut, on each `lookAt` key and in takes (3 frames) |
+| `acting.react` | on with acting | Every expression change kicks the head (about 5°, a damped 2.2 Hz wobble) |
+| `acting.fidget` | on with acting | In idle holds (pose `idle`, not talking or walking, no `lookAt`, 1.5 s clear of takes and changes) a seeded glance aside with a small head tilt every 2.6-4.6 s |
+
+Recipe, the double take: `{"type":"bean","id":"hero",...,"takes":[{"at":0.7,"kind":"double","target":"rival"}]}` with
+the camera framing the hero at `ms`. Reaction shot in a dialogue: `lookAt` the speaker, then a `snap` to the door.
 
 Travel along a curve is the common `path` field ([spec reference](../03-spec-reference.md#common-layer-fields)); beans walk it with a gait cycle (see [01 Characters](01_characters.md#characters-20-fields-bean)). `floorY` (any layer, normalised floor y) keeps the painted contact shadow on the floor under a flying or hovering bean or contact layer; jumps and upward `bob` lift it automatically.
 

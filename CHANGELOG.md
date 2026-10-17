@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+Painted engine, phase 4: camera and acting. Classic specs without the new fields render pixel for pixel as before.
+
+- Shot-size grammar: `camera.frame` keys frame a target layer at `ecu`, `cu`, `mcu`, `ms`, `ws` or `ews` (bean head and body extents, or a layer's box), with `place`, `zoom`, `point` / `box` targets and world-edge clamping; keys move between framings with an ease, a spring `overshoot` that settles, or a `whip` pan with a motion streak, and `rack: true` pulls focus to the target.
+- Over the shoulder: a key's `ots` hides the listener and redraws it as a blurred dark shoulder at the frame edge, with the speaker placed opposite. Low / high angle (`camera.angle`): horizon planes shift by depth and the subject looms or shrinks.
+- Moves: eased `zoom` / `pan` keys, `handheld` (layered seeded noise), `follow` a moving layer with a critically damped lag, `dollyzoom`, `orbit` (parallax slide), smooth `roll`. Easings `inCubic`, `inBack`, `inOutBack`, `outSettle`, `outElastic`. Every move keeps the per-plane parallax of Places 2.0; deep planes never zoom out past the frame under a framed camera.
+- Layer `dist` (camera distance: parallax 1 / dist, haze for far layers). `onTwos` on `style`, a shot or a layer steps characters at 12 fps while the camera stays on ones.
+- Acting director (`acting/director.js`): bean `lookAt` (body, head and eyes follow a layer or point, with a spring head snap), reaction `takes` (`double`, `snap`, `jolt`, `blink`), and with acting on: a blink after the cut and on head snaps, a head kick on expression changes and idle fidgets (`acting.blink`, `react`, `fidget`).
+- `scripts/camera_check.py` validates the new fields; the density lint counts shot sizes and over-the-shoulder framing. New example `examples/camera_acting` (one shot per feature); `examples/painted_bench` now uses an over-the-shoulder shot that punches into an ECU, a follow on the car and a low angle on the crowd.
+
 Painted engine, phase 3: Characters 2.0. Classic specs render as before; the painted look turns acting on.
 
 - Turnarounds: `view` (`front`, `3q`, `side` / `profile`, `back`) and `facing` (`right` / `left`) take timelines; changes turn through the in-between views with a squashed drawing and an automatic hair smear (`turn`). Flips from `move` / `path` get a front-view in-between.

@@ -19,6 +19,7 @@ import props_fx  # Props & FX 2.0 field checks (particles, impact language, trai
 from motion_check import check_motion
 from places_check import check_depth, check_set_bg, check_set_layer
 import spec_characters as SC
+import camera_check as CC
 
 KNOWN_LAYERS = {"bean", "image", "label", "title", "date", "era", "counter", "timer", "caption",
                 "prop", "card", "sign", "calendar", "map", "fx", "fg", "crowd"}
@@ -666,6 +667,7 @@ def validate(spec: dict) -> list[str]:
         style = {}
     _check_look_name(style.get("look"), "style", errors)
     _check_light(style.get("light"), "style", errors)
+    CC.check_twos(style.get("onTwos"), "style", errors)
     cast = spec.get("cast", {}) or {}
     if not isinstance(cast, dict):
         errors.append("cast must be an object {name: look}")
@@ -714,6 +716,8 @@ def validate(spec: dict) -> list[str]:
         for k, f in enumerate(shot.get("focus", []) or []):
             if not (isinstance(f, dict) and _is_num(f.get("at", 0)) and (f.get("on") in ids or f.get("on") == "bg")):
                 errors.append(f"{where}.focus[{k}]: needs at and on=<id of a layer in this shot>")
+        CC.check_camera(shot.get("camera"), where, ids, LAYER_KINDS.get("shot_size", set()), _ease_names(), errors)
+        CC.check_twos(shot.get("onTwos"), where, errors)
         if "frame" in shot:
             if fmt != "vertical":
                 errors.append(f"{where}: frame only applies to vertical films (spec.format = 'vertical')")
@@ -735,6 +739,7 @@ def validate(spec: dict) -> list[str]:
                 continue
             _check_layer(layer, f"{where}.pinned[{j}]<{layer.get('type')}>", cast, errors)
             _check_layer_refs(layer, f"{where}.pinned[{j}]", pinned_ids | ids, cast, errors)  # a pinned fx may target either list
+            CC.check_layer(layer, f"{where}.pinned[{j}]<{layer.get('type')}>", pinned_ids | ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, errors)
             if layer.get("type") == "fx":
                 refs = _fx_refs(layer)
                 if any(r in world_ids for r in refs) and any(r in pinned_ids and r not in world_ids for r in refs):
@@ -748,6 +753,7 @@ def validate(spec: dict) -> list[str]:
                 continue
             _check_layer(layer, f"{where}.layers[{j}]<{layer.get('type')}>", cast, errors)
             _check_layer_refs(layer, f"{where}.layers[{j}]", ids, cast, errors)
+            CC.check_layer(layer, f"{where}.layers[{j}]<{layer.get('type')}>", ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, errors)
     overlays = spec.get("overlays", []) or []
     if not isinstance(overlays, list):
         errors.append("overlays must be a list of {from, to, layer}")
