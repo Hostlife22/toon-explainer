@@ -50,6 +50,24 @@
       if (rad > 2.6) { ctx.strokeStyle = `rgba(255,248,225,${(a * 0.6).toFixed(3)})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(x - rad * 3, y); ctx.lineTo(x + rad * 3, y); ctx.moveTo(x, y - rad * 3); ctx.lineTo(x, y + rad * 3); ctx.stroke(); }
     }
   }
+  // The globe's space backdrop fills the whole frame, so it is painted right after the shot backgrounds, with the map
+  // layer's own transform and alpha: layers listed before the map stay in front of it. Maps drawn outside a shot pass
+  // (pinned layers, overlays) paint it inline.
+  const orthoMap = (L) => L && L.type === 'map' && L.geo && !(T.GEO_PROJ[L.geo.proj ?? 'equirect'] || { flat: true }).flat && (L.geo.backdrop ?? 'stars') !== 'none';
+  T.AFTER_BG.push((ctx, shot, lt, env, cam) => {
+    env.geoSpaceDone = true;
+    for (const L0 of shot.layers || []) {
+      if (!orthoMap(L0)) continue;
+      let L = T.effLayer(L0, lt);
+      if (!orthoMap(L)) continue;
+      if (L.dist != null && T.distLayer) L = T.distLayer(L);
+      const llt = T.twosLt ? T.twosLt(L, lt, shot, env) : lt;
+      ctx.save();
+      const st = T.layerTransform(ctx, L, llt, cam);
+      if (st) { ctx.globalAlpha *= st.a; space(ctx, L.geo, { env: { ...env, st } }, llt - (L.at ?? 0)); }
+      ctx.restore();
+    }
+  });
   function graticule(ctx, G, Gm, step, col) {
     if (!(Number.isFinite(step) && step >= 1)) throw new Error(`map geo: graticule must be true or a step of at least 1 degree (got ${step})`);
     const path = new Path2D();
@@ -110,7 +128,7 @@
     g.coastPath = Gm.coast; g.coastWidth = (painted ? 4 : 3.5) * k;
     const seaArea = ortho ? (c) => c.arc(0, 0, G.pr.R, 0, TAU) : (c) => c.rect(-mw / 2, -mh / 2, mw, mh);
     if (ortho) {
-      space(ctx, geo, g, lt);
+      if (!(g.env && g.env.geoSpaceDone)) space(ctx, geo, g, lt); // a shot draws it after its backgrounds (AFTER_BG below)
       const R = G.pr.R, glow = ctx.createRadialGradient(0, 0, R * 0.92, 0, 0, R * 1.16);
       glow.addColorStop(0, 'rgba(150,200,255,0.75)'); glow.addColorStop(0.35, 'rgba(120,180,255,0.32)'); glow.addColorStop(1, 'rgba(120,180,255,0)');
       ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(0, 0, R * 1.16, 0, TAU); ctx.fill();

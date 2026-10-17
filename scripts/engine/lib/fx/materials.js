@@ -596,7 +596,9 @@
     when: (L) => L.type !== 'fx',
     apply(src, L, lt, env, depth) {
       const x = optsOf(L.xray, 'inner'), at = x.at ?? 0, d = env.dpr || 1;
-      if (lt < at) return src;
+      // out (shot time): the x-ray crossfades back to the normal layer over outDur (default dur)
+      const mix = T.ease.outCubic(T.prog(lt, at, x.dur ?? 0.2)) * (x.out == null ? 1 : 1 - T.ease.inOut(T.prog(lt, x.out, x.outDur ?? x.dur ?? 0.2)));
+      if (lt < at || mix <= 0) return src;
       const box = alphaBox(src, 'xry' + depth), col = x.color ?? '#7fd0ff';
       const [c, k] = blank(src, 'afxxray' + depth);
       dilate(k, src, 5 * d, 12, INK); // ink edge: the dilated outline, the body is painted over it
@@ -632,7 +634,7 @@
         T.drawProp(k, x.inner, size, lt - (L.at ?? 0), { id: layerId(L) + ':xray' });
         k.restore();
       }
-      return mixed(src, c, T.ease.outCubic(T.prog(lt, at, x.dur ?? 0.2)), 'afxxraymix' + depth);
+      return mixed(src, c, mix, 'afxxraymix' + depth);
     },
   };
 })();

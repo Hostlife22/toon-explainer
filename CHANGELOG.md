@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Engine backlog: core, camera and motion
+
+- Fix: world-placed labels, titles and counters (`hud` false) no longer slide along the frame edge while a zoomed `frame` camera pans: the safe-frame shift is fixed for the layer's life (the smallest one that fits it in the frame at some moment on screen), so the text stays glued to its world spot.
+- Fix: `smooth` paths use centripetal Catmull-Rom tangents held monotone between neighbouring points, so very uneven point spacing no longer makes the curve overshoot or loop backwards (no false turn squash on a car).
+- Fix: `scripts/density.py` reads keyed `camera.zoom` values and `frame` box sizes, so it no longer reports false "same camera zoom" runs.
+- Fix: the `ortho` globe's star backdrop is painted right after the shot backgrounds (new `T.AFTER_BG` hook), so layers listed before the map stay visible.
+- `xray` `out` / `outDur`: the scan crossfades back to the normal layer mid-shot.
+- `move` steps take `by: [dx, dy]` (relative slide) and `from: [x, y]` (start point; held until the step starts; alone it slides the layer in to its `x`/`y`). Steps without them behave as before.
+- Shot `grade` `out` / `outDur` are documented as the way to end a grade mid-shot and validated (numbers, `out` not before `at`).
+- New `fx` `blackout`: the lights go off (`level`, `color`, `fade`, `dur`, `fadeOut`), with `lights` keeping soft lit holes around a candle or lamp that follow it and the camera.
+- `examples/camera_acting` gains `s18_world_labels_pan`, `s19_slide_and_xray` and `s20_lights_out`; tests in `tests/test_backlog_core.py`.
+
 Painted engine, phase 8: directing rules.
 
 - `SKILL.md` makes the painted look the default for new films and routes to Places 2.0, real `geo` maps and globes, shot-size framing, acting, path motion and particles; production rules gain "one continuous motion per shot", shot-size quotas and a per-shot density checklist.

@@ -81,6 +81,13 @@ def check_travel(layer: dict, where: str, gaits: set[str], errors: list[str]) ->
     p = layer.get("path")
     if isinstance(p, dict) and "gait" in p and p["gait"] is not False and not _in(p["gait"], gaits):
         errors.append(f"{where}: path gait {p['gait']!r} not in {sorted(gaits)} (or false)")
+    for i, m in enumerate(layer.get("move") or [] if isinstance(layer.get("move"), list) else []):
+        for k in ("to", "from", "by"):  # to / from: frame fractions; by: offset in frame fractions
+            v = m.get(k) if isinstance(m, dict) else None
+            if v is not None and not (isinstance(v, list) and len(v) == 2 and all(_num(c) for c in v)):
+                errors.append(f"{where}: move[{i}].{k} must be [x, y] (frame fractions)")
+        if isinstance(m, dict) and m.get("to") is not None and m.get("by") is not None:
+            errors.append(f"{where}: move[{i}] takes to or by, not both")
 
 
 def check_bean(layer: dict, where: str, views: set[str], hands: set[str], gaits: set[str], errors: list[str]) -> None:

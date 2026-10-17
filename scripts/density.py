@@ -60,15 +60,40 @@ def _has_foreground(shot: dict) -> bool:
     return False
 
 
+def _is_num(v) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def _frame_size(k: dict) -> str:
+    """One frame key as a shot size: its size name, explicit zoom, or the box height it fits."""
+    if k.get("size"):
+        return str(k["size"])
+    if _is_num(k.get("zoom")):
+        return f"zoom {round(float(k['zoom']), 2)}"
+    box = k.get("box")
+    if isinstance(box, list) and len(box) == 4 and all(_is_num(v) for v in box):
+        return f"box {round(max(float(box[2]), float(box[3])), 2)}"  # camera-grammar.js: frame height = max(w, h) / 0.9
+    return "follow"
+
+
+def _zoom_values(zoom) -> tuple | None:
+    """[from, to] pair or [{at, v}] keys -> rounded zoom values (start, end), or None when not a zoom."""
+    if isinstance(zoom, list) and len(zoom) == 2 and all(_is_num(z) for z in zoom):
+        vals = [zoom[0], zoom[1]]
+    elif isinstance(zoom, list) and zoom and all(isinstance(k, dict) and _is_num(k.get("v")) for k in zoom):
+        keys = sorted(zoom, key=lambda k: k.get("at", 0) if _is_num(k.get("at", 0)) else 0)
+        vals = [keys[0]["v"], keys[-1]["v"]]
+    else:
+        return None
+    return tuple(round(float(v), 2) for v in vals)
+
+
 def _zoom_key(shot: dict):
     keys = _frame_keys(shot)
     if keys:  # shot-size framing: the sizes (or zooms) of its keys
-        return tuple(str(k.get("size") or k.get("zoom") or "follow") for k in keys)
+        return tuple(_frame_size(k) for k in keys)
     cam = shot.get("camera") if isinstance(shot.get("camera"), dict) else {}
-    zoom = cam.get("zoom")
-    if not (isinstance(zoom, list) and len(zoom) == 2 and all(isinstance(z, (int, float)) for z in zoom)):
-        zoom = DEFAULT_ZOOM
-    return (round(float(zoom[0]), 2), round(float(zoom[1]), 2))
+    return _zoom_values(cam.get("zoom")) or DEFAULT_ZOOM
 
 
 def lint(spec: dict) -> list[str]:

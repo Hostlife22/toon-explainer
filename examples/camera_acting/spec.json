@@ -1086,6 +1086,263 @@
      "hud": true
     }
    ]
+  },
+  {
+   "id": "s18_world_labels_pan",
+   "dur": 3.4,
+   "bg": {
+    "kind": "street1920"
+   },
+   "camera": {
+    "frame": [
+     {
+      "at": 0,
+      "target": "consul",
+      "size": "ws"
+     },
+     {
+      "at": 1.0,
+      "target": "trader",
+      "size": "ws",
+      "dur": 1.8,
+      "ease": "inOut"
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "consul",
+     "who": "consul",
+     "x": 0.24,
+     "y": 0.86,
+     "size": 420,
+     "pose": "present",
+     "expr": "smug"
+    },
+    {
+     "type": "bean",
+     "id": "trader",
+     "who": "trader",
+     "x": 0.76,
+     "y": 0.86,
+     "size": 420,
+     "pose": "shrug",
+     "expr": "worried"
+    },
+    {
+     "type": "label",
+     "text": "THE CONSUL",
+     "x": 0.24,
+     "y": 0.4,
+     "size": 52,
+     "hud": false,
+     "arrow": "down"
+    },
+    {
+     "type": "label",
+     "text": "THE TRADER",
+     "x": 0.76,
+     "y": 0.4,
+     "size": 52,
+     "hud": false,
+     "arrow": "down",
+     "at": 1.6
+    },
+    {
+     "type": "vehicle",
+     "id": "cart",
+     "kind": "model-t",
+     "size": 230,
+     "x": 0.1,
+     "y": 0.95,
+     "path": {
+      "pts": [
+       [
+        -0.25,
+        0.95
+       ],
+       [
+        0.42,
+        0.95
+       ],
+       [
+        0.45,
+        0.935
+       ],
+       [
+        0.48,
+        0.95
+       ],
+       [
+        1.3,
+        0.95
+       ]
+      ],
+      "dur": 3.4,
+      "ease": "linear"
+     }
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "x": 0.52,
+     "z": 1.25
+    },
+    {
+     "type": "caption",
+     "text": "world labels stay put while the frame pans",
+     "x": 0.5,
+     "y": 0.93,
+     "hud": true
+    }
+   ]
+  },
+  {
+   "id": "s19_slide_and_xray",
+   "dur": 3.6,
+   "bg": {
+    "kind": "stage"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.06
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "patient",
+     "who": "citizen",
+     "x": 0.5,
+     "y": 0.92,
+     "size": 520,
+     "view": "front",
+     "expr": "worried",
+     "move": [
+      {
+       "at": 0.2,
+       "dur": 0.8,
+       "from": [
+        0.15,
+        0.92
+       ],
+       "ease": "outCubic"
+      }
+     ],
+     "xray": {
+      "at": 1.3,
+      "dur": 0.3,
+      "anatomy": true,
+      "specks": 24,
+      "specksAt": 1.5,
+      "specksDur": 0.9,
+      "out": 2.7,
+      "outDur": 0.4
+     }
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.1,
+     "move": [
+      {
+       "at": 0.9,
+       "dur": 0.9,
+       "by": [
+        0,
+        -0.95
+       ],
+       "ease": "inCubic"
+      }
+     ]
+    },
+    {
+     "type": "caption",
+     "text": "move from / by, xray out",
+     "x": 0.5,
+     "y": 0.93,
+     "hud": true
+    }
+   ]
+  },
+  {
+   "id": "s20_lights_out",
+   "dur": 3.6,
+   "bg": {
+    "kind": "office"
+   },
+   "grade": {
+    "preset": "cold",
+    "at": 0.4,
+    "dur": 0.4,
+    "out": 2.4,
+    "outDur": 0.6
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.0
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "clerk",
+     "who": "citizen",
+     "x": 0.36,
+     "y": 0.92,
+     "size": 460,
+     "expr": [
+      {
+       "at": 0,
+       "v": "neutral"
+      },
+      {
+       "at": 0.9,
+       "v": "terror"
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "id": "candle",
+     "kind": "candle",
+     "x": 0.64,
+     "y": 0.8,
+     "size": 320,
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "bushes",
+     "z": 1.3
+    },
+    {
+     "type": "fx",
+     "kind": "blackout",
+     "at": 0.8,
+     "fade": 0.15,
+     "dur": 1.8,
+     "fadeOut": 0.3,
+     "level": 0.95,
+     "lights": [
+      {
+       "id": "candle",
+       "r": 340,
+       "dy": -90
+      }
+     ]
+    },
+    {
+     "type": "caption",
+     "text": "blackout with a lit candle, grade out",
+     "x": 0.5,
+     "y": 0.93,
+     "hud": true
+    }
+   ]
   }
  ]
 }

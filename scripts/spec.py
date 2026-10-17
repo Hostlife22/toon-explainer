@@ -212,7 +212,7 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
                     errors.append(f"{where}: xray anatomy must be true or false")
                 if xr.get("specks") is not None and not (_is_num(xr["specks"]) and 0 <= xr["specks"] <= 200):
                     errors.append(f"{where}: xray specks must be a count 0..200")
-                for k in ("specksAt", "specksDur"):
+                for k in ("specksAt", "specksDur", "out", "outDur"):
                     if xr.get(k) is not None and not (_is_num(xr[k]) and xr[k] >= 0):
                         errors.append(f"{where}: xray {k} must be a number >= 0 (seconds)")
             else:
@@ -741,6 +741,10 @@ def validate(spec: dict) -> list[str]:
         for g in (grade if isinstance(grade, list) else [grade] if grade is not None else []):
             if isinstance(g, dict) and g.get("target", "frame") not in ("frame", "bg"):
                 errors.append(f"{where}: grade target {g.get('target')!r} must be 'frame' or 'bg'")
+            if isinstance(g, dict) and any(g.get(k) is not None and not (_is_num(g[k]) and g[k] >= 0) for k in ("at", "dur", "out", "outDur")):
+                errors.append(f"{where}: grade at / dur / out / outDur must be numbers >= 0 (seconds; out ends the grade)")
+            elif isinstance(g, dict) and g.get("out") is not None and g["out"] < g.get("at", 0):
+                errors.append(f"{where}: grade out ({g['out']}) must not be before its at ({g.get('at', 0)})")
             g = g.get("preset") if isinstance(g, dict) else g
             if g not in KNOWN_GRADES:
                 errors.append(f"{where}: grade {g!r} not in {sorted(KNOWN_GRADES)}")
