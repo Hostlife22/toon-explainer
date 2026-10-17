@@ -170,7 +170,7 @@ A street establisher with life: the hero car on a `path` with `ease: "out"` so i
 ```
 
 ### V. The insert that matters (ECU on an object)
-`camera.frame` keys from `ms` on the character to a `box` around the hands or the object (`overshoot` 0.08), or straight to a prop layer; the prop acts (`bottle` `pour`, `flask` `boil`, `fumes`), `particles` carry the substance (`splash`, `gas`, `steam`), and the label is `hud`. End the beat with a cut back to a face.
+`camera.frame` keys from `ms` on the character to a `box` around the hands or the object (`overshoot` 0.08), or straight to a prop layer; the prop acts (`bottle` `pour`; the glassware fields `boil`, `fumes`, `fill`), `particles` carry the substance (`splash`, `gas`, `steam`), and the label is `hud`. End the beat with a cut back to a face.
 
 ### W. Poison, gas, fumes
 `fx` `toxic-cloud` (`ground: true`, `drift`) creeping along the floor + low `particles` `gas` band (`prewarm`) + a per-shot cold `light` and a `grade` that drops on the key word (`{preset: "solemn", at, dur: 0.6}`). Never show the harm: characters `tremble`, then `exit: "fade"`, and the empty place holds.

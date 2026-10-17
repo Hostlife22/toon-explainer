@@ -88,7 +88,8 @@ The reference films rarely hold one medium-wide framing: they cut between an est
 |---|---|---|
 | `ews` / `ws` | 1–3 per place or era change | The establisher: a Places 2.0 landscape or `set`, a real `geo` map (country by `iso`, region by `lonlat`), an `ortho` globe that spins to the place. A high `angle` makes the figure small and lost |
 | `ms` | the gesture beats | A character doing the action with the set around them; `follow` a walker or a car |
-| `mcu` / `cu` | **at least 25 %** together with `ecu` | Reactions, decisions, a name card, the line that matters; faces get `detail` automatically when they are large |
+| `mcu` | the reaction and dialogue beats (does not count toward the close-up quota) | Reactions, the speaker in an `ots` pair |
+| `cu` | **at least 25 %** together with `ecu` | Decisions, a name card, the line that matters; faces get `detail` automatically when they are large |
 | `ecu` | 1–3 per minute | The stare, the scream, the object that changes everything (the bottle, the coin); add `letterbox` and an `overshoot` dolly |
 | `ots` | every exchange between two characters | `frame` keys `{target: speaker, ots: listener}`, swapped on the reply (shot-reverse-shot inside one shot); a `whip` between the keys for a fast retort |
 

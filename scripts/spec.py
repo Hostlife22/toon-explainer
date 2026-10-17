@@ -207,8 +207,16 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
         if ltype != "fx" and entry.get("xray") is not None and not isinstance(entry["xray"], bool):
             if isinstance(entry["xray"], dict):
                 name_in(entry["xray"].get("inner"), KNOWN_PROPS, "xray inner")
+                xr = entry["xray"]
+                if xr.get("anatomy") is not None and not isinstance(xr["anatomy"], bool):
+                    errors.append(f"{where}: xray anatomy must be true or false")
+                if xr.get("specks") is not None and not (_is_num(xr["specks"]) and 0 <= xr["specks"] <= 200):
+                    errors.append(f"{where}: xray specks must be a count 0..200")
+                for k in ("specksAt", "specksDur"):
+                    if xr.get(k) is not None and not (_is_num(xr[k]) and xr[k] >= 0):
+                        errors.append(f"{where}: xray {k} must be a number >= 0 (seconds)")
             else:
-                errors.append(f"{where}: xray must be true or an object {{at, dur, inner, color}}")
+                errors.append(f"{where}: xray must be true or an object {{at, dur, inner, color, anatomy, specks}}")
         if ltype == "bean" and entry.get("smear") is not None:
             sm = entry["smear"] if isinstance(entry["smear"], list) else [entry["smear"]]
             if not all(isinstance(x, dict) and _is_num(x.get("at")) and x.get("dir", 1) in (1, -1) for x in sm):

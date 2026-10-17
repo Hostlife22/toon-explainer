@@ -6,7 +6,9 @@ Painted engine, phase 8: directing rules.
 
 - `SKILL.md` makes the painted look the default for new films and routes to Places 2.0, real `geo` maps and globes, shot-size framing, acting, path motion and particles; production rules gain "one continuous motion per shot", shot-size quotas and a per-shot density checklist.
 - `references/09-directing.md` §6.1 (coverage: shot-size quotas per minute, OTS for every exchange, wide establishers on maps and globes, continuous motion, hold-and-snap for poses, density checklist); `02-visual-grammar.md` "Shot sizes and density", a `geo` map recipe F and recipes U (vehicles and walkers on paths), V (the ECU insert), W (poison and gas); `07-story-craft.md` §7 maps sentence intents to the new features and updates the war, rivalry, poison, travel, globe and lab recipes.
-- Fix: arm IK keeps the elbow on the outer side for hands raised above the shoulder (`drink`, `eat`, `facepalm`, `reach` to the face no longer fold the elbow across the chest; `tests/test_arm_ik.py`).
+- Bean `holdRot` (degrees or a timeline) tilts the held prop in the grip and `holdProps` passes prop fields to it (a held `bottle` can `pour`), so held props act and move with the hand.
+- `xray` `anatomy` (skeleton, lungs, beating heart, vessels) and `specks` (grains settling into the bones over time).
+- Fix: arm IK keeps the elbow on the outer side for hands raised above the shoulder, changing bend side smoothly through a narrow band at shoulder height (no elbow jump) (`drink`, `eat`, `facepalm`, `reach` to the face no longer fold the elbow across the chest; `tests/test_arm_ik.py`).
 - `examples/painted_bench` map and globe shots use real geography (a painted Mediterranean with a flood, pins and a sign; a spinning `ortho` globe with ISO regions).
 
 Painted engine, phase 4: camera and acting. Classic specs without the new fields render pixel for pixel as before.

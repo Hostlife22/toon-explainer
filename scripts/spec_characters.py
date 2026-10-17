@@ -136,6 +136,15 @@ def _check_hold_size(obj: dict, where: str, errors: list[str]) -> None:
     v = obj.get("holdScale")
     if v is not None and not (_num(v) and 0 < v <= 5):
         errors.append(f"{where}: holdScale must be a number in 0..5 (1 = the classic held-prop size)")
+    hp = obj.get("holdProps")
+    if hp is not None and not isinstance(hp, dict):
+        errors.append(f"{where}: holdProps must be an object of prop fields for the held prop (e.g. {{pour: {{at, dur}}}})")
+    r = obj.get("holdRot")
+    if r is not None:
+        keys = r if isinstance(r, list) else None
+        ok = _num(r) or (keys and all(isinstance(k, dict) and _num(k.get("v")) and _num(k.get("at", 0)) for k in keys))
+        if not ok:
+            errors.append(f"{where}: holdRot must be degrees or a [{{at, v}}] timeline of degrees (tilt of the held prop)")
 
 
 def check_look(look: dict, where: str, textures: set[str], errors: list[str]) -> None:

@@ -345,9 +345,9 @@ Rules: one joke per insert; the hold after the hit is the joke (1 s minimum); a 
 | Where and when (a new place or era) | `ews`/`ws` establisher: a Places 2.0 `set` or landscape, a real `geo` map (`iso`, `lonlat`, `drawOn`, `flood`) or an `ortho` globe spinning to the place |
 | Somebody speaks, argues, persuades | `camera.frame` `ots` pair, `lookAt` the listener, `lipsync` from the voiceover when the character mouths the line |
 | A reaction, a realization, a decision | `frame` punch `ms` -> `cu` / `ecu` with `overshoot`, `takes` (`double`, `snap`, `jolt`), new `expr` (`terror`, `awe`, `scheming`, `exhausted`) |
-| The key object (a poison, a coin, a document) | `ecu` on the prop layer or a `box`, the prop acts (`pour`, `boil`, `fumes`, `fill`), `aura`, `particles` |
+| The key object (a poison, a coin, a document) | `ecu` on the prop layer or a `box`, the prop acts (`bottle` `pour`; glassware `boil`, `fumes`, `fill` fields), `aura`, `particles` |
 | Travel, traffic, an era of machines | vehicles and animals on a `path` (`orient`, `bank`, exhaust, dust, wake), `follow` camera |
-| Work, experiments, industry | `set` `lab` / `office` / `factory`, machines with moving parts (`gears`, `piston`, `gauge`, `valve`, `fuel-pump`) |
+| Work, experiments, industry | `bg: set` `preset:"lab"` / `"office"` or `bg: factory`, machines with moving parts (`gears`, `piston`, `gauge`, `valve`, `fuel-pump`) |
 | Smoke, poison, fire, explosion | `particles` presets, `toxic-cloud`, painted `explosion`, `impact-frame`, `shockwave`, `dustkick`, `streaks` |
 | Spread to everyone, everywhere | globe with `continent` regions flooding in sequence; a crowd with `silhouettes` in the foreground |
 | Time passing in one place | the same `set` with `dark` raised and a night `window`, `fidget` acting, a `wall-calendar` and a `hud` counter |
@@ -387,7 +387,7 @@ Rules: one joke per insert; the hold after the hit is the joke (1 s minimum); a 
 | 24 | "X vs Y" | `doc kind:"versus"` `left`/`right` `{who, eyeGlow:true}` on `bg: flat` |
 | 25 | "A rivalry in several rounds" | `doc kind:"sequel"` `titles` 0.2 s apart |
 | 26 | "X and Y became rivals" | two close-ups nose to nose `expr:"menace"` + `jitter` `amp:2` each + a third bean squished between |
-| 27 | "They couldn't agree" | one shot with `camera.frame` keys `{target:A, size:"mcu", ots:B}` -> `{target:B, ots:A, whip:true}` every 1.5 s; or `bg: mood variant:"grunge"` with a different `color` per speaker |
+| 27 | "They couldn't agree" | one shot with `camera.frame` keys `{target:A, size:"mcu", ots:B}` -> `{target:B, size:"mcu", ots:A, whip:true, dur:0.25}` every 1.5 s; or `bg: mood variant:"grunge"` with a different `color` per speaker |
 | 28 | "X wanted A, Y wanted B" | `panel layout:"split"` `seam:"jagged"` `vs:true` with cell `label`s |
 | 29 | "Standoff" | `fx kind:"duel"` before the beans + `crackle` between the eyes |
 | 30 | "A battle of wills" | `fx kind:"beam-clash"` after the bg + two beans `pose:"reach"` |
@@ -544,7 +544,7 @@ Rules: one joke per insert; the hold after the hit is the joke (1 s minimum); a 
 | 146 | "Crossed the sea" | `bg: sea` or `harbor` + `ship` / `sailship` on a `path` (wake) + `golden-hour`; or a `geo` map `tokens icon:"ship"` along a great-circle `routes` |
 | 147 | "Marched back, people joined" | `walk` toward camera + `crowd` `enter:"ground"` staggered + `placard` props |
 | 148 | "Moved the capital" | `map` `figures` `sit:"throne"` -> `marquee-arrow` on the new place |
-| 149 | "Travelled from A to B" | `geo` map `pins` + `routes` `{ll:[...], gc:true}` + `tokens` along it + `center`/`zoom` keys flying to B; on the ground: a vehicle on a `path` with `follow` |
+| 149 | "Travelled from A to B" | `geo` map `pins` + `routes:[{pts:{ll:[...], gc:true}, at, dur}]` + `tokens:[{icon, pts:{ll:[...], gc:true}, at, dur}]` along it + `center`/`zoom` keys flying to B; on the ground: a vehicle on a `path` with `follow` |
 | 150 | "Built a road / canal / railway" | `map` `rivers` + `words` `along`; or `tracks` + `tokens icon:"train"` |
 | 151 | "The empire stretched from A to B" | `geo` `proj:"ortho"` globe with `center` keys spinning to the place + regions by `iso` with `flood` + pins |
 | 152 | "Into the story" | push on a map pin -> `portal` or `fade-white` |
@@ -561,7 +561,7 @@ Rules: one joke per insert; the hold after the hit is the joke (1 s minimum); a 
 | 158 | "X made a plan" | `pose:"steeple"` `expr:"menace"` + `doc kind:"pictobubble"` `list`; or `bg: blueprint` |
 | 159 | "A ridiculous plan" | `bg: corkboard` `notes` + `strings` drawing on + `sign` |
 | 160 | "A naive plan" | `doc kind:"crayon"` + `recolor` + `cut` |
-| 161 | "Scientists found a way" | `bg: set preset:"lab"` + glassware props (`flask`, `round-flask`, `burner`, `fumes`) + `reach` timeline across them; or `doc kind:"loading"` on a `monitor` |
+| 161 | "Scientists found a way" | `bg: set preset:"lab"` + glassware props (`flask`, `round-flask`, `burner`; `fumes:"gas"` / `boil:true` on the glass) + `reach` timeline across them; or `doc kind:"loading"` on a `monitor` |
 | 162 | "A new weapon / technology" | prop on `bg: mood variant:"nebula"` + `glow` >> the user holds it (`hold`) |
 | 163 | "The invention was unveiled" | `curtain` transition `mode:"open"`; false reveal first, real one `swap` in |
 | 164 | "What should they use?" | `doc kind:"wheel"` landing on the absurd option >> bean `hold` it |

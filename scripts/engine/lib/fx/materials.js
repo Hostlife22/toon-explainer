@@ -521,6 +521,72 @@
     ctx.drawImage(c, 0, 0);
     ctx.restore();
   }
+  // Anatomy inside an x-rayed body (physical px, box = the body's alpha box): the head is the top ~58 % of a bean.
+  // Bones are pale and soft, lungs pink, the heart beats at 1.2 Hz, vessels branch from it; `specks` dark lead grains
+  // settle into the bones one by one from `specksAt` over `specksDur` (seeded by the layer id, pure in time).
+  function xrayAnatomy(k, box, t, x, id, d) {
+    const cx = box.cx, w = box.w, h = box.h, top = box.y;
+    const hx = cx, hy = top + h * 0.3, hr = Math.min(w * 0.3, h * 0.2);
+    const ty0 = top + h * 0.6, ty1 = top + h * 0.93, tw = w * 0.42; // torso band
+    const bone = 'rgba(240,248,255,0.78)', boneEdge = 'rgba(160,200,235,0.9)';
+    k.save(); k.lineCap = 'round'; k.lineJoin = 'round';
+    if (x.anatomy) {
+      // lungs
+      for (const s of [-1, 1]) {
+        k.fillStyle = 'rgba(255,140,165,0.42)'; k.strokeStyle = 'rgba(255,120,150,0.7)'; k.lineWidth = 2 * d;
+        k.beginPath(); k.ellipse(cx + s * tw * 0.42, ty0 + (ty1 - ty0) * 0.38, tw * 0.3, (ty1 - ty0) * 0.36, s * 0.12, 0, Math.PI * 2);
+        k.fill(); k.stroke();
+      }
+      // vessels from the heart
+      const hcx = cx - tw * 0.12, hcy = ty0 + (ty1 - ty0) * 0.5;
+      k.strokeStyle = 'rgba(220,40,60,0.55)'; k.lineWidth = 3 * d;
+      const r = T.rng(T.hash(id + ':vessels'));
+      for (let i = 0; i < 7; i++) {
+        const a = -Math.PI / 2 + (i - 3) * 0.55 + (r() - 0.5) * 0.3, len = h * (0.18 + r() * 0.2);
+        k.beginPath(); k.moveTo(hcx, hcy);
+        k.quadraticCurveTo(hcx + Math.cos(a) * len * 0.5 + (r() - 0.5) * 30 * d, hcy + Math.sin(a) * len * 0.5, hcx + Math.cos(a) * len, hcy + Math.sin(a) * len);
+        k.stroke();
+      }
+      // skull, spine, ribs
+      k.fillStyle = bone; k.strokeStyle = boneEdge; k.lineWidth = 2 * d;
+      k.beginPath(); k.ellipse(hx, hy, hr * 0.78, hr * 0.86, 0, 0, Math.PI * 2); k.fill(); k.stroke();
+      k.beginPath(); k.roundRect ? k.roundRect(hx - hr * 0.42, hy + hr * 0.62, hr * 0.84, hr * 0.42, hr * 0.12) : k.rect(hx - hr * 0.42, hy + hr * 0.62, hr * 0.84, hr * 0.42); k.fill(); k.stroke();
+      k.fillStyle = 'rgba(20,40,70,0.75)';
+      for (const s of [-1, 1]) { k.beginPath(); k.ellipse(hx + s * hr * 0.3, hy + hr * 0.05, hr * 0.17, hr * 0.21, 0, 0, Math.PI * 2); k.fill(); }
+      k.beginPath(); k.moveTo(hx, hy + hr * 0.3); k.lineTo(hx - hr * 0.08, hy + hr * 0.48); k.lineTo(hx + hr * 0.08, hy + hr * 0.48); k.fill();
+      k.strokeStyle = bone; k.lineWidth = Math.max(5 * d, hr * 0.12);
+      k.beginPath(); k.moveTo(hx, hy + hr * 1.05); k.lineTo(hx, ty1); k.stroke();
+      k.lineWidth = Math.max(3 * d, hr * 0.07);
+      for (let i = 0; i < 5; i++) {
+        const y = ty0 + (ty1 - ty0) * (0.08 + i * 0.13);
+        k.beginPath(); k.ellipse(hx, y, tw * (0.62 - i * 0.04), (ty1 - ty0) * 0.08, 0, Math.PI * 0.05, Math.PI * 0.95); k.stroke();
+      }
+      // heart, beating
+      const beat = 1 + 0.12 * Math.pow(Math.max(0, Math.sin(t * Math.PI * 2 * 1.2)), 6), hs = tw * 0.13 * beat;
+      k.fillStyle = 'rgba(225,40,60,0.85)';
+      k.beginPath(); k.moveTo(hcx, hcy + hs * 0.9);
+      k.bezierCurveTo(hcx - hs * 1.4, hcy, hcx - hs * 0.8, hcy - hs * 1.1, hcx, hcy - hs * 0.35);
+      k.bezierCurveTo(hcx + hs * 0.8, hcy - hs * 1.1, hcx + hs * 1.4, hcy, hcx, hcy + hs * 0.9); k.fill();
+    }
+    const n = Math.round(x.specks ?? 0);
+    if (n > 0) { // lead grains settling into skull, spine and ribs
+      const r = T.rng(T.hash(id + ':specks')), t0 = x.specksAt ?? 0, span = x.specksDur ?? 1;
+      for (let i = 0; i < n; i++) {
+        const where = r(), u = r(), v = r(), sz = (5 + r() * 4) * d;
+        const appear = t0 + (i / Math.max(1, n - 1)) * span, p = T.clamp((t - appear) / 0.12, 0, 1);
+        let px, py;
+        if (where < 0.35) { const a = u * Math.PI * 2, rr = Math.sqrt(v) * hr * 0.7; px = hx + Math.cos(a) * rr; py = hy + Math.sin(a) * rr * 1.1; }
+        else if (where < 0.6) { px = hx + (u - 0.5) * hr * 0.14; py = hy + hr * 1.05 + v * (ty1 - hy - hr * 1.05); }
+        else { const ri = Math.floor(u * 5), y = ty0 + (ty1 - ty0) * (0.08 + ri * 0.13), a = Math.PI * (0.08 + v * 0.84);
+          px = hx + Math.cos(a) * tw * (0.62 - ri * 0.04); py = y + Math.sin(a) * (ty1 - ty0) * 0.08; }
+        if (p <= 0) continue;
+        k.fillStyle = 'rgba(40,44,52,0.95)';
+        k.beginPath(); k.arc(px, py, sz * (p < 1 ? 1 + (1 - p) * 0.8 : 1), 0, Math.PI * 2); k.fill();
+      }
+    }
+    k.restore();
+  }
+
   // ---------- xray: see-through blue silhouette with ink edges and an optional prop inside ----------
   // "xray": true | {at 0, dur 0.2, inner (prop kind), innerSize (0.5 of the shorter side), color '#7fd0ff'} — from `at`
   // (shot time, like freeze) the layer crossfades over `dur` into a translucent tinted body with a light inner rim,
@@ -552,6 +618,12 @@
         rk.globalCompositeOperation = 'destination-in'; rk.drawImage(src, 0, 0); rk.globalCompositeOperation = 'source-over';
       }
       k.globalAlpha = 0.85; k.drawImage(r, 0, 0); k.globalAlpha = 1;
+      if ((x.anatomy || x.specks) && box) { // body x-ray: bones, lungs, heart, vessels, specks, clipped to the body
+        const [a, ak] = blank(src, 'afxxrayana' + depth);
+        xrayAnatomy(ak, box, lt - at, x, layerId(L), d);
+        ak.globalCompositeOperation = 'destination-in'; ak.drawImage(src, 0, 0); ak.globalCompositeOperation = 'source-over';
+        k.drawImage(a, 0, 0);
+      }
       if (x.inner && box) {
         if (!T.PROPS[x.inner]) throw new Error(`xray: unknown inner prop "${x.inner}"`);
         const size = x.innerSize ?? (Math.min(box.w, box.h) / d) * 0.5;

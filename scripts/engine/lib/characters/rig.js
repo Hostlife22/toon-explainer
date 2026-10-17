@@ -146,14 +146,17 @@
     return { sx, sy, l1: L1 * B.armL, l2: L2 * B.armL, map };
   };
 
+  const IK_BAND = 0.15; // |dy| / distance below which the elbow changes bend side (about +-9 deg around shoulder level)
   function ik(sx, sy, tx, ty, outward, l1 = L1, l2 = L2) {
     const dx = tx - sx, dy = ty - sy, d = T.clamp(Math.hypot(dx, dy), 10, l1 + l2 - 1);
     const base = Math.atan2(dx, dy); // 0 = down, + toward +x
     const k = Math.acos(T.clamp((l1 * l1 + d * d - l2 * l2) / (2 * l1 * d), -1, 1));
-    // two elbow solutions; keep the one on the outer side (away from the body), so raised hands do not fold the
-    // elbow across the chest (base + k flips inward once the target is above the shoulder)
-    const ca = base + k * outward, cb = base - k * outward;
-    const a1 = Math.sin(ca) * outward >= Math.sin(cb) * outward - 1e-9 ? ca : cb;
+    // Keep the elbow on the outer side (away from the body): base + k bends outward for targets below the shoulder,
+    // base - k for targets above it (otherwise raised hands fold the elbow across the chest). The bend side follows
+    // the target's height through a narrow band around shoulder level, so the elbow swings through a straighter
+    // arm instead of jumping between the two solutions.
+    const side = T.clamp(dy / (d * IK_BAND), -1, 1), sm = side * side * (3 - 2 * Math.abs(side)) * Math.sign(side);
+    const a1 = base + k * outward * sm;
     const ex = sx + Math.sin(a1) * l1, ey = sy + Math.cos(a1) * l1;
     const a2 = Math.atan2(tx - ex, ty - ey);
     return { ex, ey, hx: ex + Math.sin(a2) * l2, hy: ey + Math.cos(a2) * l2, dir: a2 };
@@ -210,7 +213,7 @@
     ctx.restore();
   }
 
-  function arm(ctx, j, sleeve, skin, hold, lt = 0, w = ARM_W, hs = 1, holdSize = null) {
+  function arm(ctx, j, sleeve, skin, hold, lt = 0, w = ARM_W, hs = 1, holdSize = null, holdRot = 0, holdOpts = null) {
     if (T.PAINT && T.paintLimb) T.paintLimb(ctx, [j.sx, j.sy], [j.ex, j.ey], [j.hx, j.hy], w, sleeve, { cuff: 0.84 }); // painted: shaded tube
     else {
       const path = () => { ctx.beginPath(); ctx.moveTo(j.sx, j.sy); ctx.quadraticCurveTo(j.ex, j.ey, (j.ex + j.hx) / 2, (j.ey + j.hy) / 2); ctx.lineTo(j.hx, j.hy); };
@@ -221,10 +224,11 @@
     }
     if (hold && T.drawProp) {
       ctx.save(); ctx.translate(j.hx, j.hy);
+      if (holdRot) ctx.rotate(holdRot * T.DEG * (j.sx < 0 ? -1 : 1)); // holdRot: tilt the prop in the grip (deg)
       if (hold === 'sword') ctx.rotate(Math.PI - j.dir); // blade follows the forearm
       else if (hold === 'spear' || hold === 'torch') { ctx.rotate(T.clamp(-Math.sin(j.dir) * 0.35, -0.35, 0.35)); ctx.translate(0, hold === 'spear' ? 160 : 40); } // shafts stay upright
       else ctx.translate(0, hold === 'shield' ? 0 : -60 * (holdSize ? Math.min(1, holdSize / 170) : 1));
-      T.drawProp(ctx, hold, holdSize ?? (hold === 'shield' ? 260 : hold === 'spear' ? 420 : 170), lt, {}); ctx.restore();
+      T.drawProp(ctx, hold, holdSize ?? (hold === 'shield' ? 260 : hold === 'spear' ? 420 : 170), lt, holdOpts || {}); ctx.restore();
     }
     hand(ctx, j.hx, j.hy, j.dir, j.hand, skin, hs);
   }

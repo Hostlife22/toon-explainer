@@ -185,7 +185,8 @@
         const h = holdOf(i), k = Ly.holdScale ?? c.holdScale, base = h === 'shield' ? 260 : h === 'spear' ? 420 : 170;
         return k != null ? base * k : act ? T.HOLD_SIZE[h] ?? null : null;
       };
-      const drawArm = (i) => noArms ? null : RG.arm(ctx, arms[i], sleeve, c.skin, holdOf(i), lt, armW, B.hand, holdSz(i));
+      const holdRot = T.num(Ly.holdRot ?? c.holdRot ?? 0, lt) || 0; // tilt of held props in the grip, degrees
+      const drawArm = (i) => noArms ? null : RG.arm(ctx, arms[i], sleeve, c.skin, holdOf(i), lt, armW, B.hand, holdSz(i), holdRot, Ly.holdProps ?? c.holdProps ?? null);
       // acting: a near arm raised above the shoulders is drawn over the head, so arms-up / point-up stay visible
       const raised = (i) => !!act && !front && view !== 'back' && arms[i].hy < B.neckY - 40;
       const late = [];
