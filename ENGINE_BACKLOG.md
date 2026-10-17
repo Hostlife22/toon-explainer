@@ -1,42 +1,37 @@
 # Engine backlog
 
 Issues found while remaking "The Man Who Poisoned the World Twice" with the painted engine (all 128 shots). The film specs
-work around each of them; fix them in the engine with tests, a visual check and a review, then re-render the film's contact
-sheet and compare.
+work around each of them.
 
-## Already fixed during the film work
+## Done
 
-- Arm IK keeps the elbow outward for raised hands and changes smoothly at shoulder height (`6d4b005`, `ed2f124`).
-- `holdRot` tilts a held prop; `holdProps` lets a held prop act (a bottle pours).
-- `xray` `anatomy` and `specks`: skeleton, organs and lead grains settling in the bones.
+Each item below has tests, a visual check and a Codex review; the film's contact sheet was re-rendered afterwards (only k48,
+k68 and k89 changed, all as intended; k48's panel was moved up behind the now-occluding bench).
 
-## Bugs
+- Arm IK keeps the elbow outward for raised hands; `holdRot`, `holdProps`; `xray` `anatomy` and `specks`.
+- Characters: `flail` / `flail-b` upright (old flip kept as `upended`); `glasses: true` draws clear spectacles; crowd `look`
+  and age swaps (also for mounted crowds, via creature `riderLook`); a high `reach` lengthens the arm without `stretch`;
+  `sick` reads as nausea (green tint, pale sweat, `queasy` mouth); bottle `pour` can tip back (`back`, timelines).
+- Places and props: set parts with `front: true` (courtroom bench) are slotted among actors per frame by depth; `obj`
+  `contact` shadow sits at the feet; painted `stone` grain; unlit `candle` / `oil-lamp` / `lantern` and flame timelines;
+  smaller `poof` with optional word; new props `scales`, `microscope`, `paintbrush`, `newspaper`, `spray-can`, `fridge`,
+  `rope`, `pulley`.
+- Core, camera and motion: world labels stay glued during a zoomed `frame` pan; smooth paths never overshoot or reverse;
+  `density.py` reads real zooms and frame boxes; the `ortho` star backdrop stays behind earlier layers (`T.AFTER_BG`);
+  `xray` `out`; `move` `by` / `from`; grade `out` validated; new `fx` `blackout` with `lights`.
+- Creatures and vehicles: the reaper holds props beside the body; cars draw `front`, `3q`, `back`, `3q-back` views and turn
+  through them (view / facing timelines, path reversals); rider objects take `expr`, `lookAt`, `takes`, `talk` and more.
+- `scripts/spec.py` split (`spec_vocab.py`, `spec_maps.py`) to stay under 800 lines.
 
-1. Poses `flail` and `flail-b` are rotated 160 degrees, so the character renders upside down (`lib/characters/rig.js`).
-2. `glasses: true` on a cast look draws sunglasses instead of spectacles (`"round"` works).
-3. The reaper's `hold` prop covers its face: the hand slot sits at head height (`lib/creatures/spirits.js`).
-4. The `courtroom` set preset draws the judge's desk behind the actors.
-5. World-placed labels (`hud: false`) drift off their positions while a zoomed `frame` camera pans.
-6. Swapping `look.age` (for example to `"child"`) showed no visible change on beans in a crowd shot (k118).
-7. `contact: true` on an `obj` draws no contact shadow; the stone material shows no visible texture.
-8. Smooth paths with very uneven point spacing loop backwards (a car got squashed as if turning).
-9. `scripts/density.py` `_zoom_key` treats any keyed `camera.zoom` as the default, so it reports false "same size" warnings.
-10. The `ortho` globe's star backdrop covers layers listed before the map.
-11. A bean `reach` to a target above the head leaves the hands at the face unless `stretch: true` is set.
-12. The `sick` expression draws red drips that read as blood.
+## Remaining gaps
 
-## Missing features
-
-- `xray` cannot be switched off inside a shot (no `out` field; a `swap` to `null` is the workaround).
-- `move.from` is ignored and `move.to` is absolute, so an element cannot slide (for example a curtain).
-- A shot `grade` key with `at` never ends on its own.
-- No blackout or light-off effect (a black `fx` flash with a long `dur` is the workaround).
-- The `candle` prop cannot be unlit (no `flame: false`, unlike `oil-lamp` and `lantern`).
-- `poof` defaults to 420 x 300 with a "POOF!" word, which covers the subject.
-- A held bottle cannot tip back upright after `holdProps.pour`.
-- Missing props: scales, microscope, paintbrush, a newspaper to hold, rope and pulleys, fridge, spray can.
-
-## Quality gaps (larger tasks)
-
-- A vehicle turning around is drawn as a squash, not a real three-quarter turn.
-- A driver seated in a vehicle cannot change expression.
+- Held props draw at the default size 170, so a held `newspaper` or `paintbrush` needs `holdScale` 1.3-1.8.
+- Any `fx` layer is slotted above `front` set parts, so a local effect placed behind a bench (dust at the judge's feet)
+  draws over the bench.
+- Only the last background contributes `front` parts, and only when it is a `set`.
+- `dump-truck` has no turn views; the 3/4 car views are a stylized extrusion, and the bean rig has no back three-quarter view
+  (riders in `3q-back` use the back view).
+- A rider's `lookAt` aims from its seat but ignores the suspension bounce; vehicle riders don't take `riderLook`.
+- In a 3/4 view the back sweat bead of a `sick` face can hide under the hair.
+- An `ortho` map layer with a modifier (blur, material) no longer applies it to its starfield.
+- `lib/acting/gags.js` is over the 800-line limit (836 lines).
