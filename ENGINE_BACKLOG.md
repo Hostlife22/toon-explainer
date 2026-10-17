@@ -33,6 +33,8 @@ k68 and k89 changed, all as intended; k48's panel was moved up behind the now-oc
   projection (perspective faces, elliptical wheels on both sides, glass, lights, painted shading); beans take
   `view: "3q-back"` (also riders in 3q-back); rider anchors come from the drawn head (suspension, turns, slopes, age);
   vehicles take `riderLook`.
+- Held props: the fist closes on each prop's grip point (`T.HOLD_GRIP`, `pinch` hand), a near hand's prop draws over
+  the head, and a prop that would cover the eyes or mouth is fitted beside the face with the elbow still bent.
 
 ## Remaining gaps
 
