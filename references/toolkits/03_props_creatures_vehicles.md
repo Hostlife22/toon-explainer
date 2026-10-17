@@ -278,7 +278,7 @@ Pair with poses from [01 Characters](01_characters.md): `hold`, `hold-high`, `ca
 | `glow` | — | `true` (white) or a colour: halo around the body for divine animals |
 | `tear` | — | A tear under the eye (bull and cow) |
 | `eyes` | — | `"evil"`: glowing red slit (bull and cow) |
-| `rider` | — | Cast id seated on the back, legs hidden, saddle cloth drawn. `riderPose` (`idle`), `riderExpr` (`neutral`), `riderHold`, `riderHoldL`, `riderView` (`3q`), `riderScale` (1), `riderY` (0, vertical offset in animal units), `saddle` (`#8f1f27`) |
+| `rider` | — | Cast id seated on the back, legs hidden, saddle cloth drawn. `riderPose` (`idle`), `riderExpr` (`neutral`), `riderLook` (look fields over the rider's cast look, e.g. `{"age": "child"}`; crowds pass their `look` here), `riderHold`, `riderHoldL`, `riderView` (`3q`), `riderScale` (1), `riderY` (0, vertical offset in animal units), `saddle` (`#8f1f27`) |
 
 **More animals** (`animals-objects.js`): `wolf`, `dog`, `elephant`, `pig`, `rabbit`, `turtle`, `goat`, `snail`, `kangaroo`. Default `size` 300. Body bobs 2 px at 0.6 Hz.
 

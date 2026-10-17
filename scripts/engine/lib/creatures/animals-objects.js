@@ -201,7 +201,7 @@
   }
   function rider(ctx, L, lt, env, x, y) {
     if (!L.rider) return;
-    ctx.save(); ctx.translate(x, y); T.layers.bean(ctx, { type: 'bean', who: L.rider, id: (L.id ?? 'cr') + 'r', size: 380 * (L.riderScale ?? 1), legs: false, pose: L.riderPose ?? 'idle', expr: L.riderExpr ?? 'neutral', hold: L.riderHold, rock: 0.6 }, lt, { ...env, st: null }); ctx.restore();
+    ctx.save(); ctx.translate(x, y); T.layers.bean(ctx, { type: 'bean', who: L.rider, id: (L.id ?? 'cr') + 'r', size: 380 * (L.riderScale ?? 1), legs: false, pose: L.riderPose ?? 'idle', expr: L.riderExpr ?? 'neutral', hold: L.riderHold, rock: 0.6, look: L.riderLook }, lt, { ...env, st: null }); ctx.restore();
   }
   function quad(ctx, L, lt, env, cfg) {
     const c = L.color ?? cfg.col, c2 = L.color2 ?? cfg.col2, g = gait(L, lt), a = g * 18 * D, legTop = cfg.cy + cfg.ry * 0.3;

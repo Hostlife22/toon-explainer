@@ -113,7 +113,7 @@
     ctx.shadowBlur = 0; // the glow belongs to the animal body only, not to the rider or saddle
     if (L.rider) { // the rider sits on the saddle; legs hidden, blanket drawn over the hem
       ctx.save(); ctx.translate(-10, -282 + (L.riderY ?? 0)); // rider hem rests on the back
-      T.layers.bean(ctx, { type: 'bean', who: L.rider, id: (L.id ?? 'rider') + 'r', size: 400 * (L.riderScale ?? 1), legs: false, pose: L.riderPose ?? 'idle', expr: L.riderExpr ?? 'neutral', hold: L.riderHold, holdL: L.riderHoldL, rock: 0.6, view: L.riderView ?? '3q' }, lt, { ...env, st: null });
+      T.layers.bean(ctx, { type: 'bean', who: L.rider, id: (L.id ?? 'rider') + 'r', size: 400 * (L.riderScale ?? 1), legs: false, pose: L.riderPose ?? 'idle', expr: L.riderExpr ?? 'neutral', hold: L.riderHold, holdL: L.riderHoldL, rock: 0.6, view: L.riderView ?? '3q', look: L.riderLook }, lt, { ...env, st: null });
       ctx.restore();
       T.outlined(ctx, (kk) => T.rrect(kk, -110, -380, 220, 70, 16), L.saddle ?? '#8f1f27', { line: 7 });
     }

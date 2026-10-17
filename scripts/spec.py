@@ -396,6 +396,10 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
             errors.append(f"{where}: crowd mode {layer['mode']!r} not in {sorted(KNOWN_CROWD_MODE)}")
         if layer.get("creature") and "creature" in LAYER_KINDS and layer["creature"] not in LAYER_KINDS["creature"]:
             errors.append(f"{where}: crowd creature {layer['creature']!r} not in {sorted(LAYER_KINDS['creature'])}")
+        if layer.get("look") is not None:
+            _check_look(layer["look"], f"{where}.look", errors)
+    if kind == "prop" and layer.get("pour") is not None and not SC.pour_ok(layer["pour"]):
+        errors.append(f"{where}: pour {SC.POUR_HELP}")
     if kind in LAYER_KINDS and layer.get("kind") not in LAYER_KINDS[kind]:
         errors.append(f"{where}: {kind} kind {layer.get('kind')!r} not in {sorted(LAYER_KINDS[kind])}")
     if kind == "fg" and layer.get("kind") not in KNOWN_FG:

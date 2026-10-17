@@ -219,3 +219,58 @@ def test_held_bottle_draws_upright_again_after_back():
     assert f != g and g != h
     bad = _spec([{**base, "holdProps": {"pour": {"at": 0.3, "back": "later"}}}])
     assert any("pour" in x for x in validate(bad))
+
+
+# ---------- review follow-ups ----------
+def test_pour_spent_is_the_running_max_of_the_eased_tip_curve():
+    js = """() => {
+      const tl = [{ at: 0, v: 0 }, { at: 1, v: 0.8, ease: 'outBack' }], out = [];
+      for (let i = 0; i <= 200; i++) { const t = i / 100; out.push([TOON.pourAmount(tl, t), TOON.pourSpent(tl, t)]); }
+      return out;
+    }"""
+    rows = _page_eval(_spec([]), lambda page: page.evaluate(js))
+    peak = max(a for a, _ in rows)
+    spent = [s for _, s in rows]
+    assert all(b >= a - 1e-9 for a, b in zip(spent, spent[1:])), "spent must never fall (liquid would rise again)"
+    assert peak > 0.85 and abs(spent[-1] - peak) < 0.01, (peak, spent[-1])
+    assert all(s >= a - 0.01 for a, s in rows)
+
+
+def test_pour_back_starts_from_the_tip_reached_at_back():
+    js = """() => {
+      const ev = { at: 0, dur: 2, back: 1, backDur: 0.5 }, out = [];
+      for (let i = 0; i <= 250; i++) { const t = i / 100; out.push([t, TOON.pourAmount(ev, t), TOON.pourSpent(ev, t)]); }
+      return out;
+    }"""
+    rows = _page_eval(_spec([]), lambda page: page.evaluate(js))
+    at_back = next(a for t, a, _ in rows if abs(t - 1) < 1e-9)
+    after = [a for t, a, _ in rows if t >= 1]
+    assert all(b <= a + 1e-9 for a, b in zip(after, after[1:])), "the bottle must only tip back after `back`"
+    assert max(a for _, a, _ in rows) <= at_back + 1e-9
+    assert after[-1] == 0
+    assert abs(rows[-1][2] - at_back) < 1e-6, (rows[-1][2], at_back)  # spent stops at the real maximum
+
+
+def test_crowd_look_is_validated_like_a_bean_look():
+    for look in ({"skin": "green"}, {"age": "ancient"}):
+        bad = _spec([_crowd(look=look)])
+        assert any("look" in e for e in validate(bad)), look
+        swapped = _spec([_crowd(swap=[{"at": 0.5, "look": look}])])
+        assert any("look" in e for e in validate(swapped)), look
+
+
+def test_bottle_prop_pour_is_validated():
+    for pour in ([None], "soon", {"at": "x"}, [{"at": 0, "v": 2}]):
+        bad = _spec([{"type": "prop", "kind": "bottle", "x": 0.5, "y": 0.5, "pour": pour}])
+        assert any("pour" in e for e in validate(bad)), pour
+    good = _spec([{"type": "prop", "kind": "bottle", "x": 0.5, "y": 0.5, "pour": [{"at": 0, "v": 0}, {"at": 1, "v": 1}]}])
+    assert validate(good) == []
+
+
+def test_mounted_crowd_riders_take_the_crowd_look():
+    mounted = dict(creature="horse", count=2, size=300)
+    swap = _spec([_crowd(swap=[{"at": 0.5, "look": {"age": "child"}}], **mounted)])
+    plain = _spec([_crowd(**mounted)])
+    s0, s1 = _frames(swap, [0.3, 0.8])
+    p0, p1 = _frames(plain, [0.3, 0.8])
+    assert s0 == p0 and s1 != p1

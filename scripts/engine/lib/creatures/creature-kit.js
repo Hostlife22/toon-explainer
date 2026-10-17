@@ -304,7 +304,7 @@
     if (!L.rider || !T.layers.bean) return;
     ctx.save(); ctx.translate(x, y); ctx.rotate(o.lean ?? 0);
     T.layers.bean(ctx, { type: 'bean', who: L.rider, id: (L.id ?? 'rider') + 'r', size: 400 * scale * (L.riderScale ?? 1), legs: false,
-      pose: L.riderPose ?? 'idle', expr: L.riderExpr ?? 'neutral', hold: L.riderHold, holdL: L.riderHoldL, rock: 0.6, view: L.riderView ?? '3q' }, lt, { ...env, st: null });
+      pose: L.riderPose ?? 'idle', expr: L.riderExpr ?? 'neutral', hold: L.riderHold, holdL: L.riderHoldL, rock: 0.6, view: L.riderView ?? '3q', look: L.riderLook }, lt, { ...env, st: null });
     ctx.restore();
   };
   CK.riderLeg = (ctx, L, x, y, scale, swing = 0) => {
