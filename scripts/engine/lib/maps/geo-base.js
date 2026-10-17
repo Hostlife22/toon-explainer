@@ -65,7 +65,7 @@
       L = focusBlur(L, lt, focus);
       if (L.dist != null && T.distLayer) L = T.distLayer(L);
       const llt = T.twosLt ? T.twosLt(L, lt, shot, env) : lt;
-      if (Array.isArray(L.blur)) L = { ...L, blur: T.num(L.blur, llt) }; // keyed blur on the layer's own clock, as drawLayer
+      if (Array.isArray(L.blur)) L = T.layerWith(L, { blur: T.num(L.blur, llt) }); // keyed blur on the layer's own clock, as drawLayer
       const st = T.layerState(L, llt);
       if (!st) continue;
       // painted look opt-out exactly as drawLayer: painted: false (or an exempt type) draws the backdrop flat
@@ -97,7 +97,7 @@
   function focusBlur(L, lt, focus) {
     if (!focus || !L.id || L.sharp) return L;
     const fb = focus(L.id), own = T.num(L.blur, lt) || 0;
-    return fb >= 0.3 || own ? { ...L, blur: Math.max(fb, own) } : L;
+    return fb >= 0.3 || own ? T.layerWith(L, { blur: Math.max(fb, own) }) : L;
   }
   function graticule(ctx, G, Gm, step, col) {
     if (!(Number.isFinite(step) && step >= 1)) throw new Error(`map geo: graticule must be true or a step of at least 1 degree (got ${step})`);

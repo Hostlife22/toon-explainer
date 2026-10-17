@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Engine gaps: integration
+
+- Fix: vehicle riders keep the authored vehicle behind shot focus, keyed `blur` and `dist` copies (`T.swapBase` now rides on every layer copy, new `T.layerWith`), so a rider's `lookAt` / `takes` plan no longer starts from an already-swapped vehicle.
+
 ### Engine gaps: face-maps-split
 
 - Fix: both cold sweat beads of a `sick` face read in every view and with every hair kind: they are drawn over the hair, sit just inside the hairline in the front view and both on the visible face side in `3q` / `side` (a back view shows none).
