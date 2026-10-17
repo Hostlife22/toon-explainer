@@ -52,22 +52,43 @@
   }
   // The globe's space backdrop fills the whole frame, so it is painted right after the shot backgrounds, with the map
   // layer's own transform and alpha: layers listed before the map stay in front of it. Maps drawn outside a shot pass
-  // (pinned layers, overlays) paint it inline.
+  // (pinned layers, overlays) paint it inline. The map layer's modifiers (T.LAYER_MODS: blur, material, rack focus ...)
+  // apply to the backdrop too, as they did when it was part of the layer.
   const orthoMap = (L) => L && L.type === 'map' && L.geo && !(T.GEO_PROJ[L.geo.proj ?? 'equirect'] || { flat: true }).flat && (L.geo.backdrop ?? 'stars') !== 'none';
   T.AFTER_BG.push((ctx, shot, lt, env, cam) => {
     env.geoSpaceDone = true;
+    const focus = T.focusBlur ? T.focusBlur(shot, lt) : null;
     for (const L0 of shot.layers || []) {
       if (!L0 || L0.type !== 'map') continue;
       let L = T.effLayer(L0, lt); // swaps first: a map may swap to (or away from) an ortho globe or its backdrop
       if (!orthoMap(L)) continue;
+      L = backdropBlur(L, lt, focus);
       if (L.dist != null && T.distLayer) L = T.distLayer(L);
-      const llt = T.twosLt ? T.twosLt(L, lt, shot, env) : lt;
+      const llt = T.twosLt ? T.twosLt(L, lt, shot, env) : lt, st = T.layerState(L, llt);
+      if (!st) continue;
       ctx.save();
-      const st = T.layerTransform(ctx, L, llt, cam);
-      if (st) { ctx.globalAlpha *= st.a; space(ctx, L.geo, { env: { ...env, st } }, llt - (L.at ?? 0)); }
-      ctx.restore();
+      try {
+        ctx.globalAlpha *= st.a;
+        const paint = (c) => {
+          c.save();
+          const s = T.layerTransform(c, L, llt, cam);
+          if (s) space(c, L.geo, { env: { ...env, st: s } }, llt - (L.at ?? 0));
+          c.restore();
+        };
+        // a blurred backdrop fades out at the frame edges: lay it over a sharp copy, as drawShot does for backgrounds
+        if (T.num(L.blur, llt) >= 0.3) T.modLayer(ctx, { ...L, blur: 0 }, llt, env, paint);
+        T.modLayer(ctx, L, llt, env, paint);
+      } finally { ctx.restore(); }
     }
   });
+  // The blur the map layer itself gets in drawShot / drawLayer (rack focus, keyed blur), so its backdrop matches.
+  function backdropBlur(L, lt, focus) {
+    if (focus && L.id && !L.sharp) {
+      const fb = focus(L.id), own = T.num(L.blur, lt) || 0;
+      if (fb >= 0.3 || own) L = { ...L, blur: Math.max(fb, own) };
+    }
+    return Array.isArray(L.blur) ? { ...L, blur: T.num(L.blur, lt) } : L;
+  }
   function graticule(ctx, G, Gm, step, col) {
     if (!(Number.isFinite(step) && step >= 1)) throw new Error(`map geo: graticule must be true or a step of at least 1 degree (got ${step})`);
     const path = new Path2D();

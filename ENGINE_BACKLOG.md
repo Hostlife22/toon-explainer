@@ -22,6 +22,9 @@ k68 and k89 changed, all as intended; k48's panel was moved up behind the now-oc
 - Creatures and vehicles: the reaper holds props beside the body; cars draw `front`, `3q`, `back`, `3q-back` views and turn
   through them (view / facing timelines, path reversals); rider objects take `expr`, `lookAt`, `takes`, `talk` and more.
 - `scripts/spec.py` split (`spec_vocab.py`, `spec_maps.py`) to stay under 800 lines.
+- Both `sick` sweat beads read in every view and hair kind (drawn over the hair, on the visible face side); an `ortho`
+  map's modifiers (blur, focus, material) reach its starfield again; `gags.js` and `game-ui.js` split under 800 lines
+  (`gags-fx.js`, `gags-enter.js`, `game-docs.js`; example frames byte-identical).
 
 ## Remaining gaps
 
@@ -32,6 +35,3 @@ k68 and k89 changed, all as intended; k48's panel was moved up behind the now-oc
 - `dump-truck` has no turn views; the 3/4 car views are a stylized extrusion, and the bean rig has no back three-quarter view
   (riders in `3q-back` use the back view).
 - A rider's `lookAt` aims from its seat but ignores the suspension bounce; vehicle riders don't take `riderLook`.
-- In a 3/4 view the back sweat bead of a `sick` face can hide under the hair.
-- An `ortho` map layer with a modifier (blur, material) no longer applies it to its starfield.
-- `lib/acting/gags.js` is over the 800-line limit (836 lines).

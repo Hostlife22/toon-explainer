@@ -263,7 +263,7 @@ Used by `cities[].icon`, `tokens[].icon`, `squads[].icon`, `forts[].icon`, route
 | `rotate` | 0 | Rolls the map (degrees), animatable |
 | `radius` | 0.42 | `ortho` globe radius in frame heights |
 | `detail` | `auto` | `lo`, `hi` or `auto` (`hi` when `span` < 110 degrees or the globe radius > 0.75 H) |
-| `backdrop`, `stars` | `stars`, 160 | `ortho`: starfield with twinkles (`stars` count), a colour, or `none`. Painted right after the shot backgrounds, so layers listed before the map stay in front of it |
+| `backdrop`, `stars` | `stars`, 160 | `ortho`: starfield with twinkles (`stars` count), a colour, or `none`. Painted right after the shot backgrounds, so layers listed before the map stay in front of it; the map's modifiers (`blur`, rack `focus`, `material`, ...) apply to it too |
 | `shade`, `night` | true, false | `ortho`: sphere shading (lit top left, darker limb, atmosphere rim inside the ink edge); `night` adds a terminator |
 | `graticule` | false | `true` (every 15 degrees) or a step of at least 1 degree: pale latitude / longitude lines on the sea |
 | `ripples` | 3 | `painted`: number of ripple lines along the coasts |

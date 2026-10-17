@@ -166,21 +166,27 @@
       ctx.fillStyle = '#a01020'; ctx.beginPath(); ctx.moveTo(fx + 30, -380); ctx.quadraticCurveTo(fx + 40, -350, fx + 34, -326); ctx.quadraticCurveTo(fx + 24, -350, fx + 22, -378); ctx.closePath(); ctx.fill();
       ctx.beginPath(); ctx.arc(fx + 34, -326, 8, 0, Math.PI * 2); ctx.fill();
     }
-    if (e.queasy) { // cold sweat: two pale beads on the brow, sliding slowly (never red)
-      const ph = (lt * 0.5) % 1;
-      [[-HW * 0.72 + fx * 0.4, -494, 0], [HW * 0.68 + fx * 0.4, -506, 0.5]].forEach(([x, y, o]) => {
-        const q = (ph + o) % 1;
-        ctx.save(); ctx.globalAlpha *= 1 - q * 0.5; ctx.translate(x, y + q * 30); ctx.scale(0.85, 0.85);
-        T.outlined(ctx, (k) => { k.moveTo(0, -26); k.quadraticCurveTo(20, 0, 0, 14); k.quadraticCurveTo(-20, 0, 0, -26); }, '#dff2f6', { line: 6, ink: '#6a9aa8' });
-        ctx.restore();
-      });
-    }
     if (e.sweat) {
       const ph = (lt * 0.8) % 1;
       ctx.save(); ctx.globalAlpha *= 1 - ph * 0.6; ctx.translate(-HW * 0.9, -560 + ph * 60);
       T.outlined(ctx, (k) => { k.moveTo(0, -26); k.quadraticCurveTo(20, 0, 0, 14); k.quadraticCurveTo(-20, 0, 0, -26); }, '#7fd0f0', { line: 6 });
       ctx.restore();
     }
+  }
+
+  // Cold sweat (queasy / sick): two pale beads sliding slowly (never red). Drawn after the hair so no hair kind hides
+  // them; in turned views both sit on the visible face side (the back temple is under the hair there).
+  const QUEASY_BEADS = (view, fx) => (view === 'front'
+    ? [[-HW * 0.6 + fx * 0.4, -484, 0], [HW * 0.58 + fx * 0.4, -494, 0.5]]
+    : [[fx - HW * 0.46, -488, 0], [Math.min(fx + HW * 0.58, HW * 0.82), -486, 0.5]]);
+  function queasySweat(ctx, view, fx, lt) {
+    const ph = (lt * 0.5) % 1;
+    QUEASY_BEADS(view, fx).forEach(([x, y, o]) => {
+      const q = (ph + o) % 1;
+      ctx.save(); ctx.globalAlpha *= 1 - q * 0.5; ctx.translate(x, y + q * 30); ctx.scale(0.85, 0.85);
+      T.outlined(ctx, (k) => { k.moveTo(0, -26); k.quadraticCurveTo(20, 0, 0, 14); k.quadraticCurveTo(-20, 0, 0, -26); }, '#dff2f6', { line: 6, ink: '#6a9aa8' });
+      ctx.restore();
+    });
   }
 
   // ---------- hair / beard / headwear (view-aware: masses shift toward the back of the head) ----------
@@ -357,6 +363,7 @@
       extras(ctx, D ? { blood: e.blood, queasy: e.queasy } : e, fx, s.lt);
     }
     swayed(ctx, s.sway, c.hair === 'long' || view === 'back' ? 0.45 : 0.18, () => hairFront(ctx, c, s.seed, sh, view));
+    if (e.queasy && view !== 'back' && !(c.mask === 'gas' && T.drawGasMask)) queasySweat(ctx, view, fx, s.lt);
     headwear(ctx, c, s.lt, sh, view);
     for (const fn of T.HEAD_EXTRAS) isolated(ctx, () => fn(ctx, c, s, { view, sh, fx, HW, CY }));
   }
