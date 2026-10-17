@@ -1,7 +1,7 @@
 # 02 · Acting and gags
 In a word: the comedy devices that make something *happen to* a character: an arm whose owner is never seen, a poof cloud that hides a change, hats that pass power, micro-acting marks, sweat and tears, the "no X" sign, and measured entrances, exits, swaps, trembles and swings.
 
-Engine: `scripts/engine/lib/acting/gags.js` (arm, gag fx, `prohibit` prop, eight registered entrances / exits), `scripts/engine/core.js` (built-in entrances / exits, `swap`, `jitter`, `swing`, `shake`, `jump`) · Vocabulary: `scripts/vocab/acting.json`, `scripts/vocab/fx-tone.json` (`drop-squash`, `pop-tilt`, `slam`), `KNOWN_ENTER` in `scripts/spec.py` · Example film: [`examples/acting_gags/spec.json`](../../examples/acting_gags/spec.json) (one shot per device; render with `--sheet` to browse) · Related cards: [01 Characters](01_characters.md) (poses, expressions, headwear the hat gag draws), [03 Props, creatures and vehicles](03_props_creatures_vehicles.md) (what an arm can `hold` or `take`), [08 FX and tone](08_fx_and_tone.md) (impact stars, dust, shock), [09 Transitions and lens](09_transitions_and_lens.md) (`camera.jump`, `camera.shake`). Field contract shared by all layers: [03-spec-reference](../03-spec-reference.md); beat-to-shot method: [07-story-craft](../07-story-craft.md).
+Engine: `scripts/engine/lib/acting/gags.js` (shared helpers, arm), `acting/gags-fx.js` (gag fx, `prohibit` prop), `acting/gags-enter.js` (eight registered entrances / exits, `T.drawLayer` wrapper), `scripts/engine/core.js` (built-in entrances / exits, `swap`, `jitter`, `swing`, `shake`, `jump`) · Vocabulary: `scripts/vocab/acting.json`, `scripts/vocab/fx-tone.json` (`drop-squash`, `pop-tilt`, `slam`), `KNOWN_ENTER` in `scripts/spec.py` · Example film: [`examples/acting_gags/spec.json`](../../examples/acting_gags/spec.json) (one shot per device; render with `--sheet` to browse) · Related cards: [01 Characters](01_characters.md) (poses, expressions, headwear the hat gag draws), [03 Props, creatures and vehicles](03_props_creatures_vehicles.md) (what an arm can `hold` or `take`), [08 FX and tone](08_fx_and_tone.md) (impact stars, dust, shock), [09 Transitions and lens](09_transitions_and_lens.md) (`camera.jump`, `camera.shake`). Field contract shared by all layers: [03-spec-reference](../03-spec-reference.md); beat-to-shot method: [07-story-craft](../07-story-craft.md).
 
 ## ① When to use it
 
@@ -85,7 +85,7 @@ Common: `target` (layer id in the same shot; the fx draws in its rig units and d
 
 | `kind` | Fields (defaults) | Effect |
 |---|---|---|
-| `poof` | `w` 420, `h` 300, `hold` 0.17, `mode` `band` / `column`, `count` 7 (column: clouds 2–4, default 3), `puffs` 5, `color` #f4f1ea, `shade` #d6d0c6, `word` `POOF!` (`null` hides), `wordSize` 1, `wordColor` #e8c860 | Band: covers in 2 frames, boils for `hold`, fades as one flat sheet over 12 frames while stray puffs fly out. Column: stacked clouds rise from the feet ("ran away"); place it at the feet. Alternatives: cream #efe6cf / #d6c8a6, grey-beige #ddd5ca / #b0a598. |
+| `poof` | `w` 300, `h` 220, `hold` 0.17, `mode` `band` / `column`, `count` 7 (column: clouds 2–4, default 3), `puffs` 5, `color` #f4f1ea, `shade` #d6d0c6, `word` `POOF!` (any text; `false` or `null` hides it), `wordSize` 1, `wordColor` #e8c860 | Band: covers in 2 frames, boils for `hold`, fades as one flat sheet over 12 frames while stray puffs fly out. Column: stacked clouds rise from the feet ("ran away"); place it at the feet. Alternatives: cream #efe6cf / #d6c8a6, grey-beige #ddd5ca / #b0a598. |
 | `hat` | `target` (required), `head` `crown` (any headwear kind, see [01](01_characters.md)), `mode` `drop` / `give` / `fly` / `stack` / `flat`, `color`, `color2` | Draws a headwear sprite onto or off the target's head. A `drop` or `give` stops drawing once the target's own `swap` wears the same `head`. The cast `headColor` only tints the target's own hat kind. |
 | ↳ `drop` | `from` 600 (fall height px), `bonk` | Falls in 2 frames with two yellow swooshes, squashes 2 frames; `bonk` adds a small star. |
 | ↳ `give` | `from` (giver layer id), `arc` 120 | 12-frame arc from the giver's head to the target's. |
@@ -154,6 +154,37 @@ Kinds from `tumble` to `pivot-fall` play time-reversed when used in the other di
 | `jump` | `[{at, dur 0.45, h 120}]` | shot time | One hop of `h` px (joy, surprise). |
 
 Bean-only acting fields (`pose` / `expr` keys, `antic`, `snapTilt`, `tremble`, `talk`, `lean`) are in [01 Characters](01_characters.md).
+
+### Body acting (`acting`)
+
+On by default in the painted look (`style.look: "painted"`), opt-in with `acting: true` in classic, off with `acting: false`; `{antic, overshoot, breathe, shift, squash, turn, blink, react, fidget: false}` drops single parts (the last three are the [acting director](#acting-director-lookat-takes-blinks-fidgets)). All of it is a pure function of time (`motion.js`).
+
+| Part | Effect |
+|---|---|
+| `antic` | Before a big pose change (arms travel over 50° or the body pose changes), 4 frames of anticipation: the arms swing against their coming motion (16 % of it, at most 20°), the body dips 10 units and squashes 5 %. The explicit classic `antic: true` keeps its own 3-frame dip. |
+| `overshoot` | Pose changes follow an under-damped spring (about 16 % overshoot, settled in ~0.3 s; `poseBlend` sets the speed) instead of the classic settle squash; reach moves use it too. |
+| `breathe` | Idle breathing at 0.28 Hz lifts the shoulders and the head 2.5 units. |
+| `shift` | Idle weight shift from foot to foot every 3.2–4.5 s (seeded): lean ±2.2°, hips ±5 units, eased over 0.7 s. |
+| `squash` | Jumps (`jump`): 4-frame crouch (to 0.8), launch stretch 1.16, falling stretch 1.07, landing squash 0.78 that bounces back in 0.35 s; volume kept by the width. `impact` entries squash sideways and lean back. |
+| `turn` | Front-view in-between when a `move` / `path` flip turns the character around. |
+| secondary motion | Hair (shear from the crown), cape, robe hem, helmet crests / plumes and ties lag behind the body: a damped spring (1.4 Hz, damping 0.32) driven by the layer's acceleration over the last 1.2 s plus drag on its speed (`T.springLag`), turn impulses and the gait. The bean field `secondary` scales it (the common `sway` field is a different thing: a rotation). |
+
+### Acting director (`lookAt`, `takes`, blinks, fidgets)
+
+`acting/director.js`, on beans. All times are layer time; everything is a pure function of time.
+
+| Field | Default | Effect |
+|---|---|---|
+| `lookAt` | none | A layer id (aims at a bean's head), `[x, y]`, `{target \| x, y, turn, head, eyes}` or `[{at, v}]` keys (`v: null` lets go). The body turns toward the target (facing sampled at 6 Hz, with the usual turn in-between and hair smear; an explicit `facing` wins), the head tilts up or down (up to 15°) with a spring snap that overshoots, the eyes lead (`gaze` ±12), and the character blinks on each new key. `turn` / `head` / `eyes: false` drop one part |
+| `takes` | none | `double`: glance at `target` (0.22 s), back (to 0.6 s), then snap round with `expr` (`shock`) for 0.9 s, a 26 px hop and a head kick. `snap`: turn to the target with a head kick. `jolt`: a 34 px hop, a short tremble and an optional `expr`. `blink`: a blink. Without a `target`, `double` and `snap` look at the camera (`view: front`) |
+| `acting.blink` | on with acting | A blink 2 frames after the cut, on each `lookAt` key and in takes (3 frames) |
+| `acting.react` | on with acting | Every expression change kicks the head (about 5°, a damped 2.2 Hz wobble) |
+| `acting.fidget` | on with acting | In idle holds (pose `idle`, not talking or walking, no `lookAt`, 1.5 s clear of takes and changes) a seeded glance aside with a small head tilt every 2.6-4.6 s |
+
+Recipe, the double take: `{"type":"bean","id":"hero",...,"takes":[{"at":0.7,"kind":"double","target":"rival"}]}` with
+the camera framing the hero at `ms`. Reaction shot in a dialogue: `lookAt` the speaker, then a `snap` to the door.
+
+Travel along a curve is the common `path` field ([spec reference](../03-spec-reference.md#common-layer-fields)); beans walk it with a gait cycle (see [01 Characters](01_characters.md#characters-20-fields-bean)). `floorY` (any layer, normalised floor y) keeps the painted contact shadow on the floor under a flying or hovering bean or contact layer; jumps and upward `bob` lift it automatically.
 
 ## ④ Timing
 
@@ -321,4 +352,4 @@ Add `"camera": {"shake": [{"at": 1.2, "dur": 0.15, "amp": 6}]}` on the shot.
 - **Entrance gags on beans override the bean default `none`.** Characters that are simply there at the cut should not enter at all.
 - **Jitter and swing clocks differ.** `jitter.from` / `to` count from the layer's `at`; `swing.at`, `shake.at`, `jump.at` and `swap.at` are shot time.
 - **Determinism.** Everything is seeded by the layer `id`; two identical gags without ids look identical. Give each its own `id`.
-- gags.js wraps `T.drawLayer` (chained), so other modules can wrap it too; the wrapper hides taken layers and draws leftovers from entrances and exits.
+- gags-enter.js wraps `T.drawLayer` (chained), so other modules can wrap it too; the wrapper hides taken layers and draws leftovers from entrances and exits.

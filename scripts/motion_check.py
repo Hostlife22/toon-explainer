@@ -1,0 +1,189 @@
+"""Validation of the motion fields shared by creatures and vehicles (engine: lib/creatures/motion-path.js,
+creature-kit.js, lib/props/vehicles-kit.js): `path` on any layer, creature `gait` / `state`, vehicle `terrain`,
+`animal` and the trail switches, car `view` / `facing` / `turn` (lib/props/vehicles-views.js) and rider objects.
+Called from spec._check_layer; kept here so spec.py stays focused.
+
+`path` is always an object {pts, at, dur, ease, curve, orient, face, bank, loop}. A plain list of points is the
+older, type-specific meaning of `path` on fx (brawl trail), cursor (keys) and map layers, which are not checked here.
+"""
+from __future__ import annotations
+
+import math
+
+CURVES = {"smooth", "linear", "bezier"}
+GAITS = {"walk", "trot", "gallop", "run", "auto"}
+STATES = {"idle", "walk", "trot", "run", "gallop", "eat", "sleep", "scared", "sit", "swim", "glide", "fly", "auto"}
+TERRAINS = {"road", "dirt", "rough", "cobble", "rail", "smooth"}
+SWITCHES = ("lights", "dust", "exhaust", "wake", "contrail", "smoke", "steam", "spray")
+VEHICLE_VIEWS = {"front", "3q", "side", "profile", "back", "3q-back"}
+FACINGS = {"right", "left"}
+RIDER_FIELDS = {"who", "expr", "lookAt", "pose", "hold", "holdL", "talk", "takes", "gaze", "look", "view", "facing", "scale",
+                "blink", "headTilt", "tremble", "lipsync", "acting", "smear", "turn"}
+PATH_OWNERS = {"fx", "cursor", "map"}  # layer types whose `path` field means something else (brawl trail, cursor keys)
+
+
+def _num(v) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
+def _pair(v) -> bool:
+    return isinstance(v, list) and len(v) == 2 and all(_num(x) for x in v)
+
+
+def _name_in(v, names) -> bool:
+    return isinstance(v, str) and v in names
+
+
+def _check_names(value, names: set, what: str, where: str, errors: list[str]) -> None:
+    """A constant name or a nonempty [{at, v}] timeline of names."""
+    if isinstance(value, list):
+        if not value or not all(isinstance(k, dict) and _num(k.get("at", 0)) and _name_in(k.get("v"), names) for k in value):
+            errors.append(f"{where}: {what} timeline must be a nonempty list of {{at (number), v in {sorted(names)}}}")
+        return
+    if not _name_in(value, names):
+        errors.append(f"{where}: {what} {value!r} not in {sorted(names)}")
+
+
+def check_path(path, where: str, errors: list[str], ease_names: set) -> None:
+    if not isinstance(path, dict):
+        errors.append(f"{where}: path must be an object {{pts: [[x, y], ...], at, dur, ease, curve, orient, face, bank, loop}}")
+        return
+    pts = path.get("pts")
+    if not (isinstance(pts, list) and len(pts) >= 2 and all(_pair(p) for p in pts)):
+        errors.append(f"{where}: path needs pts: 2+ [x, y] points with finite numbers")
+        return
+    curve = path.get("curve", "smooth")
+    if not _name_in(curve, CURVES):
+        errors.append(f"{where}: path curve {curve!r} not in {sorted(CURVES)}")
+    elif curve == "bezier" and (len(pts) < 4 or (len(pts) - 1) % 3):
+        errors.append(f"{where}: a bezier path needs 3n+1 points (start, then control, control, end per segment)")
+    if path.get("at") is not None and not (_num(path["at"]) and path["at"] >= 0):
+        errors.append(f"{where}: path at must be a finite number >= 0 (shot time, like move)")
+    if path.get("dur") is not None and not (_num(path["dur"]) and path["dur"] > 0):
+        errors.append(f"{where}: path dur must be a finite number above 0")
+    if path.get("ease") is not None and not _name_in(path["ease"], ease_names):
+        errors.append(f"{where}: path ease {path['ease']!r} not in {sorted(ease_names)}")
+    orient = path.get("orient")
+    if orient is not None and not (isinstance(orient, bool) or (_num(orient) and 0 <= orient <= 180)):
+        errors.append(f"{where}: path orient must be true/false or a max tilt in degrees (0..180)")
+    if path.get("face") is not None and not isinstance(path["face"], bool):
+        errors.append(f"{where}: path face must be true or false")
+    if path.get("bank") is not None and not _num(path["bank"]):
+        errors.append(f"{where}: path bank must be a finite number (degrees of lean on turns)")
+    loop = path.get("loop")
+    if loop is not None and not (isinstance(loop, bool) or (_num(loop) and loop >= 1)):
+        errors.append(f"{where}: path loop must be true or a lap count >= 1")
+
+
+def check_motion(layer: dict, where: str, errors: list[str], ease_names: set, creature_kinds: set | None) -> None:
+    kind = layer.get("type")
+    path = layer.get("path")
+    if path is not None and not (kind in PATH_OWNERS and isinstance(path, list)):  # lists are the owners' own paths
+        check_path(path, where, errors, ease_names)
+    if kind in ("creature", "vehicle"):
+        if layer.get("gait") is not None:
+            _check_names(layer["gait"], GAITS, "gait", where, errors)
+        if layer.get("state") is not None:
+            _check_names(layer["state"], STATES, "state", where, errors)
+    if kind == "vehicle":
+        if layer.get("terrain") is not None and not _name_in(layer["terrain"], TERRAINS):
+            errors.append(f"{where}: terrain {layer['terrain']!r} not in {sorted(TERRAINS)}")
+        for key in SWITCHES:
+            v = layer.get(key)
+            if v is not None and not (isinstance(v, bool) or (_num(v) and v >= 0)):
+                errors.append(f"{where}: {key} must be true/false or a finite amount >= 0")
+        animal = layer.get("animal")
+        if animal is not None and not (isinstance(animal, str) and (not creature_kinds or animal in creature_kinds)):
+            errors.append(f"{where}: vehicle animal {animal!r} not in {sorted(creature_kinds or [])}")
+        team = layer.get("team")
+        if team is not None and not (isinstance(team, int) and not isinstance(team, bool) and 1 <= team <= 4):
+            errors.append(f"{where}: team must be 1..4 animals")
+    if kind == "vehicle":
+        _check_vehicle_views(layer, where, errors)
+    if kind == "creature" and layer.get("dust") is not None and not (isinstance(layer["dust"], bool) or (_num(layer["dust"]) and layer["dust"] >= 0)):
+        errors.append(f"{where}: dust must be true/false or a finite amount >= 0")
+    for key in ("flock", "school"):
+        v = layer.get(key)
+        if v is not None and not (isinstance(v, int) and not isinstance(v, bool) and 1 <= v <= 40):
+            errors.append(f"{where}: {key} must be a count 1..40")
+
+
+def _check_vehicle_views(layer: dict, where: str, errors: list[str]) -> None:
+    """Car turnarounds: `view` / `facing` constants or timelines, `turn` false or {frames, via, span, squash, smear}."""
+    if layer.get("view") is not None:
+        _check_names(layer["view"], VEHICLE_VIEWS, "vehicle view", where, errors)
+    if layer.get("facing") is not None:
+        _check_names(layer["facing"], FACINGS, "vehicle facing", where, errors)
+    turn = layer.get("turn")
+    if turn is None or turn is False:
+        return
+    if not isinstance(turn, dict):
+        errors.append(f"{where}: vehicle turn must be false or {{frames, via, span, squash, smear}}")
+        return
+    frames = turn.get("frames")
+    if frames is not None and not (isinstance(frames, int) and not isinstance(frames, bool) and 0 <= frames <= 6):
+        errors.append(f"{where}: turn.frames must be a whole number of frames 0..6")
+    if turn.get("via") is not None and turn["via"] not in ("front", "back"):
+        errors.append(f"{where}: turn.via must be 'front' or 'back'")
+    if turn.get("span") is not None and not (_num(turn["span"]) and turn["span"] > 0):
+        errors.append(f"{where}: turn.span must be a number > 0 (fraction of the vehicle size)")
+    for key in ("squash", "smear"):
+        if turn.get(key) is not None and not isinstance(turn[key], bool):
+            errors.append(f"{where}: turn.{key} must be true or false")
+
+
+def _names_ok(value, names: set) -> bool:
+    """A name in `names`, or a nonempty [{at (number), v: name}] timeline."""
+    if isinstance(value, list):
+        return bool(value) and all(isinstance(k, dict) and _num(k.get("at", 0)) and _name_in(k.get("v"), names) for k in value)
+    return _name_in(value, names)
+
+
+def _windows_ok(value) -> bool:
+    return isinstance(value, list) and all(_pair(w) and w[0] <= w[1] for w in value)
+
+
+def check_riders(layer: dict, where: str, errors: list[str], cast: dict, expr_names: set, prop_names: set) -> None:
+    """Vehicle `riders`: cast ids or rider objects {who, expr, lookAt, pose, hold, talk, takes, ...}; lookAt and takes
+    are checked against the shot's layer ids by spec._check_director (camera_check.check_layer)."""
+    if layer.get("type") != "vehicle" or layer.get("riders") is None:
+        return
+    riders = layer["riders"]
+    if not isinstance(riders, list):
+        errors.append(f"{where}: riders must be a list of cast ids or {{who, expr, lookAt, ...}} objects")
+        return
+    for i, r in enumerate(riders):
+        at = f"{where}.riders[{i}]"
+        who = r.get("who") if isinstance(r, dict) else r
+        if isinstance(r, dict):
+            unknown = sorted(str(k) for k in set(r) - RIDER_FIELDS)
+            if unknown:
+                errors.append(f"{at}: unknown rider fields {unknown} (known: {sorted(RIDER_FIELDS)})")
+            if r.get("expr") is not None and not _names_ok(r["expr"], expr_names):
+                errors.append(f"{at}: expr must be an expression name or a [{{at, v}}] timeline of names")
+            for hk in ("hold", "holdL"):
+                if r.get(hk) is not None and not _name_in(r[hk], prop_names):
+                    errors.append(f"{at}: {hk} {r[hk]!r} is not a prop kind")
+            if r.get("talk") is not None and not _windows_ok(r["talk"]):
+                errors.append(f"{at}: talk must be windows [[start, end], ...]")
+            if r.get("scale") is not None and not (_num(r["scale"]) and r["scale"] > 0):
+                errors.append(f"{at}: scale must be a number > 0")
+            if r.get("gaze") is not None and not _num(r["gaze"]):
+                errors.append(f"{at}: gaze must be a number")
+            if r.get("look") is not None and not isinstance(r["look"], dict):
+                errors.append(f"{at}: look must be an object of cast look fields")
+            if r.get("pose") is not None and not (isinstance(r["pose"], str) or isinstance(r["pose"], list)):
+                errors.append(f"{at}: pose must be a pose name or a [{{at, v}}] timeline")
+        elif not isinstance(r, str):
+            errors.append(f"{at}: a rider is a cast id or a {{who, ...}} object")
+            continue
+        if not isinstance(who, str) or (cast and who not in cast):
+            errors.append(f"{at}: rider who {who!r} is not defined in spec.cast")
+
+
+def rider_acting(layer: dict) -> list[tuple[int, dict]]:
+    """(index, {lookAt, takes}) of the rider objects that act, for the shot-level lookAt / takes checks."""
+    if layer.get("type") != "vehicle" or not isinstance(layer.get("riders"), list):
+        return []
+    return [(i, {k: r[k] for k in ("lookAt", "takes") if k in r}) for i, r in enumerate(layer["riders"])
+            if isinstance(r, dict) and ("lookAt" in r or "takes" in r)]

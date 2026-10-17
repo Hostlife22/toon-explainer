@@ -1,19 +1,19 @@
-// gags.js — acting and gags: the off-screen arm (rubber arm, giant hand, spring / piston glove, stomping foot,
-// fishing hook) that takes things, poof clouds, hats that drop / pass / fly / stack, micro-acting marks, sweat and tear
-// emitters, the "no X" sign, and eight measured entrances / exits (tumble, zip, ground, peek, stretch, spit,
-// silhouette-in, pivot-fall). Timing comes from frame counts of the reference videos at 30 fps.
-// Registries: T.layers.arm + T.ARMS, T.FX, T.PROPS.prohibit, T.ENTERS / T.ENTER_DUR. T.drawLayer is wrapped (chained)
-// so taken layers hide, and so entrances can draw what they leave behind (holes, dust trails, flying hats).
+// gags.js — acting and gags, part 1: shared helpers (T.GAG) and the off-screen arm (rubber arm, giant hand, spring /
+// piston glove, stomping foot, fishing hook) that takes things. FX (poof, hat, marks, sweat / tear emitters, the "no X"
+// sign) are in gags-fx.js; the eight measured entrances / exits and the T.drawLayer wrapper are in gags-enter.js.
+// Timing comes from frame counts of the reference videos at 30 fps.
+// Registries: T.layers.arm + T.ARMS; T.GAG is the helper kit the other gags files share.
 (function () {
   'use strict';
   const T = window.TOON, P = T.PAL, W = T.W, H = T.H, D = T.DEG, FPS = 30;
+  const GK = (T.GAG = { cur: null }); // shared with gags-fx.js and gags-enter.js
   const VIEW_SHIFT = { front: 0, '3q': 0.24, side: 0.42, back: 0 };
   const frame = (t) => Math.floor(t * FPS + 1e-6);
   const twos = (lt) => Math.floor(lt * 15);
   const isHex = (v) => typeof v === 'string' && /^#[0-9a-fA-F]{3,8}$/.test(v);
 
   // ---------- context: the shot being drawn (FX draw functions only receive (ctx, L, lt)) ----------
-  let CUR = null; // {env, cam, lt: shot time}
+  // GK.cur = {env, cam, lt: shot time}, set by the T.drawLayer wrapper in gags-enter.js
   const findLayer = (env, id) => (id && env && env.shot ? (env.shot.layers || []).find((l) => l.id === id) : null) || null;
   const lookOf = (env, L) => ({ ...((env && env.cast) || {})[L.who] || {}, ...(L.look || {}) });
 
@@ -39,10 +39,10 @@
   // FX helper: move ctx into the target's rig units, or (no target) treat the fx point as the head centre of a
   // 300 px character. Returns the pose (or null when the target is not on screen).
   function onTarget(ctx, L) {
-    if (L.target && CUR) {
-      const pose = poseOf(CUR.env, L.target, CUR.lt);
+    if (L.target && GK.cur) {
+      const pose = poseOf(GK.cur.env, L.target, GK.cur.lt);
       if (!pose) return null;
-      toWorld(ctx, CUR.env, pose.z, pose.hud); toRig(ctx, pose);
+      toWorld(ctx, GK.cur.env, pose.z, pose.hud); toRig(ctx, pose);
       return pose;
     }
     const s = 0.5 * (L.size ?? 1);
@@ -79,11 +79,12 @@
     ctx.restore();
   }
   // Headwear sprite in rig units (head centre (0,-450)); sx / sy squash about the brim line.
+  // `view` is the wearer's bean view, mapped as the bean maps it (T.headwearView: 3q-back draws as back).
   function hatSprite(ctx, kind, look, lt, view = '3q', sx = 1, sy = 1) {
     const fn = T.HEADWEAR && T.HEADWEAR[kind];
     if (!fn) throw new Error(`hat: unknown headwear "${kind}" (see T.HEADWEAR)`);
     ctx.save(); ctx.translate(0, -560); ctx.scale(sx, sy); ctx.translate(0, 560);
-    fn(ctx, look, lt, VIEW_SHIFT[view] ?? 0.24, view);
+    fn(ctx, look, lt, T.headwearShift(view), T.headwearView(view));
     ctx.restore();
   }
   // Head opening of a loose hat [brim y, rx, ry] in rig units: without a head inside, the hollow must read as dark
@@ -94,7 +95,7 @@
   function hatAt(ctx, kind, look, lt, cx, cy, k, rot = 0, flip = 1, sx = 1, sy = 1, view = '3q', loose = false) {
     ctx.save(); ctx.translate(cx, cy - 150 * k); ctx.rotate(rot); ctx.scale(k * flip, k); ctx.translate(0, 600);
     if (loose) {
-      const [y, rx, ry] = rimOf(kind), ox = (VIEW_SHIFT[view] ?? 0.24) * 30;
+      const [y, rx, ry] = rimOf(kind), ox = T.headwearShift(view) * 30;
       ctx.save(); ctx.translate(0, -560); ctx.scale(sx, sy); ctx.translate(0, 560);
       if (kind === 'helmet') T.outlined(ctx, (c) => c.ellipse(-ox, -640, 128, 36, 0, 0, Math.PI * 2), look.headColor ?? '#a9aeb4', { line: 6 }); // crest seat (worn, the head hides the gap)
       T.outlined(ctx, (c) => c.ellipse(ox, y, rx, ry, 0, 0, Math.PI * 2), '#3a2a22', { line: 7, shade: (c) => { c.fillStyle = '#1e1511'; c.fillRect(ox - rx, y - ry, rx * 2, ry); } });
@@ -316,7 +317,7 @@
   };
   // Draw another layer of the shot attached to the hand tip (grip = offset from the tip to the layer anchor).
   function drawTaken(ctx, env, id, tip, grip) {
-    const slt = CUR ? CUR.lt : 0, L0 = findLayer(env, id);
+    const slt = GK.cur ? GK.cur.lt : 0, L0 = findLayer(env, id);
     if (!L0 || !T.layers[L0.type]) return;
     const L = T.effLayer(L0, slt), b = boxOf(L), s = L.scale ?? 1;
     const g = Array.isArray(grip) ? grip : [0, b.feet ? b.h * 0.9 * s : b.h * 0.42 * s];
@@ -336,501 +337,5 @@
     }
     return m.get(id) ?? Infinity;
   }
-  // ========== FX — poof, hat, marks, sweat-spray, tear-stream, prohibit
-  // Fade a group as one flat sheet (overlapping lobes must not show through each other).
-  function flat(ctx, alpha, fn) {
-    if (alpha >= 1) { fn(ctx); return; }
-    if (alpha <= 0) return;
-    const [c, k] = T.scratch('act:flat', ctx.canvas.width, ctx.canvas.height);
-    k.clearRect(0, 0, c.width, c.height); k.setTransform(ctx.getTransform()); fn(k);
-    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha *= alpha; ctx.drawImage(c, 0, 0); ctx.restore();
-  }
-  // Poof: cloud covers the subject in 2 frames, boils, then dissolves into flying stray puffs (19 frames total).
-  function poof(ctx, L, lt) {
-    const f = lt * FPS, w = L.w ?? 420, h = L.h ?? 300, seed = (L.id ?? 'poof') + ':' + (L.at ?? 0);
-    const holdF = (L.hold ?? 0.17) * FPS, endF = 2 + holdF + 12;
-    if (f > endF) return;
-    const col = L.color ?? '#f4f1ea', sh = L.shade ?? '#d6d0c6';
-    if ((L.mode ?? 'band') === 'column') return poofColumn(ctx, L, f, w, h, seed, col, sh);
-    const sc = f < 2 ? T.lerp(0.6, 1.05, T.ease.outBack(f / 2)) : T.lerp(1.05, 1.3, T.ease.outCubic(T.clamp((f - 2) / (endF - 2))));
-    const fade = 1 - T.ease.in(T.clamp((f - 2 - holdF) / 12));
-    const g = T.rng(T.hash(seed + ':stray')), n = L.puffs ?? 5, fly = T.ease.outCubic(T.clamp((f - 2) / (endF - 2)));
-    for (let i = 0; i < n; i++) {
-      const a = (i / n) * Math.PI * 2 + g() * 0.8, d0 = w * 0.5, d = d0 + (80 + g() * 60) * fly, r = h * (0.08 + g() * 0.06);
-      if (f < 2 + holdF * 0.5) continue;
-      ctx.save(); ctx.globalAlpha *= 1 - T.clamp((f - endF + 8) / 8);
-      puff(ctx, Math.cos(a) * d, Math.sin(a) * d * 0.7 - 20 * fly, r * (1 - fly * 0.4), col, sh, 5);
-      ctx.restore();
-    }
-    flat(ctx, fade, (k) => T.drawCloud(k, 0, 0, w * sc, h * sc, seed, { count: L.count ?? 7, color: col, shade: sh, line: 6, boil: lt }));
-    if (L.word !== null && f >= 1) {
-      const ws = T.lerp(0.5, 1.2, T.ease.outCubic(T.clamp((f - 1) / (endF - 1))));
-      ctx.save(); ctx.globalAlpha *= 1 - T.clamp((f - endF + 5) / 5); ctx.rotate(-8 * D); ctx.scale(ws, ws);
-      T.toonText(ctx, L.word ?? 'POOF!', 0, w * 0.06, { size: w * 0.16 * (L.wordSize ?? 1), fill: L.wordColor ?? '#e8c860', stroke: 12, shadow: false });
-      ctx.restore();
-    }
-  }
-  // Column (ran away): 2-3 stacked clouds grow upward from the feet over 8 frames, hold 4, fade 12.
-  function poofColumn(ctx, L, f, w, h, seed, col, sh) {
-    const n = L.count && L.count <= 4 ? L.count : 3, fade = 1 - T.clamp((f - 12) / 12);
-    flat(ctx, fade, (k) => {
-    for (let i = 0; i < n; i++) {
-      const p = T.ease.outBack(T.clamp((f - i * 2) / 6)), cw = w * (0.62 - i * 0.12) * Math.max(0.01, p);
-      if (p <= 0) continue;
-      T.drawCloud(k, 0, -h * 0.35 - i * h * 0.62 * p, cw, cw * 0.8, seed + i, { count: 6, color: col, shade: sh, line: 6, boil: f / FPS });
-    }
-    });
-  }
-
-  // Hat: drop / give / fly / stack a headwear sprite onto (or off) the target's head.
-  function hat(ctx, L, lt) {
-    if (!CUR) return;
-    const env = CUR.env, slt = CUR.lt, start = slt - lt, mode = L.mode ?? 'drop', kind = L.head ?? 'crown';
-    const pose = poseOf(env, L.target, slt), base = pose || poseOf(env, L.target, start) || poseOf(env, L.target, start - 1 / FPS);
-    if (!base) { if (L.target) return; throw new Error('hat: needs a "target" layer id (a bean)'); }
-    const own = lookOf(env, base.L), look = { ...own, ...(own.head !== kind ? { headColor: undefined, headColor2: undefined } : {}), ...(isHex(L.color) ? { headColor: L.color } : {}), ...(isHex(L.color2) ? { headColor2: L.color2 } : {}) };
-    const view = base.L.view ?? look.view ?? '3q', flip = base.st.flip, f = lt * FPS;
-    toWorld(ctx, env, base.z, base.hud);
-    const worn = () => pose && pose.L.look && pose.L.look.head === kind; // the target's own swap has taken over
-    const [hx, hy] = headWorld(pose || base);
-    if (mode === 'drop' || mode === 'stack') {
-      const n = mode === 'stack' ? L.stack ?? 1 : 0, fallF = mode === 'stack' ? 5 : 2, k = (pose || base).k;
-      if (mode === 'drop' && f >= fallF && worn()) return;
-      const p = T.clamp(f / fallF), e = mode === 'stack' ? T.ease.in(p) : p;
-      const restY = hy - n * 98 * k, y = restY - (1 - e) * (L.from ?? 600);
-      const sq = f >= fallF && f < fallF + 2;
-      const tilt = n ? (n % 2 ? 6 : -6) * D : 0;
-      if (f < fallF + 4 && mode === 'drop') swoosh(ctx, hx, y, restY, k, f / (fallF + 4));
-      hatAt(ctx, kind, look, lt, hx, y, k, (pose || base).st.r + tilt, flip, sq ? (n ? 1.1 : 1.06) : 1, sq ? (n ? 0.85 : 0.9) : 1, view);
-      if (L.bonk && f >= fallF && f < fallF + 4) T.starburst(ctx, hx + 70 * k * 2, restY - 160 * k, 10, 30, 6, (L.id ?? 'hat') + 'bonk', '#fff6c8', P.ink, 4);
-      return;
-    }
-    if (mode === 'give') {
-      const giver = poseOf(env, L.from, start) || base, [gx, gy] = headWorld(giver), q = T.ease.outCubic(T.clamp(f / 12));
-      if (f >= 12 && worn()) return;
-      const x = T.lerp(gx, hx, q), y = T.lerp(gy, hy, q) - Math.sin(q * Math.PI) * (L.arc ?? 120);
-      hatAt(ctx, kind, look, lt, x, y, T.lerp(giver.k, (pose || base).k, q), (1 - q) * -15 * D, flip, 1, 1, view);
-      return;
-    }
-    if (mode === 'fly') return hatFly(ctx, L, lt, base, look, view, kind);
-    if (mode === 'flat') return hatFlat(ctx, L, lt, base, look, view, kind);
-    throw new Error(`hat: mode "${mode}" must be drop, give, fly, stack or flat`);
-  }
-  // Two yellow swoosh arcs along the drop path, 4 frames.
-  function swoosh(ctx, x, y, restY, k, p) {
-    ctx.save(); ctx.globalAlpha *= 1 - p; ctx.lineCap = 'round';
-    for (const s of [-1, 1]) {
-      const ox = s * 190 * k;
-      for (const [c, lw] of [[P.ink, 10], ['#ffd84a', 5]]) { ctx.strokeStyle = c; ctx.lineWidth = lw; ctx.beginPath(); ctx.moveTo(x + ox * 0.7, restY - 420 * k); ctx.quadraticCurveTo(x + ox * 1.1, restY - 280 * k, x + ox * 0.85, restY - 180 * k); ctx.stroke(); }
-    }
-    ctx.restore();
-  }
-  // Helmet-pop / startle: up and spinning, lands beside the feet with one small bounce; `float` hovers in a figure 8.
-  function hatFly(ctx, L, lt, base, look, view, kind) {
-    const [hx, hy] = headWorld(base), k = base.k, dir = L.dir ?? -1;
-    if (L.float) {
-      const rise = T.ease.outCubic(T.clamp(lt / 0.2)), w = Math.PI * 2 * 0.7 * lt;
-      hatAt(ctx, kind, look, lt, hx + Math.sin(w) * 70 * rise, hy - 160 * rise + Math.sin(2 * w) * 30 * rise, k, Math.sin(w) * 25 * D, base.st.flip, 1, 1, view);
-      return;
-    }
-    // lands upright on its brim beside the feet (head centre sits (-450 - brim y) units below the ground line)
-    const vy = L.vy ?? -900, g = L.g ?? 2500, vx = (L.vx ?? 220) * dir, ground = base.st.y + (-450 - rimOf(kind)[0] - rimOf(kind)[2] * 0.4) * k;
-    const tl = (-vy + Math.sqrt(vy * vy + 2 * g * Math.max(0, ground - hy))) / g;
-    const t = Math.min(lt, tl), x = hx + vx * t, y = hy + vy * t + 0.5 * g * t * t;
-    const b = lt > tl ? -14 * Math.sin(T.clamp((lt - tl) / 0.2) * Math.PI) : 0;
-    // whole turns only, so the spin ends upright; a 6 deg settle tilt after the landing
-    const turns = Math.max(1, Math.round(((L.spin ?? 540) * tl) / 360)), rot = lt < tl ? dir * turns * 2 * Math.PI * T.ease.out(lt / tl) : dir * 6 * D;
-    const sq = lt > tl && lt < tl + 0.07;
-    hatAt(ctx, kind, look, lt, x, y + b, k, rot, base.st.flip, sq ? 1.12 : 1, sq ? 0.86 : 1, view, true);
-  }
-  // Flat: the hat left behind after a stomp / squash, pressed flat on the ground where the target stood.
-  function hatFlat(ctx, L, lt, base, look, view, kind) {
-    const k = base.k, f = lt * FPS, p = T.ease.outBack(T.clamp(f / 4));
-    const [y0] = rimOf(kind), sy = L.flat ?? 0.42, cy = base.st.y + (-450 - y0) * k * sy;
-    hatAt(ctx, kind, look, lt, base.st.x, cy, k, (L.tilt ?? -4) * D, base.st.flip, T.lerp(1.4, 1.15, p), T.lerp(0.2, sy, p), view, true);
-    if (f < 14) { ctx.save(); ctx.globalAlpha *= 1 - T.clamp((f - 6) / 8); [-1, 1].forEach((s, i) => dustCluster(ctx, base.st.x + s * 190 * k, base.st.y - 14, 26, (L.id ?? 'hf') + i)); ctx.restore(); }
-  }
-
-  // Marks: micro-acting signs around the head, all on twos. Drawn in the target's rig units (1 px of a 300 px
-  // character = 2 units). Sub-kind in `mark`.
-  const MARK_DUR = { 'shout-jag': 0.5, ticks: 0.13, notice: 0.17, whoosh: 0.4 };
-  const MARKS = {
-    'shout-jag'(ctx, L, lt, side) {
-      const r = T.rng(T.hash((L.id ?? 'jag') + twos(lt)));
-      ctx.save(); ctx.strokeStyle = L.color ?? P.ink; ctx.lineWidth = 10; ctx.lineJoin = 'miter'; ctx.lineCap = 'round';
-      for (const a of [-30, 0, 30]) {
-        ctx.save(); ctx.translate(0, -450); ctx.rotate(a * D + side * 0.15); ctx.translate((r() - 0.5) * 12, -200 + (r() - 0.5) * 12);
-        ctx.beginPath(); ctx.moveTo(0, 0); for (let i = 1; i <= 4; i++) ctx.lineTo(i % 2 ? 16 : -16, -i * 17); ctx.stroke(); ctx.restore();
-      }
-      ctx.restore();
-    },
-    ticks(ctx, L, lt, side) { // press / snap / realize / crunch
-      const v = L.variant ?? 'realize', crunch = v === 'crunch';
-      if (crunch && twos(lt) % 2) return;
-      const [ox, oy] = crunch ? [side * 120, -382] : [side * 175, -560], col = L.color ?? (v === 'realize' ? '#ffe060' : '#ffd21a');
-      const n = L.count ?? 4, g = T.rng(T.hash((L.id ?? 'tk') + twos(lt)));
-      for (let i = 0; i < n; i++) {
-        const a = (side > 0 ? -70 : -110) * D + (i - (n - 1) / 2) * 0.42, r0 = 26, r1 = r0 + 36 + g() * 8;
-        tickStroke(ctx, ox + Math.cos(a) * r0, oy + Math.sin(a) * r0, ox + Math.cos(a) * r1, oy + Math.sin(a) * r1, col);
-      }
-    },
-    notice(ctx, L, lt) { // "\ | /" fan above the head
-      for (const a of [-25, 0, 25]) { const r = (a - 90) * D; tickStroke(ctx, Math.cos(r) * 190, -450 + Math.sin(r) * 190, Math.cos(r) * 236, -450 + Math.sin(r) * 236, L.color ?? '#ffe98a'); }
-    },
-    zzz(ctx, L, lt, side) { // a Z every 0.6 s rising 30 px/s, drifting, fading over 1.5 s
-      const sizes = [60, 46, 34];
-      for (let i = Math.max(0, Math.floor((lt - 1.5) / 0.6)); i * 0.6 <= lt; i++) {
-        const a = lt - i * 0.6, sz = sizes[i % 3] * 2;
-        ctx.save(); ctx.globalAlpha *= 1 - a / 1.5;
-        T.toonText(ctx, 'Z', side * (200 + a * 20), -640 - a * 60, { size: sz, fill: L.color ?? '#ffffff', stroke: sz * 0.16, shadow: false });
-        ctx.restore();
-      }
-    },
-    'hat-drips'(ctx, L, lt) { // stress ticks hanging under a brim, one falls as a drop every 0.4 s
-      const n = L.count ?? 8, g = T.rng(T.hash((L.id ?? 'hd') + twos(lt)));
-      ctx.save(); ctx.strokeStyle = P.ink; ctx.lineWidth = 6; ctx.lineCap = 'round';
-      for (let i = 0; i < n; i++) { const x = -120 + (240 * i) / (n - 1), len = 26 + (i % 3) * 6 + (g() - 0.5) * 12; ctx.beginPath(); ctx.moveTo(x, -548); ctx.lineTo(x, -548 + len); ctx.stroke(); }
-      ctx.restore();
-      const k = Math.floor(lt / 0.4), a = (lt % 0.4) / 0.4, x = -120 + (240 * ((k * 5) % n)) / (n - 1);
-      ctx.save(); ctx.globalAlpha *= 1 - a; drop(ctx, x, -500 + a * a * 140, 0.7, '#9fdcf2'); ctx.restore();
-    },
-    gloom(ctx, L, lt) { // purple despair lines hanging from the forehead, grow over 8 frames
-      const n = L.count ?? 8, grow = T.ease.outCubic(T.clamp(lt * FPS / 8)), g = T.rng(T.hash((L.id ?? 'gl') + ':g'));
-      ctx.save(); ctx.strokeStyle = L.color ?? '#4a2a5a'; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.globalAlpha *= 0.85;
-      for (let i = 0; i < n; i++) {
-        const x = -110 + (220 * i) / (n - 1) + 30, len = (60 + g() * 60) * grow, y0 = -578 + Math.abs(x - 30) * 0.25;
-        ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y0 + len); ctx.stroke();
-        ctx.beginPath(); ctx.arc(x, y0 + len + 4, 8 * grow, 0, Math.PI * 2); ctx.fill();
-      }
-      ctx.restore();
-    },
-    stink(ctx, L, lt) { // three green wavy lines rising from the head
-      const t = twos(lt) / 15;
-      ctx.save(); ctx.lineCap = 'round';
-      for (let i = 0; i < 3; i++) {
-        const x0 = (i - 1) * 70, rise = ((t * 0.8 + i * 0.33) % 1) * 120;
-        for (const [c, lw] of [[P.ink, 12], [L.color ?? '#6aa84f', 7]]) {
-          ctx.strokeStyle = c; ctx.lineWidth = lw; ctx.beginPath();
-          for (let s = 0; s <= 10; s++) { const y = -610 - rise - s * 12, x = x0 + Math.sin(s * 0.9 + t * Math.PI * 2) * 14; s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-          ctx.stroke();
-        }
-      }
-      ctx.restore();
-    },
-    whoosh(ctx, L, lt, side) { // white motion arcs beside the body: appear in 2 frames, fade over 10
-      const a = T.clamp(lt * FPS / 2) * (1 - T.clamp((lt * FPS - 2) / 10));
-      arcs(ctx, -side * 60, -300, 260, side > 0 ? Math.PI * 0.75 : -Math.PI * 0.25, side > 0 ? Math.PI * 1.25 : Math.PI * 0.25, L.count ?? 3, a, 10);
-    },
-    question(ctx, L, lt) { T.drawProp(ctx, 'question', 140, lt, {}); },
-    exclaim(ctx, L, lt) { T.drawProp(ctx, 'exclaim', 140, lt, {}); },
-    scribble(ctx, L, lt) { // black zigzag scribble cloud above the head
-      const g = T.rng(T.hash((L.id ?? 'sc') + twos(lt)));
-      ctx.save(); ctx.strokeStyle = L.color ?? '#1a1210'; ctx.lineWidth = 6; ctx.lineJoin = 'round'; ctx.beginPath();
-      for (let i = 0; i < 26; i++) { const a = g() * Math.PI * 2, r = Math.sqrt(g()); const x = Math.cos(a) * r * 120, y = -700 + Math.sin(a) * r * 60; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-      ctx.stroke(); ctx.restore();
-    },
-  };
-  // question / exclaim draw at the origin: lift them above the head with a 2 Hz bob.
-  for (const q of ['question', 'exclaim']) { const fn = MARKS[q]; MARKS[q] = (ctx, L, lt) => { ctx.save(); ctx.translate(0, -700 + Math.sin(lt * Math.PI * 4) * 4); fn(ctx, L, lt); ctx.restore(); }; }
-  T.ACT_MARKS = MARKS;
-  function tickStroke(ctx, x0, y0, x1, y1, col) {
-    ctx.save(); ctx.lineCap = 'round';
-    for (const [c, lw] of [[P.ink, 18], [col, 10]]) { ctx.strokeStyle = c; ctx.lineWidth = lw; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); }
-    ctx.restore();
-  }
-  function marks(ctx, L, lt) {
-    const fn = MARKS[L.mark ?? 'shout-jag'];
-    if (!fn) throw new Error(`marks: unknown mark "${L.mark}" (use ${Object.keys(MARKS).join(', ')})`);
-    const dur = L.dur ?? MARK_DUR[L.mark ?? 'shout-jag'] ?? Infinity;
-    if (lt > dur + 0.2) return;
-    ctx.save();
-    const pose = onTarget(ctx, L);
-    if (pose) {
-      if (!pose.local && L.size) { ctx.translate(0, -450); ctx.scale(L.size, L.size); ctx.translate(0, 450); }
-      if (Number.isFinite(dur) && lt > dur) ctx.globalAlpha *= 1 - T.clamp((lt - dur) / 0.2);
-      fn(ctx, L, lt, L.side ?? 1);
-    }
-    ctx.restore();
-  }
-
-  // Teardrop pointing along `ang` (0 = falling down), rig units.
-  function drop(ctx, x, y, s, fill, ang = 0) {
-    ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.scale(s, s);
-    T.outlined(ctx, (k) => { k.moveTo(0, -34); k.quadraticCurveTo(24, 4, 0, 18); k.quadraticCurveTo(-24, 4, 0, -34); }, fill, { line: 6 });
-    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.ellipse(-6, 2, 4, 7, 0.3, 0, Math.PI * 2); ctx.fill();
-    ctx.restore();
-  }
-  // Sweat spray: drops leave the head rim on gravity arcs, `rate` per second, 15 frames each; `stack` accumulates.
-  function sweatSpray(ctx, L, lt) {
-    const dur = L.dur ?? Infinity;
-    if (lt > dur + 0.5) return;
-    ctx.save();
-    if (!onTarget(ctx, L)) { ctx.restore(); return; }
-    const fill = L.color ?? '#9fdcf2', sz = L.size ?? 1;
-    if (L.stack) {
-      for (let i = 0; i <= Math.min(lt, dur); i++) drop(ctx, (L.side ?? 1) * (128 + (i % 3) * 14), -520 + (i % 2) * 30 + (lt - i) * 8, 2.3 * sz, fill);
-      ctx.restore(); return;
-    }
-    const rate = L.rate ?? 3, life = 0.5, spread = (L.spread ?? 120) * D;
-    for (let i = Math.max(0, Math.floor((lt - life) * rate)); i / rate <= Math.min(lt, dur); i++) {
-      const a0 = i / rate, t = lt - a0, g = T.rng(T.hash((L.id ?? 'sw') + ':' + i));
-      if (t < 0 || t > life) continue;
-      const a = -Math.PI / 2 + (g() - 0.5) * 2 * spread, d = 160 + g() * 160, p = t / life;
-      const x = Math.cos(a) * (165 + d * p), y = -450 + Math.sin(a) * (165 + d * p) + 700 * t * t;
-      const vx = Math.cos(a) * d / life, vy = Math.sin(a) * d / life + 1400 * t;
-      ctx.save(); ctx.globalAlpha *= 1 - p * p;
-      drop(ctx, x, y, 2.5 * sz, fill, Math.atan2(vy, vx) - Math.PI / 2);
-      ctx.restore();
-    }
-    ctx.restore();
-  }
-  // Tear stream: a light-blue ribbon from the lower lid to the chin, dash pattern scrolling 4 px per frame.
-  function tearStream(ctx, L, lt) {
-    const dur = L.dur ?? Infinity;
-    if (lt > dur) return;
-    ctx.save();
-    const pose = onTarget(ctx, L);
-    if (!pose) { ctx.restore(); return; }
-    const view = pose.L.view ?? '3q', fx = (VIEW_SHIFT[view] ?? 0.24) * 150, sp = view === 'side' ? 0 : view === '3q' ? 40 : 52;
-    const eyes = view === 'side' ? [fx + 18] : L.both === false ? [fx + sp] : [fx - sp, fx + sp];
-    const w = (L.width ?? 10) * 2, grow = T.ease.outCubic(T.clamp(lt / 0.2)), len = 230 * grow, g = T.rng(T.hash((L.id ?? 'tear') + twos(lt)));
-    for (const ex of eyes) {
-      const pts = [];
-      for (let s = 0; s <= 8; s++) pts.push([ex + (ex < fx ? -1 : 1) * s * 4 + (g() - 0.5) * 4, -436 + (s / 8) * len]);
-      ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      for (const [c, lw] of [[P.ink, w + 8], [L.color ?? '#7fc4ff', w]]) { ctx.strokeStyle = c; ctx.lineWidth = lw; poly(ctx, pts); ctx.stroke(); }
-      ctx.setLineDash([10, 22]); ctx.lineDashOffset = -lt * FPS * 8; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = w * 0.3; poly(ctx, pts); ctx.stroke();
-      ctx.restore();
-      const [bx, by] = pts[8];
-      T.outlined(ctx, (k) => k.arc(bx, by + 6, w * 0.75, 0, Math.PI * 2), L.color ?? '#7fc4ff', { line: 5 });
-    }
-    ctx.restore();
-  }
-
-  // "No X" sign: red ring + 45 deg bar with a union ink outline, optional icon prop underneath.
-  function prohibitSign(ctx, size, ringP, barP, o, lt) {
-    const R = size / 2, rw = R * 0.14 * 2, Ri = R - rw, col = isHex(o.color) ? o.color : '#d42020', line = Math.max(3, size * 0.012);
-    if (o.icon && T.PROPS[o.icon] && o.icon !== 'prohibit') { ctx.save(); ctx.filter = 'saturate(0.85)'; T.drawProp(ctx, o.icon, size * 0.6, lt, {}); ctx.restore(); }
-    ctx.save(); ctx.scale(ringP, ringP);
-    const ring = (k) => { k.moveTo(R, 0); k.arc(0, 0, R, 0, Math.PI * 2); k.moveTo(Ri, 0); k.arc(0, 0, Ri, 0, Math.PI * 2, true); };
-    const bar = (k) => { k.save(); k.rotate(45 * D); k.rect(-Ri - 2, -rw / 2, (Ri + 2) * 2 * barP, rw); k.restore(); };
-    ctx.lineJoin = 'round'; ctx.strokeStyle = P.ink; ctx.lineWidth = line * 2;
-    ctx.beginPath(); ring(ctx); if (barP > 0) bar(ctx); ctx.stroke();
-    ctx.fillStyle = col; ctx.beginPath(); ring(ctx); ctx.fill('evenodd');
-    if (barP > 0) { ctx.beginPath(); bar(ctx); ctx.fill(); }
-    if (o.highlight !== false) { ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = Math.max(2, size * 0.008); ctx.beginPath(); ctx.arc(0, 0, R - rw * 0.3, -2.6, -1.9); ctx.stroke(); }
-    ctx.restore();
-  }
-  // Ring 0 -> 1.15 -> 1 over 7 frames with a 5 deg pop tilt, then the bar wipes along its length over 4 frames.
-  function prohibitFx(ctx, L, lt) {
-    const f = lt * FPS, size = L.size ?? 260;
-    if (L.stamp) { if (f >= 1 || L.stamp === 'instant') { if (f < 3) ctx.translate((twos(lt) % 2 ? 4 : -4), 0); prohibitSign(ctx, size, 1, 1, L, lt); } return; }
-    const ringP = Math.max(0.001, T.ease.outBack(T.clamp(f / 7))), barP = T.ease.outCubic(T.clamp((f - 7) / 4));
-    ctx.rotate((1 - T.clamp(f / 7)) * 5 * D);
-    if (L.jolt && f >= 11 && f < 13) ctx.translate(f < 12 ? 4 : -4, 0);
-    prohibitSign(ctx, size, ringP, barP, L, lt);
-  }
-
-  Object.assign(T.FX, { poof, hat, marks, 'sweat-spray': sweatSpray, 'tear-stream': tearStream, prohibit: prohibitFx });
-  T.PROPS.prohibit = (ctx, s, lt, o) => prohibitSign(ctx, s, 1, 1, o || {}, lt);
-  // ========== ENTRANCES / EXITS (T.ENTERS) — fn(p, st, isExit, L); t = seconds in the kind's natural direction
-  const durOf = (kind, isExit, L) => (isExit ? L.exitDur : L.enterDur) ?? T.ENTER_DUR[kind];
-  function reg(kind, dur, natural, fn) {
-    T.ENTER_DUR[kind] = dur;
-    T.ENTERS[kind] = (p, st, isExit, L) => {
-      const d = durOf(kind, isExit, L), q = (natural === 'exit') === isExit ? p : 1 - p;
-      fn(q * d, st, L, d, isExit, p);
-    };
-  }
-  const bbScale = (L, st) => { const b = boxOf(L); return { w: b.w * st.s, h: b.h * st.s, feet: b.feet }; };
-  // Rotate about the body centre instead of the feet anchor.
-  function aboutCentre(st, L, ang) {
-    const b = bbScale(L, st);
-    if (!b.feet) { st.r += ang; return; }
-    const hh = b.h / 2;
-    st.r += ang; st.x += -hh * Math.sin(ang); st.y += -hh + hh * Math.cos(ang);
-  }
-
-  reg('tumble', 0.5, 'exit', (t, st, L) => { // shove / kick launch: no anticipation, spin + gravity arc
-    const o = L.tumble || {}, dir = o.dir ?? 1;
-    aboutCentre(st, L, (o.spin ?? 18) * t * FPS * dir * D);
-    st.x += (o.vx ?? 600) * t * dir; st.y += (o.vy ?? -500) * t + 0.5 * (o.g ?? 4000) * t * t;
-  });
-  reg('zip', 0.8, 'exit', (t, st, L) => { // 4-frame lean back, gone at frame 5 (the dust trail is drawn by the wrapper)
-    const dir = (L.zip || {}).dir ?? 1, f = frame(t);
-    if (f >= 5) { st.a = 0; return; }
-    st.r += -dir * 8 * D * T.clamp(t * FPS / 4); st.sx *= 0.94;
-  });
-  reg('ground', 0.17, 'enter', (t, st) => { // hole for 3 frames, pop at 1.06, settle by frame 5 (hard frames)
-    const f = frame(t);
-    if (f < 3) st.a = 0; else if (f === 3) st.s *= 1.06; else if (f === 4) st.s *= 1.03;
-  });
-  T.ENTER_DUR.peek = 0.25;
-  T.ENTERS.peek = (p, st, isExit, L) => { // lean in from a frame edge and keep the tilt
-    const o = L.peek || {}, side = o.side ?? 'right', sg = side === 'left' || side === 'top' ? -1 : 1;
-    const q = isExit ? 1 - T.ease.in(p) : T.ease.outBack(p), b = bbScale(L, st);
-    if (side === 'left' || side === 'right') {
-      st.x += sg * (o.dist ?? b.w * 1.15) * (1 - q);
-      st.r += -sg * (o.tilt ?? 18) * D * Math.min(1, Math.max(0, q));
-    } else st.y += sg * (o.dist ?? b.h * (o.depth ?? 0.45) * 1.3) * (1 - q);
-  };
-  reg('stretch', 0.1, 'enter', (t, st) => { // scaleY 0.3 -> 1.15 -> 1 on frames 0, 2, 3 (scaleX inverse)
-    const k = [[0.3, 1.3], [0.72, 1.11], [1.15, 0.92], [1, 1]][Math.min(3, frame(t))];
-    st.sy *= k[0]; st.sx *= k[1];
-  });
-  reg('spit', 0.6, 'enter', (t, st, L) => { // parabola out of a frame / portal over 10 frames, drop-squash landing
-    const o = L.spit || {}, from = o.from ?? [0.5, 0.4], travel = 10 / FPS;
-    if (t < travel) {
-      const u = t / travel;
-      st.x = T.lerp(from[0] * W, st.x, u); st.y = T.lerp(from[1] * H, st.y, u) - (o.arc ?? 400) * 4 * u * (1 - u);
-      st.s *= T.lerp(0.3, 1, T.ease.outCubic(u)); return;
-    }
-    const f = (t - travel) * FPS;
-    const [sy, sx] = f < 2 ? [0.85, 1.12] : f < 4 ? [1.05, 0.97] : [T.lerp(1.05, 1, T.clamp((f - 4) / 4)), T.lerp(0.97, 1, T.clamp((f - 4) / 4))];
-    st.sy *= sy; st.sx *= sx;
-  });
-  reg('silhouette-in', 0.6, 'enter', (t, st, L, d) => { // slides in as a dark shape, colour crossfades over the last 30%
-    const p = T.clamp(t / d), from = L.from ?? 'left', q = from === 'bottom' ? T.ease.out(p) : T.ease.outCubic(p);
-    if (from === 'bottom') st.y += H * 0.7 * (1 - q);
-    else if (from !== 'none') st.x += (from === 'right' ? 1 : -1) * W * 0.55 * (1 - q);
-    if (!L._silo) st.a *= T.clamp((p - 0.7) / 0.3);
-  });
-  reg('pivot-fall', 1.2, 'exit', (t, st, L, d) => { // plank fall around the feet: 10 frames accelerating, 2-frame squash, stays down
-    const o = L.fall || {}, dir = o.dir ?? 1, f = t * FPS;
-    const ang = 90 * dir * D * (o.snap ? (f >= 1 ? 1 : 0) : T.ease.in(T.clamp(f / 10)));
-    st.r += ang; st.y -= bbScale(L, st).w * 0.42 * Math.abs(Math.sin(ang)); // lie on the floor, not through it
-    if (f >= 10 && f < 12) { st.sy *= 0.92; st.sx *= 1.04; }
-    if (o.fade && t > d - 0.3) st.a *= T.clamp((d - t) / 0.3);
-  });
-  // ========== T.drawLayer wrapper: taken layers hide; ground holes, zip trails, fall dust, silhouettes and flying hats
-  const baseDrawLayer = T.drawLayer;
-  const restPose = (L, lt) => T.layerState({ ...L, enter: 'none', exit: 'none', out: undefined }, lt);
-  function inWorld(ctx, L, cam, fn) { ctx.save(); if (!L.hud && cam) T.applyCam(ctx, cam, L.z ?? 1); fn(); ctx.restore(); }
-
-  function groundBefore(ctx, L, lt, cam) {
-    const t = lt - (L.at ?? 0), f = frame(t);
-    if (f > 6 || t < 0) return;
-    const st = restPose(L, lt), b = bbScale(L, st || { s: 1 });
-    if (!st) return;
-    const y = b.feet ? st.y : st.y + b.h / 2, k = f < 3 ? 1 : 1 - (f - 2) / 5, col = L.holeColor ?? '#3a2a20';
-    inWorld(ctx, L, cam, () => T.outlined(ctx, (c) => c.ellipse(st.x, y, b.w * 0.7 * k, b.w * 0.16 * k, 0, 0, Math.PI * 2), col, { line: 5, shade: (c) => { c.fillStyle = T.shade(col, -0.35); c.fillRect(st.x - b.w, y - b.w, b.w * 2, b.w * 0.95); } }));
-  }
-  function groundAfter(ctx, L, lt, cam) {
-    const t = lt - (L.at ?? 0), f = t * FPS;
-    if (f < 3 || f > 15) return;
-    const st = restPose(L, lt);
-    if (!st) return;
-    const b = bbScale(L, st), y = b.feet ? st.y : st.y + b.h / 2, p = (f - 3) / 12;
-    inWorld(ctx, L, cam, () => {
-      ctx.globalAlpha *= 1 - T.ease.in(p);
-      [-1, 1, 0.2].forEach((s, i) => dustCluster(ctx, st.x + s * b.w * (0.45 + p * 0.3), y - 10 - p * 30 - i * 6, 22 * (1 - p * 0.5) * Math.min(2, b.h / 300), (L.id ?? 'g') + i));
-    });
-  }
-  function zipAfter(ctx, L, lt, cam) {
-    const t = lt - (L.out ?? Infinity), f = t * FPS;
-    if (f < 4 || f > 26) return;
-    const o = L.zip || {}, dir = o.dir ?? 1, st = restPose(L, L.out), b = bbScale(L, st || { s: 1 });
-    if (!st) return;
-    const n = o.puffs ?? 10, cy = b.feet ? st.y - b.h * 0.3 : st.y, g = T.rng(T.hash((L.id ?? 'zip') + ':z'));
-    inWorld(ctx, L, cam, () => {
-      if (o.hole) { ctx.save(); ctx.globalAlpha *= 0.8; T.outlined(ctx, (c) => T.smoothPath(c, T.blobPts(st.x, cy - b.h * 0.1, b.w * 0.45, b.h * 0.55, (L.id ?? 'zip') + 'h', 18, 0.22)), '#2a1c15', { line: 0 }); ctx.restore(); }
-      for (let i = 0; i < n; i++) {
-        const lag = Math.floor(g() * 2), q = T.clamp((f - 5 - 5 - lag) / 15), along = (i / (n - 1)) * (1.2 + g() * 0.8) * b.w;
-        const r = (14 + g() * 16) * Math.max(0.6, b.h / 300) * (1 - T.ease.in(q));
-        if (r < 1) continue;
-        ctx.save(); ctx.globalAlpha *= 1 - q;
-        dustCluster(ctx, st.x + dir * along - dir * b.w * 0.3, cy + (g() - 0.3) * b.h * 0.5, r, (L.id ?? 'zip') + i);
-        ctx.restore();
-      }
-      for (let i = 0; i < 3; i++) { const a = f - 5, x = st.x + dir * (b.w * 1.4 + a * 10 * (i + 1)), y = cy - 40 + i * 30 + a * a * 0.4; ctx.save(); ctx.globalAlpha *= T.clamp(1 - a / 18); puff(ctx, x, y, 7, '#e8dcb8', '#c8b890', 4); ctx.restore(); }
-    });
-  }
-  // dropShadow: N seconds before a drop / drop-squash lands, a ground shadow grows on the empty spot (reference: ~10 f
-  // of growing shadow on an empty frame, the body falls in within 3 f); it shrinks under the body as it lands.
-  function dropShadowBefore(ctx, L, lt, cam) {
-    const at = L.at ?? 0, lead = L.dropShadow === true ? 0.33 : L.dropShadow;
-    if (!(lead > 0) || lt < at - lead || lt > at + 0.2) return;
-    const st = restPose(L, at);
-    if (!st) return;
-    const b = bbScale(L, st), y = b.feet ? st.y : st.y + b.h / 2;
-    const k = lt < at ? T.ease.out(T.clamp((lt - at + lead) / lead)) : 1 - T.clamp((lt - at) / 0.2);
-    inWorld(ctx, L, cam, () => {
-      ctx.globalAlpha *= 0.35 * k;
-      ctx.fillStyle = L.shadowColor ?? '#2a1c15';
-      ctx.beginPath(); ctx.ellipse(st.x, y, b.w * 0.55 * (0.4 + 0.6 * k), b.w * 0.12 * (0.4 + 0.6 * k), 0, 0, Math.PI * 2); ctx.fill();
-    });
-  }
-  // zip.rev: the last N seconds before a zip exit, the legs spin as blurred wheels (reference: 15 f crouch, ~10 f rev).
-  function zipRev(ctx, L, lt, cam) {
-    const o = L.zip || {}, rev = o.rev === true ? 0.35 : o.rev, out = L.out;
-    if (!(rev > 0) || lt < out - rev || lt > out) return;
-    const st = T.layerState(L, lt);
-    if (!st) return;
-    const b = bbScale(L, st), dir = o.dir ?? 1, y = b.feet ? st.y - b.h * 0.07 : st.y + b.h * 0.43, r = b.w * 0.26;
-    const spin = (lt - out + rev) * 40 * dir;
-    inWorld(ctx, L, cam, () => {
-      for (const sx of [-0.18, 0.18]) {
-        const x = st.x + sx * b.w;
-        ctx.save(); ctx.globalAlpha *= 0.9; ctx.fillStyle = '#f4efe4';
-        ctx.beginPath(); ctx.ellipse(x, y, r, r * 0.85, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = '#2a1c15'; ctx.lineWidth = Math.max(3, r * 0.08); ctx.stroke();
-        for (let i = 0; i < 3; i++) { const a0 = spin + i * 2.1; ctx.beginPath(); ctx.arc(x, y, r * 0.62, a0, a0 + 1.1); ctx.stroke(); }
-        ctx.restore();
-      }
-      dustCluster(ctx, st.x - dir * b.w * 0.45, y + r * 0.4, r * (0.6 + 0.2 * Math.sin(spin * 2)), (L.id ?? 'rev') + ':d');
-    });
-  }
-  function fallAfter(ctx, L, lt, cam) {
-    const t = lt - (L.out ?? Infinity), f = t * FPS, o = L.fall || {};
-    if (f < 0 || f > 40) return;
-    const st = restPose(L, L.out), dir = o.dir ?? 1;
-    if (!st) return;
-    const b = bbScale(L, st);
-    inWorld(ctx, L, cam, () => {
-      if (o.whoosh !== false && f < 12 && !o.snap) arcs(ctx, st.x, st.y, b.h * 0.95, -Math.PI / 2, -Math.PI / 2 + dir * Math.min(Math.PI / 2, T.ease.in(T.clamp(f / 10)) * Math.PI / 2), 3, 1 - T.clamp((f - 8) / 4), 6);
-      if (o.puffs === false || f < 10) return;
-      const q = f - 10, grow = T.ease.outCubic(T.clamp(q / 6)), fade = 1 - T.clamp((q - 4) / 12);
-      ctx.globalAlpha *= fade;
-      [[st.x + dir * b.h * 1.12, 0], [st.x - dir * b.h * 0.12, 1]].forEach(([x, i]) => dustCluster(ctx, x, st.y - 10 - q * 1.5, 30 * grow * Math.min(2, b.h / 300), (L.id ?? 'fall') + i));
-    });
-  }
-  // Tumble with detach: the bean loses its headwear at `out`; the hat pops up 80 px, hangs 5 frames, falls at 60% g.
-  function tumbleHat(ctx, L, lt, env, cam) {
-    const o = L.tumble || {}, t = lt - L.out, look = lookOf(env, L);
-    if (o.detach !== 'head' || !look.head || t < 0) return false;
-    const st = restPose(L, L.out);
-    if (!st) return false;
-    const k = ((L.size ?? 420) / 600) * st.s, dir = o.dir ?? 1, f = t * FPS;
-    const up = f < 5 ? T.ease.outCubic(f / 5) * 80 : 80, fallT = Math.max(0, t - 10 / FPS);
-    // ... and lands on its brim where the bean stood, staying as the "what is left" beat of the shot
-    const rest = st.y + (-450 - rimOf(look.head)[0] - rimOf(look.head)[2] * 0.4) * k, gy = 0.6 * (o.g ?? 4000);
-    const y0 = st.y - 450 * k - up, yf = y0 + 0.5 * gy * fallT * fallT, landed = yf >= rest;
-    const tLand = 10 / FPS + Math.sqrt(Math.max(0, 2 * (rest - (st.y - 450 * k - 80)) / gy)), x = st.x + dir * 40 * Math.min(t, tLand);
-    const bounce = landed ? -10 * Math.sin(T.clamp((t - tLand) / 0.18) * Math.PI) : 0;
-    const rot = landed ? dir * 4 * D : dir * 12 * D * Math.sin(t * 8); inWorld(ctx, L, cam, () => hatAt(ctx, look.head, look, lt, x, Math.min(yf, rest) + bounce, k, rot, st.flip, 1, 1, L.view ?? look.view ?? '3q', true));
-    return true;
-  }
-
-  T.drawLayer = (ctx, L, lt, env, cam) => {
-    const prev = CUR;
-    CUR = { env: { ...env, cam: cam ?? null }, lt };
-    try {
-      if (env.shot && L.id && takenAt(env.shot, L.id) <= lt) return;
-      const enter = L.enter, exit = L.exit, at = L.at ?? 0;
-      if (enter === 'ground') groundBefore(ctx, L, lt, cam);
-      if ((enter === 'drop' || enter === 'drop-squash') && L.dropShadow) dropShadowBefore(ctx, L, lt, cam);
-      if (enter === 'silhouette-in' && !L._silo && lt >= at && lt < at + durOf('silhouette-in', false, L)) {
-        baseDrawLayer(ctx, { ...L, _silo: true, silhouette: L.silColor ?? (L.from === 'bottom' ? '#140f0c' : '#1d1414') }, lt, env, cam);
-      }
-      let LL = L;
-      if (exit === 'tumble' && L.out != null && lt > L.out && L.type === 'bean' && (L.tumble || {}).detach === 'head') {
-        LL = { ...L, look: { ...(L.look || {}), head: null } };
-        tumbleHat(ctx, L, lt, env, cam);
-      }
-      baseDrawLayer(ctx, LL, lt, env, cam);
-      if (enter === 'ground') groundAfter(ctx, L, lt, cam);
-      if (exit === 'zip' && L.out != null) { zipRev(ctx, L, lt, cam); zipAfter(ctx, L, lt, cam); }
-      if (exit === 'pivot-fall' && L.out != null) fallAfter(ctx, L, lt, cam);
-    } finally { CUR = prev; }
-  };
+  Object.assign(GK, { FPS, VIEW_SHIFT, frame, twos, isHex, findLayer, lookOf, poseOf, toWorld, toRig, headWorld, onTarget, boxOf, puff, dustCluster, arcs, hatSprite, rimOf, hatAt, takenAt, poly });
 })();

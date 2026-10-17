@@ -1,5 +1,5 @@
 {
-  "_about": "game-ui.js: game-UI kit - hud widgets (TOON.HUD_KINDS), cursor layer, game-screen doc kinds (merged into TOON.DOCS)",
+  "_about": "game-ui.js + game-docs.js: game-UI kit - hud widgets (TOON.HUD_KINDS), cursor layer, game-screen doc kinds (merged into TOON.DOCS)",
   "layers": ["hud", "cursor"],
   "kinds": {
     "hud": ["notice", "meter", "counter", "warning", "score", "hearts", "marker", "chip", "timer-lcd"],

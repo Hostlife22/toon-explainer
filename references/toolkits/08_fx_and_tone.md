@@ -30,6 +30,7 @@ browse) · Related cards: [01_characters.md](01_characters.md) (beans, `expr: "d
 | "Corruption spread", "the ink ruined it" | `spill` (`flood` to cut on it) |
 | "The people revolted" | `fg: mob` |
 | "Doom closed in" | `shadow-hands`, `darkness` |
+| "The lights went out", a power cut | `blackout` (with `lights` on a candle or a phone), then `dur` to bring them back |
 | "Zapped", "struck down" / "his zeal crumbled" | `shock` / `disintegrate` |
 | "The orders never arrived", "the deal collapsed" | `word-shatter` |
 | "Rivals", "a battle of wills" | `duel` + `crackle`, `beam-clash` |
@@ -92,9 +93,19 @@ centre unless the table says otherwise. Three placement families:
 | --- | --- | --- |
 | Local | emphasis, atmosphere (except `rain`), `mist`, `whirlpool`, eyes, `wallshadow`, `inkburst`, `paperstorm`, `flameshape`, war kinds, `brawl`, `blood-splash`, `pool`, `spill`, `boom` (no text), `onomatopoeia`, `word-shatter` | At the layer position, scaled by `scale`, moved by the camera unless `hud` |
 | Frame space | `blood-wipe`, `blood-streaks`, `shadow-hands`, `crackle`, `lightpool`, `shafts`, `godbeam`, `spotcone` | Frame coordinates (0..1 fields); camera applied unless `hud` |
-| Screen | `rain`, `glitch`, `rgbsplit`, `alarm`, `cctv`, `darkness`, `eyelids`, `beam-clash`, `duel`, `boom` with `text`, `memory`, `shock`, `disintegrate` | Whole frame, never moved by the camera (`memory` uses its own `x`/`y` as frame fractions) |
+| Screen | `rain`, `glitch`, `rgbsplit`, `alarm`, `cctv`, `darkness`, `blackout`, `eyelids`, `beam-clash`, `duel`, `boom` with `text`, `memory`, `shock`, `disintegrate` | Whole frame, never moved by the camera (`memory` uses its own `x`/`y` as frame fractions) |
 
 `fx` layers stay sharp under a shot's rack `focus` unless they set `"focusable": true`.
+
+**Fx among front set pieces** (a courtroom bench, see [04_places.md](04_places.md)). Ground fx placed at a spot
+(`dust`, `dustkick`, `poof`, `puff`, `smoke`, `fire`, `blood`, `pool`, `spill`, `toxic-cloud` with a `y`, a positional
+`move` step (`to` / `by` / `from`), a `path` or a `target`; registry `T.FX_GROUND`) stand at their `y` like actors: dust
+at the judge's feet (`y` 0.74) draws behind the bench, dust in front of it (`y` 0.9) over it. An fx that renders away
+from its layer position is slotted where it renders (registry `T.FX_ANCHOR`): a targeted `dustkick` at its newest live
+landing point, a `brawl` along its own `path`. Every other fx (flash, blackout, rain, vignette-like tones, explosions,
+speech emphasis) stays over the front pieces. `front`: `"over"` keeps a ground fx over them (the old order), `"depth"`
+slots any placed fx by its `y`. Like actors, a front piece is slotted before the first layer that belongs in front of
+it, so list ground fx before the actors that may walk in front of the piece.
 
 ### Emphasis (`emphasis.js`)
 
@@ -143,6 +154,7 @@ centre unless the table says otherwise. Three placement families:
 | `eyes-white` | as `redeyes`; `color` #ffffff, `bloom` 10, `size` 26 | White slit eyes, for shadows on a wall |
 | `wallshadow` | `size` 520, `grow` 1.0, `hornsAt` 0.6, `eyesAt` 1.2, `alpha` 0.88, `color` #120c0a, `eyeColor` (white) | Silhouette on the wall swells 0.8 → 1.1 over `grow` s, sprouts horns over 0.3 s from `hornsAt`, eyes pop on at `eyesAt` with a 2-frame glow flash |
 | `darkness` | `dur` 4, `count` 10, `strength` 1 | Soft black blobs creeping from the edges toward the centre. Screen |
+| `blackout` | `level` 0.94, `color` #020203, `fade` 0.25, `dur` (lights back on, layer time), `fadeOut` (= `fade`), `lights` ([layer id or {`id`, `r` 240, `dx`, `dy`} or {`x`, `y`, `r`}]), `glow` #ffcf70 (`null` = none) | The lights go off: the whole frame darkens to `level` over `fade` from the layer `at` and comes back over `fadeOut` at `dur` (or use the layer `out`). Each entry of `lights` keeps a soft lit hole around a layer (a candle, a lamp, a phone screen) that follows it and the camera, with a warm spill. Layers listed after the blackout stay fully lit. Screen |
 | `eyelids` | `mode` close/open/blink, `dur` 0.8 | POV almond lids. Screen |
 | `inkburst` | `bursts` [0], `color` #3b2a7a, `count` 9, `spread` 300, `puddle` 260 | Ink blobs erupt for 8 frames and fall into splats; the puddle spreads over 20 frames from 0.2 s. One burst per entry |
 | `paperstorm` | `count` 14, `color` #f3ead6, `ink` | Outlined sheets with text lines drifting outward and turning |
@@ -206,7 +218,7 @@ They all work inside `swap` (`{"at": 1.0, "material": "stone"}` makes a statue i
 | `lineart` | `true` or {`color` #ffffff, `width` 4} | Outline only (computed at half resolution above 1000 px wide). With `bg: flat #050505` it is the "inside his mind" world |
 | `material` | "ghost"/"stone"/"gold"/"engrave"/"ice" or {`kind`, `at`, `dur` 0.5, ...} | Recolours the layer; with `at` it crossfades from the plain layer over `dur`. Kinds below |
 | `freeze` | `true` or {`at` 0, `dur` 0.2, `pad` 0.08, `tint` #bfe8ea, `color` (front face) rgba(178,226,234,0.5)} | Frosted figure inside a faceted ice block (top, side and front faces, ink edges, facets, highlights); fades in over `dur` with a 2 % pop. Stop the motion at `at` (for example `jitter: {to: at}`) |
-| `xray` | `true` or {`at` 0, `dur` 0.2, `inner` (prop kind), `innerSize` (half the shorter side), `color` #7fd0ff, `alpha` 0.8} | From `at` (shot time) the layer crossfades over `dur` into a see-through blue silhouette: a translucent tinted body with faint inner structure, a light inner rim, scan stripes rolling on twos and an ink outline, with `inner` drawn at its centre ("it is hollow inside"). Order 34. Ignored on `fx` layers (`shock` uses `xray` for itself) |
+| `xray` | `true` or {`at` 0, `dur` 0.2, `inner` (prop kind), `innerSize` (half the shorter side), `color` #7fd0ff, `alpha` 0.8, `anatomy` false, `specks` 0, `specksAt` 0, `specksDur` 1, `out`, `outDur` (= `dur`)} | From `at` (shot time) the layer crossfades over `dur` into a see-through blue silhouette: a translucent tinted body with faint inner structure, a light inner rim, scan stripes rolling on twos and an ink outline, with `inner` drawn at its centre ("it is hollow inside"). `anatomy: true` draws a body x-ray inside it (skull, spine and ribs, pink lungs, a heart beating at 1.2 Hz, vessels); `specks` (count 0..200) dark grains settle into the bones one by one from `specksAt` over `specksDur` seconds (lead in the bones, a toxin building up). `out` (shot time) crossfades back to the normal layer over `outDur`, so the scan can end mid-shot. Order 34. Ignored on `fx` layers (`shock` uses `xray` for itself) |
 | `split` | {`at` 0, `gap` 0.18, `angle` 90, `jag` 0.06, `rot` 6, `label`: "text" or {`text`, `color` #c8202a}} | Crack line 1 frame before `at`; at `at` a 1-frame squash, then the jagged halves spring apart over 3 frames (outBack) and rotate ±`rot`°, with a ribbon label in the gap. `angle` 90 is a vertical cut |
 | `sticker` | `true` or {`width` 6, `color` #ffffff, `shadow` 0.25, `hover` false} | Die-cut border and soft drop shadow; `hover` bobs ±3 px every 0.8 s with a 1 px boil on twos |
 | `glow` | `true` or {`color` #fffbe6, `blur` 34, `pulse` 0.1} | Soft outer glow pulsing at 0.5 Hz: gods, relics, ghosts |
@@ -215,7 +227,7 @@ They all work inside `swap` (`{"at": 1.0, "material": "stone"}` makes a statue i
 | `material` kind | Fields (defaults) | Look |
 | --- | --- | --- |
 | `ghost` | `alpha` 0.55, `tint` #b9c2c8, `rim` #eef3f6, `bob` 5, `wisp` true | Desaturated, tinted, see-through, pale rim, ±`bob` px at 0.5 Hz. A ghost bean loses its legs for an S-shaped wisp tail that sways at 0.8 Hz (`wisp: false` or bean `legs: true` keeps the legs) |
-| `stone` | `color` #c9bea8, `cracks` 3, `crack` #8f846f, `plinth` false, `plinthColor` #a59d8f | Grey-beige statue with seeded cracks; `plinth` adds an outlined block under the feet. Set `rock: 0` and `blink: false` on the bean |
+| `stone` | `color` #c9bea8, `cracks` 3, `crack` #8f846f, `plinth` false, `plinthColor` #a59d8f, `grain` 1 (painted look; 0..2 or a timeline, `false` = none) | Grey-beige statue with seeded cracks; `plinth` adds an outlined block under the feet. In the painted look it keeps more of the layer's shading and gets a carved grain (soft mottling, pits with a lit lip, chipped facets) seeded in the layer's own units, so it moves and scales with the layer. Set `rock: 0` and `blink: false` on the bean |
 | `gold` | `ramp` [#6a4210, #e0a828, #fff4b0], `glints` 4 | Gold luminance ramp with twinkling glints |
 | `engrave` | `ramp` [#e2b57a, #6e4b2c, #4a3322], `alpha` 0.9 | Sepia engraving: ink lines turn light, fills dark brown, faint grain, the paper shows through. Leave one accent layer plain |
 | `ice` | `tint` #bfe8ea | Frosted look and a gloss streak, without the block |
@@ -262,6 +274,8 @@ grain and vignette.
 | `mono` | Plain greyscale. The past turned into a photograph (end of a short, with `panel` `frame: "photo"`), a memory, an archive look without sepia |
 | `negative` | Colour negative (a `difference` with white). A battle title frozen as a negative for about 2 s (The Longest War 20:34); a 0.2–0.3 s flash on "what if" |
 | `sunset-epic` | Founding sagas, villains arriving |
+| `dusk` | Violet-rose evening after sunset, a little warm bloom low in the frame (painted look) |
+| `overcast` | Grey, flat, slightly desaturated daylight: an ordinary day, a grim morning |
 
 Presets are op lists in `T.GRADE_PRESETS` (composite fills, `vignette`, `bloom`, `pixel`); pixel ops live in
 `T.GRADE_PIXEL` (`mono-red`, `ramp3`, `scanlines`).
@@ -270,9 +284,83 @@ Presets are op lists in `T.GRADE_PRESETS` (composite fills, `vignette`, `bloom`,
 
 | Field | Default | Effect |
 | --- | --- | --- |
-| `style.grain` | true | Film grain tile re-placed 12 times a second; `false` disables |
+| `style.grain` | true | Film grain tile re-placed 12 times a second; `false` disables. In the painted look the paper tooth rides on the grain tile; with `false` a static paper texture stays |
 | `style.vignette` | 0.28 | Warm-dark film vignette strength; `false` disables |
 | `shot.vignette` | none | {`strength` 0.8, `x` 0.5, `y` 0.5, `radius` 0.55, `color`} replaces the film vignette for one shot; `color` is the outer stop and overrides `strength` |
+| `style.look` / `shot.look` | `classic` | `painted` turns on the painted look below for the film or one shot |
+| `style.light` / `shot.light` | see below | Key light of the painted look |
+
+### Painted look
+
+`"style": {"look": "painted"}` renders the film with light-relative shading instead of the classic flat fills
+(field contract in [03 Painted look](../03-spec-reference.md#painted-look-stylelook)). What it adds, and where:
+
+| Piece | Engine | What it does |
+| --- | --- | --- |
+| Light | `base/shade.js` `T.paintState(spec, shot)` | Resolves `light` {`dir` 58 (degrees toward the light, 0 = right, 90 = up), `color` `#fff0cf`, `rim` 0.55, `ambient` `#3c2f5c`, `intensity` 0.6}; `shot.light` merges over `style.light`. core.js sets it as `T.PAINT` while a shot draws |
+| Multi-tone shapes | `T.paintPrep`, `T.shadeFill`, `T.inkUnder` | Every `T.outlined` shape with an opaque hex fill (gradients, patterns and rgba fills stay as they are): deep band on the far edge, shadow band, lit base, airbrushed falloff, rim light; ink heavier on the shadow side. Bands are shifted copies of the path, so any path callback works. `T.outlined(..., {paint: false})` keeps one shape flat, `{paint: 0.45}` softens it (faces) |
+| Tapered ink | `T.inkStroke(ctx, pts, {w, w0, w1, ink})` | A brush stroke along a polyline, thin at both ends: folds, wrinkles, grass, hair strands |
+| Contact shadow | `T.contactShadow(ctx, x, y, rx, ry, alpha)`, layer field `contact` | Soft occlusion ellipse under grounded layers (beans and crowd members by default); a second one under the head |
+| Textures | `base/textures.js` `T.TEXTURES`, `T.textureTile(kind, seed)`, `T.fillTexture(ctx, pathFn, kind, {rect, scale, rot, alpha, comp, seed})` | Seeded 256 px seamless tiles, cached per (kind, seed): `grass` strokes, `wood` grain, `stone` cobbles, `brick` running bond, `plaster` mottling, `fabric` weave, `paper` fibre, `water` ripples. Overlaid on a path or a rect |
+| Painted skies | `places/paint-places.js` `T.paintSky` | Sun bloom, deeper zenith, horizon haze, 3-tone clouds (lit cap, soft volume, darker underside), grass texture on hills, textured ground with occlusion and 2-tone tufts |
+| Surfaces | `T.paintSurface`, `T.BG_SURFACES`, `T.BG_FLOOR` | Per bg kind: plaster walls and wood floors (`interior`, `room`, `palace`, `hospital`), planks with grain everywhere `T.planks` is used (`office`, `stage`, `bar`), carpets, cobbled streets (`street1920`, `factory`, `city`), water (`sea`, `harbor`), parchment fibre, a wall-floor occlusion band |
+| Atmospheric perspective | layer field `atmos` (`T.LAYER_MODS.atmos`) | Tints a far layer toward the haze colour (the sky's horizon by default) |
+| Frame | `T.paintPost` | Key-light wash falling off to a cool, darker far side; paper tooth baked into the grain tile (static paper when `style.grain` is `false`) |
+
+Lettering and screen furniture stay flat (`T.PAINT_EXEMPT`); `painted: true` opts one in. Classic remains the
+default and is unchanged. Frame cost is under 2x classic; the bench film is `examples/painted_bench` (render its
+contact sheet with the command in CLAUDE.md).
+
+### Particles, impact and painted FX
+
+`fx/particles.js`, `fx/impact.js`, `fx/fx-paint.js`. Every particle is a pure function of (seed, index, time): spawn
+time, launch angle, speed, size and tone come from an integer hash, the position is the closed-form solution of launch
+velocity + gravity + wind under linear drag, plus smooth hashed turbulence. Nothing is stepped, so frames never depend
+on render order and you can scrub anywhere. Under the painted look puffs are soft lit sprites (lit cap toward the
+light, shadow band, feathered edge) and fire / sparks / embers glow additively; the classic look draws flat toon marks
+with ink.
+
+**`particles`**: `{"type": "fx", "kind": "particles", "preset": "smoke", "x", "y", "rate", "spread", "life", "gravity", "wind", "at", "dur"}`
+
+| Field | Meaning (preset default) |
+|---|---|
+| `preset` | `smoke`, `dust`, `sparks`, `fire`, `embers`, `steam`, `splash`, `rain`, `snow`, `debris`, `confetti`, `leaves`, `bubbles`, `gas` (`TOON.PARTICLE_PRESETS`) |
+| `rate` | particles per second (up to 2000); `burst: N` (up to 5000) spawns N at once instead (debris bursts by default) |
+| `life` | seconds each particle lives (each varies 0.7x to 1.3x) |
+| `dir`, `spread` | launch direction in degrees (0 = right, -90 = up) and the full cone width |
+| `speed` | launch speed px/s (each varies 0.55x to 1.45x) |
+| `gravity`, `wind`, `drag` | px/s^2 (negative = buoyant smoke), the air speed particles drift toward (px/s), linear drag 1/s |
+| `turb` | turbulence amplitude in px (smooth noise per particle) |
+| `size`, `grow` | px, a number or `[min, max]`; end size / start size |
+| `w`, `h`, `ox`, `oy` | emitter box and offset from the layer point (sky presets sit 600 px above it and span 2300 px: put the layer at `y` 0.5) |
+| `color` / `colors` | one hex (tones are derived) or a list (base, shadow, light; fire uses a hot-to-cold ramp); lists shorter than three are expanded |
+| `dur` | emission time in layer seconds (default: while the layer lives); no particle is born after it, the last ones finish their life. With `prewarm` the emitter has already run `prewarm` seconds at layer time 0 and still emits for `dur` |
+| `prewarm` | `true` (one `life`) or seconds: the emitter starts already running |
+| `floor`, `spin`, `opacity`, `seed` | landing line in px below the emitter (debris), rotation speed, particle opacity 0..1 (the layer's own `alpha` still fades the whole layer), seed override (default `id`) |
+
+**Impact language**
+
+| Kind | Fields (defaults) | What it does |
+|---|---|---|
+| `impact-frame` | `mode` (`invert` \| `flat` \| `flash`), `frames` (2, 1..6), `color` (paper `#f6efe2` / flash colour), `accent` (`#c8141c`, `null` = two tones), `ink`, `threshold` (0.36) | Holds for `frames` frames from the layer `at`, over the finished frame below it: `invert` negates it, `flat` posterises it to ink / accent / paper (manga hit frame), `flash` whites it out. Put it last in the layer list at the hit time |
+| `streaks` | `angle` (180 = lines travel left), `count` (36), `speed` (2600), `w`, `h` (area), `len` ([160, 560]), `width` ([3, 10]), `color` (white), `ink` (dark lines), `opacity` (0.8) | Parallel speed lines sliding past (the background rushes by). Radial lines stay `speedlines` |
+| `shockwave` | `size` (420 radius), `dur` (0.6), `rings` (2, 1..8), `color`, `width`, `squash`, `ground` (flattened ring + dust rolling out both ways), `dust` (false = no dust), `dustColor` | Expanding rings, soft additive band with a thin refraction edge (painted) or white ring with ink (classic) |
+| `dustkick` | `target` (layer id), `times` ([layer seconds]), `size` (1), `side` (`both` \| `left` \| `right`), `color` | Dust rolls out along the ground and settles, pebbles hop. With `target` it fires at each landing of that layer (the end of every `jump`, the first touch of a `drop` entrance, the end of a `slam`, using the layer's real entrance duration) at its feet in world space, after its `swap`s, so it stays put whatever the camera does |
+| `toxic-cloud` | `size` (320), `color` (`#9fb34a`), `count` (18 puffs), `dur` (2 s growth), `ground` (hugs the floor), `drift` (px/s), `wisps` (true), `opacity` (0.92) | A churning mass of lit puffs that grows in, with a sickly under-glow and gas wisps peeling off. Lead exhaust, chlorine, plague miasma |
+| `aura` | `radius` (220), `color` (`#ffe27a`), `pulse` (0.08, 0..1), `rays` (10), `motes` (true) | Additive glow with slowly turning soft rays and rising glowing motes: relics, power-ups, radioactive objects. For a halo hugging a layer's own shape use the `glow` modifier |
+
+Layer field `trail` (any layer): motion smear, see [03 Common layer fields](../03-spec-reference.md#common-layer-fields).
+
+**Painted versions of classic kinds** (painted look only; the classic look is unchanged, `T.FX_CLASSIC` keeps the
+originals):
+
+| Kind | Painted |
+|---|---|
+| `smoke` | a drifting band of lit, prewarmed smoke puffs (same `w`, `count`, `rise`, `color`) |
+| `fire` | a dark heat-smoke column behind, layered painted tongues (deep red rim, orange, yellow, white-hot core, each a cooling gradient, re-shaped every `step` frames), additive licking flames, a flickering glow and particle embers |
+| `explosion` | flash, starburst, a fireball of hot puffs over a dark smoke billow, sparks, debris that lands, a shock ring; lasts about 2.5 s |
+| `dust`, `puff` | bursts of lit dust puffs; the swap cloud as multi-tone puffs |
+| `gas` | the creeping front as lit billows |
 
 ## ④ Timing
 
@@ -311,7 +399,7 @@ All at 30 fps. "Twos" means a new drawing every 2 frames.
 | `lightpool` open | 20 | `open.dur` 0.66 |
 | `material` crossfade | 15 | `material.dur` 0.5 |
 | `freeze` | 6 | `freeze.dur` 0.2 |
-| `xray` | `true` or {`at` 0, `dur` 0.2, `inner` (prop kind), `innerSize` (half the shorter side), `color` #7fd0ff, `alpha` 0.8} | From `at` (shot time) the layer crossfades over `dur` into a see-through blue silhouette: a translucent tinted body with faint inner structure, a light inner rim, scan stripes rolling on twos and an ink outline, with `inner` drawn at its centre ("it is hollow inside"). Order 34. Ignored on `fx` layers (`shock` uses `xray` for itself) |
+| `xray` | `true` or {`at` 0, `dur` 0.2, `inner` (prop kind), `innerSize` (half the shorter side), `color` #7fd0ff, `alpha` 0.8, `anatomy` false, `specks` 0, `specksAt` 0, `specksDur` 1, `out`, `outDur` (= `dur`)} | From `at` (shot time) the layer crossfades over `dur` into a see-through blue silhouette: a translucent tinted body with faint inner structure, a light inner rim, scan stripes rolling on twos and an ink outline, with `inner` drawn at its centre ("it is hollow inside"). `anatomy: true` draws a body x-ray inside it (skull, spine and ribs, pink lungs, a heart beating at 1.2 Hz, vessels); `specks` (count 0..200) dark grains settle into the bones one by one from `specksAt` over `specksDur` seconds (lead in the bones, a toxin building up). `out` (shot time) crossfades back to the normal layer over `outDur`, so the scan can end mid-shot. Order 34. Ignored on `fx` layers (`shock` uses `xray` for itself) |
 | `split` crack / squash / spring | 1 before / 1 / 3, settle 6 | `split.at` |
 | `drop-squash` / `pop-tilt` / `slam` | 15 / 7 / 4 + 6 shake | `enterDur` |
 | Grade ramp in | 15 (`dur` 0.5) for rage; 1-2 for a cut-like change | `dur`, `outDur` |

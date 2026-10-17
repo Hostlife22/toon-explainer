@@ -52,6 +52,14 @@ Takeaways for the engine:
 - Sky: pink-orange sunsets `#b84a63 → #fde3a0`, daytime `#4f9fe0 → #eef8fb`. Reactions need a teal speckled "burst" background.
 - Light grain and a warm vignette at the edges.
 
+These rules describe the **classic** look (the engine default). A second pass over the later films of the channel (The Longest War, Rome, WW1, China, Greek Myths) shows a richer finish, which the engine reproduces as the **painted** look (`style.look: "painted"`, [03 Painted look](03-spec-reference.md#painted-look-stylelook)):
+- **Shading.** 2–3 tones per colour: a cel shadow band on the side away from a single key light, a darker core on the far edge, and a soft airbrushed falloff toward the edges (horses, robes, helmets). Faces stay almost pure white.
+- **Rim and ink.** A thin warm rim light on the lit edge of saturated shapes; the ink is heavier on the shadow side and lighter on the lit side.
+- **Contact.** Soft dark occlusion under feet, barrels and carts, and under the chin on the torso; dark bands where walls meet the floor.
+- **Texture.** Grass strokes on fields and hills, wood grain on planks and floors, cobbles, plaster mottling on walls, paper tooth over the whole frame.
+- **Depth.** Painted skies (deeper zenith, sun bloom, haze at the horizon, clouds with a warm lit cap and a darker underside); far layers fade toward the sky colour (atmospheric perspective); sets sit a step darker than the actors, with the side away from the light falling into a cool shade.
+- **Grades.** Warm low-sun and violet dusk grades, grey overcast days.
+
 ## 5. How we deliberately differ from the reference
 
 The target channel (MASTER_PROMPT) has a cold, investigative tone. So we take the visual grammar one-to-one but shift the tone through palette and FX:

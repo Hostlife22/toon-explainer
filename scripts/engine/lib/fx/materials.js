@@ -60,12 +60,15 @@
       k.globalAlpha = 1;
     },
     // Weathered statue: grayscale, warm stone multiply, seeded cracks, optional plinth under the feet.
-    stone(k, src, m, lt, d, seed, tag) {
+    stone(k, src, m, lt, d, seed, tag, at) {
       const box = alphaBox(src, tag);
       if (box && m.plinth) plinth(k, box, m, d);
       const [b, bk] = blank(src, 'afxstone' + tag);
-      filteredCopy(bk, src, 'grayscale(1) contrast(0.55) brightness(1.5)');
+      // painted look: keep more of the layer's own shading and add a carved grain (mottling, pits, chips)
+      filteredCopy(bk, src, T.PAINT ? 'grayscale(1) contrast(0.85) brightness(1.3)' : 'grayscale(1) contrast(0.55) brightness(1.5)');
       tint(bk, src, m.color ?? '#c9bea8');
+      const frame = box && T.PAINT && m.grain !== false && at ? layerFrame(at.L, at.lt, at.env) : null;
+      if (frame) stoneGrain(bk, box, frame, at.L.size ?? 200, seed, T.num(m.grain, lt, 1));
       if (box) cracks(bk, box, m.cracks ?? 3, seed, m.crack ?? '#8f846f', d);
       bk.globalCompositeOperation = 'destination-in'; bk.drawImage(src, 0, 0); bk.globalCompositeOperation = 'source-over';
       k.drawImage(b, 0, 0);
@@ -140,6 +143,57 @@
     }
     k.restore();
   }
+  // The layer's own frame in physical px (camera, anchor, rotation, scale), as core.js drawLayer sets it up: grain is
+  // seeded in layer units so it moves, turns and scales with the layer instead of with its 8 px alpha box.
+  function layerFrame(L, lt, env) {
+    const st = T.layerState(L, lt);
+    if (!st) return null;
+    const [, g] = T.scratch('afxstone-frame', 1, 1), dpr = env.dpr || 1;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (!(L.hud ?? T.HUD_DEFAULT[L.type] ?? false) && env.cam) T.applyCam(g, env.cam, T.layerZ(L));
+    g.translate(st.x, st.y); g.rotate(st.r); g.scale(st.s * st.flip * st.sx, st.s * st.sy);
+    const m = g.getTransform();
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    return m;
+  }
+  // Carved stone grain over the opaque pixels: soft light / dark mottling, pits with a lit lower lip and a few chipped
+  // facets. Cells of a fixed lattice in layer units are seeded by their index, so the grain never swims.
+  function stoneGrain(k, box, M, size, id, amt) {
+    const inv = M.inverse(), pts = [[box.x, box.y], [box.x + box.w, box.y], [box.x, box.y + box.h], [box.x + box.w, box.y + box.h]].map(([x, y]) => inv.transformPoint({ x, y }));
+    const lx0 = Math.min(...pts.map((p) => p.x)), lx1 = Math.max(...pts.map((p) => p.x)), ly0 = Math.min(...pts.map((p) => p.y)), ly1 = Math.max(...pts.map((p) => p.y));
+    const cells = (step, fn) => {
+      const gx0 = Math.floor(lx0 / step), gx1 = Math.ceil(lx1 / step), gy0 = Math.floor(ly0 / step), gy1 = Math.ceil(ly1 / step);
+      if ((gx1 - gx0) * (gy1 - gy0) > 6000) return; // degenerate frame (layer squashed to a line): skip the grain
+      for (let gx = gx0; gx < gx1; gx++) for (let gy = gy0; gy < gy1; gy++) fn(T.rng(T.hash(`${id}:stone:${step}:${gx}:${gy}`)), gx * step, gy * step);
+    };
+    k.save(); k.globalCompositeOperation = 'source-atop'; k.setTransform(M);
+    const big = size * 0.2, cell = size * 0.045, TAU = Math.PI * 2;
+    cells(big, (r, x0, y0) => { // mottling
+      const x = x0 + r() * big, y = y0 + r() * big, rad = big * (0.45 + r() * 0.5), dark = r() < 0.55, a = (dark ? 0.2 : 0.16) * amt * (0.5 + r() * 0.5);
+      const col = dark ? '46,36,26' : '255,248,232', g = k.createRadialGradient(x, y, 0, x, y, rad);
+      g.addColorStop(0, `rgba(${col},${a.toFixed(3)})`); g.addColorStop(1, `rgba(${col},0)`);
+      k.fillStyle = g; k.fillRect(x - rad, y - rad, rad * 2, rad * 2);
+    });
+    cells(cell, (r, x0, y0) => { // pits
+      const n = r() < 0.25 ? 2 : r() < 0.25 ? 0 : 1;
+      for (let i = 0; i < n; i++) {
+        const x = x0 + r() * cell, y = y0 + r() * cell, s = size * (0.003 + r() * 0.006), a = (0.24 + r() * 0.26) * amt;
+        k.fillStyle = `rgba(48,38,30,${a.toFixed(3)})`; k.beginPath(); k.arc(x, y, s, 0, TAU); k.fill();
+        k.fillStyle = `rgba(255,246,226,${(a * 0.6).toFixed(3)})`; k.beginPath(); k.arc(x + s * 0.35, y + s * 0.9, s * 0.55, 0, TAU); k.fill();
+      }
+    });
+    cells(big, (r, x0, y0) => { // chipped facets: a shaded dent with a lit lower rim
+      if (r() < 0.55) return;
+      const x = x0 + r() * big, y = y0 + r() * big, s = size * (0.02 + r() * 0.025), a0 = r() * TAU, q = [0, 1, 2, 3, 4].map(() => s * (0.6 + r() * 0.5));
+      const pt = (i) => { const a = a0 + i * TAU / 5; return [x + Math.cos(a) * q[i], y + Math.sin(a) * q[i] * 0.65]; };
+      k.beginPath(); for (let i = 0; i < 5; i++) k.lineTo(...pt(i)); k.closePath();
+      k.fillStyle = `rgba(46,36,26,${(0.16 * amt).toFixed(3)})`; k.fill();
+      const lo = [0, 1, 2, 3, 4].sort((i, j) => pt(j)[1] - pt(i)[1]).slice(0, 3).sort((i, j) => i - j);
+      k.strokeStyle = `rgba(255,248,232,${(0.3 * amt).toFixed(3)})`; k.lineWidth = size * 0.005; k.lineCap = 'round';
+      k.beginPath(); k.moveTo(...pt(lo[0])); k.lineTo(...pt(lo[1])); k.stroke();
+    });
+    k.restore();
+  }
   const MAT_KINDS = Object.keys(MAT);
   const matOf = (v) => {
     const m = optsOf(v);
@@ -164,7 +218,7 @@
       const m = matOf(L.material), p = m.at == null ? 1 : T.ease.inOut(T.prog(lt, m.at, m.dur ?? 0.5));
       if (p <= 0) return src;
       const [c, k] = blank(src, 'afxmat' + depth);
-      MAT[m.kind](k, src, m, lt - (L.at ?? 0), env.dpr || 1, layerId(L), String(depth));
+      MAT[m.kind](k, src, m, lt - (L.at ?? 0), env.dpr || 1, layerId(L), String(depth), { L, lt, env });
       return mixed(src, c, p, 'afxmatmix' + depth);
     },
   };
@@ -521,6 +575,72 @@
     ctx.drawImage(c, 0, 0);
     ctx.restore();
   }
+  // Anatomy inside an x-rayed body (physical px, box = the body's alpha box): the head is the top ~58 % of a bean.
+  // Bones are pale and soft, lungs pink, the heart beats at 1.2 Hz, vessels branch from it; `specks` dark lead grains
+  // settle into the bones one by one from `specksAt` over `specksDur` (seeded by the layer id, pure in time).
+  function xrayAnatomy(k, box, t, x, id, d) {
+    const cx = box.cx, w = box.w, h = box.h, top = box.y;
+    const hx = cx, hy = top + h * 0.3, hr = Math.min(w * 0.3, h * 0.2);
+    const ty0 = top + h * 0.6, ty1 = top + h * 0.93, tw = w * 0.42; // torso band
+    const bone = 'rgba(240,248,255,0.78)', boneEdge = 'rgba(160,200,235,0.9)';
+    k.save(); k.lineCap = 'round'; k.lineJoin = 'round';
+    if (x.anatomy) {
+      // lungs
+      for (const s of [-1, 1]) {
+        k.fillStyle = 'rgba(255,140,165,0.42)'; k.strokeStyle = 'rgba(255,120,150,0.7)'; k.lineWidth = 2 * d;
+        k.beginPath(); k.ellipse(cx + s * tw * 0.42, ty0 + (ty1 - ty0) * 0.38, tw * 0.3, (ty1 - ty0) * 0.36, s * 0.12, 0, Math.PI * 2);
+        k.fill(); k.stroke();
+      }
+      // vessels from the heart
+      const hcx = cx - tw * 0.12, hcy = ty0 + (ty1 - ty0) * 0.5;
+      k.strokeStyle = 'rgba(220,40,60,0.55)'; k.lineWidth = 3 * d;
+      const r = T.rng(T.hash(id + ':vessels'));
+      for (let i = 0; i < 7; i++) {
+        const a = -Math.PI / 2 + (i - 3) * 0.55 + (r() - 0.5) * 0.3, len = h * (0.18 + r() * 0.2);
+        k.beginPath(); k.moveTo(hcx, hcy);
+        k.quadraticCurveTo(hcx + Math.cos(a) * len * 0.5 + (r() - 0.5) * 30 * d, hcy + Math.sin(a) * len * 0.5, hcx + Math.cos(a) * len, hcy + Math.sin(a) * len);
+        k.stroke();
+      }
+      // skull, spine, ribs
+      k.fillStyle = bone; k.strokeStyle = boneEdge; k.lineWidth = 2 * d;
+      k.beginPath(); k.ellipse(hx, hy, hr * 0.78, hr * 0.86, 0, 0, Math.PI * 2); k.fill(); k.stroke();
+      k.beginPath(); k.roundRect ? k.roundRect(hx - hr * 0.42, hy + hr * 0.62, hr * 0.84, hr * 0.42, hr * 0.12) : k.rect(hx - hr * 0.42, hy + hr * 0.62, hr * 0.84, hr * 0.42); k.fill(); k.stroke();
+      k.fillStyle = 'rgba(20,40,70,0.75)';
+      for (const s of [-1, 1]) { k.beginPath(); k.ellipse(hx + s * hr * 0.3, hy + hr * 0.05, hr * 0.17, hr * 0.21, 0, 0, Math.PI * 2); k.fill(); }
+      k.beginPath(); k.moveTo(hx, hy + hr * 0.3); k.lineTo(hx - hr * 0.08, hy + hr * 0.48); k.lineTo(hx + hr * 0.08, hy + hr * 0.48); k.fill();
+      k.strokeStyle = bone; k.lineWidth = Math.max(5 * d, hr * 0.12);
+      k.beginPath(); k.moveTo(hx, hy + hr * 1.05); k.lineTo(hx, ty1); k.stroke();
+      k.lineWidth = Math.max(3 * d, hr * 0.07);
+      for (let i = 0; i < 5; i++) {
+        const y = ty0 + (ty1 - ty0) * (0.08 + i * 0.13);
+        k.beginPath(); k.ellipse(hx, y, tw * (0.62 - i * 0.04), (ty1 - ty0) * 0.08, 0, Math.PI * 0.05, Math.PI * 0.95); k.stroke();
+      }
+      // heart, beating
+      const beat = 1 + 0.12 * Math.pow(Math.max(0, Math.sin(t * Math.PI * 2 * 1.2)), 6), hs = tw * 0.13 * beat;
+      k.fillStyle = 'rgba(225,40,60,0.85)';
+      k.beginPath(); k.moveTo(hcx, hcy + hs * 0.9);
+      k.bezierCurveTo(hcx - hs * 1.4, hcy, hcx - hs * 0.8, hcy - hs * 1.1, hcx, hcy - hs * 0.35);
+      k.bezierCurveTo(hcx + hs * 0.8, hcy - hs * 1.1, hcx + hs * 1.4, hcy, hcx, hcy + hs * 0.9); k.fill();
+    }
+    const n = Math.round(x.specks ?? 0);
+    if (n > 0) { // lead grains settling into skull, spine and ribs
+      const r = T.rng(T.hash(id + ':specks')), t0 = x.specksAt ?? 0, span = x.specksDur ?? 1;
+      for (let i = 0; i < n; i++) {
+        const where = r(), u = r(), v = r(), sz = (5 + r() * 4) * d;
+        const appear = t0 + (i / Math.max(1, n - 1)) * span, p = T.clamp((t - appear) / 0.12, 0, 1);
+        let px, py;
+        if (where < 0.35) { const a = u * Math.PI * 2, rr = Math.sqrt(v) * hr * 0.7; px = hx + Math.cos(a) * rr; py = hy + Math.sin(a) * rr * 1.1; }
+        else if (where < 0.6) { px = hx + (u - 0.5) * hr * 0.14; py = hy + hr * 1.05 + v * (ty1 - hy - hr * 1.05); }
+        else { const ri = Math.floor(u * 5), y = ty0 + (ty1 - ty0) * (0.08 + ri * 0.13), a = Math.PI * (0.08 + v * 0.84);
+          px = hx + Math.cos(a) * tw * (0.62 - ri * 0.04); py = y + Math.sin(a) * (ty1 - ty0) * 0.08; }
+        if (p <= 0) continue;
+        k.fillStyle = 'rgba(40,44,52,0.95)';
+        k.beginPath(); k.arc(px, py, sz * (p < 1 ? 1 + (1 - p) * 0.8 : 1), 0, Math.PI * 2); k.fill();
+      }
+    }
+    k.restore();
+  }
+
   // ---------- xray: see-through blue silhouette with ink edges and an optional prop inside ----------
   // "xray": true | {at 0, dur 0.2, inner (prop kind), innerSize (0.5 of the shorter side), color '#7fd0ff'} — from `at`
   // (shot time, like freeze) the layer crossfades over `dur` into a translucent tinted body with a light inner rim,
@@ -530,7 +650,9 @@
     when: (L) => L.type !== 'fx',
     apply(src, L, lt, env, depth) {
       const x = optsOf(L.xray, 'inner'), at = x.at ?? 0, d = env.dpr || 1;
-      if (lt < at) return src;
+      // out (shot time): the x-ray crossfades back to the normal layer over outDur (default dur)
+      const mix = T.ease.outCubic(T.prog(lt, at, x.dur ?? 0.2)) * (x.out == null ? 1 : 1 - T.ease.inOut(T.prog(lt, x.out, x.outDur ?? x.dur ?? 0.2)));
+      if (lt < at || mix <= 0) return src;
       const box = alphaBox(src, 'xry' + depth), col = x.color ?? '#7fd0ff';
       const [c, k] = blank(src, 'afxxray' + depth);
       dilate(k, src, 5 * d, 12, INK); // ink edge: the dilated outline, the body is painted over it
@@ -552,6 +674,12 @@
         rk.globalCompositeOperation = 'destination-in'; rk.drawImage(src, 0, 0); rk.globalCompositeOperation = 'source-over';
       }
       k.globalAlpha = 0.85; k.drawImage(r, 0, 0); k.globalAlpha = 1;
+      if ((x.anatomy || x.specks) && box) { // body x-ray: bones, lungs, heart, vessels, specks, clipped to the body
+        const [a, ak] = blank(src, 'afxxrayana' + depth);
+        xrayAnatomy(ak, box, lt - at, x, layerId(L), d);
+        ak.globalCompositeOperation = 'destination-in'; ak.drawImage(src, 0, 0); ak.globalCompositeOperation = 'source-over';
+        k.drawImage(a, 0, 0);
+      }
       if (x.inner && box) {
         if (!T.PROPS[x.inner]) throw new Error(`xray: unknown inner prop "${x.inner}"`);
         const size = x.innerSize ?? (Math.min(box.w, box.h) / d) * 0.5;
@@ -560,7 +688,7 @@
         T.drawProp(k, x.inner, size, lt - (L.at ?? 0), { id: layerId(L) + ':xray' });
         k.restore();
       }
-      return mixed(src, c, T.ease.outCubic(T.prog(lt, at, x.dur ?? 0.2)), 'afxxraymix' + depth);
+      return mixed(src, c, mix, 'afxxraymix' + depth);
     },
   };
 })();

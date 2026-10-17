@@ -1,0 +1,76 @@
+{
+  "_doc": "Props & FX 2.0: fx/particles.js, fx/impact.js, fx/fx-paint.js, props/props-paint.js, props/props-lab.js, props/props-goods.js, props/props-tools.js, props/props-machines.js, paper/paper-paint.js. Fields in references/toolkits/08_fx_and_tone.md, 03_props_creatures_vehicles.md and 06_paper_and_lettering.md.",
+  "fx": [
+    "particles",
+    "impact-frame",
+    "streaks",
+    "shockwave",
+    "dustkick",
+    "toxic-cloud",
+    "aura"
+  ],
+  "props": [
+    "flask",
+    "round-flask",
+    "beaker",
+    "test-tube",
+    "tube-rack",
+    "retort",
+    "burner",
+    "book-stack",
+    "paper-stack",
+    "coin-pile",
+    "banknotes",
+    "gold-bars",
+    "amphora",
+    "apple",
+    "cheese",
+    "fish",
+    "chair",
+    "stool",
+    "oil-lamp",
+    "lantern",
+    "inkwell",
+    "hammer",
+    "wrench",
+    "saw",
+    "shovel",
+    "pickaxe",
+    "anvil",
+    "axe",
+    "bow",
+    "pistol",
+    "musket",
+    "cannon",
+    "gears",
+    "piston",
+    "gauge",
+    "valve",
+    "fuel-pump"
+  ],
+  "kinds": {
+    "particle_preset": [
+      "smoke",
+      "dust",
+      "sparks",
+      "fire",
+      "embers",
+      "steam",
+      "splash",
+      "rain",
+      "snow",
+      "debris",
+      "confetti",
+      "leaves",
+      "bubbles",
+      "gas"
+    ],
+    "doc": [
+      "front-page",
+      "letter"
+    ]
+  },
+  "registry": {
+    "particle_preset": "TOON.PARTICLE_PRESETS"
+  }
+}

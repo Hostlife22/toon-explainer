@@ -1,0 +1,1920 @@
+{
+ "_about": "Places 2.0 catalog (painted look): one shot per set-kit preset, new landscape kind, painted upgrade of an existing kind, painted foreground framing and the parallax/haze depth fields. Render its sheet with the command in CLAUDE.md.",
+ "seed": 33,
+ "fps": 30,
+ "style": {
+  "look": "painted",
+  "grain": true,
+  "vignette": 0.3
+ },
+ "cast": {
+  "king": {
+   "robe": "#8a1a2a",
+   "trim": "#e0b040",
+   "head": "crown",
+   "hair": "short",
+   "hairColor": "#5a3a22",
+   "beard": "full",
+   "beardColor": "#5a3a22"
+  },
+  "scientist": {
+   "robe": "#eef0ee",
+   "hair": "curly",
+   "hairColor": "#888888"
+  },
+  "judge": {
+   "robe": "#1e1e24",
+   "hair": "short",
+   "hairColor": "#d8d8d8"
+  },
+  "scholar": {
+   "robe": "#4a3a6a",
+   "hair": "bald",
+   "beard": "full",
+   "beardColor": "#c8c8c8"
+  },
+  "keeper": {
+   "robe": "#7a4a2a",
+   "hair": "short",
+   "hairColor": "#3a2a1e"
+  },
+  "clerk": {
+   "robe": "#3a6ea5",
+   "hair": "short",
+   "hairColor": "#3b2a20"
+  },
+  "shepherd": {
+   "robe": "#a8885a",
+   "hair": "curly",
+   "hairColor": "#5a3a26"
+  },
+  "fisher": {
+   "robe": "#4a7a8a",
+   "head": "hat",
+   "hair": "short"
+  },
+  "nomad": {
+   "robe": "#e8dcc0",
+   "head": "hood"
+  },
+  "senator": {
+   "robe": "#f1eadb",
+   "sash": "#b8323a",
+   "hair": "short",
+   "hairColor": "#3b2a20"
+  },
+  "knight": {
+   "robe": "#5a6a8a",
+   "armor": "#a9aeb4",
+   "head": "helmet",
+   "hair": "bald"
+  }
+ },
+ "shots": [
+  {
+   "id": "set_throne",
+   "_note": "set preset throne: columns, banners, sconces, light shaft",
+   "dur": 2.5,
+   "bg": {
+    "kind": "set",
+    "preset": "throne"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.36,
+     "y": 0.94,
+     "size": 420,
+     "pose": "present",
+     "expr": "smug"
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.74,
+     "y": 0.86,
+     "size": 90
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.2,
+     "width": 0.08
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "set_lab",
+   "_note": "set preset lab: tiled walls, pipes with steam, bubbling flasks",
+   "dur": 2.5,
+   "bg": {
+    "kind": "set",
+    "preset": "lab"
+   },
+   "camera": {
+    "zoom": [
+     1.08,
+     1.14
+    ],
+    "focus": [
+     0.45,
+     0.62
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "scientist",
+     "x": 0.36,
+     "y": 0.94,
+     "size": 420,
+     "pose": "present",
+     "expr": "smug"
+    },
+    {
+     "type": "prop",
+     "kind": "bulb",
+     "x": 0.7,
+     "y": 0.4,
+     "size": 90
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.2,
+     "width": 0.08
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "set_courtroom",
+   "_note": "set preset courtroom: arched windows, flags, judge's bench, pews",
+   "dur": 2.5,
+   "bg": {
+    "kind": "set",
+    "preset": "courtroom"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ],
+    "pan": [
+     [
+      -60,
+      0
+     ],
+     [
+      60,
+      0
+     ]
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "judge",
+     "x": 0.5,
+     "y": 0.72,
+     "size": 420,
+     "pose": "present",
+     "expr": "smug"
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.74,
+     "y": 0.86,
+     "size": 90
+    },
+    {
+     "type": "fg",
+     "kind": "silhouettes",
+     "count": 2,
+     "z": 1.2
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "set_courtroom_front",
+   "_note": "set part front: true: the courtroom bench covers the judge's lower body, a witness in front stays in front",
+   "dur": 2.5,
+   "bg": {
+    "kind": "set",
+    "preset": "courtroom"
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.0
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "judge",
+     "x": 0.5,
+     "y": 0.74,
+     "size": 400,
+     "view": "front",
+     "hold": "mallet",
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 1.2,
+       "v": "hammer"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.27,
+     "y": 1.0,
+     "size": 460,
+     "view": "3q",
+     "lookAt": [
+      0.5,
+      0.4
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "column",
+     "side": "right",
+     "z": 1.3
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "set_front_layers",
+   "_note": "dust at the judge's feet stays behind the bench; a parts-only set adds a front bench over the courtroom (every visible set contributes front parts)",
+   "dur": 2.5,
+   "bg": [
+    {
+     "kind": "set",
+     "preset": "courtroom"
+    },
+    {
+     "kind": "set",
+     "wall": false,
+     "floor": false,
+     "vignette": 0,
+     "parts": [
+      {
+       "kind": "bench",
+       "x": 0.42,
+       "y": 0.99,
+       "w": 760,
+       "front": true
+      }
+     ]
+    }
+   ],
+   "camera": {
+    "zoom": [
+     1.0,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "judge",
+     "x": 0.5,
+     "y": 0.74,
+     "size": 400,
+     "view": "front",
+     "expr": "angry",
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 0.8,
+       "v": "fist"
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "id": "sf_dust",
+     "x": 0.5,
+     "y": 0.74,
+     "at": 0.9,
+     "count": 12
+    },
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.36,
+     "y": 0.96,
+     "size": 440,
+     "view": "3q",
+     "lookAt": [
+      0.5,
+      0.4
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "dust",
+     "id": "sf_dust2",
+     "x": 0.8,
+     "y": 0.95,
+     "at": 0.9,
+     "count": 8
+    },
+    {
+     "type": "fg",
+     "kind": "column",
+     "side": "right",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "set_front_plane",
+   "_note": "frontY puts a studio's front plane into the automatic front pass: the judge stands behind the bench, the witness in front",
+   "dur": 2.5,
+   "bg": {
+    "kind": "studio",
+    "variant": "courtroom",
+    "frontY": 0.8
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.0
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "judge",
+     "x": 0.5,
+     "y": 0.72,
+     "size": 380,
+     "view": "front",
+     "hold": "mallet",
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 1.2,
+       "v": "hammer"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.22,
+     "y": 1.0,
+     "size": 470,
+     "view": "3q",
+     "lookAt": [
+      0.5,
+      0.4
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "set_library",
+   "_note": "set preset library: shelves, dusk window, globe, candle",
+   "dur": 2.5,
+   "bg": {
+    "kind": "set",
+    "preset": "library"
+   },
+   "camera": {
+    "zoom": [
+     1.15,
+     1.08
+    ],
+    "focus": [
+     0.55,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "scholar",
+     "x": 0.36,
+     "y": 0.94,
+     "size": 420,
+     "pose": "present",
+     "expr": "smug"
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.74,
+     "y": 0.86,
+     "size": 90
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.2,
+     "width": 0.08
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "set_tavern",
+   "_note": "set preset tavern: beams, fire glow against a dark room",
+   "dur": 2.5,
+   "bg": {
+    "kind": "set",
+    "preset": "tavern"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "keeper",
+     "x": 0.36,
+     "y": 0.94,
+     "size": 420,
+     "pose": "present",
+     "expr": "smug"
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.74,
+     "y": 0.86,
+     "size": 90
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.2,
+     "width": 0.08
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "set_study",
+   "_note": "set preset study: wallpaper, desk lamp, curtains, clock",
+   "dur": 2.5,
+   "bg": {
+    "kind": "set",
+    "preset": "study"
+   },
+   "camera": {
+    "zoom": [
+     1.08,
+     1.14
+    ],
+    "focus": [
+     0.45,
+     0.62
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "scholar",
+     "x": 0.36,
+     "y": 0.94,
+     "size": 420,
+     "pose": "present",
+     "expr": "smug"
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.74,
+     "y": 0.86,
+     "size": 90
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.2,
+     "width": 0.08
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "set_office",
+   "_note": "set preset office: cabinet, shelf, window shaft, plant",
+   "dur": 2.5,
+   "bg": {
+    "kind": "set",
+    "preset": "office"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ],
+    "pan": [
+     [
+      -60,
+      0
+     ],
+     [
+      60,
+      0
+     ]
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.36,
+     "y": 0.94,
+     "size": 420,
+     "pose": "present",
+     "expr": "smug"
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.74,
+     "y": 0.86,
+     "size": 90
+    },
+    {
+     "type": "fg",
+     "kind": "curtains",
+     "z": 1.2,
+     "width": 0.08
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "set_custom",
+   "_note": "custom set: brick wall, stone floor, arch, door, stairs, bed + a set layer table in front",
+   "dur": 2.5,
+   "bg": {
+    "kind": "set",
+    "wall": "brick",
+    "floor": "stone",
+    "dark": 0.2,
+    "parts": [
+     {
+      "kind": "arch",
+      "x": 0.18,
+      "y": 0.78,
+      "view": "day"
+     },
+     {
+      "kind": "door",
+      "x": 0.42,
+      "y": 0.78
+     },
+     {
+      "kind": "stairs",
+      "x": 0.58,
+      "y": 0.78
+     },
+     {
+      "kind": "painting",
+      "x": 0.42,
+      "y": 0.1,
+      "subject": "sea"
+     },
+     {
+      "kind": "bed",
+      "x": 0.86,
+      "y": 0.9
+     },
+     {
+      "kind": "lamp",
+      "x": 0.3,
+      "y": 0.92,
+      "style": "floor"
+     },
+     {
+      "kind": "crates",
+      "x": 0.08,
+      "y": 0.96,
+      "scale": 0.7,
+      "z": 1.05
+     }
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.15,
+     1.08
+    ],
+    "focus": [
+     0.55,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.62,
+     "y": 0.95,
+     "size": 420,
+     "pose": "shrug",
+     "expr": "worried"
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.72,
+     "y": 0.5,
+     "size": 70
+    },
+    {
+     "type": "set",
+     "z": 1.15,
+     "parts": [
+      {
+       "kind": "table",
+       "x": 0.4,
+       "y": 1.04,
+       "scale": 1.25,
+       "items": [
+        "candle",
+        "skull",
+        "books"
+       ]
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "land_hills",
+   "_note": "hills: hazed rolling planes, fence, path, swaying tree and grass",
+   "dur": 2.5,
+   "bg": {
+    "kind": "hills"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "shepherd",
+     "x": 0.3,
+     "y": 0.93,
+     "size": 430,
+     "pose": "point",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "scroll",
+     "x": 0.7,
+     "y": 0.85,
+     "size": 120
+    },
+    {
+     "type": "fg",
+     "kind": "foliage",
+     "sides": [
+      "tr"
+     ],
+     "z": 1.25
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "land_woods",
+   "_note": "woods: forest edge, layered foliage, light shafts, pollen",
+   "dur": 2.5,
+   "bg": {
+    "kind": "woods"
+   },
+   "camera": {
+    "zoom": [
+     1.08,
+     1.14
+    ],
+    "focus": [
+     0.45,
+     0.62
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "shepherd",
+     "x": 0.3,
+     "y": 0.93,
+     "size": 430,
+     "pose": "point",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "scroll",
+     "x": 0.7,
+     "y": 0.85,
+     "size": 120
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "z": 1.3,
+     "count": 14
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "land_river",
+   "_note": "river: banks, trees, reeds, flowing glints",
+   "dur": 2.5,
+   "bg": {
+    "kind": "river"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ],
+    "pan": [
+     [
+      -60,
+      0
+     ],
+     [
+      60,
+      0
+     ]
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "fisher",
+     "x": 0.3,
+     "y": 0.93,
+     "size": 430,
+     "pose": "point",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "scroll",
+     "x": 0.7,
+     "y": 0.85,
+     "size": 120
+    },
+    {
+     "type": "fg",
+     "kind": "foliage",
+     "sides": [
+      "tr"
+     ],
+     "z": 1.25
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "land_coast",
+   "_note": "river variant coast: sea, beach, rolling surf",
+   "dur": 2.5,
+   "bg": {
+    "kind": "river",
+    "variant": "coast",
+    "preset": "sunset"
+   },
+   "camera": {
+    "zoom": [
+     1.15,
+     1.08
+    ],
+    "focus": [
+     0.55,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "fisher",
+     "x": 0.3,
+     "y": 0.93,
+     "size": 430,
+     "pose": "point",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "scroll",
+     "x": 0.7,
+     "y": 0.85,
+     "size": 120
+    },
+    {
+     "type": "fg",
+     "kind": "rubble",
+     "z": 1.2
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "land_dunes",
+   "_note": "dunes: lit and shaded dune faces, mesas, blowing sand",
+   "dur": 2.5,
+   "bg": {
+    "kind": "dunes",
+    "preset": "sunset"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "nomad",
+     "x": 0.3,
+     "y": 0.93,
+     "size": 430,
+     "pose": "point",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "scroll",
+     "x": 0.7,
+     "y": 0.85,
+     "size": 120
+    },
+    {
+     "type": "fg",
+     "kind": "rubble",
+     "z": 1.2
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "land_ancient",
+   "_note": "ancient: temples, colonnade, statue, cypresses",
+   "dur": 2.5,
+   "bg": {
+    "kind": "ancient"
+   },
+   "camera": {
+    "zoom": [
+     1.08,
+     1.14
+    ],
+    "focus": [
+     0.45,
+     0.62
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "senator",
+     "x": 0.3,
+     "y": 0.93,
+     "size": 430,
+     "pose": "point",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "scroll",
+     "x": 0.7,
+     "y": 0.85,
+     "size": 120
+    },
+    {
+     "type": "fg",
+     "kind": "column",
+     "side": "right",
+     "z": 1.25
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "land_castle",
+   "_note": "castle: towers with banners, timber town, chimney smoke",
+   "dur": 2.5,
+   "bg": {
+    "kind": "castle"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ],
+    "pan": [
+     [
+      -60,
+      0
+     ],
+     [
+      60,
+      0
+     ]
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "knight",
+     "x": 0.3,
+     "y": 0.93,
+     "size": 430,
+     "pose": "point",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "flag",
+     "x": 0.7,
+     "y": 0.85,
+     "size": 120
+    },
+    {
+     "type": "fg",
+     "kind": "foliage",
+     "sides": [
+      "tr"
+     ],
+     "z": 1.25
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "rich_office",
+   "_note": "office (painted): shelf, cabinet, clock, window shaft, banker's lamp, rich desk",
+   "dur": 2.5,
+   "bg": {
+    "kind": "office",
+    "wall": "#8a5a3a",
+    "window": "arched",
+    "windowX": 0.78,
+    "lamp": true,
+    "carpet": "#6a2a22",
+    "chair": false
+   },
+   "camera": {
+    "zoom": [
+     1.15,
+     1.08
+    ],
+    "focus": [
+     0.55,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.36,
+     "y": 0.95,
+     "size": 420,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "prop",
+     "kind": "question",
+     "x": 0.62,
+     "y": 0.32,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 110,
+     "z": 1.15
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "rich_stage",
+   "_note": "stage (painted): velvet, gilt proscenium, footlights, spotlight dust",
+   "dur": 2.5,
+   "bg": {
+    "kind": "stage",
+    "color": "#5a1a1a",
+    "spots": [
+     0.5
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.36,
+     "y": 0.95,
+     "size": 420,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "prop",
+     "kind": "question",
+     "x": 0.62,
+     "y": 0.32,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 110,
+     "z": 1.15
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "rich_street",
+   "_note": "street1920 (painted): hazed city, palazzi, awnings, lamps, smoke",
+   "dur": 2.5,
+   "bg": {
+    "kind": "street1920",
+    "obelisk": 0.5
+   },
+   "camera": {
+    "zoom": [
+     1.08,
+     1.14
+    ],
+    "focus": [
+     0.45,
+     0.62
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.36,
+     "y": 0.95,
+     "size": 420,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "prop",
+     "kind": "question",
+     "x": 0.62,
+     "y": 0.32,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 110,
+     "z": 1.15
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "rich_factory",
+   "_note": "factory (painted): saw-tooth halls, smoke, water tower, puddles",
+   "dur": 2.5,
+   "bg": {
+    "kind": "factory",
+    "preset": "overcast",
+    "color": "#2e3138"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ],
+    "pan": [
+     [
+      -60,
+      0
+     ],
+     [
+      60,
+      0
+     ]
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.36,
+     "y": 0.95,
+     "size": 420,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "prop",
+     "kind": "question",
+     "x": 0.62,
+     "y": 0.32,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 110,
+     "z": 1.15
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "rich_gallery",
+   "_note": "gallery (painted): picture lights, rope barrier, bench",
+   "dur": 2.5,
+   "bg": {
+    "kind": "gallery",
+    "frames": [
+     {
+      "x": 0.32,
+      "y": 0.4,
+      "w": 0.26,
+      "h": 0.36,
+      "plaque": "EXHIBIT A"
+     },
+     {
+      "x": 0.68,
+      "y": 0.4,
+      "w": 0.26,
+      "h": 0.36,
+      "top": "#3a3a40",
+      "bottom": "#2a2a30",
+      "plaque": "EXHIBIT B"
+     }
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.15,
+     1.08
+    ],
+    "focus": [
+     0.55,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.36,
+     "y": 0.95,
+     "size": 420,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "prop",
+     "kind": "question",
+     "x": 0.62,
+     "y": 0.32,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 110,
+     "z": 1.15
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "rich_sky",
+   "_note": "sky (painted): hazed hills with bushes and tree clumps, swaying trees",
+   "dur": 2.5,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 4,
+    "trees": [
+     [
+      0.12,
+      0.8,
+      0.34
+     ],
+     [
+      0.88,
+      0.8,
+      0.3
+     ]
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "shepherd",
+     "x": 0.36,
+     "y": 0.95,
+     "size": 420,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "prop",
+     "kind": "question",
+     "x": 0.62,
+     "y": 0.32,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 110,
+     "z": 1.15
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "rich_mountains",
+   "_note": "mountains (painted): hazed ranges, snow caps, pines, snowfall",
+   "dur": 2.5,
+   "bg": {
+    "kind": "mountains",
+    "preset": "teal",
+    "ground": "#e8eef2"
+   },
+   "camera": {
+    "zoom": [
+     1.08,
+     1.14
+    ],
+    "focus": [
+     0.45,
+     0.62
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "shepherd",
+     "x": 0.36,
+     "y": 0.95,
+     "size": 420,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "prop",
+     "kind": "question",
+     "x": 0.62,
+     "y": 0.32,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 110,
+     "z": 1.15
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "rich_room",
+   "_note": "room parlour (painted): pictures, sconces, window shaft",
+   "dur": 2.5,
+   "bg": {
+    "kind": "room",
+    "variant": "parlour"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ],
+    "pan": [
+     [
+      -60,
+      0
+     ],
+     [
+      60,
+      0
+     ]
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.36,
+     "y": 0.95,
+     "size": 420,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "prop",
+     "kind": "question",
+     "x": 0.62,
+     "y": 0.32,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 110,
+     "z": 1.15
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "rich_courtroom",
+   "_note": "studio courtroom (painted): flags, seal, window shaft",
+   "dur": 2.5,
+   "bg": {
+    "kind": "studio",
+    "variant": "courtroom"
+   },
+   "camera": {
+    "zoom": [
+     1.15,
+     1.08
+    ],
+    "focus": [
+     0.55,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.36,
+     "y": 0.72,
+     "size": 420,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "prop",
+     "kind": "question",
+     "x": 0.62,
+     "y": 0.32,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 110,
+     "z": 1.15
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "rich_corkboard",
+   "_note": "corkboard (painted): framed cork, desk-lamp light",
+   "dur": 2.5,
+   "bg": {
+    "kind": "corkboard",
+    "sign": "WHO PROFITS",
+    "notes": [
+     {
+      "text": "FACTORY",
+      "at": 0.2
+     },
+     {
+      "text": "BANK",
+      "at": 0.6
+     }
+    ],
+    "strings": [
+     [
+      0,
+      1,
+      1.0
+     ]
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.05
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.36,
+     "y": 0.95,
+     "size": 420,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "prop",
+     "kind": "question",
+     "x": 0.62,
+     "y": 0.32,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 110,
+     "z": 1.15
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "rich_parchment",
+   "_note": "parchment (painted): fibres, creases, stains, scorched edges",
+   "dur": 2.5,
+   "bg": {
+    "kind": "parchment"
+   },
+   "camera": {
+    "zoom": [
+     1.08,
+     1.14
+    ],
+    "focus": [
+     0.45,
+     0.62
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.36,
+     "y": 0.95,
+     "size": 420,
+     "pose": "think",
+     "expr": "squint"
+    },
+    {
+     "type": "prop",
+     "kind": "question",
+     "x": 0.62,
+     "y": 0.32,
+     "size": 100
+    },
+    {
+     "type": "prop",
+     "kind": "coin",
+     "x": 0.74,
+     "y": 0.9,
+     "size": 110,
+     "z": 1.15
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "fg_window_frame",
+   "_note": "fg window-frame: looking out through a window",
+   "dur": 2.5,
+   "bg": {
+    "kind": "castle"
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ],
+    "pan": [
+     [
+      -60,
+      0
+     ],
+     [
+      60,
+      0
+     ]
+    ]
+   },
+   "layers": [
+    {
+     "type": "prop",
+     "kind": "scroll",
+     "x": 0.5,
+     "y": 0.8,
+     "size": 80
+    },
+    {
+     "type": "fg",
+     "kind": "window-frame"
+    },
+    {
+     "type": "bean",
+     "who": "knight",
+     "x": 0.15,
+     "y": 1.12,
+     "size": 520,
+     "pose": "point",
+     "z": 1.3
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "fg_silhouettes",
+   "_note": "fg silhouettes: audience heads in the foreground",
+   "dur": 2.5,
+   "bg": {
+    "kind": "stage",
+    "spots": [
+     0.5
+    ]
+   },
+   "camera": {
+    "zoom": [
+     1.15,
+     1.08
+    ],
+    "focus": [
+     0.55,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "king",
+     "x": 0.5,
+     "y": 0.86,
+     "size": 420,
+     "pose": "arms-up",
+     "expr": "happy"
+    },
+    {
+     "type": "prop",
+     "kind": "exclaim",
+     "x": 0.66,
+     "y": 0.3,
+     "size": 90
+    },
+    {
+     "type": "fg",
+     "kind": "silhouettes",
+     "count": 4
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "depth_parallax",
+   "dur": 3,
+   "bg": {
+    "kind": "hills",
+    "parallax": 1.8,
+    "haze": 1.4
+   },
+   "camera": {
+    "zoom": [
+     1.0,
+     1.0
+    ],
+    "pan": [
+     [
+      -160,
+      0
+     ],
+     [
+      160,
+      0
+     ]
+    ],
+    "ease": "inOut"
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "shepherd",
+     "x": 0.45,
+     "y": 0.93,
+     "size": 420,
+     "pose": "wave",
+     "expr": "happy",
+     "move": [
+      {
+       "at": 0.2,
+       "to": [
+        0.6,
+        0.93
+       ],
+       "dur": 2.4
+      }
+     ]
+    },
+    {
+     "type": "prop",
+     "kind": "flag",
+     "x": 0.8,
+     "y": 0.86,
+     "size": 120
+    },
+    {
+     "type": "fg",
+     "kind": "foliage",
+     "sides": [
+      "tl",
+      "bl"
+     ],
+     "z": 1.35
+    }
+   ],
+   "_note": "parallax 1.8 + haze 1.4: planes slide at their own depth"
+  }
+ ]
+}

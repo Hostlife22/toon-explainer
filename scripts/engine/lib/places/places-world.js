@@ -14,6 +14,12 @@
     else for (let y = y0; y < y1; y += step * 0.6) { ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke(); }
     ctx.strokeStyle = 'rgba(60,30,10,0.25)'; ctx.lineWidth = 3;
     for (let i = 0; i < 18; i++) { const x = x0 + ((i * 397) % (x1 - x0)), y = y0 + ((i * 211) % (y1 - y0)); ctx.beginPath(); ctx.ellipse(x, y, 26, 8, vertical ? Math.PI / 2 : 0, 0, Math.PI * 2); ctx.stroke(); }
+    if (T.PAINT) { // painted look: alternating plank tones and wood grain along the boards
+      ctx.fillStyle = 'rgba(30,12,0,0.12)';
+      if (vertical) for (let x = x0, i = 0; x < x1; x += step, i++) { if (i % 3 === 1) ctx.fillRect(x + 3, y0, step - 6, y1 - y0); }
+      else for (let y = y0, i = 0; y < y1; y += step * 0.6, i++) { if (i % 3 === 1) ctx.fillRect(x0, y + 3, x1 - x0, step * 0.6 - 6); }
+      T.fillTexture(ctx, null, 'wood', { rect: [x0, y0, x1 - x0, y1 - y0], rot: vertical ? 90 : 0, alpha: 0.75 });
+    }
   }
   T.planks = planks;
 

@@ -50,7 +50,7 @@ Engine: `scripts/engine/lib/base/text.js` (`label`, `title`, `date`, `era`, `cou
 
 - **Lettering style.** Heavy Rubik 800/900 caps, a dark-brown ink outline and a soft drop shadow. White is the default fill; gold `#f2c230` for tags and new names, red `#c8323a` for titles, red `#c8141c` / `#e0302a` for strikes, stamps and verdict marks. Paper is warm cream (`#f6ecd2`, `#fbf7ee`, `#efe2c0`) with one flat darker band as its shadow, never gradients.
 - **Sizes that read at 1080p.** Name 80–110 px, tags at half the name, captions 56 px, subtitles 54 px, body text on paper 40–44 px. Nothing under ~30 px. Long names: drop `size` to 80–90 rather than letting them run off the frame.
-- **Safe frame.** `label`, `title` and `counter` shift themselves to stay 3.5 % inside the frame edge (camera zoom included); `keepInFrame: false` turns that off. A `title` longer than 90 % of the frame is squeezed.
+- **Safe frame.** `label`, `title` and `counter` shift themselves to stay 3.5 % inside the frame edge (camera zoom included); a world-placed one (`hud` false) keeps a single shift for its whole life, so it stays glued to its spot while the camera pans or zooms; `keepInFrame: false` turns that off. A `title` longer than 90 % of the frame is squeezed.
 - **Empty side.** Put names on the empty side of the frame (x 0.22–0.32 when the character stands on the right). A `big` nameplate goes behind the bean (earlier in `layers`) and beside or above the head, never under it.
 - **Screen-locked by default** (ignore camera moves, `hud: false` lets the camera move them): `era`, `timer`, `lowerthird`, `timeskip`, `statstack`, `band`, `timeline`, `subtitle`. Everything else moves with the camera.
 - **Always sharp.** Lettering and `doc` layers ignore shot `focus` blur even with an `id` (`focusable: true` opts in).
@@ -198,6 +198,20 @@ Entrances: `speech`/`thought` pop over 6 f (`appear: "cut"` skips it); `shout` i
 - Words switch from `base` to `fill` one by one; timing is weighted by character count over [`start`, `start + dur`]. Pass `words: [{w, at}]` for exact transcript timings (then `text` is ignored).
 - Lines wrap at `maxW` (frame widths) and stack upward: the last line sits on `y`.
 - `flag` turns a word or phrase (`word`, matched case- and punctuation-insensitively on consecutive words) red with a small pop, by default 0.3 s after its last word fills. This is the fact-check device: the quote plays, then the lie lights up.
+
+### ③.11 Painted paper, front page and letter
+
+`paper/paper-paint.js`. Under `style.look: "painted"` every sheet drawn by `T.docPaper` (newspaper, document,
+checklist, chart, poster, the new kinds below) becomes aged paper: a soft drop shadow, a light-to-shade wash,
+paper-fibre texture, yellowed edges, fold creases and coffee rings. Doc layer fields: `folds` (0..3: 1 = a crease
+across the middle, 2 = letter thirds, 3 = thirds plus a vertical one; default 1), `stains` (0..3, default 1, seeded by
+`id`). Rubber stamps (`stamp`, and `stamp` inside a document) get uneven grungy ink. The classic look is unchanged
+(`T.docPaperClassic`).
+
+| Kind | Fields and defaults | Behaviour |
+|---|---|---|
+| `front-page` | `masthead` "THE DAILY HERALD", `date`, `price` "ONE CENT", `edition` "LATE EDITION", `headline` "EXTRA! EXTRA!" (`\n` splits lines), `subhead`, `photo: {who \| prop \| color, bg, caption}`, `stories: [{title}]` (first = side column, next three = bottom columns), `w` 820, `h` 1060, `color`, `grayscale` | docPop. Ruled masthead with date / edition / price line, a banner headline fitted to the width, a halftone photo (grey cast bust, or any prop kind), a side column and three bottom columns of text bars with rules |
+| `letter` | `title` (salutation), `lines` (count of scribbled lines, default 9, or a list of strings in italic), `write` (seconds to write every line; 0 = already written), `signature` (string under a scribbled signature; `false` hides it), `seal` (true or a wax colour), `sealText` "R", `ink` `#22305a`, `color`, `w` 760, `h` 980, `folds` (default 2) | docPop. Ruled paper; handwriting scribbles (ascenders, descenders, word gaps) write on left to right one line after another, then the signature; a lit wax seal |
 
 ## ④ Timing
 

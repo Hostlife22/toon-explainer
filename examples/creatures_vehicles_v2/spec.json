@@ -1,0 +1,1493 @@
+{
+ "_about": "Creatures and vehicles 2.0 catalog (painted look): one shot per feature. Gaits with planted feet (walk / trot / gallop, chosen by speed along a path), animal states (idle, eat, sleep, scared, sit), new animals, flocks and schools, cars of four eras with distance-driven wheels, exhaust, dust and headlights, a tank on rough ground, a chariot and a wagon pulled by a trotting team, a steam train with rods and smoke, ships rocking with wakes, a banking plane with a contrail, a zeppelin, a balloon and a rocket launch. Turn views of the dump-truck (tipping in 3/4), projected 3/4 cars with riders aiming from the bouncing seat, a riderLook swap and a bean in the rear 3/4 view. Render with --sheet to browse.",
+ "seed": 61,
+ "fps": 30,
+ "style": {
+  "look": "painted",
+  "grain": true,
+  "vignette": 0.25
+ },
+ "cast": {
+  "knight": {
+   "robe": "#9a2a2a",
+   "armor": "#a9aeb4",
+   "head": "helmet",
+   "hair": "bald"
+  },
+  "rider": {
+   "robe": "#3a6ea5",
+   "hair": "short",
+   "hairColor": "#3b2a20"
+  },
+  "driver": {
+   "robe": "#2f3e5a",
+   "hair": "short",
+   "hairColor": "#1e1a18"
+  },
+  "pilot": {
+   "robe": "#6a4a2a",
+   "hair": "short",
+   "hairColor": "#3b2a20"
+  },
+  "farmer": {
+   "robe": "#7a8a3a",
+   "hair": "curly",
+   "hairColor": "#6a4a2a",
+   "beard": "full",
+   "beardColor": "#6a4a2a"
+  },
+  "boss": {
+   "robe": "#6c7078",
+   "hair": "bald-sides",
+   "build": "fat",
+   "mustache": true,
+   "mustacheColor": "#8a8a8a"
+  }
+ },
+ "shots": [
+  {
+   "id": "c01_horse_gaits",
+   "dur": 4,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "ground": "grass",
+    "hills": 2,
+    "clouds": 3
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "id": "walker",
+     "kind": "horse",
+     "size": 230,
+     "gait": "walk",
+     "path": {
+      "pts": [
+       [
+        0.05,
+        0.6
+       ],
+       [
+        0.3,
+        0.6
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none",
+     "atmos": 0.25
+    },
+    {
+     "type": "creature",
+     "id": "trotter",
+     "kind": "horse",
+     "size": 260,
+     "color": "#e8e2d8",
+     "mane": "#7a7a80",
+     "gait": "trot",
+     "path": {
+      "pts": [
+       [
+        0.02,
+        0.74
+       ],
+       [
+        0.5,
+        0.74
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "id": "charger",
+     "kind": "horse",
+     "size": 300,
+     "color": "#3a2a22",
+     "rider": "knight",
+     "riderHold": "spear",
+     "riderExpr": "angry",
+     "path": {
+      "pts": [
+       [
+        -0.1,
+        0.94
+       ],
+       [
+        1.1,
+        0.94
+       ]
+      ],
+      "dur": 4,
+      "ease": "in"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "signpost",
+     "x": 0.86,
+     "y": 0.62,
+     "size": 200,
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c02_farm_states",
+   "dur": 4,
+   "bg": {
+    "kind": "sky",
+    "preset": "sunset",
+    "ground": "grass",
+    "hills": 1
+   },
+   "camera": {
+    "zoom": [
+     1.02,
+     1.06
+    ],
+    "focus": [
+     0.5,
+     0.7
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "kind": "cow",
+     "x": 0.16,
+     "y": 0.66,
+     "size": 260,
+     "state": "eat",
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "sheep",
+     "x": 0.4,
+     "y": 0.64,
+     "size": 190,
+     "state": "idle",
+     "expr": "happy",
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "pig",
+     "x": 0.62,
+     "y": 0.68,
+     "size": 200,
+     "state": "sleep",
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "dog",
+     "x": 0.68,
+     "y": 0.74,
+     "size": 190,
+     "state": "sit",
+     "expr": "happy",
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "chicken",
+     "size": 130,
+     "path": {
+      "pts": [
+       [
+        0.3,
+        0.9
+       ],
+       [
+        0.55,
+        0.88
+       ],
+       [
+        0.45,
+        0.94
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "cat",
+     "x": 0.58,
+     "y": 0.93,
+     "size": 150,
+     "state": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 2,
+       "v": "scared"
+      }
+     ],
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "who": "farmer",
+     "x": 0.93,
+     "y": 0.95,
+     "size": 340,
+     "pose": "wave",
+     "expr": "happy",
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "bushes",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c03_wild",
+   "dur": 4,
+   "bg": {
+    "kind": "forest"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.04
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "kind": "elephant",
+     "size": 300,
+     "path": {
+      "pts": [
+       [
+        0.0,
+        0.66
+       ],
+       [
+        0.3,
+        0.66
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "camel",
+     "x": 0.55,
+     "y": 0.64,
+     "size": 260,
+     "gait": "walk",
+     "enter": "none",
+     "atmos": 0.2
+    },
+    {
+     "type": "creature",
+     "kind": "bear",
+     "x": 0.8,
+     "y": 0.72,
+     "size": 260,
+     "state": "idle",
+     "expr": "angry",
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "wolf",
+     "size": 220,
+     "path": {
+      "pts": [
+       [
+        1.05,
+        0.9
+       ],
+       [
+        0.4,
+        0.9
+       ]
+      ],
+      "dur": 4,
+      "ease": "inOut"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "rat",
+     "size": 90,
+     "path": {
+      "pts": [
+       [
+        0.1,
+        0.96
+       ],
+       [
+        0.35,
+        0.95
+       ]
+      ],
+      "dur": 2,
+      "ease": "inOut"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "snake",
+     "size": 120,
+     "path": {
+      "pts": [
+       [
+        0.5,
+        0.97
+       ],
+       [
+        0.7,
+        0.97
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "trunk",
+     "z": 1.4
+    }
+   ]
+  },
+  {
+   "id": "c04_birds_fish",
+   "dur": 4,
+   "bg": {
+    "kind": "sky",
+    "preset": "sunset",
+    "ground": "grass"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "kind": "bird",
+     "size": 130,
+     "flock": 5,
+     "color": "#2a2a36",
+     "path": {
+      "pts": [
+       [
+        0.15,
+        0.3
+       ],
+       [
+        0.5,
+        0.15
+       ],
+       [
+        0.85,
+        0.3
+       ],
+       [
+        0.5,
+        0.42
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear",
+      "loop": true,
+      "orient": 20
+     },
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "bird",
+     "x": 0.2,
+     "y": 0.66,
+     "size": 150,
+     "state": "idle",
+     "color": "#c8503a",
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "bird",
+     "size": 170,
+     "color": "#f6f4f0",
+     "state": "glide",
+     "path": {
+      "pts": [
+       [
+        0.9,
+        0.5
+       ],
+       [
+        0.55,
+        0.55
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "signpost",
+     "x": 0.2,
+     "y": 0.86,
+     "size": 200,
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "grass",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c05_underwater",
+   "dur": 3,
+   "bg": {
+    "kind": "underwater"
+   },
+   "camera": {
+    "zoom": [
+     1.06,
+     1.1
+    ],
+    "focus": [
+     0.5,
+     0.6
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "kind": "fish",
+     "size": 160,
+     "school": 6,
+     "path": {
+      "pts": [
+       [
+        0.1,
+        0.45
+       ],
+       [
+        0.5,
+        0.35
+       ],
+       [
+        0.9,
+        0.5
+       ]
+      ],
+      "dur": 3,
+      "ease": "linear",
+      "orient": 25
+     },
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "fish",
+     "x": 0.75,
+     "y": 0.75,
+     "size": 220,
+     "color": "#4a8ac8",
+     "expr": "sad",
+     "flip": true,
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "submarine",
+     "x": 0.32,
+     "y": 0.85,
+     "size": 380,
+     "face": "angry",
+     "drive": [
+      [
+       0,
+       3
+      ]
+     ],
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "bushes",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c06_cars",
+   "dur": 4,
+   "bg": {
+    "kind": "street1920"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.02
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "model-t",
+     "size": 280,
+     "riders": [
+      "driver"
+     ],
+     "path": {
+      "pts": [
+       [
+        -0.1,
+        0.78
+       ],
+       [
+        0.45,
+        0.78
+       ]
+      ],
+      "dur": 4,
+      "ease": "out"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "sedan1920",
+     "size": 330,
+     "riders": [
+      "rider"
+     ],
+     "path": {
+      "pts": [
+       [
+        1.15,
+        0.86
+       ],
+       [
+        0.7,
+        0.86
+       ]
+      ],
+      "dur": 4,
+      "ease": "out"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "car1950",
+     "size": 360,
+     "riders": [
+      "driver"
+     ],
+     "lights": true,
+     "path": {
+      "pts": [
+       [
+        -0.2,
+        0.97
+       ],
+       [
+        1.2,
+        0.97
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "car-modern",
+     "x": 0.82,
+     "y": 0.66,
+     "size": 240,
+     "riders": [
+      "rider"
+     ],
+     "enter": "none",
+     "atmos": 0.25
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c07_war_road",
+   "dur": 4,
+   "bg": {
+    "kind": "battlefield"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.04
+    ],
+    "shake": [
+     {
+      "at": 1.5,
+      "dur": 0.4,
+      "amp": 6
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "tank",
+     "size": 460,
+     "terrain": "rough",
+     "path": {
+      "pts": [
+       [
+        -0.1,
+        0.8
+       ],
+       [
+        0.45,
+        0.82
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "chariot",
+     "size": 520,
+     "rider": "knight",
+     "path": {
+      "pts": [
+       [
+        1.2,
+        0.95
+       ],
+       [
+        0.65,
+        0.95
+       ]
+      ],
+      "dur": 4,
+      "ease": "out"
+     },
+     "gait": "gallop",
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "crate",
+     "x": 0.9,
+     "y": 0.8,
+     "size": 140,
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "barbed-wire",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c08_wagon_trail",
+   "dur": 4,
+   "bg": {
+    "kind": "desert"
+   },
+   "camera": {
+    "zoom": [
+     1.02,
+     1.06
+    ],
+    "focus": [
+     0.5,
+     0.7
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "wagon",
+     "size": 620,
+     "rider": "farmer",
+     "animal": "horse",
+     "team": 2,
+     "path": {
+      "pts": [
+       [
+        0.05,
+        0.88
+       ],
+       [
+        0.6,
+        0.86
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "dog",
+     "size": 160,
+     "path": {
+      "pts": [
+       [
+        0.0,
+        0.95
+       ],
+       [
+        0.75,
+        0.95
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "prop",
+     "kind": "tent",
+     "x": 0.88,
+     "y": 0.8,
+     "size": 260,
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "rubble",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c09_train",
+   "dur": 4,
+   "bg": {
+    "kind": "mountains"
+   },
+   "camera": {
+    "zoom": [
+     1.08,
+     1.12
+    ],
+    "focus": [
+     0.5,
+     0.75
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "kind": "cow",
+     "x": 0.82,
+     "y": 0.74,
+     "size": 150,
+     "state": "eat",
+     "enter": "none",
+     "atmos": 0.3
+    },
+    {
+     "type": "vehicle",
+     "kind": "locomotive",
+     "size": 1100,
+     "cars": 2,
+     "lights": true,
+     "rider": "driver",
+     "path": {
+      "pts": [
+       [
+        0.1,
+        0.86
+       ],
+       [
+        0.7,
+        0.86
+       ]
+      ],
+      "dur": 4,
+      "ease": "inOut"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "bushes",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c10_sea",
+   "dur": 4,
+   "bg": {
+    "kind": "sea",
+    "preset": "turquoise"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "sailship",
+     "x": 0.18,
+     "y": 0.62,
+     "size": 300,
+     "cross": true,
+     "enter": "none",
+     "atmos": 0.3
+    },
+    {
+     "type": "vehicle",
+     "kind": "ship",
+     "style": "warship",
+     "size": 420,
+     "path": {
+      "pts": [
+       [
+        1.1,
+        0.7
+       ],
+       [
+        0.62,
+        0.7
+       ]
+      ],
+      "dur": 4,
+      "ease": "out"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "ship",
+     "style": "liner",
+     "size": 560,
+     "path": {
+      "pts": [
+       [
+        -0.2,
+        0.88
+       ],
+       [
+        0.4,
+        0.88
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "creature",
+     "kind": "bird",
+     "size": 90,
+     "flock": 3,
+     "color": "#f6f4f0",
+     "path": {
+      "pts": [
+       [
+        0.3,
+        0.2
+       ],
+       [
+        0.7,
+        0.15
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none",
+     "z": 1.2
+    }
+   ]
+  },
+  {
+   "id": "c11_air",
+   "dur": 4,
+   "bg": {
+    "kind": "sky",
+    "preset": "day",
+    "clouds": 5
+   },
+   "camera": {
+    "zoom": [
+     0.98,
+     1.02
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "zeppelin",
+     "size": 520,
+     "path": {
+      "pts": [
+       [
+        0.85,
+        0.3
+       ],
+       [
+        0.7,
+        0.28
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none",
+     "atmos": 0.3
+    },
+    {
+     "type": "vehicle",
+     "kind": "balloon",
+     "x": 0.15,
+     "y": 0.75,
+     "size": 180,
+     "rider": "rider",
+     "bob": 10,
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "plane",
+     "size": 300,
+     "rider": "pilot",
+     "contrail": true,
+     "path": {
+      "pts": [
+       [
+        -0.1,
+        0.6
+       ],
+       [
+        0.35,
+        0.35
+       ],
+       [
+        0.7,
+        0.55
+       ],
+       [
+        1.1,
+        0.25
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear",
+      "orient": 35,
+      "bank": 50
+     },
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "biplane",
+     "size": 260,
+     "burning": true,
+     "path": {
+      "pts": [
+       [
+        1.1,
+        0.52
+       ],
+       [
+        0.55,
+        0.46
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear",
+      "orient": 20
+     },
+     "enter": "none"
+    }
+   ]
+  },
+  {
+   "id": "c12_rocket",
+   "dur": 3,
+   "bg": {
+    "kind": "sky",
+    "preset": "dusk",
+    "ground": "dirt"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.1
+    ],
+    "focus": [
+     0.5,
+     0.6
+    ],
+    "shake": [
+     {
+      "at": 0.8,
+      "dur": 1.5,
+      "amp": 8
+     }
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "rocket",
+     "size": 220,
+     "ignite": true,
+     "path": {
+      "pts": [
+       [
+        0.5,
+        0.8
+       ],
+       [
+        0.5,
+        0.5
+       ],
+       [
+        0.56,
+        -0.25
+       ]
+      ],
+      "at": 0.8,
+      "dur": 2.2,
+      "ease": "in",
+      "orient": true,
+      "face": false
+     },
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "who": "pilot",
+     "x": 0.2,
+     "y": 0.95,
+     "size": 360,
+     "pose": "point",
+     "expr": "shock",
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "who": "driver",
+     "x": 0.82,
+     "y": 0.95,
+     "size": 340,
+     "pose": "arms-up",
+     "expr": "happy",
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "rubble",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c13_car_turns",
+   "dur": 4,
+   "bg": {
+    "kind": "street1920"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "creature",
+     "kind": "reaper",
+     "id": "reaper",
+     "x": 0.1,
+     "y": 0.9,
+     "size": 340,
+     "hold": "hourglass",
+     "pose": "sign",
+     "expr": "smile",
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "car-modern",
+     "x": 0.42,
+     "y": 0.66,
+     "size": 260,
+     "riders": [
+      "rider"
+     ],
+     "atmos": 0.2,
+     "enter": "none",
+     "view": [
+      {
+       "at": 0,
+       "v": "side"
+      },
+      {
+       "at": 0.8,
+       "v": "front"
+      },
+      {
+       "at": 2.4,
+       "v": "back"
+      }
+     ]
+    },
+    {
+     "type": "vehicle",
+     "kind": "sedan1920",
+     "id": "uturn",
+     "size": 330,
+     "riders": [
+      "driver"
+     ],
+     "path": {
+      "pts": [
+       [
+        0.3,
+        0.76
+       ],
+       [
+        0.74,
+        0.76
+       ],
+       [
+        0.88,
+        0.84
+       ],
+       [
+        0.74,
+        0.92
+       ],
+       [
+        0.3,
+        0.92
+       ]
+      ],
+      "dur": 4,
+      "ease": "linear"
+     },
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "car1950",
+     "id": "car",
+     "x": 0.66,
+     "y": 1.02,
+     "size": 560,
+     "z": 1.06,
+     "enter": "none",
+     "riders": [
+      {
+       "who": "driver",
+       "expr": [
+        {
+         "at": 0,
+         "v": "happy"
+        },
+        {
+         "at": 1.6,
+         "v": "shock"
+        }
+       ],
+       "lookAt": [
+        {
+         "at": 0,
+         "v": [
+          0.98,
+          0.5
+         ]
+        },
+        {
+         "at": 1.6,
+         "v": "reaper"
+        }
+       ]
+      },
+      {
+       "who": "boss",
+       "expr": [
+        {
+         "at": 0,
+         "v": "smug"
+        },
+        {
+         "at": 2.2,
+         "v": "worried"
+        }
+       ],
+       "talk": [
+        [
+         0.2,
+         1.4
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c14_truck_turns",
+   "dur": 4,
+   "bg": {
+    "kind": "street1920"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "dump-truck",
+     "x": 0.3,
+     "y": 0.86,
+     "size": 620,
+     "riders": [
+      "farmer",
+      "boss"
+     ],
+     "view": [
+      {
+       "at": 0,
+       "v": "3q"
+      },
+      {
+       "at": 1.4,
+       "v": "3q-back"
+      }
+     ],
+     "turn": {
+      "via": "back"
+     },
+     "tilt": [
+      {
+       "at": 0,
+       "v": 0
+      },
+      {
+       "at": 2,
+       "v": 0
+      },
+      {
+       "at": 3.2,
+       "v": 45
+      }
+     ],
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "dump-truck",
+     "x": 0.8,
+     "y": 0.77,
+     "size": 360,
+     "atmos": 0.2,
+     "view": [
+      {
+       "at": 0,
+       "v": "front"
+      },
+      {
+       "at": 2.2,
+       "v": "back"
+      }
+     ],
+     "riders": [
+      "rider"
+     ],
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "who": "driver",
+     "x": 0.62,
+     "y": 0.95,
+     "size": 360,
+     "view": "3q-back",
+     "pose": "point",
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c15_three_quarter_riders",
+   "dur": 4,
+   "bg": {
+    "kind": "street1920"
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "cop",
+     "who": "knight",
+     "x": 0.9,
+     "y": 0.9,
+     "size": 320,
+     "pose": "point",
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "car1950",
+     "id": "convertible",
+     "size": 520,
+     "terrain": "cobble",
+     "view": "3q",
+     "path": {
+      "pts": [
+       [
+        0.05,
+        0.86
+       ],
+       [
+        0.45,
+        0.9
+       ]
+      ],
+      "dur": 4,
+      "ease": "out"
+     },
+     "enter": "none",
+     "riders": [
+      {
+       "who": "driver",
+       "lookAt": [
+        {
+         "at": 0,
+         "v": [
+          0.98,
+          0.5
+         ]
+        },
+        {
+         "at": 1.6,
+         "v": "cop"
+        }
+       ],
+       "expr": [
+        {
+         "at": 0,
+         "v": "happy"
+        },
+        {
+         "at": 1.6,
+         "v": "shock"
+        }
+       ]
+      },
+      "boss"
+     ],
+     "swap": [
+      {
+       "at": 2.6,
+       "riderLook": {
+        "age": "elder",
+        "hairColor": "#d8d8d8"
+       }
+      }
+     ]
+    },
+    {
+     "type": "vehicle",
+     "kind": "sedan1920",
+     "x": 0.68,
+     "y": 0.79,
+     "size": 380,
+     "view": "3q-back",
+     "atmos": 0.2,
+     "riders": [
+      "rider",
+      "farmer"
+     ],
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "z": 1.3
+    }
+   ]
+  }
+ ]
+}

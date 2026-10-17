@@ -4,7 +4,8 @@ through, and how the camera pushes, tilts, frames and pulls focus.
 
 Engine: `scripts/engine/core.js` (timeline, built-in transitions, camera, letterbox, rack focus),
 `scripts/engine/lib/fx/tone.js` (comic and horror transitions), `scripts/engine/lib/lens/transitions.js`,
-`scripts/engine/lib/lens/panels.js` (`panel` layer, POV masks), `scripts/engine/lib/base/helpers.js` (`T.subShot`) ·
+`scripts/engine/lib/lens/panels.js` (`panel` layer, POV masks), `scripts/engine/lib/lens/camera-grammar.js` and
+`camera-moves.js` (shot sizes, over-the-shoulder, follow, whip, handheld, dolly zoom, orbit, roll, angles, on twos), `scripts/engine/lib/base/helpers.js` (`T.subShot`) ·
 Vocabulary: `scripts/vocab/transitions-lens.json`, `scripts/vocab/fx-tone.json` (`transitions`), base
 `KNOWN_TRANSITIONS` in `scripts/spec.py` · Example films:
 [`examples/transitions_lens/spec.json`](../../examples/transitions_lens/spec.json) and the transition shots of
@@ -206,6 +207,39 @@ Full field contract: [../03-spec-reference.md](../03-spec-reference.md#camera). 
 | layer `blur` | 0 | Fixed or `[{at, v}]` blur in px, combined with rack focus (the larger wins) |
 | layer `z` | 1 | Parallax factor (0 pinned to the screen, 1.3-1.6 foreground) |
 
+### Camera 2.0: shot sizes and moves
+
+Field contract: [../03-spec-reference.md](../03-spec-reference.md#camera). Example film:
+[`examples/camera_acting/spec.json`](../../examples/camera_acting/spec.json), one shot per feature.
+
+| Size | Bean framing (rig units above the feet: head 604-300) | Use |
+| --- | --- | --- |
+| `ecu` | 250 tall around the eyes and mouth | The stare, the scream, the verdict; add `letterbox` |
+| `cu` | 400: the whole head | Reaction, a line that matters |
+| `mcu` | 540: head and shoulders | Dialogue, over-the-shoulder |
+| `ms` | 700: to the waist | Gesture, a prop in hand, takes |
+| `ws` | 940: the whole figure | Action, entrances, the place |
+| `ews` | 2600: a small figure | Lost in the landscape; zoom never goes below 1 |
+
+Other layers frame on their `size` box (`ecu` 0.32 of it ... `ews` 4.5). Close framings switch painted bean faces to
+close-up detail automatically. Planes keep their parallax under every framing: backgrounds slide and zoom less than
+the subject, foreground (`z` > 1, `dist` < 1) more.
+
+| Move | Fields | Look |
+| --- | --- | --- |
+| Dolly between sizes | `frame` keys with `dur`, `ease` or `overshoot` 0.1-0.25 | Push in that passes the framing and settles (spring) |
+| Zoom keys | `zoom: [{at, v, ease: "outSettle"}]` | The same on the plain camera |
+| Whip pan | key `whip: true` (`dur` 0.25) | Fast pan to the next target; 12 fading copies along the motion smear the frame under the lettering |
+| Rack focus | key `rack: true` or px | Synthesises shot `focus` keys: the target sharpens as the key starts |
+| Over the shoulder | key `ots: "<listener id>"` | The listener is hidden and redrawn as a dark, blurred (`blur` 5, `tone` 0.5) back of the head at the frame edge; the speaker is placed at 0.38 / 0.62 |
+| Follow | `follow` or a key with `lag` | A critically damped lag (`lag` = mean delay); `axis: "x"` keeps the height |
+| Handheld | `handheld` | Bounded noise drift of `amp` px and `rot` degrees at `hz` |
+| Dolly zoom | `dollyzoom` | Subject holds, the world stretches (`amount` > 0) or looms (< 0); far planes shrink at most into their painted margins |
+| Orbit-lite | `orbit` | Parallax slide around the subject plane |
+| Roll | `roll` | Eased dutch angle |
+| Low / high angle | `angle` | Horizon planes shift ±11 % of the frame by depth, the subject looms or shrinks about 4 % |
+| On twos | `onTwos` on `style`, shot or layer | Characters on 12 fps, the camera on ones |
+
 ## ④ Timing
 
 At 30 fps; "switch" is the frame where B replaces A.
@@ -242,8 +276,20 @@ At 30 fps; "switch" is the frame where B replaces A.
 | Eye `wake` / blink / `bloom` | slit 2 / 2 + 2 + 2 / 2 white + 12 fade | `wake`, `blink`, `bloom` |
 | Camera punch / jump / dutch snap | 2-3 up, about 12 down / 1 / 2 | `punch`, `jump`, `rot` keys |
 | Letterbox / rack focus | 6 / 12 | `letterbox.dur` 0.2, `focus.dur` 0.4 |
+| Frame key move / whip / overshoot settle | 18 / 7-8 / about 18 | `frame[].dur` 0.6 / 0.25 / `dur` |
 
 ## ⑤ Recipes
+
+**Dialogue, over the shoulder, then the close-up.**
+```json
+{"id": "r09_ots", "dur": 3.0, "bg": {"kind": "palace"},
+ "camera": {"frame": [{"at": 0, "target": "senator", "size": "mcu", "ots": "merchant"},
+                      {"at": 1.2, "target": "senator", "size": "ecu", "dur": 0.3, "overshoot": 0.15}], "letterbox": {"h": 0.1, "at": 1.2}},
+ "layers": [{"type": "bean", "id": "senator", "who": "senator", "x": 0.4, "y": 0.92, "size": 460, "expr": [{"at": 1.2, "v": "rage"}]},
+            {"type": "bean", "id": "merchant", "who": "merchant", "x": 0.78, "y": 0.92, "size": 460, "flip": true}]}
+```
+
+**Whip to the rival.** `"camera": {"frame": [{"at": 0, "target": "hero", "size": "mcu"}, {"at": 1.3, "target": "rival", "size": "mcu", "whip": true}]}`
 
 **"Time passed."**
 ```json
@@ -360,6 +406,12 @@ At 30 fps; "switch" is the frame where B replaces A.
   empty hole. Both read `cast` from the film being rendered.
 - `iris` has no `at` and always opens from the centre; use `peephole` or `inkblot` for an off-centre point.
 - `screen-dive` and `portal` only look seamless when `frame` matches the TV, painting or map position in A.
+- Framing clamps to the world: a target near the frame edge is not centred (`clamp: false` shows past the edge,
+  where only planes with margins are painted). A follow with `zoom` 1 cannot pan at all.
+- `frame` replaces `zoom`, `pan` and `focus`; `punch`, `jump`, `shake` and `rot` still apply on top. Lettering follows
+  the camera unless `hud: true`, so captions in a close-up grow: give them `hud: true`.
+- On twos also steps the character's breathing and talk; the follow camera stays smooth, so the character judders
+  against the background by design.
 - Camera `jump` has no duration: entries stack until the shot ends. Use `punch` for a zoom that comes back.
 - A grade recolours the whole shot, but transition overlays (clouds, curtains, ink) are drawn after both shots and
   are never graded; film `overlays` draw over transitions.

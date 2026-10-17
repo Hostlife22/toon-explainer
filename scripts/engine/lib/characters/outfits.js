@@ -31,7 +31,7 @@
     const x = fx(view), shirt = c.shirt ?? '#f4f2ea';
     T.outlined(ctx, (k) => { k.moveTo(x - 46, -334); k.lineTo(x + 46, -334); k.lineTo(x, -214); k.closePath(); }, shirt, { line: 6 });
     if (c.bowtie) T.outlined(ctx, (k) => { k.moveTo(x - 34, -318); k.lineTo(x + 34, -298); k.lineTo(x + 34, -336); k.lineTo(x - 34, -316); k.closePath(); }, c.tie ?? '#1c1a18', { line: 5 });
-    else T.outlined(ctx, (k) => { k.moveTo(x - 12, -330); k.lineTo(x + 12, -330); k.lineTo(x + 16, -236); k.lineTo(x, -216); k.lineTo(x - 16, -236); k.closePath(); }, c.tie ?? '#b8262a', { line: 5 });
+    else T.outlined(ctx, (k) => { k.moveTo(x - 12, -330); k.lineTo(x + 12, -330); k.lineTo(x + 16 + T.swayX(0.25), -236); k.lineTo(x + T.swayX(0.35), -216); k.lineTo(x - 16 + T.swayX(0.25), -236); k.closePath(); }, c.tie ?? '#b8262a', { line: 5 });
     ctx.strokeStyle = shade(c.robe, -0.45); ctx.lineWidth = 6;
     ctx.beginPath(); ctx.moveTo(x - 50, -334); ctx.lineTo(x - 18, -200); ctx.moveTo(x + 50, -334); ctx.lineTo(x + 18, -200); ctx.stroke();
     buttons(ctx, x, [-180, -136], shade(c.robe, -0.5), 7);

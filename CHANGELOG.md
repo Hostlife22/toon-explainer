@@ -1,5 +1,173 @@
 # Changelog
 
+## Unreleased
+
+### Engine gaps: integration
+
+- Fix: vehicle riders keep the authored vehicle behind shot focus, keyed `blur` and `dist` copies (`T.swapBase` now rides on every layer copy, new `T.layerWith`), so a rider's `lookAt` / `takes` plan no longer starts from an already-swapped vehicle.
+- Fix: gag hats (`fx` kind `hat`, every mode) and tumble-detached headwear on a `view: "3q-back"` bean draw with the bean's own headwear view (the back view, no face shift; shared `T.headwearView` / `T.headwearShift`), so a falling hood no longer shows its face opening before the swap.
+
+### Held props: grip and head
+
+- Fix: a held prop no longer sinks into the head: a near hand's sleeve is drawn with the body and its prop and fist after the head (both looks). The far hand in 3/4 and side views and both hands in the back view stay behind the body; in `3q-back` a near hand holding a prop in front of the chest goes behind the back with its prop.
+- Fix: the fist closes on each prop's grip point (new table `T.HOLD_GRIP`, `lib/characters/grip.js`, every handheld prop): poles and tool handles run through the fist (a flag's pole used to end on top of it, a broom was held by its bristles), signs by their stick, a newspaper by its side edge, a scroll by a rod, a mug and a teacup by the handle (mirrored in the left hand), bags, buckets, lanterns and scales hang from the fist by their neck or ring, a chain hangs; small things are pinched (new hand shape `pinch`). Props without an entry keep the classic placement; `holdProps.grip` overrides the point.
+- Fix: a holding hand closes on its prop instead of keeping the pose's open, pointing or waving hand (fingers passed through the prop); `hand` / `handL` and a `reach` hand still win.
+- Fix: a near hand whose prop would cover the eyes or the mouth fits it beside the face, measured from the prop's own drawing: it tilts the prop outward, lowers the hand, moves it out with the elbow still bent, or holds it by its other side, the cheapest first (no more straight arm stuck out to the side, no placard over the face in `think`, `beg` or `wave`); cups and stacks stay level. `eat`, `drink`, `phone-ear` and `binoculars` still bring a hand-sized prop to the face.
+- Review fixes: the face box turns with the head (`headTilt`, nods); a moved hand keeps the elbow bent even when the pose's arm is straight (88 % of the arm, 96 % only when nothing bent clears the face); a fitted spear or torch never leans past ±20°; an inactive `reach` or one on the other arm no longer keeps a holding hand open or unfitted; prop silhouettes are measured at whole sizes in the flat look, so neither size rounding nor a shot's light makes the fit depend on render order; the wrench is gripped mid-handle.
+- `banner` is held by its top rod and hangs from the fist, at a natural size of 200 with acting. `T.RIG_PROBE[id]` reports `grips` (drawn grip point and palm per hand), `handShapes` and the `face` box; tests in `tests/test_held_prop_head.py`.
+
+### Engine gaps: face-maps-split
+
+- Fix: both cold sweat beads of a `sick` face read in every view and with every hair kind: they are drawn over the hair, sit just inside the hairline in the front view and both on the visible face side in `3q` / `side` (a back view shows none).
+- Fix: an `ortho` map's layer modifiers (`blur`, keyed blur, rack `focus`, `material` and the other `T.LAYER_MODS`) apply to its star backdrop again, which still paints behind layers listed before the map; a blurred backdrop is laid over a sharp copy so the frame edges stay dark.
+- `lib/acting/gags.js` is split into `gags.js` (helpers in `T.GAG`, the arm), `gags-fx.js` and `gags-enter.js`, and `lib/game/game-ui.js` into `game-ui.js` and `game-docs.js` (helpers in `T.GAME_UI`), so every engine file stays under 800 lines; frames of every example are byte-identical.
+
+### Engine gaps: props-front
+
+- Fix: held props take a natural size with acting on (the painted default) when no `holdScale` is set: `T.HOLD_SIZE` now also grows long tools, signs and broadsheets (`newspaper` 280, `paintbrush` 250, `scales` 270, `microscope` 260, `spray-can` 190, `rope` 230, `broom` 330, `shovel` 320, `pitchfork` 340, `rifle` / `musket` 330, `placard` / flags 260 and more), so they read against the hand and body without tuning. Classic keeps 170; an explicit `holdScale` still multiplies the classic size; props that already read right (mug, teacup, bottle, mallet, scroll, ...) are unchanged.
+- Fix: ground fx placed at a spot (`dust`, `dustkick`, `poof`, `puff`, `smoke`, `fire`, `blood`, `pool`, `spill`, `toxic-cloud`; registry `T.FX_GROUND`) are slotted among `set` front parts by their `y` like actors, so dust at the judge's feet stays behind the bench; screen-wide fx (flash, blackout, rain, ...) stay over. New fx field `front`: `"over"` keeps the old order, `"depth"` slots any placed fx by its `y`.
+- Fix: front parts come from every `set` in the shot's `bg` list that no covering background follows; a parts-only set (`wall: false, floor: false`) does not cover, so a room plus a set of extra front benches, or a landscape plus a parts-only set with a front desk, both work (`T.bgCovers`, `T.frontSources`).
+- New bg field `frontY` on `room`, `cell`, `antique`, `palace` and `studio`: their front plane joins the automatic front pass (redrawn over layers standing above `frontY`), so a judge stays behind a `studio` `courtroom` bench without a hand-placed `bg-front` layer.
+- Front pass review fixes: an fx is slotted where it renders (`T.FX_ANCHOR`: a targeted `dustkick` at its landing point, a `brawl` along its own `path`); only positional `move` steps place an fx; an explicit `set-front` layer also places `frontY` planes; a `frontY` plane is left out of the background pass (drawn once, also under a rack-focus blur); fx `front` is validated across swaps.
+- `examples/painted_places` gains `set_front_layers` and `set_front_plane`; `examples/props_fx_v2` gains `v16_held`.
+
+### Engine gaps: vehicles-riders
+
+- Fix: the three-quarter car views (`view: "3q"` / `"3q-back"`) are a real projection instead of a stylized extrusion: the car turned 36° toward (away from) the viewer, seen from slightly above with a mild perspective. The side drawing sits on the near side plane (wheels become ellipses, lines run down toward the near end), bonnet, roof and boot tops are lit, the front (rear) face is in shade with its grille, lamps, tail lights, spare and bumper on the body's own end, the four tyres are cylinders (the far pair peeks out under the body) and riders sit upright on the centre line behind the near side, seen through its glass. Painted and classic looks; side, front and back views are unchanged.
+- Fix: a rider's `lookAt` / `takes` aim from its head as drawn: the anchor probes the vehicle's drawing at each moment (view and turn squash, suspension bounce and pitch, path orient, the classic `car1910` `drive` bob) with the vehicle's swaps resolved at that moment, and uses the rider's head height (build, age), so rider plans do not depend on render order. The projected views honour `contact` `{w, h, alpha}`; odd value types in a look (`riderLook: {"hair": []}`) are reported instead of crashing the validator.
+- `dump-truck` turns like the cars: `view` (`front`, `3q`, `side`, `3q-back`, `back`) and `facing` timelines, `turn`, and path reversals. Front: cab, grille, lamps, bumper, the tipped bed rising behind the cab; 3q: the projected views with the bed tipping in them; back: tailgate, tail lights, plate, riders over the tailgate who slide back and land behind the truck. Without `view` / `facing` / a reversing path the classic drawing is unchanged in both looks.
+- Beans take `view: "3q-back"` (rear three-quarter): body, outfit, hair and headwear as in the back view, the arms as in 3/4, and the cheek, jaw and ear of the face side past the hairline. Usable for standing characters (constant, timeline, `look.view`); turns to or from it pass through it; riders of a car in `3q-back` use it (they used the back view).
+- Vehicles take `riderLook` (look fields over the riders' cast looks, as on creatures; a rider object's own `look` wins field by field; `swap` entries can change it): cars, `car1910`, `dump-truck`, `bicycle`, `rowboat`, chariot, wagon, locomotive, plane and balloon. `riderLook` is validated on vehicles and creatures.
+- `examples/creatures_vehicles_v2` gains `c14_truck_turns` and `c15_three_quarter_riders`; tests in `tests/test_vehicle_gaps.py`.
+
+### Engine backlog: characters
+
+- Fix: poses `flail` / `flail-b` stand upright (panicked arms thrown up at odd angles) instead of rendering the character upside down; the old head-over-heels flip is the new pose pair `upended` / `upended-b` (`story_banana_caper` uses it for its slips).
+- Fix: `glasses: true` draws plain spectacles (thin rounded frames over clear glass, the eyes show through) instead of sunglasses; `"clear"` / `"spectacles"` are the explicit names, `"sun"` (and other strings) still draw sunglasses.
+- Fix: `crowd` honours `look` (merged over every member's cast look, back rows still tinted), so a crowd `swap` with `look: {"age": "child"}` turns the whole crowd into children; bean `look.age` swaps are covered by a test.
+- Fix: a bean `reach` to a target above the shoulder and out of reach lengthens the arm toward it (up to 1.9 × straight up, like `hold-high`) without `stretch`; level and low targets keep the arm length and `stretch: false` turns it off. In the painted front view a raised arm whose hand ends over the head stays behind the head instead of crossing the face.
+- Fix: the `sick` expression reads as nausea, not bleeding: a pale green face tint, cold pale sweat beads and a new tight wavy `queasy` mouth replace the red drip.
+- Held and prop `bottle` `pour` can tip back: `{at, dur, back, backDur}` returns it upright, or a `[{at, v}]` timeline of tip fractions drives it; the painted liquid stays poured. The return starts from the tip reached at `back`, and the poured amount is the running maximum of the (eased) tip curve, so the liquid never rises again. `holdProps.pour` and a prop's `pour` are validated.
+- Crowd `look` (and `swap` looks) are validated like bean looks, and mounted crowds (`creature`) pass it to the riders through the new creature field `riderLook`.
+- `examples/characters_v2` gains `c11_panic_sick_reach` and `c12_crowd_age_pour`.
+
+### Engine backlog: core, camera and motion
+
+- Fix: world-placed labels, titles and counters (`hud` false) no longer slide along the frame edge while a zoomed `frame` camera pans: the safe-frame shift is fixed for the layer's life (the smallest one that fits it in the frame at some moment on screen), so the text stays glued to its world spot.
+- Fix: `smooth` paths use centripetal Catmull-Rom tangents held monotone between neighbouring points, so very uneven point spacing no longer makes the curve overshoot or loop backwards (no false turn squash on a car).
+- Fix: `scripts/density.py` reads keyed `camera.zoom` values and `frame` box sizes, so it no longer reports false "same camera zoom" runs.
+- Fix: the `ortho` globe's star backdrop is painted right after the shot backgrounds (new `T.AFTER_BG` hook), so layers listed before the map stay visible.
+- `xray` `out` / `outDur`: the scan crossfades back to the normal layer mid-shot.
+- `move` steps take `by: [dx, dy]` (relative slide) and `from: [x, y]` (start point; held until the step starts; alone it slides the layer in to its `x`/`y`). Steps without them behave as before.
+- Shot `grade` `out` / `outDur` are documented as the way to end a grade mid-shot and validated (numbers, `out` not before `at`).
+- New `fx` `blackout`: the lights go off (`level`, `color`, `fade`, `dur`, `fadeOut`), with `lights` keeping soft lit holes around a candle or lamp that follow it and the camera.
+- Review fixes: the blackout scratch is cleared each draw (translucent colours no longer build up); only the first `move` step holds a layer at its `from`; the globe backdrop pass resolves `swap`s first; vertical films sample each moment's strip centre for the label shift; a pinned blackout whose `lights` name world layers is drawn in the world pass; `lights` are validated (shape, `r` > 0, ids in the shot; `scripts/spec_blackout.py`); a grade with `at: null` validates; density fits `frame` box zooms to the vertical strip.
+- Integration fixes: the world-label shift samples the layer's own state at each sampled time (a label that slides in is no longer pinned to the frame edge); `T.subShot` frames vertical sources with the same `T.stripFramed` as the film; swap states are validated for refs, blackout lights, riders and rider acting; `scripts/spec.py` vocabulary and map checks moved to `spec_vocab.py` and `spec_maps.py` (re-exported, no behaviour change).
+- `examples/camera_acting` gains `s18_world_labels_pan`, `s19_slide_and_xray` and `s20_lights_out`; tests in `tests/test_backlog_core.py`.
+
+### Engine backlog: places and props
+
+- Fix: the `courtroom` set preset's judge's desk now sits in front of the actors. Set parts take `front: true`: they are left out of the room and drawn by a front pass that goes into the layer order automatically (before the first fg layer, lettering, layer with `z` > 1 or layer standing lower than the part), so a judge stands behind the bench and a witness in front of it stays in front. An explicit `fg` `bg-front` (or the new `set-front`) layer places the pass by hand.
+- Fix: `contact: true` on an `obj` draws its shadow at the object's feet (it landed half a size below, detached), 1.3 times wider for the body.
+- Fix: the `stone` material shows a texture in the painted look: soft mottling, pits with a lit lip and chipped facets, seeded in the layer's own units so the grain moves and scales with it (`grain` 0..2, `false` = none); it also keeps more of the layer's shading. The classic look is unchanged.
+- `candle` takes `flame: false` (a charred wick); `candle`, `oil-lamp` and `lantern` also take a `[{at, v}]` flame timeline, and a lamp that goes out leaves a smoke wisp for 1.5 s.
+- `poof` defaults to 300 x 220 (was 420 x 300) so it no longer covers the subject; `word` takes any text, and `false` hides it like `null`. Explicit `w` / `h` work as before.
+- Review fixes: each front part is slotted per frame from the layers' current state (swaps, motion, `z`, `hud`) and depth-sorted by its own `y` among the actors; an inactive explicit front layer no longer suppresses the pass; only the last background, when it is a set, contributes front parts; `set-front` in `pinned` is rejected. `spray: 0` sprays and every window's plume finishes; the everyday props' fields and nested prop kinds (fridge `items`, pulley `load`, scales pans, flame timelines, held props' `holdProps`) are validated (`scripts/props_check.py`); fridge ground items stand on the shelf; `contact: true` on an `obj` uses its wider default shadow.
+- Front parts stay under `fx` layers (a blackout covers the bench), are slotted from the state a layer is drawn at on twos, get the `bg`-target grade and the rack-focus background blur, and draw inside pinned sub-shot replays.
+- New props, original designs with painted shading: `scales` (tilting beam, pans holding props), `microscope`, `paintbrush`, `newspaper` (`title`, `headline`, `date`, `photo`), `spray-can` (`spray` windows with a particle mist), `fridge` (`open` door over lit shelves with `items`), `rope` (coil) and `pulley` (`lift` raises a `load`, the wheel turns). The paintbrush, newspaper, spray can and rope work as bean `hold` items with `holdProps`. Catalog shots in `examples/props_fx_v2` (`v13_everyday`, `v14_house`, `v15_unlit`) and `examples/painted_places` (`set_courtroom_front`).
+
+### Engine backlog: creatures and vehicles
+
+- Fix: the reaper's `hold` prop sits in its right glove, out beside the body, in every pose (it covered the skull mask); the scythe follows the glove too; `holdSize` sets the prop size (`tests/test_vehicle_views.py`).
+- Car views: `model-t`, `car1910`, `sedan1920`, `car1950` and `car-modern` draw `front`, `3q`, `back` and `3q-back` views (`lib/props/vehicles-views.js`) from a per-kind face description. A vehicle `view` / `facing` timeline turns the car through the views in between (`turn: {frames, via, squash, smear}`), and a car whose `path` doubles back turns through 3q and front (or back) instead of squashing. Cars without `view`, `facing` or a reversal render exactly as before.
+- Riders can be objects `{who, expr, lookAt, talk, pose, hold, takes, ...}`: a seated driver changes expression on its own timeline and looks at a layer or point from its seat (the acting director aims from the seat in the world).
+- Car 3q and 3q-back views redrawn as one oblique projection (`lib/props/vehicles-3q.js`): foreshortened side, swept bonnet / roof / boot top planes and the front or rear face inked as one silhouette with creases, far wheels, riders behind the glass. In 3q-back the rear face replaces the side drawing's tail end (tail lights, bumper end, spare) and riders are seen from behind.
+- Fixes from review: rider anchors are pure functions of shot time (view, facing and 3q seat at that time; the vehicle's `at`; rider `scale`), so acting no longer depends on render order; riders of different vehicles never share a director plan; classic `car1910` riders aim from their seats; take hops lift seated riders; exhaust puffs keep the facing of their emission time; the squash stays where no view turn can draw (`rig: "classic"`, authored view); `view: "side"` is identical to no view; looping paths turn across the lap seam (circular distance, seam reversal); path `orient` no longer tilts front / back views; rider fields (`expr`, `hold`, `talk`, `lookAt`, `takes`) are type-checked and their targets validated.
+- `examples/creatures_vehicles_v2` shot `c13_car_turns` (a U-turn toward the camera, a car turning to face the camera and away, a driver reacting to a reaper holding an hourglass); recipe note in `02-visual-grammar.md` (U).
+
+Painted engine, phase 8: directing rules.
+
+- `SKILL.md` makes the painted look the default for new films and routes to Places 2.0, real `geo` maps and globes, shot-size framing, acting, path motion and particles; production rules gain "one continuous motion per shot", shot-size quotas and a per-shot density checklist.
+- `references/09-directing.md` §6.1 (coverage: shot-size quotas per minute, OTS for every exchange, wide establishers on maps and globes, continuous motion, hold-and-snap for poses, density checklist); `02-visual-grammar.md` "Shot sizes and density", a `geo` map recipe F and recipes U (vehicles and walkers on paths), V (the ECU insert), W (poison and gas); `07-story-craft.md` §7 maps sentence intents to the new features and updates the war, rivalry, poison, travel, globe and lab recipes.
+- Bean `holdRot` (degrees or a timeline) tilts the held prop in the grip and `holdProps` passes prop fields to it (a held `bottle` can `pour`), so held props act and move with the hand.
+- `xray` `anatomy` (skeleton, lungs, beating heart, vessels) and `specks` (grains settling into the bones over time).
+- Fix: arm IK keeps the elbow on the outer side for hands raised above the shoulder, changing bend side smoothly through a narrow band at shoulder height (no elbow jump) (`drink`, `eat`, `facepalm`, `reach` to the face no longer fold the elbow across the chest; `tests/test_arm_ik.py`).
+- `examples/painted_bench` map and globe shots use real geography (a painted Mediterranean with a flood, pins and a sign; a spinning `ortho` globe with ISO regions).
+
+Painted engine, phase 4: camera and acting. Classic specs without the new fields render pixel for pixel as before.
+
+- Shot-size grammar: `camera.frame` keys frame a target layer at `ecu`, `cu`, `mcu`, `ms`, `ws` or `ews` (bean head and body extents, or a layer's box), with `place`, `zoom`, `point` / `box` targets and world-edge clamping; keys move between framings with an ease, a spring `overshoot` that settles, or a `whip` pan with a motion streak, and `rack: true` pulls focus to the target.
+- Over the shoulder: a key's `ots` hides the listener and redraws it as a blurred dark shoulder at the frame edge, with the speaker placed opposite. Low / high angle (`camera.angle`): horizon planes shift by depth and the subject looms or shrinks.
+- Moves: eased `zoom` / `pan` keys, `handheld` (layered seeded noise), `follow` a moving layer with a critically damped lag, `dollyzoom`, `orbit` (parallax slide), smooth `roll`. Easings `inCubic`, `inBack`, `inOutBack`, `outSettle`, `outElastic`. Every move keeps the per-plane parallax of Places 2.0; deep planes never zoom out past the frame under a framed camera.
+- Layer `dist` (camera distance: parallax 1 / dist, haze for far layers). `onTwos` on `style`, a shot or a layer steps characters at 12 fps while the camera stays on ones.
+- Acting director (`acting/director.js`): bean `lookAt` (body, head and eyes follow a layer or point, with a spring head snap), reaction `takes` (`double`, `snap`, `jolt`, `blink`), and with acting on: a blink after the cut and on head snaps, a head kick on expression changes and idle fidgets (`acting.blink`, `react`, `fidget`).
+- Fixes to the shared path motion: object paths move `fx` and `map` layers again (only their plain lists keep the old meaning), the path position wins over `move.to`, anonymous path layers keep one noise seed (no bob / wobble flicker), creature crowds forward `contact` to their members, and map `fights`, `morphs` and `throws` accept the lon/lat forms (`{ll}`, `{lon, lat}`, `{ll: [...], gc}`) when the map has `geo`.
+- `scripts/camera_check.py` validates the new fields; the density lint counts shot sizes and over-the-shoulder framing. New example `examples/camera_acting` (one shot per feature); `examples/painted_bench` now uses an over-the-shoulder shot that punches into an ECU, a follow on the car and a low angle on the crowd.
+
+Painted engine, phase 3: Characters 2.0. Classic specs render as before; the painted look turns acting on.
+
+- Turnarounds: `view` (`front`, `3q`, `side` / `profile`, `back`) and `facing` (`right` / `left`) take timelines; changes turn through the in-between views with a squashed drawing and an automatic hair smear (`turn`). Flips from `move` / `path` get a front-view in-between.
+- Arms: IK `reach` to world points, rig-local points or another layer (`target`), arced hand paths with spring overshoot, `stretch` for rubber-hose reaches; new hand shapes `grab`, `wave`, `peace`, `thumbs-up`, counting `one`..`five` via `hand` / `handL` (registry `T.HANDS`). Painted arms and legs are shaded tapered tubes with cuffs and joint creases.
+- Body acting (`acting`, default on when painted): automatic anticipation before big pose changes, spring overshoot and settle after them, breathing, weight shift, squash & stretch on jumps, landings and `impact` hits.
+- Gaits: new walk / run / `sneak` / `march` cycles with contact, down, passing and up poses, 2-bone legs with planted feet, head nod and counter-swinging arms. Beans walk the common `path` (one implementation, shared with creatures and vehicles) with the stride matched to the speed. `floorY` keeps the painted contact shadow on the floor under fliers; upward `bob` now lifts it too.
+- Spring secondary motion in closed form (`T.springLag`): hair, cape, robe hem, helmet crests and ties lag and overshoot; `secondary` scales it.
+- Close-up faces (`detail`, automatic on large painted heads): graded irises with highlights, mood-shaped lids and brows, nose and cheek shading, wrinkles, sweat, tears, veins, blush, stubble, mouths with teeth rows and tongue. New expressions `terror`, `disgust`, `awe`, `crying`, `laughing`, `scheming`, `exhausted`.
+- Lip-sync: `scripts/lipsync.py` writes a per-frame loudness envelope from a voiceover (FFmpeg + standard library); `lipsync: {src}` maps it to five mouth shapes on twos (`render.py` inlines the file).
+- Painted costume detail: fabric weave over robes and outfits, cloth folds that follow the secondary motion, shaded belts with buckles, `patches`.
+- With acting, raised near arms draw over the head (`arms-up`, `point-up` stay visible) and held props get sizes that suit them; `holdScale` scales a held prop in any look.
+- Hardening: gait phase integrates the cadence over speed changes (no re-phasing on eased paths), switching the reaching arm releases instead of snapping, pinned beans can reach world layers, `turn` / `acting.turn` settings apply to motion flips, impacts are clamped, cloth folds respect layer opacity, `--gate 0` keeps silence silent, external lip-sync envelopes are validated, and malformed or non-finite Characters 2.0 values are reported instead of crashing.
+- `examples/characters_v2` (one shot per feature) and livelier face and crowd shots in `examples/painted_bench`.
+
+Painted engine, phases 0 and 1: a density lint and the paint core.
+
+- `style.look: "painted"` (or `look` per shot): light-relative multi-tone shading for every filled `T.outlined` shape (deep band, shadow band, lit base, airbrushed falloff, rim light), heavier ink on the shadow side, contact shadows under characters and under the head, paper tooth in the grain. Classic stays the default and renders as before; lettering and UI stay flat (`painted: true` opts a layer in, `painted: false` out).
+- `style.light` / `shot.light`: `dir`, `color`, `rim`, `ambient`, `intensity`.
+- Painted places: sun bloom, deeper zenith and horizon haze, 3-tone clouds, textured hills and ground with tufts and occlusion, surface textures per background kind (plaster, wood planks and floors, carpet, cobbles, water, parchment) and a wall-floor occlusion band.
+- New layer fields `atmos` (atmospheric perspective, works in both looks) and `contact` (ground shadow).
+- `base/textures.js`: seeded, cached texture tiles `grass`, `wood`, `stone`, `brick`, `plaster`, `fabric`, `paper`, `water` and `T.fillTexture`; `base/shade.js`: `T.paintState`, `T.shadeFill`, `T.inkUnder`, `T.inkStroke`, `T.contactShadow`.
+- Grades `dusk` and `overcast`.
+- `scripts/density.py`: `spec.py` prints non-fatal warnings for shots under 4 layers (title cards excepted), `void` backgrounds, characters without a foreground element, and 3+ consecutive cuts at the same camera zoom.
+- `examples/painted_bench`: one dense painted shot per scene type (interior, street, landscape, map, globe, face close-up, vehicle, crowd).
+
+Maps 2.0: real geography.
+
+- Bundled Natural Earth geography (public domain): 1:110m and 1:50m countries with shared-arc borders, lakes and rivers, about 265 KB in `scripts/engine/lib/maps/geo-data-lo.js` / `geo-data-hi.js`, rebuilt by `scripts/build_geo.py` from the raw downloads.
+- Map `geo: {proj, center, span, zoom, rotate, radius}` with `equirect`, `mercator` and `ortho` projections; `center`, `span`, `zoom` and `rotate` take `[{at, v}]` keys, so a globe spins to Europe and zooms in. The globe sits on a twinkling starfield with an atmosphere glow, sphere shading and an inked rim; `graticule` draws latitude and longitude lines.
+- Regions by ISO code (`iso: "FRA"`, groups `iso: ["ESP", "PRT"]` merged into one outline, `continent`), custom historical territories as `lonlat` rings (hand-drawn wobble, clipped to the real coast), `labelAt`. Faces, labels, conquest, wipes and every region effect work on them; overlay points take `{ll: [lon, lat]}`, `{ll: [...], gc: true}` (great circle) or `lon`/`lat` keys, and lon/lat `arrows` bow along the great circle.
+- `style: "painted"` for every map: mottled brush-textured sea, concentric coast ripples, land on a deep inked drop side with a bevel and paper grain, painted region slabs, highland and desert tint (`relief`, `lush`), mountain glyphs with snow caps and hill humps along 29 built-in ranges (`ranges`, `mountains`), rivers by name, plus `compass` and wooden `signs` overlays.
+- Animated conquest: region `flood` (organic boiling front from a lon/lat point, shared across all parts of a group), `drawOn` (border traced with a pen, then the fill fades in), `wipe.dir` (a straight edge sweeping `left`, `right`, `top`, `bottom`, a vector or an angle).
+- The validator checks map `style`, `geo.proj`, `geo.ranges`, `geo.detail`, `iso` codes, `lonlat` rings and lon/lat cover origins. New example `examples/geo_maps` (Europe 1914, globe spin, Mediterranean flood, warring states of China, an Atlantic crossing, a border drawn and wiped).
+
+Painted engine, phase 7: props and FX 2.0.
+
+- Closed-form particles: `fx` kind `particles` with 14 presets (`smoke`, `dust`, `sparks`, `fire`, `embers`, `steam`, `splash`, `rain`, `snow`, `debris`, `confetti`, `leaves`, `bubbles`, `gas`) and fields `rate`, `spread`, `life`, `gravity`, `wind`, `dur`, `burst`, `prewarm`, ...; every particle is a pure function of (seed, index, time). Painted rendering: soft lit puffs and additive glows.
+- Impact language: `impact-frame` (1-6 frame `invert`, `flat` poster or `flash` hit frame), `streaks`, `shockwave`, `dustkick` (fires on a target's landings), `toxic-cloud`, `aura`, and the layer field `trail` (motion smear on any layer).
+- Under the painted look `smoke`, `fire`, `explosion`, `dust`, `puff` and `gas` are repainted with particles; `bottle`, `crate`, `barrel`, `coin`, `moneybag`, `sack`, `hourglass`, `bulb`, `book`, `scroll`, `sword` and `shield` get materials, and standing props get contact shadows. Classic frames are unchanged.
+- Materials API: `T.matGlass`, `T.matLiquid`, `T.matMetal`, `T.matWood`, `T.matFabric`, `T.matPaper`, `T.matStone`, `T.matLeather`.
+- 37 new props: lab glassware (`flask`, `round-flask`, `beaker`, `test-tube`, `tube-rack`, `retort`, `burner`) with liquid levels, bubbles and fumes; `book-stack`, `paper-stack`, `coin-pile`, `banknotes`, `gold-bars`, `amphora`, `apple`, `cheese`, `fish`, `chair`, `stool`, `oil-lamp`, `lantern`, `inkwell`; `hammer`, `wrench`, `saw`, `shovel`, `pickaxe`, `anvil`, `axe`, `bow`, `pistol`, `musket`, `cannon` (guns `fire` with flash, smoke and recoil); machines with moving parts `gears`, `piston`, `gauge`, `valve`, `fuel-pump`.
+- Painted paper: aged sheets with folds, stains and grungy stamps (`folds`, `stains`); new doc kinds `front-page` and `letter` (handwriting that writes on, signature, wax seal).
+- `examples/props_fx_v2`: a 12-shot catalog of the above.
+
+Phase 6, creatures and vehicles 2.0:
+
+- `path: {pts, at, dur, ease, curve, orient, face, bank, loop}` on any layer (`creatures/motion-path.js`): constant-speed motion along smooth, linear or bezier curves (looping beziers close smoothly) with ease, facing the direction of motion (reversing eases turn the layer round), `orient`, `bank` and `loop`; `T.layerTravel` gives the signed distance the rig walked or rolled along `path` or `move`.
+- v2 creature rigs: gait tables with planted feet (walk, trot, gallop, auto by speed), 2-bone IK legs, states `idle`, `eat`, `sleep`, `scared`, `sit`, toon eyes by `expr`, lagging tails and manes, riders with saddle, bridle and reins. Upgraded `horse`, `cow`, `bull`, `sheep`, `pig`, `camel`, `elephant`, `dog`, `wolf` (painted look or new fields); new `cat`, `bear`, `rat`, `chicken`, `bird` (`flock`), `fish` (`school`), `snake`.
+- v2 vehicles: wheels and rods driven by distance, terrain suspension, world-space smoke / exhaust / dust / steam / wake trails and contrails, headlights, ships on a swell. New `model-t`, `sedan1920`, `car1950`, `car-modern`, `chariot`, `wagon` (animal teams), `locomotive`, `ship`, `sailship`, `plane`, `zeppelin`, `balloon`, `rocket`; `tank`, `train`, `biplane`, `submarine`, `car1910` upgrade in the painted look.
+- Animals kick up dust when running on dirt (`dust`); contact shadows stay on the ground during jumps; organic silhouettes (jointed tapered legs, thigh contours, wool, fur clumps, hump, knee wrinkles).
+- Classic specs render pixel-identical; `rig: "classic"` / `"v2"` forces a rig.
+- `examples/creatures_vehicles_v2` (12 shots); the painted bench vehicle shot now drives a wagon and a Model T along paths.
+
+Painted engine, phase 2: Places 2.0.
+
+- Modular set kit: bg kind `set` (`wall` plaster / brick / wood / stone / wallpaper / tile, perspective `floor` wood / stone / tile / carpet / dirt, `dark`, `parts`) with 29 painted parts (window with light shaft and dust, door, arch, column, roof beams, stairs, fireplace, curtain, painting, lamp, chandelier, banner, pipes, shelf, cabinet, rug, table, desk, chair, bed, plant, clock, throne, bench, flasks, crates, globe) and presets `throne`, `lab`, `courtroom`, `library`, `tavern`, `study`, `office`; layer type `set` places the same parts in front of the characters.
+- Depth planes: `parallax` on any background scales the depth between its planes (old kinds too); far planes of the new kinds carry atmospheric `haze`. In the painted look static planes are cached in offscreen canvases (deterministic keys) and animated details draw live, so the painted film got faster (film backgrounds 38 -> 31 ms/frame at scale 0.5).
+- New landscapes: `hills`, `woods`, `river` (and `coast`), `dunes`, `ancient`, `castle`, with swaying trees and grass, glints, surf, blowing sand, smoke and fluttering banners.
+- Richer painted versions of `office`, `stage`, `street1920`, `factory`, `gallery`, `sky`, `mountains`, `room`, `studio`, `corkboard` and `parchment` (same fields; classic look pixel-identical).
+- Painted fg framing: `foliage`, `column`, `window-frame`, `silhouettes`.
+- `examples/painted_places` catalog; `painted_bench` interior, street and landscape shots use the new sets.
+- Review fixes: a `set` layer follows its own `move`/bob/entrance; painted surface overlays keep their background's `parallax`, and parallax no longer leaks into nested screen shots; painted fg framing (`column`, `foliage`, `window-frame`, `silhouettes`) anchors to the visible strip in vertical films; `wall: false` / `floor: false` validate; malformed set enums, non-finite part geometry and bad presets of the new landscapes are reported instead of crashing or rendering; `street1920` / `factory` honour a custom `haze` colour; animation inside a set part (fire, candles) stays behind parts listed after it.
+- Richer painted `corkboard` (cork granules, pinned clutter, red yarn, frame), `parchment` (ruled lines, ornament border, aged edges, burnt corners), and new painted `battlefield`, `trench` and `harbor`; vegetation on sunset hills stays green.
+
 ## 3.6.0 · 2026-10-15
 
 More pictures, more examples and a reproducible showcase.

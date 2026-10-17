@@ -279,7 +279,12 @@ Common rules: put `fg` after the characters and before the lettering. Leave `x`,
 | `hands-fpv` | First-person gloved hands rising from the bottom corners with a bob | `color` `#f6f2ea` (glove), `sleeve` `#5a6a8a` |
 | `lamp-post` | A street lamp as a vertical band near one edge | `side` `right` |
 | `aperture` | Looking out from inside: a dark frame over the whole screen with one rectangular or rounded hole, an ink rim and one lighter bevel tone around the hole, optional vertical window bars | `hole` [0.2, 0.18, 0.6, 0.64] (`[x, y, w, h]` fractions of the visible frame; in vertical films of the strip), `radius` 0 (px), `color` `#120c09`, `edge` true (ink rim + bevel), `bars` 0 (count), `barWidth` (3 % of the hole width, at least 18 px); ignores `x`, `y`, `scale`, `z` and the camera (fixed to the screen) |
+| `foliage` | Painted canopy hugging the top corners (dense leaf clusters, a bough, hanging sprigs) and leaf masses in the bottom corners, swaying slowly (cached sprites) | `sides` [`tl`, `tr`, `bl`] (any of `tl`, `tr`, `bl`, `br`), `color` `#3a5a26`, `id` (layout seed) |
+| `column` | A huge cropped column at one edge, darker than the lit set behind it | `side` `left`, `inset` 60 (px), `width` 300 (px), `color` `#d8cfbc`, `tone` 0.25 (mix toward shadow) |
+| `window-frame` | Looking out through a window: textured wall, a deep reveal in three tones, a stone sill, open shutters (rocking slightly) and a flower pot | `hole` [0.2, 0.12, 0.6, 0.62] (frame fractions), `wall` `#cdbb98`, `frame` `#6a4428`, `depth` 46 (px), `shutters` true, `shutter` `#3a6a4a`, `pot` true |
+| `silhouettes` | Backs of heads and shoulders along the bottom edge (an audience, a crowd in front of a speaker), darkened, bobbing | `count` 3, `who` (cast names, one per figure), `look` (overrides for all), `tone` 0.55 (darkening), `size` 1, `id` (layout seed) |
 | `bg-front` | Redraws the shot background's front plane over everything drawn so far | none; ignores `x`, `y`, `scale`, `z` (the plane keeps its background parallax) |
+| `set-front` | Draws every automatic front piece here: the `front: true` parts of visible `set` backgrounds and the `frontY` planes (the automatic front pass, placed by hand) | none; ignores `x`, `y`, `scale`, `z` |
 
 `bg-front` front planes:
 
@@ -290,8 +295,72 @@ Common rules: put `fg` after the characters and before the lettering. Leave `x`,
 | `room` | `living` sofa back, `hospital` blanket, `bedroom` quilt (only with `quilt: true`) |
 | `cell` | the bars |
 | `antique` | the `balcony` balustrade |
+| `set` | parts with `front: true` (the `courtroom` preset's judge's desk); these are left out of the background itself |
 
-The background also draws its front plane itself, so a shot without `bg-front` still looks complete. `office` desk, `bar` counter and `olympus` throne have no front plane: they always stay behind the characters.
+The background also draws its front plane itself, so a shot without `bg-front` still looks complete. `frontY` (a number, the plane's ground y in frame fractions) on `room`, `cell`, `antique`, `palace` or `studio` puts the whole front plane into the automatic front pass instead (the background pass then leaves it out, so it is drawn once, also under a rack-focus blur): it is redrawn over every layer standing above `frontY` (ground y smaller) and stays under the ones standing lower, slotted per frame like `set` front parts (`{"kind": "studio", "variant": "courtroom", "frontY": 0.8}` keeps a judge at `y` 0.72 behind the bench and a witness at 0.98 in front). `office` desk, `bar` counter and `olympus` throne have no front plane: they always stay behind the characters.
+
+### Places 2.0: sets, depth planes and painted places
+
+Everything here is built for the painted look (`style.look: "painted"`); in the classic look the new kinds still render, plainer and uncached. Example catalog: `examples/painted_places`.
+
+**Depth fields on every background.** `parallax` (0..3, default 1) multiplies each plane's distance from the camera plane: 0 flattens the background, 2 doubles the depth (works for every kind, old and new, and for its `bg-front` plane). `haze` (0..2, default 1; `false` = none) scales the atmospheric haze baked into far planes of the Places 2.0 kinds (a hex string sets the haze colour instead; `battlefield` keeps its own on/off meaning). `rich: false` keeps an upgraded kind on its Phase 1 painting.
+
+**Cached planes.** In the painted look the static planes of the kinds below are drawn once per shot into offscreen canvases (keyed by shot, bg fields, light and resolution; at the shot's highest zoom) and blitted every frame; animated details (fire, lamps, dust, smoke, sway, water glints, banners) are drawn live on top of their plane. The result is identical whatever order frames are rendered in, and faster than drawing the shapes every frame.
+
+**Set kit: bg `set`.** A room composed from parts: `{"kind": "set", "preset", "wall", "wallColor", "trim", "floor", "floorColor", "floorColors", "floorY" 0.78, "z" 0.9, "dark" 0, "vignette" 0.35, "parts": [...]}`.
+- `wall` material: `plaster` (mottled, cracks, stains, wainscot), `brick`, `wood` (planks with nails), `stone` (ashlar blocks), `wallpaper` (stripes and diamonds, wainscot), `tile` (tiled lower wall, plaster above); `wall: false` leaves it out. `trim` colours the wainscot (`false` removes it).
+- `floor` material (perspective toward the centre): `wood` (boards, varnish sheen), `stone` (flagstones), `tile` (checker of `floorColors`), `carpet`, `dirt`; `floor: false` leaves it out.
+- `dark` 0..1 lowers the room's ambient level under its lamps and fires (the `tavern` preset uses 0.3).
+- **Parts in front of the actors.** A part with `front: true` is not drawn with the room: a front pass draws it over the actors who stand behind it (a judge behind the bench, a clerk behind a counter). Every frame each front part is slotted into the layer order on its own, from the layers' current state (swaps, `move`, `path`, jumps, `z`, `hud`): before the first active layer that belongs in front of it, that is a screen-wide `fx` layer (a blackout, flash or tone effect stays over the bench; ground fx such as `dust` at a `y` stand at that `y`, see [08_fx_and_tone.md](08_fx_and_tone.md)), an `fg` layer, lettering or screen furniture (`label`, `title`, `hud`, …), a layer nearer than the subject plane (`z` > 1), or a layer whose ground point is lower on screen than the part's `y`. So an actor between two front tables covers the far one and is covered by the near one, and a judge who walks forward past the bench comes in front of it. Every `set` in the shot's `bg` list contributes its front parts unless a covering background is listed after it: every background covers the earlier ones except a parts-only `set` (`wall: false, floor: false`), so a room plus a parts-only set of extra benches, or a landscape (`forest`) plus a parts-only set with a front desk, both work. While an explicit `fg` `bg-front` or `set-front` layer in `layers` is active, it places all the front parts instead; `set-front` is not allowed in `pinned`. Layer states are read at the time the layer is drawn (on twos: its held frame); front parts get the shot's `bg`-target grade and the rack-focus background blur, and draw inside sub-shot replays (panels, screens) with that shot's camera. The `courtroom` preset's desk is a front part: put the judge at `y` ≈ 0.74 and witnesses or lawyers in front at `y` > 0.8.
+- `preset`: `throne` (stone hall, columns, crown banners, sconces, rug, throne, arched window), `lab` (tiles, pipes with steam, jars, cabinet, clock, bubbling `flasks`), `courtroom` (wood, arched windows, star flags, portrait, judge's desk in front of the actors (`front: true`), front pews at `z` 1.05), `library` (four shelves, dusk window, globe, candle table), `tavern` (beams, jars, brick fireplace, sconce, crates, table), `study` (wallpaper, sea painting, curtained window, clock, desk with lamp), `office` (cabinet, shelf, painting, window, plant, hanging lamp, desk). `parts` are added after the preset's parts.
+- Parts that share a `z` form one plane (cached in the painted look); parts are drawn in list order. Positions are frame fractions: standing parts use `x` = centre and `y` = floor contact; wall-hung parts (`window`, `painting`, `banner`, `curtain`) use `y` = top edge. `scale` sizes most parts.
+
+| part `kind` | Fields (defaults) | Look / animation |
+| --- | --- | --- |
+| `wall` | `material` `plaster`, `color`, `trim`, `y` (floor line) | as the bg `wall` |
+| `floor` | `material` `wood`, `color`, `colors`, `y`, `vx` (vanishing x fraction) | as the bg `floor` |
+| `window` | `w` 0.14, `h` 0.34, `arch` false, `sky` `day` (`dusk`, `sunset`, `night`, `overcast`), `mullions` [2, 3], `frame` `#6a4428`, `light` false, `lean` (px), `lightColor`, `lightAmount` 1, `dust` true | view with hills and trees, glass glare, wooden frame and sill; `light`: a shaft down to the floor with a floor pool and drifting dust motes |
+| `door` | `color` `#6e4424`, `open` false | panelled door in a frame (open: dark doorway, leaf swung out) |
+| `arch` | `color` `#b8ab94`, `view` (a window sky name; dark passage without) | stone archway with voussoirs and keystone |
+| `column` | `h` 0.66, `color` `#d8cfbc` | fluted shaft, base and capital, contact shadow |
+| `roof` | `y` 0.1, `count` 7, `color` `#5a3a22` | ceiling boards and beams across the top |
+| `stairs` | `steps` 8, `dir` `right`, `color` `#8a5a32` | wooden stairs with a banister |
+| `fireplace` | `material` `stone` (`brick`), `color` `#a8988a` | mantel with candles and a clock; live fire, flickering glow |
+| `curtain` | `w` 0.12, `y` 0.06, `y1` 0.74, `color` `#8a2a2a`, `closed` false | rod and two tied drapes, swaying |
+| `painting` | `w` 0.1, `h` 0.14, `subject` `landscape` (`sea`, `portrait`, `abstract`, `dark`), `frame` `#c8962e`, `plaque` | gilt frame, canvas weave, cast shadow |
+| `lamp` | `style` `floor` (`table`, `hanging`, `sconce`), `shade`, `light` `#ffd890`, `on` true, `radius`, `flicker` 0.05 | warm flickering pool and a cone under the shade |
+| `chandelier` | (`y` = hanging height) | five candles, flickering glow |
+| `banner` | `y` 0.08, `h` 0.4, `color` `#8a1a1a`, `trim` `#e2b23c`, `emblem` `circle` (`star`, `cross`, `crown`, `none`) | cloth banner waving on a rod |
+| `pipes` | `rows` [0.16, 0.24], `drops` [0.12, 0.86], `color`, `steam` true | wall pipes with flanges, valves and steam |
+| `shelf` | `w` 300, `h` 440, `rows` 4, `items` `books` (`jars`, `scrolls`, `mixed`, or a list per row), `color` | bookcase with seeded books, shelf shadows |
+| `cabinet` | `drawers` 4, `color` `#7a8478`, `open` (drawer index) | filing cabinet with labels and handles |
+| `rug` | `w` 640, `color`, `trim`, `shape` `rect` (`oval`) | rug in perspective with border and medallion (`y` = centre) |
+| `table` | `w` 380, `color`, `items` [] (`books`, `papers`, `candle`, `jug`, `bottle`, `inkwell`, `globe`, `skull`, `lamp`) | table with items; candles burn live |
+| `desk` | `w` 520, `color`, `items` | desk with drawers and items |
+| `chair` | `color`, `cushion`, `flip` | wooden chair |
+| `bed` | `color`, `sheet` | headboard, pillow, folded blanket |
+| `plant` | `kind` `fern` (`palm`), `color`, `pot` | potted plant |
+| `clock` | `color` | grandfather clock with a swinging pendulum |
+| `throne` | `color` (gold), `cloth` | throne on stone steps |
+| `bench` | `w` 560, `back` true, `color` | bench or pew |
+| `flasks` | `colors` (four) | lab glassware on a stand, rising bubbles and coloured glow |
+| `crates` | `color` | crate stack and a barrel |
+| `globe` | | standing globe |
+
+**Set layer: `type: "set"`.** The same parts as a layer, e.g. furniture in front of the characters: `{"type": "set", "parts": [...], "preset", "floorY", "z"}`. Part positions stay frame fractions; the layer's `x`, `y`, `scale` and `rot` pivot the whole group around its anchor (default centre). Default entrance `none`.
+
+**New landscape kinds** (each draws its own painted sky: `preset`, `clouds`, `horizon`, `palette`, `sun`):
+
+| kind | Fields (defaults) | Look |
+| --- | --- | --- |
+| `hills` | `horizon` 0.56, `grass`, `fence` true, `path` true, `flowers` 60, `trees` [[0.1, 0.88, 0.6]] ([x, y, h] fractions), `leaf` | three hazed rolling planes with tree clumps and bushes, a fence along the near crest, a meadow path with flowers; trees and grass sway |
+| `woods` | `horizon` 0.6, `leaf` `#5d7d32`, `rays` true | forest edge: hazed treeline, two rows of foliage trees, near trees and bushes, meadow; big swaying trees at both edges, light shafts, pollen |
+| `river` | `variant` `river` (`coast`), `water`, `sand` (coast), `horizon` | river: hazed hills, banks with trees and bushes, stones, reeds swaying, flowing glints. coast: sea to a headland, glints, beach with shells and rocks, rolling surf |
+| `dunes` | `horizon` 0.58, `sand` `#e0b878`, `skull` true | sandstone mesas, three rows of dunes with lit windward slopes and shaded slip faces (away from the light), ripples, blowing sand |
+| `ancient` | `horizon` 0.6, `stone` `#e8dcc4`, `paving`, `colonnade` true, `statue` true | hazed hill town and temple, a big temple with pediment, cypresses, a paved agora between colonnades, a statue |
+| `castle` | `horizon` 0.56, `at` 0.62, `stone` `#a8a090`, `roof` `#3a4a7a`, `flag` `#c0302a` | castle on a hill (curtain wall, gate, towers with conical roofs and fluttering banners), a timber-framed town with smoking chimneys, a road |
+
+**Richer painted versions of existing kinds.** In the painted look these kinds draw a new, denser version with their existing fields (classic look unchanged): `office` (wood wall, bookshelf, filing cabinet, portrait, wall clock, window with a light shaft and dust, rug, banker's `lamp`, tufted chair, desk with blotter, papers, inkwell and lamp; new optional `deskColor`, `chairColor`, `deskItems`), `stage` (velvet backdrop, gilt proscenium, valance with tassels, footlights, spotlight cones with dust for `spots`; `back`, `floor`, `gold`), `street1920` (hazed city silhouette, domes, palazzi with shutters, balconies, flower boxes, awnings, cornices, chimneys with smoke, lamp posts `lamps` [0.27, 0.73], cobbles and kerbs), `factory` (hazed skyline, brick saw-tooth halls with lit windows, chimneys with heavy smoke, water tower, pipe bridge, fence, puddles), `gallery` (moulded wall and wainscot, gilt frames under picture lights, parquet, `bench` and `ropes` true), `sky` (hazed hill planes with bushes and tree clumps, swaying `trees`, water glints, swaying grass; a `timelapse` sky keeps the Phase 1 painting), `mountains` (`peaks` variant: hazed ranges with lit and shaded rock, snow caps, pine belts, foothills, rocks; a light `ground` colour or `snow: true` gives snowfields and snowfall), `room` and `studio` (pictures, sconces, window light shafts with dust, wall textures where the wall is bare; courtroom flags and seal), `corkboard` (framed cork with granules and pin holes, a pinned clutter of clippings, photos, a map scrap, index cards and sticky notes joined by red yarn under the spec's own notes (`decor: false` removes it), desk-lamp light), `parchment` (fibres, fold creases, stain rings, faint ruled lines `ruled`, an ink border with corner flourishes `ornament`, blotchy aged edges, burnt corners `burnt`; each `false` removes it), `battlefield` (hazed ridges with dead trees and smoke columns, painted craters with puddles, stumps, planks, wire on stakes, fires with glow and smoke, drifting ground fog), `trench` (cratered no-man's-land, sandbagged lip, plank revetment with posts and a ladder, fog; a drifting flare at `night`) and `harbor` (lighthouse and town on the far shore, glints, a bobbing ship and moored boats, gulls, a plank pier with bollards, rope coils, crates and lamps). In a `set`, the animation of fireplaces, candles, clocks, flasks, curtains and banners stays behind parts listed after them in the same plane; light effects (window shafts, lamp pools, steam) are drawn over the whole plane.
 
 Other `fg` kinds live in other toolkits: the POV masks `binoculars`, `spyglass` and `eye-pov` in [09_transitions_and_lens](09_transitions_and_lens.md), and the crowd silhouette band `mob` in [08_fx_and_tone](08_fx_and_tone.md).
 

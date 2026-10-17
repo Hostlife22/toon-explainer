@@ -90,6 +90,8 @@
   // kind "bg-front" ({"type": "fg", "kind": "bg-front"}): bgs are always painted before layers, so a figure standing
   // behind a bench needs this second pass. The bg draws the same plane itself, so shots without the fg still look whole.
   T.BG_FRONT = T.BG_FRONT || {};
+  // frontY routes the plane to the automatic front pass (set-front.js): the background pass leaves it out, like set front parts.
+  T.frontRouted = (bg) => typeof bg.frontY === 'number';
   T.FG['bg-front'] = (ctx, L, lt, env) => {
     const bgs = Array.isArray(env.shot && env.shot.bg) ? env.shot.bg : [env.shot && env.shot.bg].filter(Boolean);
     ctx.save(); ctx.setTransform(env.dpr || 1, 0, 0, env.dpr || 1, 0, 0); // full-frame: the front plane applies its own parallax
@@ -421,7 +423,7 @@
     const v = variantOf(bg, Object.keys(PALACE), 'ochre', 'palace'), seed = seedOf(env, 'palace', bg);
     const night = !!bg.night, pal = palOf(bg, v);
     const floorY = H * (bg.floorY ?? 0.8), cols = bg.columns ?? [0.12, 0.34, 0.66, 0.88];
-    if (v === 'gothic') { palaceGothic(ctx, bg, lt, env, pal, floorY); vignette(ctx, 0.35); palaceFront(ctx, bg, lt, env); return; }
+    if (v === 'gothic') { palaceGothic(ctx, bg, lt, env, pal, floorY); vignette(ctx, 0.35); if (!T.frontRouted(bg)) palaceFront(ctx, bg, lt, env); return; }
     cam(ctx, env, 0.6, () => {
       ctx.fillStyle = vgrad(ctx, -OV, floorY, [T.shade(pal.wall, -0.12), pal.wall, T.shade(pal.wall, -0.06)]); ctx.fillRect(-OV, -OV, W + OV * 2, floorY + OV + 4);
       if (v === 'ochre') {
@@ -468,7 +470,7 @@
       for (let i = 0; i < 40; i++) { const x = W * (0.2 + r() * 0.7), y = ((r() * H + lt * 14) % (H * 0.8)), s = 2 + r() * 3; ctx.fillRect(x + Math.sin(lt + i) * 10, y, s, s); }
     });
     vignette(ctx, night ? 0.55 : 0.3);
-    palaceFront(ctx, bg, lt, env);
+    if (!T.frontRouted(bg)) palaceFront(ctx, bg, lt, env);
   };
 
   // ---------- burning (inferno plain / city on a hill / palace roofline) ----------
@@ -733,7 +735,7 @@
     const v = variantOf(bg, Object.keys(STUDIO), 'gameshow', 'studio'), seed = seedOf(env, 'studio', bg);
     STUDIO[v].back(ctx, bg, lt, env, seed);
     vignette(ctx, bg.vignette ?? 0.3);
-    STUDIO[v].front(ctx, bg, lt, env, seed);
+    if (!T.frontRouted(bg)) STUDIO[v].front(ctx, bg, lt, env, seed);
   };
   T.BG_FRONT.studio = (ctx, bg, lt, env) => { const v = bg.variant ?? 'gameshow'; if (STUDIO[v]) STUDIO[v].front(ctx, bg, lt, env, seedOf(env, 'studio', bg)); };
 })();

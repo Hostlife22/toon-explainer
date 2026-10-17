@@ -1,0 +1,22 @@
+{
+  "_doc": "Places 2.0 (painted look): depth planes and the cached plane renderer (places/depth.js), the modular set kit (bg kind and layer type `set`, places/set-*.js), new landscape kinds (places/land-*.js), rich painted versions of common kinds (places/rich-*.js) and painted foreground framing (places/fg-painted.js). See references/toolkits/04_places.md.",
+  "layers": ["set"],
+  "bgs": ["set", "hills", "woods", "river", "dunes", "ancient", "castle"],
+  "fg": ["foliage", "column", "window-frame", "silhouettes", "set-front"],
+  "kinds": {
+    "set_part": [
+      "wall", "floor", "window", "door", "column", "shelf", "cabinet", "rug", "table", "desk", "chair", "bed",
+      "painting", "lamp", "roof", "stairs", "fireplace", "curtain", "plant", "clock", "pipes", "chandelier",
+      "banner", "throne", "bench", "flasks", "crates", "globe", "arch"
+    ],
+    "set_preset": ["throne", "lab", "courtroom", "library", "tavern", "study", "office"],
+    "set_wall": ["plaster", "brick", "wood", "stone", "wallpaper", "tile"],
+    "set_floor": ["wood", "stone", "tile", "carpet", "dirt"]
+  },
+  "registry": {
+    "set_part": "TOON.SET_PARTS",
+    "set_preset": "TOON.SET_PRESETS",
+    "set_wall": "TOON.SET_WALLS",
+    "set_floor": "TOON.SET_FLOORS"
+  }
+}

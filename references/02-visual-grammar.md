@@ -29,7 +29,15 @@ The recipes below (A–P) are the core grammar. Topic-specific recipes live with
 2. **Midground**: characters (3/4 view!), crowds, props.
 3. **Background**: a rich backdrop (`forest`, `city`, `sky` with the right cloud style, `interior` with light wedges).
 
-Add atmosphere (`fx`: `birds`, `beam`, `rain`, `smoke`, `fire`) and, when the tone calls for it, `grade`. An empty background with a lone character is acceptable only for reactions (`burst`) and title cards.
+Add atmosphere (`fx`: `particles`, `birds`, `beam`, `rain`, `smoke`, `fire`) and, when the tone calls for it, `grade`. An empty background with a lone character is acceptable only for reactions (`burst`) and title cards.
+
+In the painted look (`style.look: "painted"`, the default for new films) the background is a Places 2.0 `set` (a `preset` plus your own `parts`) or a painted landscape, the middle plane gets a `set` layer of furniture in front of the actors, and the foreground can be an `ots` shoulder from the camera framing or `silhouettes` of an audience (`size` 0.5–0.6 when the camera frames tightly, or the hats fill the frame).
+
+## Shot sizes and density
+
+Plan each shot's size with `camera.frame` (`ecu`, `cu`, `mcu`, `ms`, `ws`, `ews`) and follow the quotas of [09 §6.1](09-directing.md#61-coverage-shot-sizes-continuous-motion-and-density-painted-look): at least 25 % `cu`/`ecu` per minute, an `ots` pair for every exchange, a wide establisher (set, landscape, `geo` map, globe) per new place or era, never three cuts in a row at one size. Every shot carries one continuous motion (a `path`, `particles`, a camera move); poses still hold and snap. Lettering in a tightly framed shot uses `hud: true`.
+
+Density checklist (each shot): place + actors + foreground; light set; one continuous motion; size differs from one of the previous two shots; real geography on maps. `python3 scripts/spec.py` prints the density lint after the OK line; fix every warning or justify it in the shot's `screen` note.
 
 ## Recipes
 
@@ -79,6 +87,18 @@ Two characters or two objects on opposite sides; the second appears later; `whip
 For a document or study, use `card` (title, year, 2–3 lines); for a day, month, or deadline, use `calendar`.
 
 ### F. Map / geography / spread
+Real geography first (the painted default): a `geo` map with countries by `iso`, historical or state shapes as `lonlat` rings, and animated change (`flood`, `drawOn`, `wipe`), pins and routes in lon/lat:
+```json
+{"bg":{"kind":"flat","color":"#14213d"},"layers":[{"type":"map","style":"painted",
+  "geo":{"proj":"mercator","center":[{"at":0,"v":[-92,39]},{"at":2.6,"v":[-84,40]}],"span":52,
+         "zoom":[{"at":2.2,"v":1},{"at":3.6,"v":2.2}],"ranges":true,"rivers":true},
+  "regions":[{"id":"us","iso":"USA","color":"#8fb36a","dur":0.001,"label":{"text":"USA","size":60}},
+             {"id":"ohio","lonlat":[[-84.8,41.7],[-80.5,42],[-80.5,40.6],[-82.6,38.4],[-84.8,39.1]],"color":"#c8402a",
+              "dur":0.001,"drawOn":{"at":2.4,"dur":1.0}}],
+  "pins":[{"lon":-74,"lat":40.7,"label":"NEW YORK","at":0.2},{"lon":-84.19,"lat":39.76,"label":"DAYTON","at":2.6}],
+  "routes":[{"pts":{"ll":[[-74,40.7],[-84.19,39.76]],"gc":true},"at":0.6,"dur":1.7}]}]}
+```
+For "everywhere on Earth", an `ortho` globe whose `center` keys spin it while `continent` regions `flood` one after another. The older blob map below remains for abstract or invented lands:
 ```json
 {"bg":{"kind":"parchment"},"layers":[{"type":"map","land":[[0.45,0.55,0.25,0.18],[0.7,0.4,0.2,0.2]],
   "regions":[{"pts":[[0.38,0.5],[0.5,0.45],[0.55,0.6],[0.42,0.66]],"at":0.5,"dur":1.5}],
@@ -86,7 +106,7 @@ For a document or study, use `card` (title, year, 2–3 lines); for a day, month
   "routes":[{"pts":[[0.47,0.55],[0.6,0.45],[0.72,0.38]],"at":1.2,"dur":1.4}]},
   {"type":"bean","who":"x","x":0.62,"y":0.6,"size":260}]}
 ```
-For real geography, supply a `map.image`: an AI-generated parchment-style map or PNG outlines. The code handles fills, pins, and routes.
+For a hand-drawn look of a real place, `map.image` (an AI-generated parchment map) still works; prefer `geo` (see [toolkits/05_maps.md](toolkits/05_maps.md)).
 
 ### G. Turn to the "villain" / the system
 Dark preset (`night`, `storm`), villain large from below (`size` 750+, `y` 1.02), `expr:"smug"`, slow push-in `zoom [1, 1.12]` with `ease:"out"`, `fx: spotlight` or dark-colored `rays`. Tag caption: "INDUSTRY", "CORPORATION", "SENATE".
@@ -121,7 +141,45 @@ A viewer-stand-in character `who:"you"` (neutral clothing), `expr:"worried"`, th
 `city` (`style: stone` or `wood`) + `crowd` (2 rows, `armsUp`, `expr: "happy"`, `flipAlt`) + `fx: confetti` + `fg: grass`.
 
 ### P. Over-the-shoulder conversation
-`fg: ots` (`who` is the listener, `side` opposite the speaker) + the speaker in 3/4 view with `talk`, pose changes, and a caption. Put the caption **after** `ots` in the layer list so the back of the head doesn't cover it.
+Both characters in the shot with ids, then `camera.frame` keys `{"target": "<speaker>", "size": "mcu", "ots": "<listener>"}` and a second key that swaps them on the reply (shot-reverse-shot in one shot). The listener becomes a blurred dark shoulder at the frame edge, the speaker sits opposite; a final key at `ecu` with `overshoot` punches into the line that matters. Hand-placed alternative: `fg: ots` (`who` is the listener, `side` opposite the speaker), with the caption **after** it in the layer list.
+
+### Q. Lived-in room (painted look)
+`bg: set` with a `preset` (`study`, `library`, `office`, `tavern`, `lab`, `throne`, `courtroom`) or your own `parts`; a `window` with `light: true` gives a shaft with dust, a `lamp` or `fireplace` gives a warm pool (raise `dark` for a night scene). Put the speaker in the light, add a `set` layer (`table` with a `candle`, `z` 1.1) in front of the characters, and frame with `fg: column` or `fg: curtains`.
+
+### R. Establishing landscape with depth (painted look)
+`hills`, `woods`, `river` (`coast`), `dunes`, `ancient` or `castle` + a slow camera `pan`: far planes are hazed and slide less. Push `parallax` to 1.5–2 for a showy reveal and `haze` up for heat or morning mist. Frame with `fg: foliage` (top corners) and keep the character on the near meadow or plaza.
+
+### S. Looking out / listening audience
+Through a window: `fg: window-frame` over a `castle` or `street1920`, a character's shoulder at `z` 1.3 in a corner. A speech or verdict: `fg: silhouettes` (`who` = cast backs) under a speaker on a `stage` or in a `set` `courtroom`.
+
+### T. Shot-size grammar (vary the size every cut or two)
+Frame the subject instead of zooming by hand: `camera.frame: {"target": "<id>", "size": "ecu" | "cu" | "mcu" | "ms" | "ws" | "ews"}`.
+Establish at `ws` / `ews` (a `high` angle makes the figure small and lost), cut to `ms` for the gesture, `mcu` / `cu`
+for the reaction, `ecu` + `letterbox` for the stare or the scream. Power and triumph: `angle: "low"` at `ms` over a
+crowd. Panic: `handheld` + `shake`. Chase: `follow` the runner (`onTwos` for snappier legs), `whip` to the pursuer.
+Dread: `dollyzoom` on a `cu`. Reveal of a second character: `rack` focus from the foreground one to the far one.
+
+### U. Vehicles and walkers on a path (painted look)
+A street establisher with life: the hero car on a `path` with `ease: "out"` so it rolls in and stops, a second vehicle crossing behind at a smaller `size` with `atmos`, a pedestrian on a `path` with `gait: "walk"`, and the camera `follow`ing the hero (`size: "ws"`, `axis: "x"`). Exhaust and wheel rotation come from the distance travelled.
+```json
+{"bg":{"kind":"street1920"},"camera":{"follow":{"target":"car","lag":0.4,"size":"ws","axis":"x"}},
+ "layers":[{"type":"vehicle","kind":"sedan1920","size":260,"atmos":0.25,"path":{"pts":[[1.15,0.8],[-0.2,0.8]],"dur":4.6,"ease":"linear"}},
+  {"type":"bean","who":"lady","x":0.86,"y":0.9,"size":300,"path":{"pts":[[0.86,0.88],[0.66,0.88]],"dur":4.6,"gait":"walk"}},
+  {"type":"vehicle","kind":"model-t","id":"car","size":420,"riders":["driver"],"path":{"pts":[[-0.2,0.93],[0.52,0.93]],"dur":2.6,"ease":"out"}},
+  {"type":"fg","kind":"lamp-post","side":"left"}]}
+```
+
+**Turning cars and drivers who react.** The cars (`model-t`, `car1910`, `sedan1920`, `car1950`, `car-modern`) have front, `3q`, back and `3q-back` drawings: a path that doubles back (a U-turn heading down the frame) turns the car through 3q and front instead of squashing it, and a `view` timeline swings a parked car to face the camera. A rider object gives the driver a reaction:
+```json
+{"type":"vehicle","kind":"car1950","id":"car","x":0.6,"y":0.95,"size":560,
+ "riders":[{"who":"driver","expr":[{"at":0,"v":"happy"},{"at":1.6,"v":"shock"}],"lookAt":[{"at":1.6,"v":"reaper"}]},"boss"]}
+```
+
+### V. The insert that matters (ECU on an object)
+`camera.frame` keys from `ms` on the character to a `box` around the hands or the object (`overshoot` 0.08), or straight to a prop layer; the prop acts (`bottle` `pour`; the glassware fields `boil`, `fumes`, `fill`), `particles` carry the substance (`splash`, `gas`, `steam`), and the label is `hud`. End the beat with a cut back to a face.
+
+### W. Poison, gas, fumes
+`fx` `toxic-cloud` (`ground: true`, `drift`) creeping along the floor + low `particles` `gas` band (`prewarm`) + a per-shot cold `light` and a `grade` that drops on the key word (`{preset: "solemn", at, dur: 0.6}`). Never show the harm: characters `tremble`, then `exit: "fade"`, and the empty place holds.
 
 ## Tone: cold vs. comedic
 

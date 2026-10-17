@@ -9,86 +9,28 @@ before a long render starts. Keep the KNOWN_* sets in sync with scripts/engine (
 from __future__ import annotations
 
 import json
-import re
+import math
 import sys
 from pathlib import Path
 
-KNOWN_LAYERS = {"bean", "image", "label", "title", "date", "era", "counter", "timer", "caption",
-                "prop", "card", "sign", "calendar", "map", "fx", "fg", "crowd"}
-KNOWN_BGS = {"sky", "interior", "parchment", "burst", "flat", "image", "forest", "city"}
-KNOWN_TRANSITIONS = {"cut", "dissolve", "fade-white", "fade-black", "zoom-punch", "whip", "iris"}
-KNOWN_ENTER = {"none", "fade", "pop", "drop", "rise", "slide-left", "slide-right", "slide-up", "slide-down", "spin"}
-KNOWN_PROPS = {"coin", "moneybag", "scroll", "sword", "flag", "question", "exclaim", "bread", "temple", "skull",
-               "heart", "book", "hourglass", "shield", "spear", "torch", "bulb"}
-KNOWN_FX = {"rays", "speedlines", "sweat", "anger", "splat", "flash", "dust", "sparkle", "confetti", "spotlight",
-            "fire", "rain", "beam", "birds", "smoke", "puff", "explosion", "blood", "lightning", "arrows"}
-KNOWN_FG = {"bushes", "canopy", "ledge", "grass", "trunk", "ots", "rubble"}
-KNOWN_VIEWS = {"front", "3q", "side", "back"}
-KNOWN_GRADES = {"serious", "storm", "night", "solemn", "warm", "gold"}
-KNOWN_POSES = {"idle", "point", "point-up", "arms-up", "shrug", "facepalm", "think", "wave", "hold", "fist", "hips",
-               "cross", "present", "scared", "hands-face", "thumbs-up", "clutch-head", "sword-up", "reach"}
-KNOWN_EXPR = {"neutral", "happy", "content", "sleepy", "smug", "angry", "rage", "sad", "worried", "shock", "scream",
-              "squint", "cry", "dead"}
-KNOWN_SKY = {"sunset", "day", "dusk", "night", "storm", "teal"}
-KNOWN_HAIR = {"short", "long", "curly", "bun", "bald", "bald-sides"}
-KNOWN_BEARD = {"full", "goatee", "stubble"}
-KNOWN_HEAD = {"crown", "laurel", "helmet", "hood", "headband", "pontifex", "hat"}
-KNOWN_OUTFIT: set[str] = set()
-KNOWN_MASK: set[str] = set()
-KNOWN_HEADSHAPE: set[str] = set()
-KNOWN_FLAG: set[str] = set()
-KNOWN_CROWD_MODE: set[str] = set()
-KNOWN_BUILD: set[str] = set()  # body proportions (rig.js T.BUILDS), filled from scripts/vocab
-KNOWN_AGE: set[str] = set()
-COLOR_KEYS = ("skin", "skinShade", "robe", "robeShade", "sleeve", "trim", "sash", "belt", "cape", "armor", "hairColor",
-              "beardColor", "mustacheColor", "headColor", "crest", "sandal", "legColor")
-HEX_RE = re.compile(r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
-IMAGE_KEYS = ("src", "image", "idle", "talk", "blink")
-
-# ---------- vocabulary extensions ----------
-# Each engine module may ship scripts/vocab/<module>.json, so new layer types, kinds and costume values extend the
-# validator without editing this file:
-#   {"layers": [...], "bgs": [...], "fx": [...], "props": [...], "fg": [...], "transitions": [...], "grades": [...],
-#    "enter": [...], "poses": [...], "expr": [...], "head": [...], "hair": [...], "beard": [...], "sky": [...],
-#    "color_keys": [...],
-#    "kinds": {"<layer type>": ["kind", ...]},            # layer.kind must be one of these for that type
-#    "registry": {"<layer type or set name>": "TOON.<registry>"}}  # checked against the engine by tests
-VOCAB_DIR = Path(__file__).parent / "vocab"
-LAYER_KINDS: dict[str, set[str]] = {}
-REGISTRIES: dict[str, str] = {}
-
-
-# Output formats: width x height of the rendered video. The world is always 1920x1080 (see core.js T.FORMATS).
-FORMATS = {"landscape": (1920, 1080), "vertical": (1080, 1920)}
-
-
-def _load_vocab() -> None:
-    global COLOR_KEYS
-    targets = {"layers": KNOWN_LAYERS, "bgs": KNOWN_BGS, "transitions": KNOWN_TRANSITIONS, "enter": KNOWN_ENTER,
-               "props": KNOWN_PROPS, "fx": KNOWN_FX, "fg": KNOWN_FG, "grades": KNOWN_GRADES, "poses": KNOWN_POSES,
-               "expr": KNOWN_EXPR, "sky": KNOWN_SKY, "hair": KNOWN_HAIR, "beard": KNOWN_BEARD, "head": KNOWN_HEAD,
-               "views": KNOWN_VIEWS, "outfit": KNOWN_OUTFIT, "mask": KNOWN_MASK, "headShape": KNOWN_HEADSHAPE,
-               "flag": KNOWN_FLAG, "crowd_mode": KNOWN_CROWD_MODE,
-               "build": KNOWN_BUILD, "age": KNOWN_AGE}
-    extra_colors: list[str] = []
-    for path in sorted(VOCAB_DIR.glob("*.json")):
-        data = json.loads(path.read_text(encoding="utf-8"))
-        for key, values in data.items():
-            if key in targets:
-                targets[key].update(values)
-            elif key == "color_keys":
-                extra_colors += values
-            elif key == "kinds":
-                for layer_type, kinds in values.items():
-                    LAYER_KINDS.setdefault(layer_type, set()).update(kinds)
-            elif key == "registry":
-                REGISTRIES.update(values)
-            elif not key.startswith("_"):
-                raise ValueError(f"{path.name}: unknown vocabulary key {key!r}")
-    COLOR_KEYS = tuple(dict.fromkeys(list(COLOR_KEYS) + extra_colors))
-
-
-_load_vocab()
+from density import lint  # noqa: F401  (re-exported: non-fatal density warnings, printed by the CLI)
+import props_fx  # Props & FX 2.0 field checks (particles, impact language, trail, paper)
+import props_check  # everyday props: nested prop kinds, spray windows, flame switches
+from motion_check import check_motion, check_riders, rider_acting
+from places_check import check_depth, check_set_bg, check_set_layer
+import spec_characters as SC
+import camera_check as CC
+import spec_blackout as SB
+from spec_vocab import (  # noqa: F401  (re-exported: the vocabulary is part of this module's API)
+    COLOR_KEYS, FORMATS, GLITCH_STYLES, HEX_RE, IMAGE_KEYS, ISO_BUILDINGS, KNOWN_AGE, KNOWN_BEARD, KNOWN_BGS,
+    KNOWN_BUILD, KNOWN_CROWD_MODE, KNOWN_ENTER, KNOWN_EXPR, KNOWN_FG, KNOWN_FLAG, KNOWN_FX, KNOWN_GRADES,
+    KNOWN_HAIR, KNOWN_HEAD, KNOWN_HEADSHAPE, KNOWN_LAYERS, KNOWN_MASK, KNOWN_OUTFIT, KNOWN_POSES, KNOWN_PROPS,
+    KNOWN_SKY, KNOWN_TRANSITIONS, KNOWN_VIEWS, LAYER_KINDS, REGISTRIES, TRANSITION_ENUMS, VOCAB_DIR, _ease_names,
+    _load_vocab,
+)
+from spec_maps import (  # noqa: F401
+    ISO3_RE, _check_geo_map, _check_geo_region, _check_map_refs, _geo_peak, _lonlat, _map_icons, _map_path, _map_point,
+)
 
 
 class SpecError(ValueError):
@@ -105,6 +47,14 @@ def _timed_values(value):
         yield value
 
 
+def _known(v, names) -> bool:
+    """Membership that never raises on unhashable values (a list or dict where a name belongs)."""
+    try:
+        return v in names
+    except TypeError:
+        return False
+
+
 def _check_look(look, where: str, errors: list[str]) -> None:
     """Validate a character look (cast entry or a layer's `look` override)."""
     if not isinstance(look, dict):
@@ -113,39 +63,26 @@ def _check_look(look, where: str, errors: list[str]) -> None:
     for key, allowed in (("hair", KNOWN_HAIR), ("beard", KNOWN_BEARD), ("head", KNOWN_HEAD), ("view", KNOWN_VIEWS),
                          ("outfit", KNOWN_OUTFIT), ("mask", KNOWN_MASK), ("headShape", KNOWN_HEADSHAPE),
                          ("build", KNOWN_BUILD), ("age", KNOWN_AGE)):
-        if look.get(key) is not None and allowed and look[key] not in allowed:
+        if look.get(key) is not None and allowed and not _known(look[key], allowed):
             errors.append(f"{where}: {key} {look[key]!r} not in {sorted(allowed)}")
+    SC.check_look(look, where, LAYER_KINDS.get("texture", set()), errors)
     flag = look.get("flag")
     if flag is not None:
         if not isinstance(flag, dict):
             errors.append(f"{where}: flag must be an object like {{\"pattern\": \"h3\", \"colors\": [...]}}")
         else:
-            if KNOWN_FLAG and flag.get("pattern") not in KNOWN_FLAG:
+            if KNOWN_FLAG and not _known(flag.get("pattern"), KNOWN_FLAG):
                 errors.append(f"{where}: flag pattern {flag.get('pattern')!r} not in {sorted(KNOWN_FLAG)}")
-            for c in flag.get("colors", []) or []:
+            for c in (flag.get("colors") if isinstance(flag.get("colors"), list) else [flag.get("colors")] if flag.get("colors") else []):
                 if not (isinstance(c, str) and HEX_RE.match(c)):
                     errors.append(f"{where}: flag colors must be hex, got {c!r}")
     for hk in ("hold", "holdL"):
-        if look.get(hk) is not None and look[hk] not in KNOWN_PROPS:
+        if look.get(hk) is not None and not _known(look[hk], KNOWN_PROPS):
             errors.append(f"{where}: {hk} {look[hk]!r} not in {sorted(KNOWN_PROPS)}")
     for ck in COLOR_KEYS:
         v = look.get(ck)
         if v is not None and not (isinstance(v, str) and HEX_RE.match(v)):
             errors.append(f"{where}: {ck} must be a hex colour like #c8323a, got {v!r}")
-
-
-def _ease_names() -> set:
-    src = (Path(__file__).parent / "engine" / "core.js").read_text(encoding="utf-8")
-    block = src[src.index("T.ease = {"):]
-    block = block[:block.index("};")]
-    return set(re.findall(r"^\s*'?([A-Za-z]+)'?\s*:", block, re.M))
-
-
-TRANSITION_ENUMS = {"burn": {"from": {"bottom", "top", "left", "right"}}, "swarm": {"creature": {"bat", "bird"}},
-                    "squeeze": {"axis": {"horizontal", "vertical"}}, "whip": {"dir": {"left", "right", "up", "down"}},
-                    "fg-pass": {"axis": {"horizontal", "vertical"}}}
-GLITCH_STYLES = {"corrupt", "stepped"}
-ISO_BUILDINGS = {"none", "house", "tower"}
 
 
 def _pair(v) -> bool:
@@ -173,12 +110,14 @@ def _swap_states(layer: dict) -> list[dict]:
     return states
 
 
-def _map_icons() -> set:
-    icons: set = set()
-    for f in sorted(VOCAB_DIR.glob("*.json")):
-        kinds = json.loads(f.read_text(encoding="utf-8")).get("kinds") or {}
-        icons |= set(kinds.get("map_icon", []) if isinstance(kinds, dict) else [])
-    return icons
+def _per_state(layer: dict, check) -> list[str]:
+    """Run check(state, found) over every swap state of the layer; errors repeated by several states appear once."""
+    out: list[str] = []
+    for state in _swap_states(layer):
+        found: list[str] = []
+        check(state, found)
+        out += [e for e in found if e not in out]
+    return out
 
 
 def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
@@ -198,8 +137,16 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
         if ltype != "fx" and entry.get("xray") is not None and not isinstance(entry["xray"], bool):
             if isinstance(entry["xray"], dict):
                 name_in(entry["xray"].get("inner"), KNOWN_PROPS, "xray inner")
+                xr = entry["xray"]
+                if xr.get("anatomy") is not None and not isinstance(xr["anatomy"], bool):
+                    errors.append(f"{where}: xray anatomy must be true or false")
+                if xr.get("specks") is not None and not (_is_num(xr["specks"]) and 0 <= xr["specks"] <= 200):
+                    errors.append(f"{where}: xray specks must be a count 0..200")
+                for k in ("specksAt", "specksDur", "out", "outDur"):
+                    if xr.get(k) is not None and not (_is_num(xr[k]) and xr[k] >= 0):
+                        errors.append(f"{where}: xray {k} must be a number >= 0 (seconds)")
             else:
-                errors.append(f"{where}: xray must be true or an object {{at, dur, inner, color}}")
+                errors.append(f"{where}: xray must be true or an object {{at, dur, inner, color, anatomy, specks}}")
         if ltype == "bean" and entry.get("smear") is not None:
             sm = entry["smear"] if isinstance(entry["smear"], list) else [entry["smear"]]
             if not all(isinstance(x, dict) and _is_num(x.get("at")) and x.get("dir", 1) in (1, -1) for x in sm):
@@ -218,8 +165,8 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
                 movers += [m for m in val if isinstance(m, dict)]
             fights = entry.get("fights")
             for f in ([fights] if isinstance(fights, dict) else fights if isinstance(fights, list) else []):
-                if not (isinstance(f, dict) and isinstance(f.get("path"), list) and len(f["path"]) >= 2 and all(_pair(q) for q in f["path"])):
-                    errors.append(f"{where}: map fights need a path of 2+ [x, y] points")
+                if not (isinstance(f, dict) and _map_path(f.get("path"), bool(entry.get("geo")), 2)):
+                    errors.append(f"{where}: map fights need a path of 2+ [x, y] points (or lon/lat forms with geo)")
                     continue
                 if f.get("dur") is not None and not (_is_num(f["dur"]) and f["dur"] > 0):
                     errors.append(f"{where}: map fights dur must be above 0")
@@ -271,18 +218,33 @@ def _check_extensions(layer: dict, where: str, errors: list[str]) -> None:
                     name_in(it.get("prop"), KNOWN_PROPS, "tierlist item prop")
         if ltype == "map":
             morphs, throws = entry.get("morphs", []) or [], entry.get("throws", []) or []
-            if not isinstance(morphs, list) or not all(isinstance(m, dict) and all(isinstance(m.get(k), list) and len(m[k]) >= 2 and all(_pair(q) for q in m[k]) for k in ("from", "to")) for m in morphs):
-                errors.append(f"{where}: map morphs need from and to as lists of [x, y] points")
-            if not isinstance(throws, list) or not all(isinstance(t, dict) and _pair(t.get("from")) and _pair(t.get("to")) for t in throws):
-                errors.append(f"{where}: map throws need from and to as [x, y]")
+            geo = bool(entry.get("geo"))
+            if not isinstance(morphs, list) or not all(isinstance(m, dict) and all(_map_path(m.get(k), geo, 2) for k in ("from", "to")) for m in morphs):
+                errors.append(f"{where}: map morphs need from and to as lists of [x, y] points (or lon/lat forms with geo)")
+            if not isinstance(throws, list) or not all(isinstance(t, dict) and _map_point(t.get("from"), geo) and _map_point(t.get("to"), geo) for t in throws):
+                errors.append(f"{where}: map throws need from and to as [x, y] (or lon/lat forms with geo)")
             else:
                 for t in throws:
                     name_in(t.get("icon"), KNOWN_PROPS | _map_icons(), "map throws icon")
 
 
+def _check_director(layer: dict, where: str, ids: set, errors: list[str]) -> None:
+    """Camera & acting layer fields (camera_check.py) in every state the layer's swaps produce."""
+    seen: set[str] = set()
+    for state in _swap_states(layer):
+        found: list[str] = []
+        CC.check_layer(state, where, ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, found)
+        errors.extend(e for e in found if not (e in seen or seen.add(e)))
+    def riders(state, found):  # vehicle rider objects act like beans
+        for i, acting in rider_acting(state):
+            CC.check_layer(acting, f"{where}.riders[{i}]", ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, found)
+    errors += _per_state(layer, riders)
+
+
 def _fx_refs(layer: dict) -> list[str]:
     swaps = layer.get("swap") if isinstance(layer.get("swap"), list) else []
     vals = [layer.get("target"), layer.get("follow")] + [x for sw in swaps if isinstance(sw, dict) for x in (sw.get("target"), sw.get("follow"))]
+    vals += [i for src in [layer] + swaps if isinstance(src, dict) for i in SB.light_ids(src.get("lights"))]  # blackout lights
     return [v for v in vals if isinstance(v, str)]
 
 
@@ -324,8 +286,7 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         for hk in ("hold", "holdL"):
             if layer.get(hk) and layer[hk] not in KNOWN_PROPS:
                 errors.append(f"{where}: {hk} {layer[hk]!r} not in {sorted(KNOWN_PROPS)}")
-        if layer.get("view") and layer["view"] not in KNOWN_VIEWS:
-            errors.append(f"{where}: view {layer['view']!r} not in {sorted(KNOWN_VIEWS)}")
+        SC.check_bean(layer, where, KNOWN_VIEWS, LAYER_KINDS.get("hand", set()), LAYER_KINDS.get("gait", set()), errors)
         if layer.get("look") is not None:
             _check_look(layer["look"], f"{where}.look", errors)
         for key in ("walk", "run", "tremble"):
@@ -350,6 +311,10 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
             errors.append(f"{where}: crowd mode {layer['mode']!r} not in {sorted(KNOWN_CROWD_MODE)}")
         if layer.get("creature") and "creature" in LAYER_KINDS and layer["creature"] not in LAYER_KINDS["creature"]:
             errors.append(f"{where}: crowd creature {layer['creature']!r} not in {sorted(LAYER_KINDS['creature'])}")
+        if layer.get("look") is not None:
+            _check_look(layer["look"], f"{where}.look", errors)
+    if kind == "prop" and layer.get("pour") is not None and not SC.pour_ok(layer["pour"]):
+        errors.append(f"{where}: pour {SC.POUR_HELP}")
     if kind in LAYER_KINDS and layer.get("kind") not in LAYER_KINDS[kind]:
         errors.append(f"{where}: {kind} kind {layer.get('kind')!r} not in {sorted(LAYER_KINDS[kind])}")
     if kind == "fg" and layer.get("kind") not in KNOWN_FG:
@@ -371,11 +336,28 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
         errors.append(f"{where}: prop kind {layer.get('kind')!r} not in {sorted(KNOWN_PROPS)}")
     if kind == "fx" and layer.get("kind") not in KNOWN_FX:
         errors.append(f"{where}: fx kind {layer.get('kind')!r} not in {sorted(KNOWN_FX)}")
+    if kind == "fx" and any(s.get("front") is not None and s.get("front") not in ("over", "depth") for s in _swap_states(layer)):
+        errors.append(f'{where}: fx front must be "over" (above set front parts) or "depth" (slotted by its y)')
     if kind in ("label", "title", "caption", "sign", "date") and not str(layer.get("text", "")).strip():
         errors.append(f"{where}: {kind} needs non-empty text")
     if kind == "image" and not (layer.get("src") or (layer.get("frames") or {}).get("idle")):
         errors.append(f"{where}: image needs src or frames.idle")
     _check_common(layer, where, cast, errors)
+    _check_paint_fields(layer, where, errors)
+    seen: set[str] = set()
+    for state in _swap_states(layer):
+        found: list[str] = []
+        props_fx.check_layer(state, where, found, LAYER_KINDS.get("particle_preset", set()))
+        props_check.check_layer(state, where, found, KNOWN_PROPS)
+        errors.extend(e for e in found if not (e in seen or seen.add(e)))
+    def motion(state, found):
+        check_motion(state, where, found, _ease_names(), LAYER_KINDS.get("creature"))
+        check_riders(state, where, found, cast, KNOWN_EXPR, KNOWN_PROPS)
+        if state.get("type") in ("vehicle", "creature") and state.get("riderLook") is not None:  # look fields over the riders' casts
+            _check_look(state["riderLook"], f"{where}.riderLook", found)
+    errors += _per_state(layer, motion)
+    if kind == "set":
+        check_set_layer(layer, where, LAYER_KINDS, errors)
     for win in layer.get("talk", []) or []:
         if not (isinstance(win, list) and len(win) == 2 and all(isinstance(v, (int, float)) for v in win) and win[0] <= win[1]):
             errors.append(f"{where}: talk windows must be [[start, end], ...] with start <= end")
@@ -413,6 +395,7 @@ def _check_common(layer: dict, where: str, cast: dict, errors: list[str]) -> Non
                 if any(kk in entry for kk in ("kind", "pose", "expr", "hold", "holdL", "view", "who")):
                     _check_layer({**merged, "swap": None}, f"{where}.swap[{k}]", cast, errors)
     _check_number_or_timeline(layer.get("blur"), f"{where}: blur", errors)
+    SC.check_travel(layer, where, LAYER_KINDS.get("gait", set()), errors)
     for key in ("move", "shake", "jump"):
         if layer.get(key) is not None and not (isinstance(layer[key], list) and all(isinstance(x, dict) for x in layer[key])):
             errors.append(f"{where}: {key} must be a list of objects like [{{\"at\": 1.0, ...}}]")
@@ -422,19 +405,6 @@ def _check_common(layer: dict, where: str, cast: dict, errors: list[str]) -> Non
     sw = layer.get("swing")
     if sw is not None and not (sw is True or isinstance(sw, dict)):
         errors.append(f"{where}: swing must be an object {{at, amp, period, decay}}")
-
-
-def _check_map_refs(layer: dict, where: str, errors: list[str]) -> None:
-    """Region references inside a map must name a region id (conquer.by may also be a hex colour)."""
-    regions = [r for r in layer.get("regions", []) or [] if isinstance(r, dict)]
-    rids = {r.get("id") for r in regions if r.get("id")}
-    for r in regions:
-        by = (r.get("conquer") or {}).get("by") if isinstance(r.get("conquer"), dict) else None
-        if isinstance(by, str) and by not in rids and not HEX_RE.match(by):
-            errors.append(f"{where}: region {r.get('id', '?')!r} conquer.by {by!r} is neither a region id nor a hex colour")
-    for c in layer.get("crosses", []) or []:
-        if isinstance(c, dict) and isinstance(c.get("region"), str) and c["region"] not in rids:
-            errors.append(f"{where}: crosses region {c['region']!r} is not a region id")
 
 
 def _nested_whos(value):
@@ -452,7 +422,9 @@ def _nested_whos(value):
 
 # Backgrounds that paint a sky behind themselves and pass `preset` to it (other kinds use `preset` for their own variants).
 SKY_BACKED_BGS = {"sky", "city", "battlefield", "desert", "eastcity", "factory", "graveyard", "karst", "mountains",
-                  "street1920", "trench"}
+                  "street1920", "trench", "hills", "woods", "river", "dunes", "ancient", "castle"}  # + Places 2.0 landscapes
+# Backgrounds with a front plane (T.BG_FRONT) that can join the automatic front pass with `frontY` (set-front.js).
+FRONT_PLANE_BGS = {"room", "cell", "antique", "palace", "studio"}
 
 
 def _check_bg(bg, where: str, errors: list[str]) -> None:
@@ -484,11 +456,79 @@ def _check_bg(bg, where: str, errors: list[str]) -> None:
         errors.append(f"{where}: image bg needs image")
     if kind == "interior" and bg.get("windowSky", "day") not in KNOWN_SKY:
         errors.append(f"{where}: windowSky {bg.get('windowSky')!r} not in {sorted(KNOWN_SKY)}")
+    check_depth(bg, where, errors)
+    fy = bg.get("frontY")
+    if fy is not None and not (_is_num(fy) and 0 <= fy <= 1.5 and kind in FRONT_PLANE_BGS):
+        errors.append(f"{where}: frontY (the front plane's ground y, 0..1.5) works on {sorted(FRONT_PLANE_BGS)}")
+    if kind == "set":
+        check_set_bg(bg, where, LAYER_KINDS, errors)
+
+
+KNOWN_LOOKS = {"classic", "painted"}  # shade.js T.LOOKS
+LIGHT_NUMS = {"dir": (-360, 720), "rim": (0, 1), "intensity": (0, 1)}
+
+
+def _check_light(light, where: str, errors: list[str]) -> None:
+    """style.light / shot.light: {dir (deg toward the light, 0 = right, 90 = up), color, rim, ambient, intensity}."""
+    if light is None:
+        return
+    if not isinstance(light, dict):
+        errors.append(f"{where}: light must be an object {{dir, color, rim, ambient, intensity}}")
+        return
+    for key, (lo, hi) in LIGHT_NUMS.items():
+        v = light.get(key)
+        if v is not None and not (_is_num(v) and lo <= v <= hi):
+            errors.append(f"{where}: light.{key} must be a number in {lo}..{hi}")
+    for key in ("color", "ambient"):
+        v = light.get(key)
+        if v is not None and not (isinstance(v, str) and HEX_RE.match(v)):
+            errors.append(f"{where}: light.{key} must be a hex colour, got {v!r}")
+
+
+def _check_look_name(look, where: str, errors: list[str]) -> None:
+    if look is not None and (not isinstance(look, str) or look not in KNOWN_LOOKS):
+        errors.append(f"{where}: look {look!r} not in {sorted(KNOWN_LOOKS)}")
+
+
+CONTACT_KEYS = {"w": (0, None), "h": (0, None), "dy": (None, None), "alpha": (0, 1)}
+
+
+def _check_paint_fields(layer: dict, where: str, errors: list[str]) -> None:
+    """Per-layer painted-look fields, for the layer and every state its swaps produce: atmos (atmospheric
+    perspective), contact (ground shadow), painted (opt out)."""
+    states = _swap_states(layer)
+    for k, entry in enumerate(states):
+        at = where if k == 0 else f"{where} (after swap {k})"
+        atmos = entry.get("atmos")
+        amount = atmos.get("amount", 0.5) if isinstance(atmos, dict) else atmos
+        if atmos is not None and not (_is_num(amount) and 0 <= amount <= 1):
+            errors.append(f"{at}: atmos must be 0..1 or {{amount 0..1, color}}")
+        if isinstance(atmos, dict) and atmos.get("color") is not None and not (isinstance(atmos["color"], str) and HEX_RE.match(atmos["color"])):
+            errors.append(f"{at}: atmos color must be a hex colour")
+        contact = entry.get("contact")
+        if isinstance(contact, dict):
+            for key, val in contact.items():
+                lo, hi = CONTACT_KEYS.get(key, (None, None))
+                if key not in CONTACT_KEYS:
+                    errors.append(f"{at}: contact {key} is not a contact field (w, h, dy, alpha)")
+                elif not (_is_num(val) and math.isfinite(val) and (lo is None or val >= lo) and (hi is None or val <= hi)):
+                    errors.append(f"{at}: contact {key} must be a number" + (f" in {lo}..{hi}" if hi is not None else " >= 0" if lo is not None else ""))
+        elif contact is not None and not (isinstance(contact, bool) or (_is_num(contact) and math.isfinite(contact) and contact >= 0)):
+            errors.append(f"{at}: contact must be true/false, a width scale >= 0 or {{w, h, alpha, dy}}")
+        if entry.get("painted") is not None and not isinstance(entry["painted"], bool):
+            errors.append(f"{at}: painted must be true or false")
 
 
 def _check_layer_refs(layer: dict, where: str, ids: set, cast: dict, errors: list[str]) -> None:
-    """Cross-references inside one shot (fx target, map refs, doc arrowTo and nested who), shared by layers and pinned."""
+    """Cross-references inside one shot (fx target, map refs, doc arrowTo and nested who, blackout lights), shared by
+    layers and pinned, checked for every state the layer's swaps produce."""
+    errors += _per_state(layer, lambda state, found: _state_refs(state, where, ids, cast, found))
+
+
+def _state_refs(layer: dict, where: str, ids: set, cast: dict, errors: list[str]) -> None:
     kind = layer.get("type")
+    SC.check_refs(layer, where, ids, errors)
+    SB.check_blackout(layer, where, ids, errors)
     target = layer.get("target")
     if kind == "fx" and isinstance(target, str) and target not in ids:
         errors.append(f"{where}<fx>: target {target!r} is not the id of a layer in this shot")
@@ -517,6 +557,13 @@ def validate(spec: dict) -> list[str]:
     fps = spec.get("fps", 30)
     if not isinstance(fps, int) or not 1 <= fps <= 60:
         errors.append("fps must be an integer 1..60")
+    style = spec.get("style") or {}
+    if not isinstance(style, dict):
+        errors.append("style must be an object")
+        style = {}
+    _check_look_name(style.get("look"), "style", errors)
+    _check_light(style.get("light"), "style", errors)
+    CC.check_twos(style.get("onTwos"), "style", errors)
     cast = spec.get("cast", {}) or {}
     if not isinstance(cast, dict):
         errors.append("cast must be an object {name: look}")
@@ -546,10 +593,16 @@ def validate(spec: dict) -> list[str]:
         _check_transition(tr, f"{where}.transition", errors)
         if tr_kind not in KNOWN_TRANSITIONS:
             errors.append(f"{where}: transition {tr_kind!r} not in {sorted(KNOWN_TRANSITIONS)}")
+        _check_look_name(shot.get("look"), where, errors)
+        _check_light(shot.get("light"), where, errors)
         grade = shot.get("grade")
         for g in (grade if isinstance(grade, list) else [grade] if grade is not None else []):
             if isinstance(g, dict) and g.get("target", "frame") not in ("frame", "bg"):
                 errors.append(f"{where}: grade target {g.get('target')!r} must be 'frame' or 'bg'")
+            if isinstance(g, dict) and any(g.get(k) is not None and not (_is_num(g[k]) and g[k] >= 0) for k in ("at", "dur", "out", "outDur")):
+                errors.append(f"{where}: grade at / dur / out / outDur must be numbers >= 0 (seconds; out ends the grade)")
+            elif isinstance(g, dict) and g.get("out") is not None and g["out"] < (g.get("at") or 0):  # null at = 0, as in the engine
+                errors.append(f"{where}: grade out ({g['out']}) must not be before its at ({g.get('at') or 0})")
             g = g.get("preset") if isinstance(g, dict) else g
             if g not in KNOWN_GRADES:
                 errors.append(f"{where}: grade {g!r} not in {sorted(KNOWN_GRADES)}")
@@ -563,6 +616,8 @@ def validate(spec: dict) -> list[str]:
         for k, f in enumerate(shot.get("focus", []) or []):
             if not (isinstance(f, dict) and _is_num(f.get("at", 0)) and (f.get("on") in ids or f.get("on") == "bg")):
                 errors.append(f"{where}.focus[{k}]: needs at and on=<id of a layer in this shot>")
+        CC.check_camera(shot.get("camera"), where, ids, LAYER_KINDS.get("shot_size", set()), _ease_names(), errors)
+        CC.check_twos(shot.get("onTwos"), where, errors)
         if "frame" in shot:
             if fmt != "vertical":
                 errors.append(f"{where}: frame only applies to vertical films (spec.format = 'vertical')")
@@ -583,7 +638,10 @@ def validate(spec: dict) -> list[str]:
                 errors.append(f"{where}.pinned[{j}]: must be an object")
                 continue
             _check_layer(layer, f"{where}.pinned[{j}]<{layer.get('type')}>", cast, errors)
+            if layer.get("type") == "fg" and layer.get("kind") == "set-front":
+                errors.append(f"{where}.pinned[{j}]<fg>: set-front draws world parts of the set; put it in layers, not pinned")
             _check_layer_refs(layer, f"{where}.pinned[{j}]", pinned_ids | ids, cast, errors)  # a pinned fx may target either list
+            _check_director(layer, f"{where}.pinned[{j}]<{layer.get('type')}>", pinned_ids | ids, errors)
             if layer.get("type") == "fx":
                 refs = _fx_refs(layer)
                 if any(r in world_ids for r in refs) and any(r in pinned_ids and r not in world_ids for r in refs):
@@ -597,6 +655,7 @@ def validate(spec: dict) -> list[str]:
                 continue
             _check_layer(layer, f"{where}.layers[{j}]<{layer.get('type')}>", cast, errors)
             _check_layer_refs(layer, f"{where}.layers[{j}]", ids, cast, errors)
+            _check_director(layer, f"{where}.layers[{j}]<{layer.get('type')}>", ids, errors)
     overlays = spec.get("overlays", []) or []
     if not isinstance(overlays, list):
         errors.append("overlays must be a list of {from, to, layer}")
@@ -630,6 +689,25 @@ def image_refs(spec: dict) -> list[str]:
     return sorted(set(found))
 
 
+def lipsync_refs(spec: dict) -> list[str]:
+    """Envelope files named by bean lipsync.src fields (render.py inlines them)."""
+    found: list[str] = []
+
+    def walk(value):
+        if isinstance(value, list):
+            for item in value:
+                walk(item)
+        elif isinstance(value, dict):
+            lip = value.get("lipsync")
+            if isinstance(lip, dict) and isinstance(lip.get("src"), str):
+                found.append(lip["src"])
+            for v in value.values():
+                walk(v)
+
+    walk(spec)
+    return sorted(set(found))
+
+
 def load(path: str | Path) -> dict:
     """Load and validate a spec; raise SpecError listing every problem (including missing image files)."""
     path = Path(path)
@@ -640,6 +718,9 @@ def load(path: str | Path) -> dict:
     except json.JSONDecodeError as exc:
         raise SpecError(f"{path}: invalid JSON at line {exc.lineno}: {exc.msg}") from exc
     errors = validate(spec)
+    for ref in lipsync_refs(spec):
+        if not (path.parent / ref).exists():
+            errors.append(f"lipsync envelope not found: {ref} (relative to {path.parent}; make it with scripts/lipsync.py)")
     for ref in image_refs(spec):
         if not ref.startswith(("data:", "http:", "https:")) and not (path.parent / ref).exists():
             errors.append(f"image not found: {ref} (relative to {path.parent})")
@@ -659,6 +740,9 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         sys.exit("usage: spec.py path/to/spec.json")
     try:
-        print("OK:", summary(load(sys.argv[1])))
+        loaded = load(sys.argv[1])
+        print("OK:", summary(loaded))
+        for warning in lint(loaded):
+            print("warning:", warning)
     except SpecError as err:
         sys.exit(f"❌ {err}")

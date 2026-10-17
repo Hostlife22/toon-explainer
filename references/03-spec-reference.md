@@ -14,13 +14,16 @@ Colors must be `#rrggbb` or `#rgb`: shadows and haze are derived from them. The 
 {
   "title": "…", "fps": 30, "seed": 1,               // seed makes the render deterministic
   "format": "landscape" | "vertical",                 // output 1920x1080 (default) or 1080x1920
-  "style": { "grain": true, "vignette": 0.3 },        // post-processing; false disables
+  "style": { "grain": true, "vignette": 0.3,          // post-processing; false disables
+             "look": "classic" | "painted",            // painted: shading, ink weight, textures (see Painted look)
+             "light": { "dir": 58, "color": "#fff0cf", "rim": 0.55, "ambient": "#3c2f5c", "intensity": 0.6 } },
   "cast": { "<name>": { /* bean appearance */ } },    // character sheet
   "shots": [ { "id": "k01", "dur": 3.2, "vo": "…", "screen": "…",
                "transition": "cut" | { "kind": "zoom-punch", "dur": 0.3 },
                "bg": { … } | [ { … }, { … } ],        // backgrounds are drawn in order
                "camera": { … }, "layers": [ … ],
                "pinned": [ … ],                       // layers without camera, centred in the visible frame
+               "look": "classic", "light": { "dir": 140 },   // per-shot look and light overrides
                "frame": 0.5 | [ {"at": 0, "v": 0.3}, … ] } ]  // vertical films: x of the visible strip
 }
 ```
@@ -48,6 +51,30 @@ In vertical films `keepInFrame` (labels, titles, counters) clamps to the visible
 | `rot` | `[0, -2]` or `[{"at":0,"v":0},{"at":1.2,"v":-6}]` | Tilt in degrees. Key form = dutch-angle snaps (2-frame blend) |
 | `letterbox` | `{"h":0.12,"at":0.3,"dur":0.2,"out":2.5}` or `true` | Cinematic bars slide in (and out at `out`) for extreme close-ups and stares |
 | `jump` | `[{"at":1.4,"zoom":1.35,"focus":[0.4,0.35]}]` | Cut-in without a cut: the zoom jumps in 1 frame on a pose snap or key word; entries stack |
+| `zoom` / `pan` keys | `[{"at":0,"v":1},{"at":1,"v":1.5,"ease":"outSettle"}]` | Keyed form: each segment eases with the later key's `ease` (default `inOut`); `pan` key values are `[x, y]` px |
+| `frame` | `{"target":"hero","size":"cu"}` or a list of keys | Shot-size framing of a layer: zoom and centre come from the target's extents (a bean's head and body, or a layer's `size`). Fields below |
+| `follow` | `"car"` or `{"target":"car","lag":0.35,"size":"ms","axis":"x"}` | Follows a moving layer with a critically damped lag (`lag` s, default 0.3; zoom 1.35 unless `size` / `zoom`). Not together with `frame` |
+| `handheld` | `true`, `8` or `{"amp":8,"hz":0.6,"rot":0.4,"at":1,"dur":2}` | Handheld drift: three octaves of seeded noise (px and degrees), fades in and out of an `at`/`dur` window |
+| `dollyzoom` | `{"at":0.4,"dur":2,"amount":0.6,"target":"hero"}` | Vertigo move: the subject plane keeps its size while farther planes shrink and nearer ones grow (`amount` -0.9..4; below 0 the world looms). Centred on `target` |
+| `orbit` | `{"amount":220,"dur":3}` | Orbit-lite parallax slide: planes behind the subject slide one way, planes in front the other, by `amount` px at full depth |
+| `roll` | `-4` or `[{"at":0,"v":0},{"at":2,"v":-8,"ease":"inOut"}]` | Smooth camera roll in degrees (eased keys; `rot` keys snap) |
+| `angle` | `"low"`, `"high"`, `"eye"`, a number -1..1 or `[{at, v}]` | Low angle: far planes drop (lower horizon), near planes rise and the subject looms; high angle the reverse |
+
+`frame` keys: `at` (shot time; before the first key the plain camera holds), `target` (layer id) or `point` `[x, y]`
+or `box` `[x, y, w, h]` (fractions), `size` (`ecu` extreme close-up: eyes and mouth; `cu` close-up: the head; `mcu`
+head and shoulders; `ms` medium: to the waist; `ws` wide: the whole figure; `ews` extreme wide: a small figure),
+`zoom` (overrides `size`), `place` (`[x, y]` frame fractions where the target lands, default centre), `dur` (0.6 s
+move from the previous key; `ots` keys cut unless `dur` is set), `ease`, `overshoot` (0..0.9: a spring push that passes the framing and settles),
+`whip` (a fast pan, `dur` 0.25, with a motion streak), `rack` (`true` or px: rack focus to the target as the key
+starts), `ots` (the listener's id or `{id, side, blur, tone}`: over-the-shoulder, the listener becomes a blurred dark
+shoulder at the frame edge and the speaker is placed opposite), `lag` (follow), `axis` (`x` / `y`: follow one axis),
+`clamp` (default true: the framing never shows past the world edge). Easings: `linear`, `in`, `out`, `inOut`,
+`inCubic`, `outCubic`, `outBack`, `outBounce`, `inBack` (anticipation), `inOutBack`, `outSettle` (spring, 13 %
+overshoot), `outElastic`. Times and the full lens guide: [09 Transitions and lens](toolkits/09_transitions_and_lens.md#camera-20-shot-sizes-and-moves).
+
+`onTwos` (`style`, shot or layer: `true` = 12 fps, or a rate): character layers (`bean`, `crowd`, `creature`, `obj`,
+`arm`, or any layer with its own `onTwos: true`) are sampled on the coarser clock while the camera stays smooth;
+a layer's `onTwos: false` opts out.
 
 Parallax: every layer has a `z` (default 1). At 0 the layer is pinned to the screen; at 0.5 it moves at half the camera speed. Backgrounds lay out their own planes: sky 0.15, clouds 0.3, hills 0.45–0.8, ground 1.
 
@@ -79,12 +106,14 @@ Parallax: every layer has a `z` (default 1). At 0 the layer is pinned to the scr
 - `burst`: background for reactions; `color`, `center`, `edge`, `at`: `[x,y]`, `wedges`: bool.
 - `flat`: `color`.
 - `image`: `image` (path relative to the spec), `overscan` (1.08), `z`, `filter` (canvas CSS filter, e.g. `"saturate(1.1)"`).
+- Any kind: `parallax` (0..3, default 1) scales the depth between its planes as the camera moves (0 = flat, 2 = deep); `haze` (0..2, or a hex colour) scales the far-plane haze of the Places 2.0 kinds.
+- `set` (modular room from parts: `wall`, `floor`, `preset`, `parts`), `hills`, `woods`, `river`, `dunes`, `ancient`, `castle`: Places 2.0 kinds, see [04 Places](toolkits/04_places.md#places-20-sets-depth-planes-and-painted-places). The layer type `set` draws the same parts as a layer.
 
 ## Common layer fields
 `type`, `id`, `x`, `y`, `scale`, `rot` (degrees), `alpha`, `flip`, `z`, `hud` (ignores the camera), `at`, `out`,
 `enter`, `exit` (`none|fade|pop|drop|rise|slide-left|slide-right|slide-up|slide-down|spin|drop-squash|pop-tilt|slam` and the gag kinds in [02 Acting](toolkits/02_acting.md)), `enterDur`, `exitDur`,
-`move: [{at,dur,to:[x,y],scale,rot,alpha,flip,ease}]`, `bob` (px), `bobHz`, `sway` (deg), `swayHz`, `wobble` (px),
-`shake: [{at,dur,amp}]`, `jump: [{at,dur,h}]`.
+`move: [{at,dur,to:[x,y],by:[dx,dy],from:[x,y],scale,rot,alpha,flip,ease}]` (steps run in order, each from where the last one ended: `to` is an absolute frame point, `by` an offset in frame fractions (a curtain slides `by: [0, -0.9]`), `from` the point the step starts at; the first positional step, if it has a `from`, holds the layer there until it starts (a later `from` step jumps there when it begins), and without `to`/`by` it ends at the layer's `x`/`y`, so `from` alone slides a layer in), `bob` (px), `bobHz`, `sway` (deg), `swayHz`, `wobble` (px),
+`shake: [{at,dur,amp}]`, `jump: [{at,dur,h}]`, `floorY` (normalised floor y: keeps the painted contact shadow of a bean or contact layer on the floor while it flies), `path` (table below).
 
 More fields accepted by every layer:
 
@@ -95,6 +124,12 @@ More fields accepted by every layer:
 | `jitter` | `{"amp":3,"on":2}` or `true` | Seeded tremble on twos (struggle, panic, a shaking region); `from`/`to` limit it in layer time |
 | `swing` | `{"at":0.4,"amp":10,"period":1.1,"decay":2}` | Damped pendulum around the layer origin: hanging signs, a dropped microphone, keys on a hook |
 | `glow`, `silhouette`, `lineart` + module modifiers | `"glow": true` | Per-layer modifiers from `T.LAYER_MODS`; several can combine (order is fixed by the registry) |
+| `atmos` | `0.45` or `{"amount":0.6,"color":"#c9d6e0"}` | Atmospheric perspective: tints the layer toward the haze colour (the sky's horizon colour by default, or the bg's `atmos`) by `amount` 0..1. Far temples, ships on the horizon, a distant army. Works in both looks |
+| `contact` | `true`, `1.4` or `{"w":1.2,"h":0.05,"alpha":0.6,"dy":0.5}` | Painted look: soft contact shadow (ambient occlusion) on the ground under the layer. On by default for `bean` (and crowd members); `false` turns it off. `w` scales the width, `dy` is the offset below the anchor as a fraction of `size` (0.5 for centred props, 0 for beans and `obj`, which stand on their anchor; an `obj` shadow is 1.3 times wider) |
+| `painted` | `false` | Painted look: keep this layer flat (`false`), or shade a lettering / UI layer that is flat by default (`true`) |
+| `trail` | `true` or `{"frames":4,"length":0.12,"alpha":0.5,"min":6}` | Motion smear: while the layer moves (more than `min` px over `length` s, rotation counts too), `frames` ghost copies of it at earlier times are drawn under it, fading out. Thrown coins, a swung hammer, a flying prop. Works on any layer type and in both looks ([08 Impact](toolkits/08_fx_and_tone.md#particles-impact-and-painted-fx)) |
+| `dist` | `2` | Camera distance relative to the subject plane: parallax `1 / dist` (unless `z` is set); farther layers (`dist` > 1) also get atmospheric haze (`atmos` default `(dist - 1) × 0.2`, at most 0.6). Below 1 is foreground |
+| `path` | `{"pts":[[0.1,0.8],[0.5,0.6],[0.9,0.8]],"at":0,"dur":3,"ease":"inOut","curve":"smooth","orient":true,"face":true,"bank":30,"loop":false}` | Moves the layer along a curve at constant speed (arc-length), eased over shot time `at`..`at + dur` (like `move`). `curve`: `smooth` (through the points; a centripetal curve held monotone between neighbouring points, so it never overshoots or loops back, however uneven the spacing), `linear`, `bezier` (3n+1 points: start, control, control, end per segment). `face` (default true) flips the layer to face the direction of travel and squashes it through a reversal; `orient` rotates it to the tangent (`true`, or a max tilt in degrees); `bank` leans it into curves (planes roll their wings instead); `loop`: `true` or a lap count. Creatures and vehicles lock their gait and wheels to the distance travelled, beans walk it (`gait`: `walk` default, `run`, `sneak`, `march`, `false` = glide; stride matched to the speed, phase integrated over speed changes, a front-view in-between on reversals); trails and contact shadows follow. Always an object (it moves any layer, `fx` and `map` included): a plain list of points is the type-specific `path` of `fx`, `cursor` and `map` only. The path owns the position: `move` entries still scale, rotate, fade and flip the layer but their `to`, `by` and `from` are ignored. Reversing eases (`outBack`, `outBounce`) turn the layer round and run the gait / wheels backward correctly; with `face: false` the rig keeps its facing and walks or rolls backward. Details: [03 Props, creatures and vehicles](toolkits/03_props_creatures_vehicles.md#motion-20-path-gaits-and-trails) |
 
 Shot-level `focus` (rack focus; not the same as `camera.focus`, which is only the zoom target point): `"focus": [{"at":0,"on":"king","px":10},{"at":2.2,"on":"bg","dur":0.5}]`. From `at`, every layer **with an `id`** other than `on` ramps to `px` of blur and `on` ramps sharp over `dur` (0.4 s, ease in-out); the background gets `bg` px (default `px`, or 0 when `on` is `"bg"`). Pull focus on the word that names the new subject.
 - Always sharp: layers without an `id`, and lettering and screen furniture even with an `id`: `label`, `title`, `caption`, `date`, `era`, `counter`, `timer`, `doc`, `hud`, `cursor` and `fx`. Add `"focusable": true` to let one of these blur.
@@ -104,7 +139,7 @@ Film-level `overlays`: `"overlays": [{"from": 12.0, "to": 95.0, "layer": {"type"
 - `hideIn: ["k19", "k23"]` hides the overlay during those shots (a split screen that needs the corner, a finale with its own counter); it returns on the next shot.
 - For a fade or a hide in the middle of a shot, swap the overlay layer's alpha. `at` is overlay time (film time minus `from`): `"swap": [{"at": 41.2, "alpha": 0}, {"at": 44.0, "alpha": 1}]`.
 
-**Safe area:** `label`, `title` and `counter` are shifted automatically so text stays inside a 3.5 % margin from the frame edge. The calculation accounts for camera zoom. Disable with `"keepInFrame": false`. A long `title` is squeezed to 90 % of the frame width.
+**Safe area:** `label`, `title` and `counter` are shifted automatically so text stays inside a 3.5 % margin from the frame edge. The calculation accounts for camera zoom. A world-placed layer (`hud` false) keeps one shift for its whole life (the smallest one that fits it in the frame at some moment on screen), so it stays glued to the world while the camera pans or zooms. Disable with `"keepInFrame": false`. A long `title` is squeezed to 90 % of the frame width.
 
 Default entrance:
 - `pop` for labels, props, counters;
@@ -127,12 +162,14 @@ Default entrance:
   - `3q` by default (≈60–70 % of reference frames): features shift toward the gaze side, the back of the head sits in a large cool shadow;
   - `front`, `side`;
   - `back`: back of the head, hair covers the head.
+  - `3q-back`: rear three-quarter: the back of the head and body, the near arm in front, the cheek and ear of the face side.
   - The character faces right; `flip: true` turns it left.
 - `expr`: the base set is `neutral happy content sleepy smug angry rage sad worried shock scream squint cry dead`; [01 Characters](toolkits/01_characters.md) lists all of them (`menace`, `evil`, `jaw-drop`, `side-eye`, …) with their eye, mouth and brow kinds.
   - The eyebrows carry the emotion.
   - `rage` adds an anger vein, `worried` a sweat drop, `cry` streams of tears.
   - `dead` gives X eyes; combine with `rot: -88`, `rock: 0`, `blink: false` and `fx: blood`.
 - `talk`: the mouth switches between the expression's 3 shapes every ~3 frames (10 Hz, no repeats); the head bobs ±1.6°.
+- `lookAt` (a layer id, `[x, y]`, `{target | x, y, turn, head, eyes}` or a `[{at, v}]` timeline, `null` = stop): the body turns toward the target, the head tilts up or down with a spring snap and the eyes lead; `takes` (`[{at, kind: double | snap | jolt | blink, target, expr}]`, layer time): reaction takes. See [02 Acting](toolkits/02_acting.md#acting-director-lookat-takes-blinks-fidgets).
 - `pose` (arms): `idle point point-up arms-up shrug facepalm think wave hold fist hips cross present scared hands-face thumbs-up clutch-head sword-up reach`.
   - Arms are two bendable tubes (shoulder → elbow → hand; some poses use IK).
   - Glove hands: `open`, `fist`, `point`, `thumb`.
@@ -141,7 +178,7 @@ Default entrance:
   - force and power: `shove t-pose spread flex flex-one hands-up hammer throw-windup throw hold-high carry grab`;
   - pleading and offering: `beg rub-hands offer kneel kneel-pray kneel-beg kneel-offer prostrate`;
   - two characters: `hug arm-around handshake` (partner at +x, overlap about 40 %), `cradle` (`hold: "swaddle"`), `lean-table`;
-  - body on the ground or in the air: `sit` (chair seat at about 0.1 × `size` above `y`), `sit-floor` (hugging knees), `sit-slump`, `lie` (pair with `expr: dead`), `crawl`, `fly`, `flail` / `flail-b` (alternate for a tumble), `hang` (from a bar).
+  - body on the ground or in the air: `sit` (chair seat at about 0.1 × `size` above `y`), `sit-floor` (hugging knees), `sit-slump`, `lie` (pair with `expr: dead`), `crawl`, `fly`, `flail` / `flail-b` (upright panic, arms thrown up; alternate them), `upended` / `upended-b` (flipped head over heels; alternate for a tumble or a slip), `hang` (from a bar).
   - A pose entry may carry a body: `{arms, body: {dy, rot, lean, legs, front, view, armScale, pivot}}`; legs are `stand kneel sit tuck splay kick squat dangle none`. Modules add poses with `T.POSES[name] = …`.
 - `antic: true` adds a 3-frame anticipation dip before every pose change and a 2-frame stretch after it; `snapTilt: 8` adds one tilted breakdown frame. Use them on big gestures (a slam on the table, a reveal), not on talking heads.
 - `look.build` (`adult brute fat thin muscle`) and `look.age` (`adult child toddler baby elder`) change proportions; `size` stays an adult's height, so a child at the same `size` is drawn about 0.65 as tall. `age` sets head/limb ratios, `build` sets widths. Overlays (belly, pecs, swaddle, wrinkles) are drawn by `characters/expressions.js` ([01 Characters](toolkits/01_characters.md)).
@@ -171,7 +208,7 @@ Default entrance:
 - `march`: everyone walks (`inStep: true` keeps them in step).
 - `armsUp`: arms go up and down alternately at 2 Hz (cheering).
 - `silhouette`: dark spectator silhouettes.
-- Other fields: `jitter` (x scatter, 30 px), `hold`, `holdL`, `gaitRate`, `rock`, `fog` (haze color for back rows).
+- Other fields: `jitter` (x scatter, 30 px), `hold`, `holdL`, `gaitRate`, `rock`, `fog` (haze color for back rows), `look` (merged over every member's cast look, e.g. `{"age": "child"}`; a `swap` with `look` changes the whole crowd).
 - Set `id` if a shot has two crowds with the same `who`, `x` and `count`; otherwise their phases match.
 
 ### `fg`: foreground, frame framing (the main source of depth in the reference)
@@ -234,10 +271,24 @@ During `talk`, the idle and talk frames alternate at 8 Hz. `blink` shows every ~
 
 These are the base kinds. Over 40 more live in [08 FX and tone](toolkits/08_fx_and_tone.md) and [02 Acting](toolkits/02_acting.md).
 
+Props & FX 2.0 adds closed-form `particles` (14 presets), `impact-frame`, `streaks`, `shockwave`, `dustkick`, `toxic-cloud` and `aura`; under the painted look `smoke`, `fire`, `explosion`, `dust`, `puff` and `gas` are repainted with them ([08 Particles, impact and painted FX](toolkits/08_fx_and_tone.md#particles-impact-and-painted-fx)).
+
+## Painted look (`style.look`)
+`"style": {"look": "painted"}` (or `"look": "painted"` on one shot) switches the film from the classic flat look (one fill and one shadow tone per colour, uniform ink) to a painted look modelled on the reference frames, through shared drawing helpers so most of the library changes at once:
+- **Light.** `style.light` (and `shot.light` per shot): `dir` (degrees toward the light: 0 = from the right, 90 = from above; default 58, upper right; without a `dir`, a sky with a visible sun lights the shot from the sun), `color` (key / rim tint), `rim` (0..1 rim-light strength), `ambient` (shadow tint, cool by default), `intensity` (0..1 shadow depth). The light is in screen space, so a flipped character is lit from the same side.
+- **Shapes.** Every `T.outlined` shape with an opaque hex fill gets a deep band on the far edge, a shadow band, the base colour on the lit side, an airbrushed falloff toward the far edges and a rim light along the lit edge; its ink is thinner on the lit side and heavier on the shadow side. Shapes under 18 px keep a flat fill, shapes under 64 px get one band. Faces are shaded at 45 % so they stay bright.
+- **Ground and depth.** Characters get a contact shadow and a soft shadow of the head on the torso; `atmos` hazes far layers.
+- **Places.** Painted clouds (lit cap, soft volume, darker underside), sun bloom, deeper zenith and horizon haze; textured ground (grass strokes and 2-tone tufts, cobbles, sand); per-kind surface textures (plaster walls, wood floors and planks, carpets, cobbled streets, water, parchment fibre) and an occlusion band where walls meet the floor.
+- **Places 2.0.** Richer painted versions of `office`, `stage`, `street1920`, `factory`, `gallery`, `sky`, `mountains`, `room`, `studio`, `corkboard` and `parchment`; hazed, cached depth planes; window light shafts, dust motes, lamp pools, chimney smoke, swaying trees and grass. See [04 Places](toolkits/04_places.md#places-20-sets-depth-planes-and-painted-places).
+- **Frame.** A key-light wash falling off to a cool, darker far side, and paper tooth baked into the film grain (`style.grain: false` keeps a static paper texture). A layer fading in or out is shaded on its own canvas first, so its bands do not build up alpha.
+- **Props, FX and paper.** The most used props get materials (glass with liquid, metal sheen, wood grain, burlap, leather) and a contact shadow ([03 Props](toolkits/03_props_creatures_vehicles.md#painted-materials-and-props-20)); smoke, fire, explosions, dust and gas become soft lit puffs and additive glows; `doc` sheets become aged paper with folds and stains ([06 Paper](toolkits/06_paper_and_lettering.md#③11-painted-paper-front-page-and-letter)).
+- Lettering and screen furniture (`label`, `title`, `caption`, `date`, `era`, `counter`, `timer`, `doc`, `hud`, `cursor`, `subtitle`, `timeline`, `panel`, `fx`) stay flat unless they set `painted: true`.
+- Classic stays the default and renders exactly as before. The painted look costs under 2x the classic frame time (measured on `examples/showcase` at `--scale 0.5`). `examples/painted_bench` has one dense shot per scene type; the grades that suit it (`golden-hour`, `dusk`, `overcast`, `night`) are listed below. Techniques and APIs: [08 FX and tone](toolkits/08_fx_and_tone.md#painted-look).
+
 ## Shot color grade (`grade`)
 `"grade": "serious"` or `{ "preset": "serious", "at": 2.0, "dur": 0.5, "strength": 1 }` recolors the whole shot, **including labels and the HUD**. If a label must stay clean, put it in the next shot or lower `strength`. With `at`/`dur`, the grade kicks in mid-shot: this is how the rain starts in the reference at 22:43.9.
 
-`grade` may also be a **list** of entries, applied in order, each `{preset, at, dur, strength, out, outDur, target}`. `out` fades the entry away again (over `outDur`, default `dur`), so a list builds grade sequences such as a trauma cycle (teal → amber → violet, each about 0.95 s) or a 1 s red flash. `strength` accepts a `[{at,v}]` timeline. `"target": "bg"` grades only the backgrounds (applied before the layers), so characters and lettering stay clean on a hellish red or a cold sepia set. All presets are listed in [08 FX and tone](toolkits/08_fx_and_tone.md).
+`grade` may also be a **list** of entries, applied in order, each `{preset, at, dur, strength, out, outDur, target}`. `out` (shot time) ends the entry: it fades away over `outDur` (default `dur`), so a grade that starts with `at` can stop mid-shot, so a list builds grade sequences such as a trauma cycle (teal → amber → violet, each about 0.95 s) or a 1 s red flash. `strength` accepts a `[{at,v}]` timeline. `"target": "bg"` grades only the backgrounds (applied before the layers), so characters and lettering stay clean on a hellish red or a cold sepia set. All presets are listed in [08 FX and tone](toolkits/08_fx_and_tone.md).
 
 | Preset | When |
 |---|---|
@@ -249,6 +300,9 @@ These are the base kinds. Over 40 more live in [08 FX and tone](toolkits/08_fx_a
 | `gold` | Golden hour, triumph |
 | `mono` | Plain greyscale: the past turned into a photograph, a memory |
 | `negative` | Colour negative: a frozen title, a "what if" flash (use 0.2–2 s) |
+| `golden-hour` | Low warm sun: orange soft light and a warm bloom (departure, farewell, aftermath glory) |
+| `dusk` | Violet-rose evening after sunset, a little bloom near the horizon |
+| `overcast` | Grey, flat, slightly desaturated daylight |
 
 ## Transitions
 Built into `core.js`: `cut` (0 s), `dissolve` (0.35), `fade-white` (0.4), `fade-black` (0.5), `zoom-punch` (0.3), `whip` (0.3; `dir` `left` default, `right`, `up`, `down`), `iris` (0.5). Twenty-six more, including `swirl` (the vertical shorts' spin cut), `pixelate`, `burn`, `swarm`, `squeeze` and `carry` (ink blot, peephole, cloud wipe, drip, …) with their parameters are in [09 Transitions and lens](toolkits/09_transitions_and_lens.md).
