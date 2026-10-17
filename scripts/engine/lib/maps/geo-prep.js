@@ -125,6 +125,13 @@
     out.regions = (L.regions || []).flatMap((R, i) => prepRegion(R, i, cx));
     if (L.arrows) out.arrows = list(L.arrows).map((A) => gcArrow(A, cx));
     for (const k of Object.keys(out)) if (!SKIP.has(k) && out[k] && typeof out[k] === 'object') out[k] = walk(out[k], P, 0);
+    // {lon, lat} points come back as objects with x, y: fights, morphs and throws draw from plain [x, y] arrays
+    const xy = (v) => (v && !Array.isArray(v) && typeof v === 'object' && typeof v.x === 'number' && typeof v.y === 'number' ? [v.x, v.y] : v);
+    const pts = (v) => (Array.isArray(v) ? v.map(xy) : v);
+    const each = (v, fn) => (v == null ? v : Array.isArray(v) ? v.map(fn) : fn(v));
+    if (out.fights) out.fights = each(out.fights, (F) => (F && typeof F === 'object' ? { ...F, path: pts(F.path) } : F));
+    if (out.morphs) out.morphs = each(out.morphs, (Mo) => (Mo && typeof Mo === 'object' ? { ...Mo, from: pts(Mo.from), to: pts(Mo.to) } : Mo));
+    if (out.throws) out.throws = each(out.throws, (Th) => (Th && typeof Th === 'object' ? { ...Th, from: xy(Th.from), to: xy(Th.to) } : Th));
     return out;
   };
   T.MAP_PREP.push((L, lt, env) => T.geoPrepare(L, lt, env));

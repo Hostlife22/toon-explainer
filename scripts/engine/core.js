@@ -516,7 +516,7 @@
     const sEnv = { ...env, cam: null, shot: own, outerShot: shot, outerCam: T.cameraAt(shot.camera, lt, shot.dur, shot), seed: (env.seed ?? 1) + ':' + shot.id + ':pinned' };
     const prevPaint = T.PAINT;
     T.PAINT = T.paintState ? T.paintState(env.spec, shot) : null;
-    try { for (const L0 of shot.pinned) T.drawLayer(c, T.effLayer(L0, lt), lt, sEnv, null); } finally { T.PAINT = prevPaint; c.restore(); }
+    try { for (const L0 of shot.pinned) { const L = T.effLayer(L0, lt); T.drawLayer(c, L, T.twosLt ? T.twosLt(L, lt, shot, env) : lt, sEnv, null); } } finally { T.PAINT = prevPaint; c.restore(); }
   };
   // Output formats. "vertical" (9:16) keeps the 1920x1080 world and shows a strip of it STRIP_W wide and the full
   // height, centred on shot.frame (x fraction, number or [{at, v, ease}] keys, default 0.5), scaled to 1080x1920.

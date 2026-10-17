@@ -310,6 +310,15 @@ def _map_path(v, geo: bool, n: int) -> bool:
     return isinstance(v, list) and len(v) >= n and all(_map_point(q, geo) for q in v)
 
 
+def _check_director(layer: dict, where: str, ids: set, errors: list[str]) -> None:
+    """Camera & acting layer fields (camera_check.py) in every state the layer's swaps produce."""
+    seen: set[str] = set()
+    for state in _swap_states(layer):
+        found: list[str] = []
+        CC.check_layer(state, where, ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, found)
+        errors.extend(e for e in found if not (e in seen or seen.add(e)))
+
+
 def _fx_refs(layer: dict) -> list[str]:
     swaps = layer.get("swap") if isinstance(layer.get("swap"), list) else []
     vals = [layer.get("target"), layer.get("follow")] + [x for sw in swaps if isinstance(sw, dict) for x in (sw.get("target"), sw.get("follow"))]
@@ -760,7 +769,7 @@ def validate(spec: dict) -> list[str]:
                 continue
             _check_layer(layer, f"{where}.pinned[{j}]<{layer.get('type')}>", cast, errors)
             _check_layer_refs(layer, f"{where}.pinned[{j}]", pinned_ids | ids, cast, errors)  # a pinned fx may target either list
-            CC.check_layer(layer, f"{where}.pinned[{j}]<{layer.get('type')}>", pinned_ids | ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, errors)
+            _check_director(layer, f"{where}.pinned[{j}]<{layer.get('type')}>", pinned_ids | ids, errors)
             if layer.get("type") == "fx":
                 refs = _fx_refs(layer)
                 if any(r in world_ids for r in refs) and any(r in pinned_ids and r not in world_ids for r in refs):
@@ -774,7 +783,7 @@ def validate(spec: dict) -> list[str]:
                 continue
             _check_layer(layer, f"{where}.layers[{j}]<{layer.get('type')}>", cast, errors)
             _check_layer_refs(layer, f"{where}.layers[{j}]", ids, cast, errors)
-            CC.check_layer(layer, f"{where}.layers[{j}]<{layer.get('type')}>", ids, LAYER_KINDS.get("take", set()), KNOWN_EXPR, errors)
+            _check_director(layer, f"{where}.layers[{j}]<{layer.get('type')}>", ids, errors)
     overlays = spec.get("overlays", []) or []
     if not isinstance(overlays, list):
         errors.append("overlays must be a list of {from, to, layer}")

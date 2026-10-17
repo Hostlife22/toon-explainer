@@ -87,3 +87,15 @@ def test_geo_overlay_forms_validate():
     assert any("fights" in e for e in validate(_spec([flat]))), "geo forms need map geo"
     broken = dict(layer, fights=[{"path": {"ll": [[2, 48]]}}])
     assert any("fights" in e for e in validate(_spec([broken])))
+
+
+def test_geo_lon_lat_points_render_on_fights_morphs_and_throws():
+    geo = {"proj": "mercator", "center": [10, 50], "span": 30}
+    layer = {"type": "map", "geo": geo,
+             "fights": [{"path": [{"lon": 2, "lat": 48}, {"lon": 13, "lat": 52}], "dur": 2}],
+             "morphs": [{"from": [{"lon": 0, "lat": 45}, {"lon": 10, "lat": 45}, {"lon": 5, "lat": 50}], "to": [[0.1, 0.1], [0.2, 0.2], [0.3, 0.1]]}],
+             "throws": [{"from": {"lon": 2, "lat": 48}, "to": {"ll": [13, 52]}}]}
+    spec = _spec([layer])
+    assert validate(spec) == []
+    frame = _page_eval(spec, lambda page: page.evaluate(GRAB, 1.0))
+    assert frame.startswith("data:image/png")

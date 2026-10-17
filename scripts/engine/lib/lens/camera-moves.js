@@ -47,7 +47,7 @@
       if (c.roll != null) cam = { ...cam, rot: cam.rot + numOrKeys(c.roll, lt) * DEG };
       const ext = {};
       if (c.dollyzoom) {
-        const d = c.dollyzoom, amt = (d.amount ?? 0.35) * win(d, lt, dur);
+        const d = c.dollyzoom, amt = Math.max(-0.9, (d.amount ?? 0.35) * win(d, lt, dur)); // 1 + amt stays positive
         if (amt) {
           ext.dz = amt;
           const p = d.target && shot && T.targetPoint ? T.targetPoint(shot, d.target, lt) : null;

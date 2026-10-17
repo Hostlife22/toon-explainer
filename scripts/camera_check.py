@@ -22,6 +22,11 @@ def _pair(v) -> bool:
     return isinstance(v, list) and len(v) == 2 and all(_num(x) for x in v)
 
 
+def _name(v, names) -> bool:
+    """A string member of names (never raises on lists or dicts)."""
+    return isinstance(v, str) and v in names
+
+
 def _keys_ok(value, ok_value) -> bool:
     """A nonempty [{at, v, ease?}] timeline whose values pass ok_value."""
     return isinstance(value, list) and bool(value) and all(
@@ -49,7 +54,7 @@ def _check_frame_key(key, where: str, ids: set, sizes: set, eases: set, errors: 
     if unknown:
         errors.append(f"{where}: unknown frame fields {sorted(unknown)} (known: {sorted(FRAME_KEYS)})")
     target = key.get("target")
-    if target is not None and target not in ids:
+    if target is not None and not _name(target, ids):
         errors.append(f"{where}: frame target {target!r} is not the id of a layer in this shot")
     if target is None and not _pair(key.get("point")) and not (isinstance(key.get("box"), list) and len(key["box"]) == 4
                                                                 and all(_num(x) for x in key["box"])):
@@ -75,15 +80,15 @@ def _check_frame_key(key, where: str, ids: set, sizes: set, eases: set, errors: 
     ots = key.get("ots")
     if ots is not None:
         oid = ots.get("id") if isinstance(ots, dict) else ots
-        if not (isinstance(oid, str) and oid in ids):
+        if not _name(oid, ids):
             errors.append(f"{where}: frame ots {oid!r} must name the listener layer (an id in this shot)")
         if isinstance(ots, dict):
-            if ots.get("side") is not None and ots["side"] not in ("left", "right"):
+            if ots.get("side") is not None and not _name(ots["side"], {"left", "right"}):
                 errors.append(f"{where}: ots side must be 'left' or 'right'")
             for k in ("blur", "tone"):
                 if ots.get(k) is not None and not (_num(ots[k]) and ots[k] >= 0):
                     errors.append(f"{where}: ots {k} must be a number >= 0")
-    if key.get("axis") is not None and key["axis"] not in FOLLOW_AXES:
+    if key.get("axis") is not None and not _name(key["axis"], FOLLOW_AXES):
         errors.append(f"{where}: frame axis must be one of {sorted(FOLLOW_AXES)}")
 
 
@@ -129,8 +134,10 @@ def check_camera(cam, where: str, ids: set, sizes: set, eases: set, errors: list
             continue
         _check_window(v, f"{w}.{name}", errors)
         _check_ease(v.get("ease"), f"{w}.{name}", eases, errors)
-        if name == "dollyzoom" and v.get("target") is not None and v["target"] not in ids:
+        if name == "dollyzoom" and v.get("target") is not None and not _name(v["target"], ids):
             errors.append(f"{w}: dollyzoom target {v['target']!r} is not the id of a layer in this shot")
+        if name == "dollyzoom" and _num(v.get("amount")) and not -0.9 <= v["amount"] <= 4:
+            errors.append(f"{w}: dollyzoom amount must be in -0.9..4 (below -1 the world would turn inside out)")
     roll = cam.get("roll")
     if roll is not None and not (_num(roll) or _keys_ok(roll, _num)):
         errors.append(f"{w}: roll must be degrees or a [{{at, v, ease}}] timeline of degrees")
@@ -168,8 +175,8 @@ def _look_ok(v, ids: set) -> bool:
     if _pair(v):
         return True
     if isinstance(v, dict) and set(v) <= LOOK_KEYS:
-        if isinstance(v.get("target"), str):
-            return v["target"] in ids
+        if v.get("target") is not None:
+            return _name(v["target"], ids)
         return _num(v.get("x")) and _num(v.get("y"))
     return False
 
@@ -195,10 +202,10 @@ def check_layer(layer: dict, where: str, ids: set, takes: set, exprs: set, error
             errors.append(f"{where}: takes must be a list of {{at, kind, target, expr}}")
             return
         for i, t in enumerate(tk):
-            if not (isinstance(t, dict) and _num(t.get("at")) and t.get("kind") in takes):
+            if not (isinstance(t, dict) and _num(t.get("at")) and _name(t.get("kind"), takes)):
                 errors.append(f"{where}.takes[{i}]: a take needs a numeric at (layer time) and kind in {sorted(takes)}")
                 continue
-            if t.get("target") is not None and t["target"] not in ids:
+            if t.get("target") is not None and not _name(t["target"], ids):
                 errors.append(f"{where}.takes[{i}]: take target {t['target']!r} is not the id of a layer in this shot")
-            if t.get("expr") is not None and t["expr"] not in exprs:
+            if t.get("expr") is not None and not _name(t["expr"], exprs):
                 errors.append(f"{where}.takes[{i}]: take expr {t['expr']!r} not in {sorted(exprs)}")

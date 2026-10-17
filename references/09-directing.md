@@ -78,6 +78,35 @@ Write the action as **subject + verb + visible result**: "the ice block rises pa
 6. **Empty frames are beats.** 2–3 s of an empty set after a death or an escape (China 9:52, 10:28, 26:30); 1 s of black before a solemn title; an exit that leaves the composition for 0.7–1 s (Rome).
 7. **Deflate** comic or ordinary peaks within 2–6 s; never deflate atrocity beats ([07 §5](07-story-craft.md)).
 
+### 6.1 Coverage: shot sizes, continuous motion and density (painted look)
+
+The reference films rarely hold one medium-wide framing: they cut between an establishing wide, a gesture at medium, a reaction close-up and an over-the-shoulder pair, and something always moves. Plan this per shot before choosing layers, and write the size into the shot card (below).
+
+**Shot-size quotas** (count per minute of film, from the `camera.frame` sizes of each shot's main key):
+
+| Size | Quota | Use it for |
+|---|---|---|
+| `ews` / `ws` | 1–3 per place or era change | The establisher: a Places 2.0 landscape or `set`, a real `geo` map (country by `iso`, region by `lonlat`), an `ortho` globe that spins to the place. A high `angle` makes the figure small and lost |
+| `ms` | the gesture beats | A character doing the action with the set around them; `follow` a walker or a car |
+| `mcu` / `cu` | **at least 25 %** together with `ecu` | Reactions, decisions, a name card, the line that matters; faces get `detail` automatically when they are large |
+| `ecu` | 1–3 per minute | The stare, the scream, the object that changes everything (the bottle, the coin); add `letterbox` and an `overshoot` dolly |
+| `ots` | every exchange between two characters | `frame` keys `{target: speaker, ots: listener}`, swapped on the reply (shot-reverse-shot inside one shot); a `whip` between the keys for a fast retort |
+
+Rules of thumb: never three cuts in a row at the same size (the density lint warns); punch from `ms` to `cu` on the key word (`overshoot` 0.12–0.18) instead of a flat `camera.punch` when a face is the subject; open every new location or era wide, and every new character at `ms` or tighter.
+
+**Every shot has one continuous motion.** Breathing and the default drift are not enough. Pick one thing that moves for the whole shot: a vehicle, a walker or an animal on a `path` (with exhaust, dust or a gait), `particles` (smoke from a chimney, gas from a bottle, dust motes in a window shaft), a `follow` or `handheld` camera, a `frame` move between two sizes, a spinning globe, a map `flood` or `drawOn`, a machine part (`gears`, `piston`). Then add the hold-and-snap beats on top of it.
+
+**Hold-and-snap still governs poses.** Continuous motion lives in the world and the camera; characters keep holding a pose and snapping to the next one on the key word (the painted `acting` adds anticipation and settle). A character never drifts slowly between two poses unless it is a deliberate slow burn.
+
+**Density checklist per shot** (the validator prints the lint; every warning is fixed or justified in the shot's `screen` note):
+
+1. Three planes: a place (never `void`), actors, a foreground element (`fg`, a `set` layer, `silhouettes`, an `ots` shoulder, a near prop at `z` > 1).
+2. The light is set: `style.light` for the film, a shot `light` or `grade` for a mood change, a practical source in the set (window shaft, lamp, fire).
+3. One continuous motion (above).
+4. Shot size differs from at least one of the two previous shots.
+5. Maps are real geography (`geo` + `iso` / `lonlat` / `continent`), animated (`flood`, `drawOn`, `wipe`, routes, tokens), not blobs.
+6. Text is lettering on `hud` when the camera frames tightly, so it stays readable.
+
 ## 7. The shot card
 
 Before writing layers, fill one card per shot. Keep it in the storyboard's `- On screen:` line or as the shot's `screen` field:
@@ -89,6 +118,7 @@ Happens:  six molecules pop into a ring one by one; a title RINGS lands
 Changes:  the crowd has become a structure with a hole in it
 Because:  k05 made them slow down and hold hands -> what shape do they make?
 Device:   10-technique-library M4 (a diagram figure comes alive) + pops 0.3 s apart
+Size:     ms -> cu on "rings" (overshoot); continuous motion: the molecules jostle (path loops)
 ```
 
 A shot is ready only if all four lines are filled:
@@ -136,7 +166,8 @@ Run these on the storyboard, then on the `--sheet`:
 6. **Continuity:** persistent state (counters, damage, stickers, costumes, set states) is the same in every later shot; callbacks match their original framing.
 7. **Readability:** labels 56+ (shorts 46–70), faces not covered, text inside the frame or the vertical strip.
 8. **Sensitive material:** no gore, no extremist symbols, no real logos or likenesses ([07 §5](07-story-craft.md)). The reference videos sometimes draw such symbols and more explicit violence; this skill deliberately does not.
-9. **Vocabulary:** `python3 scripts/spec.py film/spec.json` passes; render `--sheet` and `--stills` on risky shots and look at them.
+9. **Coverage:** per minute at least 25 % `cu`/`ecu`, an `ots` pair for every dialogue, a wide establisher per place or era; the density lint prints no warning that is not justified (§6.1).
+10. **Vocabulary:** `python3 scripts/spec.py film/spec.json` passes; render `--sheet` and `--stills` on risky shots and look at them.
 
 ## 10. Transfer: the same method on other topics
 

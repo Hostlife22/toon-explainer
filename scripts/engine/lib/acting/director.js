@@ -64,19 +64,30 @@
     return -T.clamp(elev * 0.4, -MAX_TILT, MAX_TILT);
   }
 
-  // ---------- compiled plan (cached per layer object and shot) ----------
-  const plans = new WeakMap();
+  // ---------- compiled plan ----------
+  // Cached per film by the shot id and the authored fields the plan depends on, so the transient copies made by
+  // swaps, rack focus, dist haze or vertical framing reuse it. Bounded (oldest out); plans are pure, so eviction
+  // never changes a frame.
+  const plans = new WeakMap(), MAX_PLANS = 512;
+  T.directorCompiles = 0;
+  const planKey = (Ly, shot) => (shot ? shot.id : '') + '|' + JSON.stringify([Ly.id, Ly.who, Ly.lookAt, Ly.takes, Ly.facing, Ly.view,
+    Ly.expr, Ly.at, Ly.x, Ly.y, Ly.size, Ly.scale, Ly.flip, Ly.move, Ly.path, Ly.look && Ly.look.view]);
   function planOf(Ly, shot, env) {
-    let byShot = plans.get(Ly);
-    if (byShot && byShot.has(shot)) return byShot.get(shot);
+    const film = (T.film && T.film.spec) || env.spec || T;
+    let cache = plans.get(film);
+    if (!cache) { cache = new Map(); plans.set(film, cache); }
+    const key = planKey(Ly, shot);
+    if (cache.has(key)) return cache.get(key);
     const plan = compile(Ly, shot, env);
-    if (!byShot) { byShot = new WeakMap(); plans.set(Ly, byShot); }
-    byShot.set(shot, plan);
+    T.directorCompiles++;
+    cache.set(key, plan);
+    if (cache.size > MAX_PLANS) cache.delete(cache.keys().next().value);
     return plan;
   }
+  // The layer's flip at shot time t (move / path flips change it during the shot).
+  const flipAt = (Ly, t) => { const st = T.layerState(Ly, t); return (st && st.flip) || 1; };
   function compile(Ly, shot, env) {
     const at0 = Ly.at ?? 0, end = (shot && shot.dur) || 10, look = Ly.lookAt == null ? null : toKeys(Ly.lookAt);
-    const st0 = T.layerState(Ly, at0) || { flip: 1 };
     const S = (lt) => lt + at0; // layer time -> shot time
     // base facing: explicit facing, else derived from lookAt (sampled on a fixed 6 Hz grid), else right
     let facing = toKeys(Ly.facing, 'right').map((k) => ({ ...k, v: faceNum(k.v) }));
@@ -87,7 +98,7 @@
         const from = k.at ?? 0, to = Math.min(i + 1 < look.length ? look[i + 1].at ?? 0 : Infinity, end - at0);
         for (let t = from; t < to + 1e-9; t += 1 / HZ) {
           const d = dirTo(Ly, k.v, shot, S(t));
-          const v = d ? d * (st0.flip || 1) : keys[keys.length - 1].v;
+          const v = d ? d * flipAt(Ly, S(t)) : keys[keys.length - 1].v;
           if (t <= 1e-9) keys[0] = { at: 0, v }; // already turned at the cut: no turn on frame 0
           else if (v !== keys[keys.length - 1].v) keys.push({ at: t, v });
         }
@@ -99,7 +110,7 @@
     const baseExpr = toKeys(Ly.expr, 'neutral');
     const fSegs = [], vSegs = [], eSegs = [], hops = [], kicks = [], blinks = [], tremble = [];
     for (const tk of Ly.takes || []) {
-      const a = tk.at, toward = tk.target ? dirTo(Ly, tk.target, shot, S(a)) * (st0.flip || 1) : 0, orig = valAt(facing, a);
+      const a = tk.at, toward = tk.target ? dirTo(Ly, tk.target, shot, S(a)) * flipAt(Ly, S(a)) : 0, orig = valAt(facing, a);
       const turn = (from, to, back) => {
         if (toward) fSegs.push({ from, to, v: back ? orig : toward });
         else vSegs.push({ from, to, v: back ? valAt(baseView, a) : 'front' });

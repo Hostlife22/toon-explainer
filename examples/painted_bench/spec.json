@@ -272,87 +272,102 @@
    "layers": [
     {
      "type": "map",
-     "land": [
-      [
-       0.4,
-       0.58,
-       0.32,
-       0.24
+     "id": "med",
+     "style": "painted",
+     "geo": {
+      "proj": "mercator",
+      "center": [
+       11,
+       45
       ],
-      [
-       0.74,
-       0.3,
-       0.18,
-       0.18
+      "span": 30,
+      "ranges": [
+       "alps",
+       "apennines",
+       "pyrenees",
+       "dinarics"
+      ],
+      "rivers": [
+       "Rhine",
+       "Danube",
+       "Po"
       ]
-     ],
+     },
      "regions": [
       {
-       "pts": [
-        [
-         0.25,
-         0.55
+       "id": "rome",
+       "iso": "ITA",
+       "color": "#c3161f",
+       "dur": 0.001,
+       "face": {
+        "mood": "smug",
+        "scale": 0.22
+       }
+      },
+      {
+       "id": "gaul",
+       "iso": "FRA",
+       "color": "#e8d9b0",
+       "dur": 0.001,
+       "flood": {
+        "at": 0.3,
+        "dur": 1.6,
+        "from": [
+         7.5,
+         44
         ],
-        [
-         0.42,
-         0.45
-        ],
-        [
-         0.58,
-         0.52
-        ],
-        [
-         0.52,
-         0.72
-        ],
-        [
-         0.3,
-         0.7
-        ]
-       ],
-       "at": 0.2,
-       "dur": 1.0
+        "by": "rome"
+       }
       }
      ],
      "pins": [
       {
-       "x": 0.4,
-       "y": 0.6,
+       "lon": 12.5,
+       "lat": 41.9,
        "at": 0.3,
        "label": "ROME"
       }
-     ]
+     ],
+     "signs": [
+      {
+       "lon": 9.6,
+       "lat": 48.6,
+       "text": "RHINE",
+       "at": 0.9,
+       "size": 130
+      }
+     ],
+     "compass": {
+      "x": 0.9,
+      "y": 0.82,
+      "size": 80,
+      "at": 0.2
+     }
     },
     {
      "type": "bean",
      "who": "legion",
-     "x": 0.24,
-     "y": 0.66,
-     "size": 300,
+     "x": 0.16,
+     "y": 1.02,
+     "size": 420,
      "pose": "point",
-     "expr": "worried"
-    },
-    {
-     "type": "sign",
-     "text": "RHINE",
-     "x": 0.62,
-     "y": 0.62,
-     "w": 220,
-     "scale": 0.7
+     "expr": "worried",
+     "lookAt": "med"
     },
     {
      "type": "prop",
      "kind": "coin-heap",
-     "x": 0.8,
-     "y": 0.8,
-     "size": 160
+     "x": 0.86,
+     "y": 0.92,
+     "size": 180,
+     "z": 1.1
     },
     {
      "type": "prop",
      "kind": "dagger",
-     "x": 0.12,
+     "x": 0.06,
      "y": 0.3,
-     "size": 120,
+     "size": 140,
      "rot": 30,
      "z": 1.15
     }
@@ -381,37 +396,61 @@
     {
      "type": "map",
      "id": "world",
-     "style": "atlas",
-     "view": "globe",
-     "globe": {
-      "full": true,
-      "r": 0.4,
-      "dy": 0.04,
-      "spin": 0.012,
-      "stars": 60
+     "style": "painted",
+     "geo": {
+      "proj": "ortho",
+      "radius": 0.4,
+      "graticule": true,
+      "center": [
+       {
+        "at": 0,
+        "v": [
+         -20,
+         30
+        ]
+       },
+       {
+        "at": 2.5,
+        "v": [
+         20,
+         38
+        ]
+       }
+      ]
      },
      "regions": [
       {
        "id": "west",
-       "blob": [
-        0.3,
-        0.5,
-        0.17,
-        0.3
+       "iso": [
+        "ESP",
+        "PRT",
+        "FRA",
+        "ITA",
+        "GBR"
        ],
        "color": "#f08a2c",
-       "dur": 0.001
+       "dur": 0.001,
+       "label": {
+        "text": "WEST",
+        "size": 40
+       }
       },
       {
        "id": "east",
-       "blob": [
-        0.72,
-        0.48,
-        0.17,
-        0.3
+       "iso": [
+        "GRC",
+        "TUR",
+        "EGY",
+        "SYR"
        ],
        "color": "#7a4fc2",
-       "dur": 0.001
+       "at": 0.8,
+       "dur": 0.8,
+       "label": {
+        "text": "EAST",
+        "size": 40,
+        "at": 1.2
+       }
       }
      ]
     },
@@ -422,7 +461,8 @@
      "y": 0.98,
      "size": 360,
      "pose": "point-up",
-     "expr": "shock"
+     "expr": "awe",
+     "z": 1.1
     },
     {
      "type": "prop",

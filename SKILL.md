@@ -11,6 +11,8 @@ You are the director, animator and editor. The script becomes a **spec** (JSON w
 
 The style grammar comes from studies of **twenty** videos by one history/myth explainer channel: eight long films (Rome, China, the Reconquista, World War I, the road to World War II, a speech fact-check show, a Greek myth, a horror biography; about 3.5 hours) and twelve vertical shorts (40–95 s). Every frame was decoded for cut detection; contact sheets cover every video end to end, with frame strips at 30 fps for fast actions and transcripts for word sync. `references/06-reference-library.md` records coverage and what each video teaches, `references/09-directing.md` turns the dramaturgy into a planning method, `references/10-technique-library.md` catalogues the techniques by what a scene must do, `references/11-vertical-shorts.md` covers the 9:16 format, and `references/07-story-craft.md` maps sentences to shot recipes.
 
+**Default look for a new film: painted.** Set `"style": {"look": "painted", "light": {...}}`, build places from Places 2.0 (`set` presets and parts, `hills`/`woods`/`river`/`street1920`/`factory`...), real geography for maps (`geo` with `iso` codes, `lonlat` regions, the `ortho` globe), shot-size framing (`camera.frame` `ecu`/`cu`/`mcu`/`ms`/`ws`/`ews`, `ots`), acting (`lookAt`, `takes`, `lipsync`), `path` motion for walkers, creatures and vehicles, and closed-form `particles` and impact FX. The classic flat look stays available for existing films; do not start a new one in it. Run the density checklist (production rule 3b) on every shot.
+
 **Direct before you draw.** For any new film, first write the central question, the arc and a shot card per shot (what the viewer learns, what physically happens, what changes, why it follows the previous shot): `references/09-directing.md`. Only then pick layers.
 
 ## Route the task
@@ -25,6 +27,12 @@ All numbered guides are in `references/`; toolkit cards are in `references/toolk
 | Pick a technique by what the scene must do (explain a mechanism, build suspense, show a death off screen, compare, pass time) | technique library by purpose, then its engine recipe | 10 → card |
 | Turn a line of narration into a shot | Find the sentence's intent in the recipe table, then open the card it names | 07 §7 → 08 → card |
 | Make a single shot or scene | Recipe from 02 or a card, check with `--stills` | 02, 03, card |
+| Plan shot sizes, coverage and density for a film (painted look) | shot-size quotas, OTS for dialogue, EWS map/globe establishers, one continuous motion per shot, density checklist | 09 §6.1 → 02 "Shot sizes and density" |
+| Lived-in rooms, painted landscapes, depth planes | `bg: set` (`preset`, `parts`), `set` layer in front, `parallax`, `haze`, painted `fg` framing | `toolkits/04_places.md` "Places 2.0" |
+| Camera grammar: ECU/CU/OTS, low/high angle, whip, rack, dolly zoom, follow, handheld | `camera.frame` keys, `angle`, `follow`, `handheld`, `dollyzoom`, `onTwos` | `toolkits/09_transitions_and_lens.md`, 02 recipe T |
+| Faces, turnarounds, reaches, gaits, lip-sync | `view`/`facing`, `reach`, `path` + `gait`, `lookAt`, `takes`, `lipsync` (`scripts/lipsync.py`) | `toolkits/01_characters.md` |
+| Vehicles and animals travelling, exhaust, dust | `path` (`pts`, `dur`, `ease`, `orient`), v2 vehicles (`model-t`, `sedan1920`, `locomotive`, `ship`...) | `toolkits/03_props_creatures_vehicles.md` |
+| Smoke, gas, sparks, debris, hit frames | `fx` `particles` presets, `toxic-cloud`, `impact-frame`, `shockwave`, `dustkick`, `streaks`, layer `trail` | `toolkits/08_fx_and_tone.md` |
 | Custom character / unique location | `bean` in `cast`, or an AI cutout + `key_green.py` + an `image` layer | `toolkits/01_characters.md`, 04 |
 | Fit to an existing voiceover | SRT → `script2spec.py --srt … --merge spec.json` | 05 §4 |
 | New reference style | `analyze_ref.py` → frame strips → extend 01 and the library | 01, 06 |
@@ -66,14 +74,24 @@ Films that show a whole story:
 - `examples/grammar/` — recipe catalog: reveal, map, villain, episode, finale;
 - `examples/story_*` — twelve 22 s story films on non-historical topics, each with a hook, a turn and a payoff and dense feature use: `story_moon_race` (rivals, countdown), `story_vaccine` (an inside-the-body explainer), `story_museum_heist` (a plan, CCTV, a double-cross), `story_banana_caper` (a slapstick investigation), `story_startup` (rise and fall told with UI), `story_simulation` (glitches, grid, pull-back reveal), `story_border` (a living-map dispute), `story_emu_war` (comedy history with image cutouts), `story_lighthouse` (slow-burn horror), `story_volcano` (a science disaster), and two 9:16 shorts, `story_cat_physics` and `story_honey`.
 
+Painted-engine catalogs (start here for a new film): `painted_bench` (one dense painted shot per scene type), `painted_places`, `characters_v2`, `camera_acting`, `geo_maps`, `creatures_vehicles_v2`, `props_fx_v2`.
+
 Toolkit catalogs (one shot per feature; render one with `--sheet` before using its card for the first time): `character_sheet`, `eras_wardrobe`, `expressions_wardrobe`, `acting_gags`, `props_creatures`, `places_tour`, `sets_rooms`, `living_maps`, `geo_maps`, `paper_and_maps`, `paper_cards`, `game_ui`, `tone_and_horror`, `action_fx`, `transitions_lens`. `references/08-toolkits.md` says which card each one belongs to. Contact sheets of every example: `assets/sheets/<example>.jpg`.
 
 ## Production rules
 
 0. **Plan the story first** (`09-directing.md`): central question → arc → meaning events → the physical action that shows each one → shot cards. Every shot must answer: what the viewer learns, what happens, what changes, why it follows the previous one.
-1. **Three planes in every shot:** foreground (`fg`), characters, a rich background, plus atmosphere (`birds`, `beam`, `rain`, `smoke`). A bare background with a lone character is only for reactions and titles (02 → "Depth rule").
-2. **Characters move like the reference:** 3/4 angle; a pose holds, then changes over 2 frames with settle (hold-and-snap); the body sways; the mouth cycles through 3 shapes while speaking; `tremble` for fear; `walk`/`run` for movement.
-3. **No static shots.** The camera always drifts; this is the default. Add one main action per shot. Split shots longer than 5 s into internal beats.
+1. **Three planes in every shot:** foreground (`fg`, a `set` layer or a near layer at `z` > 1, or an `ots` shoulder), characters, a rich background (a Places 2.0 `set` or painted landscape, never `void`), plus atmosphere (`particles`, `birds`, window light, `smoke`). A bare background with a lone character is only for reactions and titles (02 → "Depth rule").
+2. **Characters move like the reference:** 3/4 angle; a pose holds, then changes over 2 frames with settle (hold-and-snap; with the painted look `acting` adds the anticipation and overshoot); characters look at what matters (`lookAt`) and react with `takes`; the mouth follows the voice (`lipsync`) only when the character is the one speaking or mouthing the line; `tremble` for fear; travel along a `path` with a `gait`.
+3. **No static shots: one continuous motion per shot.** Besides breathing and the camera drift, every shot carries at least one thing that moves the whole time: a vehicle or walker on a `path`, smoke or gas `particles`, a camera `follow` / `frame` move / `handheld`, a spinning globe, a flood on a map. Add one main action per shot. Split shots longer than 5 s into internal beats.
+3a. **Shot-size grammar.** Frame with `camera.frame` sizes instead of one medium-wide shot: per minute at least 25 % `cu`/`ecu`, an `ots` pair for every exchange between two characters, an `ews`/`ws` establisher (a set, a landscape, a real `geo` map or a globe) when the place or the era changes; never three cuts in a row at the same size (09 §6.1).
+3b. **Density checklist, every shot** (the validator prints the lint; the warnings must be zero, or each one justified in the shot's `screen` note):
+   - three planes: background place, actors, a foreground element;
+   - the light is set (`style.light`, a per-shot `light` for a mood change, a window shaft, a lamp, a `grade`);
+   - foreground framing (`fg`, a `set` layer, `ots`, `silhouettes`);
+   - at least one continuous motion (rule 3);
+   - its shot size differs from at least one of the two previous shots;
+   - maps use real geography (`geo` + `iso` / `lonlat`), not blobs.
 4. **Match the reference pace by events, not cuts:** both formats cut 7–17 times a minute, and something new happens on screen every 1.5–3 s (shorts: 1.5–2.5 s, under 15 % still frames). A long map, board or stage shot is fine if it keeps changing inside. Climaxes either cut fast (0.1–1.6 s, then a 2–4 s outcome hold) or get heavier through content; hold before an impact (2–3 s) so it lands.
 5. **Word = event.** The key word of a line coincides with a label, a number or a camera hit appearing (`at`, `punch`, `jump`).
 6. **Labels = key words**, not the whole sentence. Tag (`tag`) + name + an arrow pointing to the character.

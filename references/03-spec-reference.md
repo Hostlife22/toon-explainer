@@ -55,7 +55,7 @@ In vertical films `keepInFrame` (labels, titles, counters) clamps to the visible
 | `frame` | `{"target":"hero","size":"cu"}` or a list of keys | Shot-size framing of a layer: zoom and centre come from the target's extents (a bean's head and body, or a layer's `size`). Fields below |
 | `follow` | `"car"` or `{"target":"car","lag":0.35,"size":"ms","axis":"x"}` | Follows a moving layer with a critically damped lag (`lag` s, default 0.3; zoom 1.35 unless `size` / `zoom`). Not together with `frame` |
 | `handheld` | `true`, `8` or `{"amp":8,"hz":0.6,"rot":0.4,"at":1,"dur":2}` | Handheld drift: three octaves of seeded noise (px and degrees), fades in and out of an `at`/`dur` window |
-| `dollyzoom` | `{"at":0.4,"dur":2,"amount":0.6,"target":"hero"}` | Vertigo move: the subject plane keeps its size while farther planes shrink and nearer ones grow (`amount` < 0: the world looms). Centred on `target` |
+| `dollyzoom` | `{"at":0.4,"dur":2,"amount":0.6,"target":"hero"}` | Vertigo move: the subject plane keeps its size while farther planes shrink and nearer ones grow (`amount` -0.9..4; below 0 the world looms). Centred on `target` |
 | `orbit` | `{"amount":220,"dur":3}` | Orbit-lite parallax slide: planes behind the subject slide one way, planes in front the other, by `amount` px at full depth |
 | `roll` | `-4` or `[{"at":0,"v":0},{"at":2,"v":-8,"ease":"inOut"}]` | Smooth camera roll in degrees (eased keys; `rot` keys snap) |
 | `angle` | `"low"`, `"high"`, `"eye"`, a number -1..1 or `[{at, v}]` | Low angle: far planes drop (lower horizon), near planes rise and the subject looms; high angle the reverse |
@@ -64,7 +64,7 @@ In vertical films `keepInFrame` (labels, titles, counters) clamps to the visible
 or `box` `[x, y, w, h]` (fractions), `size` (`ecu` extreme close-up: eyes and mouth; `cu` close-up: the head; `mcu`
 head and shoulders; `ms` medium: to the waist; `ws` wide: the whole figure; `ews` extreme wide: a small figure),
 `zoom` (overrides `size`), `place` (`[x, y]` frame fractions where the target lands, default centre), `dur` (0.6 s
-move from the previous key), `ease`, `overshoot` (0..0.9: a spring push that passes the framing and settles),
+move from the previous key; `ots` keys cut unless `dur` is set), `ease`, `overshoot` (0..0.9: a spring push that passes the framing and settles),
 `whip` (a fast pan, `dur` 0.25, with a motion streak), `rack` (`true` or px: rack focus to the target as the key
 starts), `ots` (the listener's id or `{id, side, blur, tone}`: over-the-shoulder, the listener becomes a blurred dark
 shoulder at the frame edge and the speaker is placed opposite), `lag` (follow), `axis` (`x` / `y`: follow one axis),

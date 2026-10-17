@@ -64,7 +64,7 @@
       } else { x = b.x; y = b.y + (S ? S.gy * b.h : 0); if (S) fh = S.g * b.h; }
     } else if (k.box) {
       x = (k.box[0] + k.box[2] / 2) * W; y = (k.box[1] + k.box[3] / 2) * H;
-      fh = S ? S.g * k.box[3] * H : Math.max(k.box[3] * H, (k.box[2] * H * H) / W) / 0.9;
+      fh = S ? S.g * k.box[3] * H : Math.max(k.box[3] * H, (k.box[2] * W * H) / viewSpan()[1]) / 0.9; // width fit in the visible span
     } else if (k.point) {
       x = k.point[0] * W; y = k.point[1] * H; if (S) fh = S.g * 400;
     } else return null;
@@ -116,6 +116,7 @@
     return 1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + (z / Math.sqrt(1 - z * z)) * Math.sin(wd * t));
   }
   const keyProgress = (k, since) => {
+    if (k.ots && k.dur == null) return 1; // a reverse shot cuts: the old speaker is already hidden behind the new shoulder
     if (k.whip) return T.ease.inOut(T.prog(since, 0, k.dur ?? 0.25));
     if (k.overshoot > 0) return springStep(since, k.dur ?? 0.6, k.overshoot);
     return T.easeBy(k.ease || 'inOut')(T.prog(since, 0, k.dur ?? 0.6));
@@ -132,30 +133,47 @@
     const at = k.at ?? 0;
     if (i === 0 && at <= 0) return { ...cur, key: k, p: 1 };
     const prev = i > 0 ? framing(keys[i - 1], lt, shot, baseZ) : null;
-    const from = prev || { z: baseZ, x: out.fx + out.px + (W / 2 - out.fx) / out.z, y: out.fy + out.py + (H / 2 - out.fy) / out.z, place: [0.5, 0.5] };
+    const from = prev || { z: baseZ, x: out.fx + out.px + (viewSpan()[0] + viewSpan()[1] / 2 - out.fx) / out.z, y: out.fy + out.py + (H / 2 - out.fy) / out.z, place: [0.5, 0.5] };
     const p = keyProgress(k, lt - at);
-    if (p >= 1 && !(k.overshoot > 0)) return { ...cur, key: k, p: 1 };
+    if (p === 1) return { ...cur, key: k, p: 1 }; // eased overshoot (outBack, outSettle...) keeps p > 1
     const lz = Math.exp(T.lerp(Math.log(from.z), Math.log(cur.z), p));
     return { z: lz, x: T.lerp(from.x, cur.x, p), y: T.lerp(from.y, cur.y, p),
       place: [T.lerp(from.place[0], cur.place[0], p), T.lerp(from.place[1], cur.place[1], p)], key: k, p };
   }
 
   // Applies the framing to a core camera {z, px, py, fx, fy, ...}; zMul = punch / jump multipliers on top.
+  // [left, width] of the world strip the viewer sees: the whole width, or the vertical film's strip at shot.frame.
+  let VIEW = null;
+  function viewSpan() {
+    if (VIEW) return VIEW;
+    if (T.FORMAT !== 'vertical') return [0, W];
+    return [W / 2 - T.STRIP_W / 2, T.STRIP_W];
+  }
+  const stripOf = (shot, lt) => {
+    if (T.FORMAT !== 'vertical') return [0, W];
+    const S = T.STRIP_W, c = T.clamp(T.num(shot && shot.frame, lt, 0.5) * W, S / 2, W - S / 2);
+    return [c - S / 2, S];
+  };
+  T.frameStrip = stripOf;
   function solve(out, f, k, zMul) {
-    const z = Math.max(1, f.z) * zMul, vert = T.FORMAT === 'vertical';
-    const ax = vert ? out.fx : f.place[0] * W, ay = f.place[1] * H;
+    const z = Math.max(1, f.z) * zMul, [a0, span] = viewSpan(), a1 = a0 + span;
+    const ax = a0 + f.place[0] * span, ay = f.place[1] * H;
     let x = f.x, y = f.y;
-    if (k.clamp !== false) { // never show past the world edge (subject plane)
-      const left = ax / z, right = (W - ax) / z, top = ay / z, bot = (H - ay) / z;
-      if (!vert) x = left + right >= W ? W / 2 : T.clamp(x, left, W - right);
+    if (k.clamp !== false) { // never show past the world edge (subject plane) inside the visible span
+      const left = (ax - a0) / z, right = (a1 - ax) / z, top = ay / z, bot = (H - ay) / z;
+      x = left + right >= W ? W / 2 : T.clamp(x, left, W - right);
       y = top + bot >= H ? H / 2 : T.clamp(y, top, H - bot);
     }
-    const fx = vert ? out.fx : W / 2, fy = H / 2;
+    const fx = a0 + span / 2, fy = H / 2;
     return { ...out, z, fx, fy, px: x - fx - (ax - fx) / z, py: y - fy - (ay - fy) / z, framed: true };
   }
   T.frameCamera = (out, c, lt, dur, shot, zMul = 1) => {
     const keys = shot ? T.frameKeys(c) : null;
     if (!keys) return out;
+    VIEW = stripOf(shot, lt);
+    try { return frameCamera(out, keys, lt, shot, zMul); } finally { VIEW = null; }
+  };
+  function frameCamera(out, keys, lt, shot, zMul) {
     const f = frameAt(keys, out, lt, shot, zMul);
     if (!f) return out;
     let res = solve(out, f, f.key, zMul);
@@ -169,7 +187,7 @@
       }
     }
     return res;
-  };
+  }
   // Shot-time world point of a layer used as a camera anchor (dolly zoom centre): its framing centre.
   T.targetPoint = (shot, id, lt, size = 'mcu') => rawFraming({ target: id, size }, lt, shot);
 
@@ -206,11 +224,18 @@
     otsCache.set(shot, res);
     return res;
   }
+  // Vertical films: the shoulder is scaled to the visible strip and sits on its bottom edge (fg ots draws its head
+  // 0.36 of the width off centre, 786 units below its origin at scale 1).
+  function stripShoulder(L, shot, lt) {
+    if (T.FORMAT !== 'vertical') return L;
+    const [a0, span] = stripOf(shot, lt), s = span / W;
+    return { ...L, x: (a0 + span / 2) / W, y: (H + 20 - 786 * s) / H, scale: s };
+  }
   T.shotLayers = (shot, lt) => {
     const P = otsPlan(shot), list = shot.layers || [];
     if (!P) return list;
     const on = P.plan.filter((q) => lt >= q.from - 1e-9 && lt < q.to), hidden = new Set(on.map((q) => q.hide));
     const kept = list.filter((L) => !(L && hidden.has(L.id))), i = P.first ? kept.indexOf(P.first) : -1, at = i < 0 ? kept.length : i;
-    return [...kept.slice(0, at), ...on.map((q) => q.layer), ...kept.slice(at)];
+    return [...kept.slice(0, at), ...on.map((q) => stripShoulder(q.layer, shot, lt)), ...kept.slice(at)];
   };
 })();

@@ -428,3 +428,89 @@ def test_density_lint_counts_shot_sizes_and_ots():
     assert any("same camera zoom" in w for w in lint(same))
     ots = {"shots": [{"id": "o", "dur": 2, "camera": {"frame": {"target": "hero", "ots": "pal"}}, "layers": [_bean(), _bean(id="pal", who="pal")]}]}
     assert not any("no foreground" in w for w in lint(ots))
+
+
+# ---------- review fixes ----------
+def test_dolly_zoom_amount_domain():
+    spec = _spec([_bean()], camera={"dollyzoom": {"amount": -1.2}})
+    assert any("dollyzoom" in e for e in validate(spec))
+    ok = _spec([_bean()], camera={"dollyzoom": {"amount": -0.8, "ease": "outElastic", "dur": 1}, "zoom": [1.2, 1.2]})
+    res = _cam(ok, [[t, [[100, 100, 0.3], [100, 100, 1.4]]] for t in (0.1, 0.3, 0.6, 1.0)])
+    assert all(all(v == v and abs(v) < 1e6 for p in r["pts"] for v in p) for r in res), "finite scales"
+
+
+def test_vertical_framing_honours_place_and_clamp():
+    spec = _spec([_bean(x=0.01)], camera={"frame": {"target": "hero", "size": "ws"}})
+    spec["format"] = "vertical"
+    (res,) = _cam(spec, [[1.0, [[0, 540]]]])
+    strip_left = 960 - 1080 * 1080 / 1920 / 2
+    assert res["pts"][0][0] <= strip_left + 0.5, ("the world edge stays at or left of the strip edge", res["pts"][0][0])
+    placed = _spec([_bean(x=0.5)], camera={"frame": {"target": "hero", "size": "cu", "place": [0.3, 0.5], "clamp": False}})
+    placed["format"] = "vertical"
+    (res,) = _cam(placed, [[1.0, [[960, 0.9 * 1080 - 450 * 0.7]]]])
+    assert abs(res["pts"][0][0] - (strip_left + 0.3 * 607.5)) < 4, res["pts"][0][0]
+
+
+def test_vertical_ots_shoulder_sits_in_the_strip():
+    layers = [_bean(x=0.4), _bean(id="pal", who="pal", x=0.6)]
+    spec = _spec(layers, camera={"frame": {"target": "hero", "size": "mcu", "ots": "pal"}})
+    spec["format"] = "vertical"
+    js = "(t) => TOON.shotLayers(TOON.film.timeline.shots[0], t).filter((L) => L.kind === 'ots').map((L) => [L.x, L.scale ?? 1])"
+    (o,) = _page_eval(spec, lambda page: page.evaluate(js, 1.0))
+    assert abs(o[0] - 0.5) < 0.01 and o[1] < 0.5, o
+
+
+def test_box_fit_keeps_a_wide_box_whole():
+    spec = _spec([_bean()], camera={"frame": {"box": [0.1, 0.45, 0.8, 0.1]}})
+    (res,) = _cam(spec, [[1.0, [[0.1 * 1920, 540], [0.9 * 1920, 540]]]])
+    assert res["pts"][0][0] >= -1 and res["pts"][1][0] <= 1921, res["pts"]
+
+
+def test_frame_key_easing_overshoot_is_kept():
+    keys = [{"at": 0, "target": "hero", "size": "ws"}, {"at": 1, "target": "hero", "size": "cu", "dur": 0.6, "ease": "outSettle"}]
+    zs = [r["z"] for r in _cam(_spec([_bean()], camera={"frame": keys}), [[1 + i / 60, []] for i in range(1, 50)])]
+    assert max(zs) > zs[-1] * 1.03, "outSettle passes the framing"
+
+
+def test_look_at_follows_the_current_flip():
+    hero = _bean(x=0.5, lookAt="pal", move=[{"at": 1, "dur": 0.1, "flip": True}])
+    p = _probe(_spec([hero, _bean(id="pal", who="pal", x=0.15)]), [0.5, 2.0])
+    # pal is on the left: unflipped the rig faces -1; once flipped by move, the rig must face +1 (screen left again)
+    assert p[0]["hero"]["facing"] == -1 and p[1]["hero"]["facing"] == 1, p
+
+
+def test_pinned_layers_step_on_twos():
+    mover = _bean(move=[{"at": 0, "dur": 2, "to": [0.8, 0.9], "ease": "linear"}], x=0.2)
+    spec = _spec([], camera={"zoom": [1, 1]}, onTwos=True, bg={"kind": "flat", "color": "#8a7a66"}, pinned=[mover])
+    a = _frames(spec, [1.0, 1.0 + 1 / 30])
+    assert a[0] == a[1]
+
+
+def test_acting_plan_is_cached_across_transient_copies():
+    hero = _bean(x=0.5, lookAt="pal", dist=1.5)
+    js = """() => { const T = TOON, s = T.film.timeline.shots[0], L = s.layers[0];
+      const env = {shot: s, cast: T.film.spec.cast, style: {}, lt: 1, st: T.layerState(L, 1)};
+      T.directBean({...L}, 1, env); const n0 = T.directorCompiles; T.directBean({...L}, 1.1, {...env, shot: {...s}}); return T.directorCompiles - n0; }"""
+    assert _page_eval(_spec([hero, _bean(id="pal", who="pal", x=0.15)]), lambda page: page.evaluate(js)) == 0
+
+
+@pytest.mark.parametrize("camera", [
+    {"frame": {"target": [], "size": "cu"}}, {"frame": {"target": "hero", "axis": []}}, {"frame": {"target": "hero", "size": []}},
+    {"dollyzoom": {"target": {}}}, {"frame": {"target": "hero", "ots": {"id": "pal", "side": []}}}, {"angle": []},
+])
+def test_camera_check_reports_wrong_types(camera):
+    errors = validate(_spec([_bean(), _bean(id="pal", who="pal", x=0.7)], camera=camera))
+    assert errors
+
+
+@pytest.mark.parametrize("field,value", [("takes", [{"at": 1, "kind": []}]), ("takes", [{"at": 1, "kind": "snap", "target": []}]),
+                                          ("takes", [{"at": 1, "kind": "jolt", "expr": []}]), ("lookAt", {"target": []})])
+def test_acting_check_reports_wrong_types(field, value):
+    assert validate(_spec([_bean(**{field: value})]))
+
+
+def test_acting_fields_in_swaps_are_checked():
+    hero = _bean(swap=[{"at": 1, "takes": {"kind": "blink", "at": 0}}])
+    assert any("takes" in e for e in validate(_spec([hero])))
+    ok = _bean(swap=[{"at": 1, "lookAt": "pal"}])
+    assert validate(_spec([ok, _bean(id="pal", who="pal", x=0.7)])) == []
