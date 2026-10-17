@@ -134,17 +134,11 @@
   }
 
   // ---------- spray-can: aerosol with a label, actuator and an optional mist ----------
-  const sprayOn = (o, lt) => {
-    const v = o.spray;
-    if (!v) return null;
-    if (v === true) return { t0: 0, t1: Infinity };
-    const wins = typeof v === 'number' ? [[v, Infinity]] : v;
-    let hit = null;
-    for (const [a, b] of wins) if (lt >= a) hit = { t0: a, t1: b };
-    return hit;
-  };
+  // spray: true (from 0), a start time (from then on), or [[from, to], ...] windows -> list of windows.
+  const sprayWins = (v) => (v == null || v === false ? [] : v === true ? [[0, Infinity]] : typeof v === 'number' ? [[v, Infinity]] : v);
+  const MIST_LIFE = 0.6;
   function sprayCan(ctx, s, lt, o) {
-    const col = o.color ?? '#c8323a', w = s * 0.15, win = sprayOn(o, lt), pressing = win && lt <= win.t1;
+    const col = o.color ?? '#c8323a', w = s * 0.15, wins = sprayWins(o.spray), pressing = wins.some(([a, b]) => lt >= a && lt <= b);
     const shell = (k) => { k.moveTo(-w, -s * 0.28); k.lineTo(-w, s * 0.44); k.quadraticCurveTo(-w, s * 0.48, -w + s * 0.03, s * 0.48); k.lineTo(w - s * 0.03, s * 0.48); k.quadraticCurveTo(w, s * 0.48, w, s * 0.44); k.lineTo(w, -s * 0.28); k.closePath(); };
     T.matMetal(ctx, shell, col, { line: LW(s) });
     T.outlined(ctx, (k) => k.rect(-w, -s * 0.1, w * 2, s * 0.36), o.labelColor ?? '#f2e8d0', { line: LW(s) * 0.6, shade: (k) => {
@@ -155,11 +149,13 @@
     const dip = pressing ? s * 0.012 : 0;
     T.outlined(ctx, (k) => T.rrect(k, -s * 0.055, -s * 0.45 + dip, s * 0.11, s * 0.075, s * 0.02), '#f4f1ea', { line: LW(s) * 0.8 });
     ctx.fillStyle = P.ink; ctx.beginPath(); ctx.arc(s * 0.045, -s * 0.415 + dip, s * 0.01, 0, TAU); ctx.fill();
-    if (!win) return;
-    const dir = o.dir ?? -4, mist = T.hex6(o.sprayColor ?? col), dur = Math.max(0.05, win.t1 - win.t0);
-    const e = T.emitterOf({ preset: 'steam', id: (o.id ?? 'spray') + ':mist', rate: 70, life: 0.6, dir, spread: 26, speed: s * 2.4, drag: 3, gravity: 0, wind: 0, turb: s * 0.03,
-      size: [s * 0.03, s * 0.065], grow: 3.2, w: 2, h: 2, opacity: 0.75, colors: [mist, T.mix(mist, '#1c1420', 0.3), T.mix(mist, '#ffffff', 0.45)], dur: dur === Infinity ? undefined : dur });
-    ctx.save(); ctx.translate(s * 0.06, -s * 0.415 + dip); T.drawParticles(ctx, e, lt - win.t0); ctx.restore();
+    const dir = o.dir ?? -4, mist = T.hex6(o.sprayColor ?? col);
+    wins.forEach(([a, b], i) => { // every window whose plume is still in the air
+      if (lt < a || lt - b > MIST_LIFE * 1.4) return;
+      const dur = Math.max(0.05, b - a), e = T.emitterOf({ preset: 'steam', id: (o.id ?? 'spray') + ':mist' + i, rate: 70, life: MIST_LIFE, dir, spread: 26, speed: s * 2.4, drag: 3, gravity: 0, wind: 0, turb: s * 0.03,
+        size: [s * 0.03, s * 0.065], grow: 3.2, w: 2, h: 2, opacity: 0.75, colors: [mist, T.mix(mist, '#1c1420', 0.3), T.mix(mist, '#ffffff', 0.45)], dur: dur === Infinity ? undefined : dur });
+      ctx.save(); ctx.translate(s * 0.06, -s * 0.415); T.drawParticles(ctx, e, lt - a); ctx.restore();
+    });
   }
 
   Object.assign(T.PROPS, { scales, microscope, paintbrush, newspaper, 'spray-can': sprayCan });

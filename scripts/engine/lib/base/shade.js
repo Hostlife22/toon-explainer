@@ -260,7 +260,7 @@
     if (!T.PAINT) return;
     const c = L.contact ?? T.CONTACT_DEFAULT[L.type];
     if (!c) return;
-    const o = typeof c === 'object' ? c : { w: c === true ? 1 : c };
+    const o = typeof c === 'object' ? c : c === true ? {} : { w: c }; // true: the type's default width (CONTACT_W)
     const size = (L.size ?? (L.type === 'bean' || L.type === 'topbean' ? 420 : 200)) * (o.w ?? T.CONTACT_W[L.type] ?? 1);
     // airborne (jump, upward bob, or above `floorY` = the normalised floor y under a flier): shadow stays down, shrinks
     const above = st && typeof L.floorY === 'number' ? Math.max(0, L.floorY * T.H - st.y) : 0;

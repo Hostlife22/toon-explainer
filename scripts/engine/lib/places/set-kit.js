@@ -103,8 +103,7 @@
     if (d.floor !== false) base.push({ kind: 'floor', material: d.floor ?? 'wood', color: d.floorColor, colors: d.floorColors, y: fy });
     const items = [...base, ...(pre.parts || []), ...(bg.parts || [])].map((p, i) => ({ p, i }));
     const back = items.filter(({ p }) => !p.front), front = items.filter(({ p }) => p.front);
-    const frontY = front.length ? Math.min(...front.map(({ p }) => p.y ?? 0.78)) : null;
-    return { fy, dark: T.clamp(d.dark ?? 0), planes: toPlanes(back, z0), front: toPlanes(front, z0), frontY };
+    return { fy, dark: T.clamp(d.dark ?? 0), z0, planes: toPlanes(back, z0), front };
   }
   const resolved = new WeakMap();
   const resolvedOf = (bg) => { let R = resolved.get(bg); if (!R) { R = resolve(bg); resolved.set(bg, R); } return R; };
@@ -125,10 +124,13 @@
       if (list.some(({ p }) => T.SET_PARTS[p.kind].live && !T.SET_PARTS[p.kind].inPlace)) T.plane(ctx, env, { f: z, live: true }, (g) => live(g, list, false));
     });
   }
-  // Front parts of a set background: the smallest `y` among them (null = none) and their drawing, used by the fg kind
-  // bg-front and by the automatic front pass (set-front.js). Full-frame context: each plane applies its own camera.
-  T.setFrontY = (bg) => (bg && bg.kind === 'set' ? resolvedOf(bg).frontY : null);
-  T.BG_FRONT.set = (ctx, bg, lt, env) => { const R = resolvedOf(bg); if (R.front.length) drawPlanes(ctx, bg, R.front, lt, env, R, 'setfront'); };
+  // Front parts of a set background ([{p, i}] in list order) and the drawing of some of them (each part keeps its own
+  // cached plane), used by the front pass in set-front.js. Full-frame context: each plane applies its own camera.
+  T.setFrontParts = (bg) => (bg && bg.kind === 'set' ? resolvedOf(bg).front : []);
+  T.drawSetFront = (ctx, bg, items, lt, env) => {
+    const R = resolvedOf(bg);
+    for (const it of items) drawPlanes(ctx, bg, [[it.p.z ?? R.z0, [it]]], lt, env, R, 'setfront' + it.i);
+  };
   T.bgs.set = (ctx, bg, lt, env) => {
     const R = resolvedOf(bg);
     drawPlanes(ctx, bg, R.planes, lt, env, R, 'set');

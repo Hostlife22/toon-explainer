@@ -206,3 +206,99 @@ def test_handheld_props_work_with_a_bean_hold(kind, props):
     assert validate(spec) == []
     plain, holding = _frames(_props([bean]), [1.0])[0], _frames(spec, [1.0])[0]
     assert _changed(holding, plain) > 100
+
+
+# ---------- review fixes: the front pass follows the layers frame by frame ----------
+def test_front_pass_follows_motion_and_swaps():
+    empty = _frames(_court([]), [1.0])[0]
+    moved = {**JUDGE, "move": [{"at": 0, "dur": 0.01, "to": [0.5, 0.97]}]}
+    swapped = {**JUDGE, "swap": [{"at": 0.5, "y": 0.97}]}
+    for judge in (moved, swapped):
+        assert validate(_court([judge])) == []
+        img = _frames(_court([judge]), [1.0])[0]
+        assert _diff(empty, img, (0.45, 0.62, 0.55, 0.74)) > 8, "a judge who walks to the front is drawn over the bench"
+    hud = {**JUDGE, "swap": [{"at": 0.5, "z": 1.2}]}
+    img = _frames(_court([hud]), [1.0])[0]
+    assert _diff(empty, img, DESK_BOX) > 8, "a judge swapped to a near plane is in front of the bench"
+
+
+def test_inactive_explicit_front_layer_keeps_the_automatic_pass():
+    empty = _frames(_court([]), [1.0, 2.0])
+    late = _frames(_court([JUDGE, {"type": "fg", "kind": "set-front", "at": 2}]), [1.0])[0]
+    gone = _frames(_court([{"type": "fg", "kind": "set-front", "out": 0.5}, JUDGE]), [2.0])[0]
+    assert _diff(empty[0], late, DESK_BOX) < 1.5, "before an explicit front layer starts, the automatic pass hides the judge"
+    assert _diff(empty[1], gone, DESK_BOX) < 1.5, "after it ends, too"
+
+
+def test_front_parts_depth_sort_among_actors():
+    bg = {"kind": "set", "wall": "plaster", "floor": "wood", "parts": [
+        {"kind": "table", "x": 0.5, "y": 0.7, "w": 700, "front": True},
+        {"kind": "table", "x": 0.5, "y": 0.9, "w": 900, "front": True}]}
+    actor = {**JUDGE, "y": 0.8, "size": 420}
+    empty, full = (_frames(_court(layers, bg=bg), [1.0])[0] for layers in ([], [actor]))
+    assert _diff(empty, full, (0.46, 0.57, 0.54, 0.6)) > 8, "the actor stands in front of the far table"
+    assert _diff(empty, full, (0.45, 0.765, 0.55, 0.785)) < 1.5, "the near table covers the actor"
+
+
+def test_set_front_in_pinned_is_rejected_and_draws_nothing():
+    cam = {"pan": [[-120, 0], [120, 0]]}
+    plain = _court([JUDGE])
+    pinned = _court([JUDGE])
+    for spec in (plain, pinned):
+        spec["shots"][0]["camera"] = cam
+    pinned["shots"][0]["pinned"] = [{"type": "fg", "kind": "set-front"}]
+    assert any("set-front" in e for e in validate(pinned))
+    assert _diff(_frames(plain, [1.0])[0], _frames(pinned, [1.0])[0], (0, 0, 1, 1)) == 0
+
+
+def test_only_the_topmost_set_contributes_front_parts():
+    library = {"kind": "set", "preset": "library"}
+    covered = _frames(_court([JUDGE], bg=[COURT, library]), [1.0])[0]
+    alone = _frames(_court([JUDGE], bg=[library]), [1.0])[0]
+    assert _diff(covered, alone, (0, 0, 1, 1)) < 0.05, "a set covered by a later background adds no front parts"
+    on_top = _frames(_court([JUDGE], bg=[library, COURT]), [1.0])[0]
+    empty = _frames(_court([], bg=[library, COURT]), [1.0])[0]
+    assert _diff(empty, on_top, DESK_BOX) < 1.5
+
+
+# ---------- review fixes: props ----------
+SPRAY = {"type": "prop", "kind": "spray-can", "x": 0.4, "y": 0.6, "size": 400}
+
+
+def test_spray_zero_and_overlapping_windows():
+    dry = _frames(_props([SPRAY]), [1.0, 0.35])
+    assert _diff(dry[0], _frames(_props([{**SPRAY, "spray": 0}]), [1.0])[0], (0.4, 0.2, 0.9, 0.7)) > 1, "spray: 0 sprays from 0 s"
+    second = _frames(_props([{**SPRAY, "spray": [[0.3, 0.5]]}]), [0.35])[0]
+    both = _frames(_props([{**SPRAY, "spray": [[0, 0.2], [0.3, 0.5]]}]), [0.35])[0]
+    assert _diff(second, both, (0.4, 0.1, 1, 0.7)) > 0.3, "the first plume is still in the air at 0.35 s"
+
+
+@pytest.mark.parametrize("layer, needle", [
+    ({"kind": "fridge", "items": "apple"}, "items"),
+    ({"kind": "fridge", "items": ["unicorn"]}, "items[0]"),
+    ({"kind": "pulley", "load": "unicorn"}, "load"),
+    ({"kind": "pulley", "lift": "up"}, "lift"),
+    ({"kind": "spray-can", "spray": [1]}, "spray"),
+    ({"kind": "scales", "left": "unicorn"}, "left"),
+    ({"kind": "candle", "flame": "off"}, "flame"),
+])
+def test_new_prop_fields_are_validated(layer, needle):
+    errors = "\n".join(validate(_props([{"type": "prop", "x": 0.5, "y": 0.5, **layer}])))
+    assert needle in errors, errors
+    held = {"type": "bean", "who": "judge", "hold": "spray-can", "holdProps": {"spray": [1]}}
+    assert any("spray" in e for e in validate(_props([held])))
+
+
+def test_fridge_ground_items_stand_on_the_shelf():
+    fridge = {"type": "prop", "kind": "fridge", "x": 0.5, "y": 0.5, "size": 1000, "open": 1}
+    bare = _frames(_props([{**fridge, "items": []}]), [1.0])[0]
+    heap = _frames(_props([{**fridge, "items": ["coin-heap"]}]), [1.0])[0]
+    rows = np.where((np.abs(heap - bare).sum(axis=2) > 40).any(axis=1))[0]
+    shelf = (0.5 + 0.0208 * 1000 / 1080) * bare.shape[0]
+    assert abs(rows.max() - shelf) < 6, (rows.max(), shelf)
+
+
+def test_obj_contact_true_uses_the_wider_obj_shadow():
+    one, wide, true = (_frames(_rock(contact=c), [1.0])[0] for c in ({"w": 1}, {"w": 1.3}, True))
+    assert _diff(wide, true, (0, 0, 1, 1)) == 0, "contact: true uses the obj default width 1.3 (CONTACT_W)"
+    assert _diff(one, true, (0, 0, 1, 1)) > 0

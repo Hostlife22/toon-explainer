@@ -55,13 +55,13 @@
       T.outlined(ctx, (k) => k.rect(ix0, iy0, ix1 - ix0, iy1 - iy0), light ? '#f6f2e2' : '#8f8c84', { line: LW(s) * 0.6, paint: false, shade: (k) => {
         const g = k.createLinearGradient(0, iy0, 0, iy1); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(40,30,20,0.22)'); k.fillStyle = g; k.fillRect(ix0, iy0, ix1 - ix0, iy1 - iy0);
       } });
-      const items = o.items ?? ['bottle', 'cheese', 'apple', 'fish'], shelves = [0.34, 0.62];
+      const items = [].concat(o.items ?? ['bottle', 'cheese', 'apple', 'fish']), shelves = [0.34, 0.62];
       shelves.forEach((f, si) => {
         const y = iy0 + (iy1 - iy0) * f;
         items.filter((_, i) => i % 2 === si).forEach((kind, j, row) => {
           if (!T.PROPS[kind]) throw new Error('fridge: unknown item prop ' + kind);
           const x = T.lerp(ix0, ix1, (j + 0.5) / row.length), sz = s * 0.13;
-          ctx.save(); ctx.translate(x, y - sz * 0.48); T.drawProp(ctx, kind, sz, lt, { id: (o.id ?? 'fridge') + ':' + kind }); ctx.restore();
+          ctx.save(); ctx.translate(x, y - (T.PROP_GROUND.has(kind) ? 0 : sz * 0.48)); T.drawProp(ctx, kind, sz, lt, { id: (o.id ?? 'fridge') + ':' + kind }); ctx.restore();
         });
         T.matGlass(ctx, (k) => k.rect(ix0, y - s * 0.006, ix1 - ix0, s * 0.012), { tint: '#e8f2f4', line: LW(s) * 0.4, alpha: 0.8 });
       });
