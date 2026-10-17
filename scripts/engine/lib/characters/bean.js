@@ -49,6 +49,17 @@
     return out;
   }
 
+  // Which arms a `reach` moves at lt ([left, right]): its current entry's arms, and the previous entry's arms while they
+  // travel back to the pose. An inactive reach (v: null) or one on the other arm leaves a holding hand alone.
+  function reachingArms(Ly, lt) {
+    const r = Ly.reach ? T.reachOf(Ly, lt) : null;
+    if (!r || (!r.cur && !r.prev)) return [false, false];
+    const dur = (r.cur && r.cur.dur) ?? (r.prev && r.prev.dur) ?? 0.35;
+    const of = (e) => (!e ? [] : e.arm === 'left' ? [0] : e.arm === 'both' ? [0, 1] : [1]);
+    const on = [...of(r.cur), ...(r.since < dur * 2.5 ? of(r.prev) : [])];
+    return [on.includes(0), on.includes(1)];
+  }
+
   // Natural held sizes (rig units: the prop's longest side, the classic default is 170), used with acting when the layer
   // sets no holdScale; classic keeps 170 for everything but shields and spears. Small things shrink; long tools, signs,
   // flags and broadsheets grow to read against the hand and body. Prop modules add their own (props-everyday.js, ...).
@@ -206,9 +217,10 @@
         const g = RG.arm(ctx, arms[i], sleeve, c.skin, holdOf(i), lt, armW, B.hand, holdSz(i), holdRot, holdOpts, part);
         if (g) gripped[i] = g;
       };
-      // a holding hand closes on the prop's grip (grip.js) unless the layer sets the hand shape or a reach does
+      // a holding hand closes on the prop's grip (grip.js) unless the layer sets the hand shape or a reach moves that arm
+      const reaching = reachingArms(Ly, lt);
       arms = arms.map((j, i) => {
-        const gh = holdOf(i) && !(i ? hR : hL) && !Ly.reach ? T.gripHand(holdOf(i)) : null;
+        const gh = holdOf(i) && !(i ? hR : hL) && !reaching[i] ? T.gripHand(holdOf(i)) : null;
         return gh ? { ...j, hand: gh } : j;
       });
       // a near hand holds its prop in front of the body and the head: its sleeve draws with the body, the prop and the
@@ -219,12 +231,16 @@
       const overFace = (i) => armView === 'front' && Math.abs(arms[i].hx) < 110 * B.head;
       const raised = (i) => !!act && !front && armView !== 'back' && arms[i].hy < B.neckY - 40 && !overFace(i);
       const late = [];
-      // a near hand whose prop would cover the eyes or the mouth tilts it outward, moves out or lowers it (grip.js)
+      // a near hand whose prop would cover the eyes or the mouth tilts it outward, moves out or lowers it (grip.js); the
+      // face is checked where the head draws it (head tilt, nod, talking bob, rock)
+      const talkBob = lipOn ? lipRank * 0.7 : talking ? Math.sin(lt * 9) * 1.6 : 0;
+      const tilt = -rock * 1.6 + talkBob + (Ly.headTilt ?? 0) + (gait2 ? gait2.nod : 0);
+      const toHead = T.headFrame(B, tilt, breathY * 1.4);
       const keepGrip = holdOpts && holdOpts.grip; // the layer sets the grip: kept as given (a pour fits like the upright prop)
       arms = arms.map((j, i) => {
         const nearArm = i ? armView !== 'back' : armView === 'front' || front;
-        if (!nearArm || noArms || !holdOf(i) || Ly.reach || holdRot || keepGrip || qb) return j;
-        return T.gripFit(j, holdOf(i), holdSz(i), B, i ? 1 : -1, shownView, gMix, R().ik, B.hand, T.TO_FACE_POSES.has(pt.cur));
+        if (!nearArm || noArms || !holdOf(i) || reaching[i] || holdRot || keepGrip || qb) return j;
+        return T.gripFit(j, holdOf(i), holdSz(i), B, i ? 1 : -1, shownView, gMix, R().ik, B.hand, T.TO_FACE_POSES.has(pt.cur), toHead);
       });
       // 3/4 back: a near hand holding a prop in front of the chest is hidden by the back, with its prop
       const behindBack = (i) => i === 1 && qb && !noArms && !!holdOf(i) && Math.abs(arms[i].hx) < 125 * B.bodyW && arms[i].hy > B.neckY - 20;
@@ -245,8 +261,6 @@
 
       if (T.PAINT) T.contactShadow(ctx, B.headFwd * 300, B.neckY + 24, 120 * B.bodyW, 30, 0.38); // painted: the head's shadow on the torso
       ctx.save();
-      const talkBob = lipOn ? lipRank * 0.7 : talking ? Math.sin(lt * 9) * 1.6 : 0;
-      const tilt = -rock * 1.6 + talkBob + (Ly.headTilt ?? 0) + (gait2 ? gait2.nod : 0);
       ctx.translate(B.headFwd * 300, B.neckY + breathY * 1.4); ctx.rotate(tilt * T.DEG);
       if (B.head !== 1) ctx.scale(B.head, B.head);
       ctx.translate(0, 300);
@@ -272,7 +286,7 @@
       if (probe) record(probe, ctx, base, arms, { view: shownView, facing: ts.facing, inBetween: !!(ts.inBetween || ft), sx: sq.sx * tsx, sy: sq.sy * tsy * anticSy,
         antic, overshoot: act && pt.at > -1e8 && since < 0.6 ? pp - 1 : 0, gait: gait2 ? gait2.kind : gait ? (gait.run ? 'run' : 'walk') : null,
         feet: geom && legMode === 'gait' ? geom.map((L) => L.ft.map((v) => Math.round(v))) : gait ? gait.legs.map((l) => [Math.round(l.dx), Math.round(l.dy)]) : null,
-        detail, mouth: mouthKind, sway, tilt: Ly.headTilt ?? 0, gaze: Ly.gaze ?? 0, blink: blinkNow }, gripped, T.faceBox(B, shownView));
+        detail, mouth: mouthKind, sway, tilt: Ly.headTilt ?? 0, gaze: Ly.gaze ?? 0, blink: blinkNow }, gripped, T.faceBox(B, shownView), T.headFrame(B, -tilt, breathY * 1.4));
       ctx.restore();
     } finally { T.CHAR_SWAY = prevSway; }
     if (probe) T.RIG_PROBE[Ly.id] = probe;
@@ -280,8 +294,8 @@
 
   // Probe: solved state plus the wrists in world coordinates (layer base transform undone).
   // grips: per hand {hold, grip, palm} (the drawn prop's grip point and the palm centre, world px) or null; face: the
-  // eyes-and-mouth box in world px (null when the view shows no face).
-  function record(probe, ctx, base, arms, o, gripped, face) {
+  // bounds of the eyes-and-mouth box as the head draws it, in world px (null when the view shows no face).
+  function record(probe, ctx, base, arms, o, gripped, face, fromHead) {
     Object.assign(probe, o);
     if (!base) return;
     const inv = base.inverse(), m = ctx.getTransform();
@@ -290,7 +304,7 @@
     probe.grips = gripped.map((g) => (g ? { hold: g.hold, grip: world(...g.grip, false), palm: world(...g.palm, false) } : null));
     probe.handShapes = arms.map((j) => j.hand);
     if (face) {
-      const cs = [[face.x0, face.y0], [face.x1, face.y0], [face.x0, face.y1], [face.x1, face.y1]].map(([x, y]) => world(x, y));
+      const cs = [[face.x0, face.y0], [face.x1, face.y0], [face.x0, face.y1], [face.x1, face.y1]].map((q) => world(...fromHead(q)));
       probe.face = [Math.min(...cs.map((q) => q[0])), Math.min(...cs.map((q) => q[1])), Math.max(...cs.map((q) => q[0])), Math.max(...cs.map((q) => q[1]))];
     } else probe.face = null;
   }

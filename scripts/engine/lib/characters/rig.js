@@ -240,7 +240,7 @@
     let out = null;
     if (hold && T.drawProp) {
       const side = j.sx < 0 ? -1 : 1, size = T.heldSize(hold, holdSize);
-      const g = T.gripOf(hold, holdSize, side, j.dir, (j.gripTilt || 0) + holdRot * T.DEG * side, !!j.gripAlt); // holdRot: tilt in the grip
+      const g = T.gripOf(hold, holdSize, side, j.dir, j.gripTilt || 0, !!j.gripAlt, holdRot * T.DEG * side); // holdRot: tilt in the grip
       const [px, py] = g.entry ? T.palmOf(j, hs) : [j.hx, j.hy];
       const pin = ctx.getTransform().transformPoint(new DOMPoint(px, py));
       ctx.save(); ctx.translate(px, py); ctx.rotate(g.rot);
