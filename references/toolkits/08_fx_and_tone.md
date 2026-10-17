@@ -215,7 +215,7 @@ They all work inside `swap` (`{"at": 1.0, "material": "stone"}` makes a statue i
 | `material` kind | Fields (defaults) | Look |
 | --- | --- | --- |
 | `ghost` | `alpha` 0.55, `tint` #b9c2c8, `rim` #eef3f6, `bob` 5, `wisp` true | Desaturated, tinted, see-through, pale rim, ±`bob` px at 0.5 Hz. A ghost bean loses its legs for an S-shaped wisp tail that sways at 0.8 Hz (`wisp: false` or bean `legs: true` keeps the legs) |
-| `stone` | `color` #c9bea8, `cracks` 3, `crack` #8f846f, `plinth` false, `plinthColor` #a59d8f | Grey-beige statue with seeded cracks; `plinth` adds an outlined block under the feet. Set `rock: 0` and `blink: false` on the bean |
+| `stone` | `color` #c9bea8, `cracks` 3, `crack` #8f846f, `plinth` false, `plinthColor` #a59d8f, `grain` 1 (painted look; 0..2 or a timeline, `false` = none) | Grey-beige statue with seeded cracks; `plinth` adds an outlined block under the feet. In the painted look it keeps more of the layer's shading and gets a carved grain (soft mottling, pits with a lit lip, chipped facets) seeded in the layer's own units, so it moves and scales with the layer. Set `rock: 0` and `blink: false` on the bean |
 | `gold` | `ramp` [#6a4210, #e0a828, #fff4b0], `glints` 4 | Gold luminance ramp with twinkling glints |
 | `engrave` | `ramp` [#e2b57a, #6e4b2c, #4a3322], `alpha` 0.9 | Sepia engraving: ink lines turn light, fills dark brown, faint grain, the paper shows through. Leave one accent layer plain |
 | `ice` | `tint` #bfe8ea | Frosted look and a gloss streak, without the block |

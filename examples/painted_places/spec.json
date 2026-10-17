@@ -227,6 +227,68 @@
    ]
   },
   {
+   "id": "set_courtroom_front",
+   "_note": "set part front: true: the courtroom bench covers the judge's lower body, a witness in front stays in front",
+   "dur": 2.5,
+   "bg": {
+    "kind": "set",
+    "preset": "courtroom"
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.0
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "who": "judge",
+     "x": 0.5,
+     "y": 0.74,
+     "size": 400,
+     "view": "front",
+     "hold": "mallet",
+     "pose": [
+      {
+       "at": 0,
+       "v": "idle"
+      },
+      {
+       "at": 1.2,
+       "v": "hammer"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "who": "clerk",
+     "x": 0.27,
+     "y": 1.0,
+     "size": 460,
+     "view": "3q",
+     "lookAt": [
+      0.5,
+      0.4
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "column",
+     "side": "right",
+     "z": 1.3
+    },
+    {
+     "type": "prop",
+     "kind": "book",
+     "x": 0.9,
+     "y": 0.95,
+     "size": 80,
+     "z": 1.2
+    }
+   ]
+  },
+  {
    "id": "set_library",
    "_note": "set preset library: shelves, dusk window, globe, candle",
    "dur": 2.5,

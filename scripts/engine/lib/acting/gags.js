@@ -345,9 +345,9 @@
     k.clearRect(0, 0, c.width, c.height); k.setTransform(ctx.getTransform()); fn(k);
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha *= alpha; ctx.drawImage(c, 0, 0); ctx.restore();
   }
-  // Poof: cloud covers the subject in 2 frames, boils, then dissolves into flying stray puffs (19 frames total).
+  // Poof: covers the subject in 2 frames, boils, dissolves into stray puffs (19 frames). 300 x 220; word: text | false.
   function poof(ctx, L, lt) {
-    const f = lt * FPS, w = L.w ?? 420, h = L.h ?? 300, seed = (L.id ?? 'poof') + ':' + (L.at ?? 0);
+    const f = lt * FPS, w = L.w ?? 300, h = L.h ?? 220, seed = (L.id ?? 'poof') + ':' + (L.at ?? 0);
     const holdF = (L.hold ?? 0.17) * FPS, endF = 2 + holdF + 12;
     if (f > endF) return;
     const col = L.color ?? '#f4f1ea', sh = L.shade ?? '#d6d0c6';
@@ -363,10 +363,10 @@
       ctx.restore();
     }
     flat(ctx, fade, (k) => T.drawCloud(k, 0, 0, w * sc, h * sc, seed, { count: L.count ?? 7, color: col, shade: sh, line: 6, boil: lt }));
-    if (L.word !== null && f >= 1) {
+    if (L.word !== null && L.word !== false && f >= 1) {
       const ws = T.lerp(0.5, 1.2, T.ease.outCubic(T.clamp((f - 1) / (endF - 1))));
       ctx.save(); ctx.globalAlpha *= 1 - T.clamp((f - endF + 5) / 5); ctx.rotate(-8 * D); ctx.scale(ws, ws);
-      T.toonText(ctx, L.word ?? 'POOF!', 0, w * 0.06, { size: w * 0.16 * (L.wordSize ?? 1), fill: L.wordColor ?? '#e8c860', stroke: 12, shadow: false });
+      T.toonText(ctx, typeof L.word === 'string' ? L.word : 'POOF!', 0, w * 0.06, { size: w * 0.16 * (L.wordSize ?? 1), fill: L.wordColor ?? '#e8c860', stroke: 12, shadow: false });
       ctx.restore();
     }
   }
