@@ -46,7 +46,7 @@
       { kind: 'column', x: 0.06, y: 0.76, h: 0.74, color: '#8a5a36' }, { kind: 'column', x: 0.94, y: 0.76, h: 0.74, color: '#8a5a36' },
       { kind: 'painting', x: 0.5, y: 0.08, w: 0.1, h: 0.18, subject: 'portrait' },
       { kind: 'banner', x: 0.36, y: 0.06, color: '#2a3a7a', emblem: 'star', h: 0.34 }, { kind: 'banner', x: 0.64, y: 0.06, color: '#2a3a7a', emblem: 'star', h: 0.34 },
-      { kind: 'desk', x: 0.5, y: 0.8, w: 640, scale: 1.25, color: '#5a3018', items: ['books', 'papers', 'inkwell'] },
+      { kind: 'desk', x: 0.5, y: 0.8, w: 640, scale: 1.25, color: '#5a3018', items: ['books', 'papers', 'inkwell'], front: true },
       { kind: 'bench', x: 0.18, y: 0.98, w: 520, z: 1.05 }, { kind: 'bench', x: 0.82, y: 0.98, w: 520, z: 1.05 },
     ] },
     library: { wall: 'wood', floor: 'carpet', wallColor: '#6a4024', floorColor: '#5a2a2a', floorY: 0.8, parts: [
@@ -87,7 +87,13 @@
   };
   T.SET_PRESETS = PRESETS;
 
-  // Resolve a set background (preset + overrides) into planes [{z, parts}] sorted far to near.
+  // Resolve a set background (preset + overrides) into planes [{z, parts}] sorted far to near. Parts with `front: true`
+  // go to separate front planes drawn over the actors (set-front.js puts that pass into the layer order).
+  const toPlanes = (items, z0) => {
+    const planes = new Map();
+    items.forEach((it) => { const z = it.p.z ?? z0; if (!planes.has(z)) planes.set(z, []); planes.get(z).push(it); });
+    return [...planes.entries()].sort((a, b) => a[0] - b[0]);
+  };
   function resolve(bg) {
     const pre = bg.preset != null ? PRESETS[bg.preset] : {};
     if (!pre) throw new Error(`bg set: unknown preset "${bg.preset}" (known: ${Object.keys(PRESETS).join(', ')})`);
@@ -95,30 +101,39 @@
     const base = [];
     if (d.wall !== false) base.push({ kind: 'wall', material: d.wall ?? 'plaster', color: d.wallColor, trim: d.trim, y: fy });
     if (d.floor !== false) base.push({ kind: 'floor', material: d.floor ?? 'wood', color: d.floorColor, colors: d.floorColors, y: fy });
-    const parts = [...base, ...(pre.parts || []), ...(bg.parts || [])];
-    const planes = new Map();
-    parts.forEach((p, i) => { const z = p.z ?? z0; if (!planes.has(z)) planes.set(z, []); planes.get(z).push({ p, i }); });
-    return { fy, dark: T.clamp(d.dark ?? 0), planes: [...planes.entries()].sort((a, b) => a[0] - b[0]) };
+    const items = [...base, ...(pre.parts || []), ...(bg.parts || [])].map((p, i) => ({ p, i }));
+    const back = items.filter(({ p }) => !p.front), front = items.filter(({ p }) => p.front);
+    return { fy, dark: T.clamp(d.dark ?? 0), z0, planes: toPlanes(back, z0), front };
   }
   const resolved = new WeakMap();
-  T.bgs.set = (ctx, bg, lt, env) => {
-    let R = resolved.get(bg);
-    if (!R) { R = resolve(bg); resolved.set(bg, R); }
+  const resolvedOf = (bg) => { let R = resolved.get(bg); if (!R) { R = resolve(bg); resolved.set(bg, R); } return R; };
+  // Draw resolved planes. A plane is split into runs after each part whose animation belongs between it and the parts
+  // drawn later (fire, candles, pendulum, cloth): run = cached statics, then that run's in-place animation. Light
+  // effects (window shafts, lamp pools, steam) are overlays drawn once over the whole plane.
+  function drawPlanes(ctx, bg, planes, lt, env, R, tag) {
     const e = { ...env, setFloorY: R.fy * H };
-    R.planes.forEach(([z, list], gi) => {
-      // A plane is split into runs after each part whose animation belongs between it and the parts drawn later
-      // (fire, candles, pendulum, cloth): run = cached statics, then that run's in-place animation. Light effects
-      // (window shafts, lamp pools, steam) are overlays drawn once over the whole plane.
+    planes.forEach(([z, list], gi) => {
       const runs = [[]];
       list.forEach((it, j) => { runs[runs.length - 1].push(it); if (T.SET_PARTS[it.p.kind].inPlace && j < list.length - 1) runs.push([]); });
       const live = (g, items, inPlace) => items.forEach(({ p, i }) => { const P = T.SET_PARTS[p.kind]; if (P.live && !!P.inPlace === inPlace) P.live(g, p, lt, e, stateOf(p, i, e)); });
       runs.forEach((run, ri) => {
         // dark: the room's ambient level (0..1), baked over the static parts so lamps and fire glow against it
-        T.plane(ctx, env, { f: z, key: `set|${env.seed}|${T.bgKey(bg)}|${gi}.${ri}`, haze: R.dark, hazeColor: '#120a16' }, (g) => run.forEach(({ p, i }) => T.SET_PARTS[p.kind].draw(g, p, e, stateOf(p, i, e))));
+        T.plane(ctx, env, { f: z, key: `${tag}|${env.seed}|${T.bgKey(bg)}|${gi}.${ri}`, haze: R.dark, hazeColor: '#120a16' }, (g) => run.forEach(({ p, i }) => T.SET_PARTS[p.kind].draw(g, p, e, stateOf(p, i, e))));
         if (run.some(({ p }) => T.SET_PARTS[p.kind].live && T.SET_PARTS[p.kind].inPlace)) T.plane(ctx, env, { f: z, live: true }, (g) => live(g, run, true));
       });
       if (list.some(({ p }) => T.SET_PARTS[p.kind].live && !T.SET_PARTS[p.kind].inPlace)) T.plane(ctx, env, { f: z, live: true }, (g) => live(g, list, false));
     });
+  }
+  // Front parts of a set background ([{p, i}] in list order) and the drawing of some of them (each part keeps its own
+  // cached plane), used by the front pass in set-front.js. Full-frame context: each plane applies its own camera.
+  T.setFrontParts = (bg) => (bg && bg.kind === 'set' ? resolvedOf(bg).front : []);
+  T.drawSetFront = (ctx, bg, items, lt, env) => {
+    const R = resolvedOf(bg);
+    for (const it of items) drawPlanes(ctx, bg, [[it.p.z ?? R.z0, [it]]], lt, env, R, 'setfront' + it.i);
+  };
+  T.bgs.set = (ctx, bg, lt, env) => {
+    const R = resolvedOf(bg);
+    drawPlanes(ctx, bg, R.planes, lt, env, R, 'set');
     if (bg.vignette !== 0) { // corners of the room fall into shadow
       const g = ctx.createRadialGradient(W / 2, H * 0.45, H * 0.35, W / 2, H * 0.45, W * 0.75);
       g.addColorStop(0, 'rgba(20,10,6,0)'); g.addColorStop(1, `rgba(20,10,6,${(bg.vignette ?? 0.35).toFixed(3)})`);

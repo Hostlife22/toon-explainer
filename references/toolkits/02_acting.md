@@ -85,7 +85,7 @@ Common: `target` (layer id in the same shot; the fx draws in its rig units and d
 
 | `kind` | Fields (defaults) | Effect |
 |---|---|---|
-| `poof` | `w` 420, `h` 300, `hold` 0.17, `mode` `band` / `column`, `count` 7 (column: clouds 2–4, default 3), `puffs` 5, `color` #f4f1ea, `shade` #d6d0c6, `word` `POOF!` (`null` hides), `wordSize` 1, `wordColor` #e8c860 | Band: covers in 2 frames, boils for `hold`, fades as one flat sheet over 12 frames while stray puffs fly out. Column: stacked clouds rise from the feet ("ran away"); place it at the feet. Alternatives: cream #efe6cf / #d6c8a6, grey-beige #ddd5ca / #b0a598. |
+| `poof` | `w` 300, `h` 220, `hold` 0.17, `mode` `band` / `column`, `count` 7 (column: clouds 2–4, default 3), `puffs` 5, `color` #f4f1ea, `shade` #d6d0c6, `word` `POOF!` (any text; `false` or `null` hides it), `wordSize` 1, `wordColor` #e8c860 | Band: covers in 2 frames, boils for `hold`, fades as one flat sheet over 12 frames while stray puffs fly out. Column: stacked clouds rise from the feet ("ran away"); place it at the feet. Alternatives: cream #efe6cf / #d6c8a6, grey-beige #ddd5ca / #b0a598. |
 | `hat` | `target` (required), `head` `crown` (any headwear kind, see [01](01_characters.md)), `mode` `drop` / `give` / `fly` / `stack` / `flat`, `color`, `color2` | Draws a headwear sprite onto or off the target's head. A `drop` or `give` stops drawing once the target's own `swap` wears the same `head`. The cast `headColor` only tints the target's own hat kind. |
 | ↳ `drop` | `from` 600 (fall height px), `bonk` | Falls in 2 frames with two yellow swooshes, squashes 2 frames; `bonk` adds a small star. |
 | ↳ `give` | `from` (giver layer id), `arc` 120 | 12-frame arc from the giver's head to the target's. |

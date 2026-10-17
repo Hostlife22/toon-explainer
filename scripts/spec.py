@@ -16,6 +16,7 @@ from pathlib import Path
 
 from density import lint  # noqa: F401  (re-exported: non-fatal density warnings, printed by the CLI)
 import props_fx  # Props & FX 2.0 field checks (particles, impact language, trail, paper)
+import props_check  # everyday props: nested prop kinds, spray windows, flame switches
 from motion_check import check_motion
 from places_check import check_depth, check_set_bg, check_set_layer
 import spec_characters as SC
@@ -433,6 +434,7 @@ def _check_layer(layer: dict, where: str, cast: dict, errors: list[str]) -> None
     for state in _swap_states(layer):
         found: list[str] = []
         props_fx.check_layer(state, where, found, LAYER_KINDS.get("particle_preset", set()))
+        props_check.check_layer(state, where, found, KNOWN_PROPS)
         errors.extend(e for e in found if not (e in seen or seen.add(e)))
     check_motion(layer, where, errors, _ease_names(), LAYER_KINDS.get("creature"))
     if kind == "set":
@@ -787,6 +789,8 @@ def validate(spec: dict) -> list[str]:
                 errors.append(f"{where}.pinned[{j}]: must be an object")
                 continue
             _check_layer(layer, f"{where}.pinned[{j}]<{layer.get('type')}>", cast, errors)
+            if layer.get("type") == "fg" and layer.get("kind") == "set-front":
+                errors.append(f"{where}.pinned[{j}]<fg>: set-front draws world parts of the set; put it in layers, not pinned")
             _check_layer_refs(layer, f"{where}.pinned[{j}]", pinned_ids | ids, cast, errors)  # a pinned fx may target either list
             _check_director(layer, f"{where}.pinned[{j}]<{layer.get('type')}>", pinned_ids | ids, errors)
             if layer.get("type") == "fx":

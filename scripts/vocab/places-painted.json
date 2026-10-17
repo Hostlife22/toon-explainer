@@ -2,7 +2,7 @@
   "_doc": "Places 2.0 (painted look): depth planes and the cached plane renderer (places/depth.js), the modular set kit (bg kind and layer type `set`, places/set-*.js), new landscape kinds (places/land-*.js), rich painted versions of common kinds (places/rich-*.js) and painted foreground framing (places/fg-painted.js). See references/toolkits/04_places.md.",
   "layers": ["set"],
   "bgs": ["set", "hills", "woods", "river", "dunes", "ancient", "castle"],
-  "fg": ["foliage", "column", "window-frame", "silhouettes"],
+  "fg": ["foliage", "column", "window-frame", "silhouettes", "set-front"],
   "kinds": {
     "set_part": [
       "wall", "floor", "window", "door", "column", "shelf", "cabinet", "rug", "table", "desk", "chair", "bed",

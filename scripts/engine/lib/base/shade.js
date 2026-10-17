@@ -16,6 +16,9 @@
   T.PAINT_EXEMPT = new Set(['label', 'title', 'caption', 'date', 'era', 'counter', 'timer', 'doc', 'hud', 'cursor', 'subtitle', 'timeline', 'panel', 'fx']);
   // Layer types standing on the ground at their origin: they get a contact shadow unless contact: false.
   T.CONTACT_DEFAULT = { bean: 1, topbean: 1 };
+  // Per layer type: contact dy (fraction of size below the anchor) of layers standing on their anchor, and width factor.
+  T.CONTACT_DY = { obj: 0 };
+  T.CONTACT_W = { obj: 1.3 };
 
   const num = (v, def, lo, hi, what) => {
     if (v == null) return def;
@@ -257,13 +260,13 @@
     if (!T.PAINT) return;
     const c = L.contact ?? T.CONTACT_DEFAULT[L.type];
     if (!c) return;
-    const o = typeof c === 'object' ? c : { w: c === true ? 1 : c };
-    const size = (L.size ?? (L.type === 'bean' || L.type === 'topbean' ? 420 : 200)) * (o.w ?? 1);
+    const o = typeof c === 'object' ? c : c === true ? {} : { w: c }; // true: the type's default width (CONTACT_W)
+    const size = (L.size ?? (L.type === 'bean' || L.type === 'topbean' ? 420 : 200)) * (o.w ?? T.CONTACT_W[L.type] ?? 1);
     // airborne (jump, upward bob, or above `floorY` = the normalised floor y under a flier): shadow stays down, shrinks
     const above = st && typeof L.floorY === 'number' ? Math.max(0, L.floorY * T.H - st.y) : 0;
     const lift = Math.max(0, (st && st.jy) || 0, above) / Math.max(0.05, st ? st.s : 1);
     const k = 1 / (1 + lift / (size * 0.6));
-    const dy = o.dy ?? (T.CONTACT_DEFAULT[L.type] ? 0 : 0.5); // centred layers (props) stand on their lower edge
+    const dy = o.dy ?? T.CONTACT_DY[L.type] ?? (T.CONTACT_DEFAULT[L.type] ? 0 : 0.5); // centred layers (props) stand on their lower edge
     T.contactShadow(ctx, 0, lift + dy * (L.size ?? 200), size * 0.34 * k, size * (o.h ?? 0.05) * k, (o.alpha ?? 0.6) * k);
   };
 

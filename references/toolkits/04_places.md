@@ -284,6 +284,7 @@ Common rules: put `fg` after the characters and before the lettering. Leave `x`,
 | `window-frame` | Looking out through a window: textured wall, a deep reveal in three tones, a stone sill, open shutters (rocking slightly) and a flower pot | `hole` [0.2, 0.12, 0.6, 0.62] (frame fractions), `wall` `#cdbb98`, `frame` `#6a4428`, `depth` 46 (px), `shutters` true, `shutter` `#3a6a4a`, `pot` true |
 | `silhouettes` | Backs of heads and shoulders along the bottom edge (an audience, a crowd in front of a speaker), darkened, bobbing | `count` 3, `who` (cast names, one per figure), `look` (overrides for all), `tone` 0.55 (darkening), `size` 1, `id` (layout seed) |
 | `bg-front` | Redraws the shot background's front plane over everything drawn so far | none; ignores `x`, `y`, `scale`, `z` (the plane keeps its background parallax) |
+| `set-front` | Draws only the `front: true` parts of a `set` background here (the automatic front pass, placed by hand) | none; ignores `x`, `y`, `scale`, `z` |
 
 `bg-front` front planes:
 
@@ -294,6 +295,7 @@ Common rules: put `fg` after the characters and before the lettering. Leave `x`,
 | `room` | `living` sofa back, `hospital` blanket, `bedroom` quilt (only with `quilt: true`) |
 | `cell` | the bars |
 | `antique` | the `balcony` balustrade |
+| `set` | parts with `front: true` (the `courtroom` preset's judge's desk); these are left out of the background itself |
 
 The background also draws its front plane itself, so a shot without `bg-front` still looks complete. `office` desk, `bar` counter and `olympus` throne have no front plane: they always stay behind the characters.
 
@@ -309,7 +311,8 @@ Everything here is built for the painted look (`style.look: "painted"`); in the 
 - `wall` material: `plaster` (mottled, cracks, stains, wainscot), `brick`, `wood` (planks with nails), `stone` (ashlar blocks), `wallpaper` (stripes and diamonds, wainscot), `tile` (tiled lower wall, plaster above); `wall: false` leaves it out. `trim` colours the wainscot (`false` removes it).
 - `floor` material (perspective toward the centre): `wood` (boards, varnish sheen), `stone` (flagstones), `tile` (checker of `floorColors`), `carpet`, `dirt`; `floor: false` leaves it out.
 - `dark` 0..1 lowers the room's ambient level under its lamps and fires (the `tavern` preset uses 0.3).
-- `preset`: `throne` (stone hall, columns, crown banners, sconces, rug, throne, arched window), `lab` (tiles, pipes with steam, jars, cabinet, clock, bubbling `flasks`), `courtroom` (wood, arched windows, star flags, portrait, judge's desk, front pews at `z` 1.05), `library` (four shelves, dusk window, globe, candle table), `tavern` (beams, jars, brick fireplace, sconce, crates, table), `study` (wallpaper, sea painting, curtained window, clock, desk with lamp), `office` (cabinet, shelf, painting, window, plant, hanging lamp, desk). `parts` are added after the preset's parts.
+- **Parts in front of the actors.** A part with `front: true` is not drawn with the room: a front pass draws it over the actors who stand behind it (a judge behind the bench, a clerk behind a counter). Every frame each front part is slotted into the layer order on its own, from the layers' current state (swaps, `move`, `path`, jumps, `z`, `hud`): before the first active layer that belongs in front of it, that is an `fg` layer, lettering or screen furniture (`label`, `title`, `hud`, …), a layer nearer than the subject plane (`z` > 1), or a layer whose ground point is lower on screen than the part's `y`. So an actor between two front tables covers the far one and is covered by the near one, and a judge who walks forward past the bench comes in front of it. Only the last background of the shot contributes front parts, and only when it is a `set` (a background listed after the room would cover it). While an explicit `fg` `bg-front` or `set-front` layer in `layers` is active, it places all the front parts instead; `set-front` is not allowed in `pinned`. The `courtroom` preset's desk is a front part: put the judge at `y` ≈ 0.74 and witnesses or lawyers in front at `y` > 0.8.
+- `preset`: `throne` (stone hall, columns, crown banners, sconces, rug, throne, arched window), `lab` (tiles, pipes with steam, jars, cabinet, clock, bubbling `flasks`), `courtroom` (wood, arched windows, star flags, portrait, judge's desk in front of the actors (`front: true`), front pews at `z` 1.05), `library` (four shelves, dusk window, globe, candle table), `tavern` (beams, jars, brick fireplace, sconce, crates, table), `study` (wallpaper, sea painting, curtained window, clock, desk with lamp), `office` (cabinet, shelf, painting, window, plant, hanging lamp, desk). `parts` are added after the preset's parts.
 - Parts that share a `z` form one plane (cached in the painted look); parts are drawn in list order. Positions are frame fractions: standing parts use `x` = centre and `y` = floor contact; wall-hung parts (`window`, `painting`, `banner`, `curtain`) use `y` = top edge. `scale` sizes most parts.
 
 | part `kind` | Fields (defaults) | Look / animation |

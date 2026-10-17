@@ -140,7 +140,7 @@ Times inside a layer are layer-local (they count from the layer's `at`). A field
 |---|---|---|
 | `sack` | `text`, `textColor`, `dollar` (green `$` instead of text), `color` (`#c9a06a`) | |
 | `bottle` | `text`, `textColor`, `label` (`#efe6cf`), `color` (`#5a3a22`), `liquid` (`#d9b84a`), `pour` (event `{at, dur 0.5, back, backDur}` or a `[{at, v}]` timeline of tip fractions 0..1) | Tips to 110° (ease.inOut) and pours a stream after 60 %; with `back` it tips upright again from that time over `backDur` (default `dur`); the painted liquid stays poured |
-| `candle` | `color` (`#efe6cf`) | Flame flickers ±6 % on twos, warm glow |
+| `candle` | `color` (`#efe6cf`), `flame` (true; `false` = unlit, or a `[{at, v}]` timeline) | Flame flickers ±6 % on twos, warm glow; unlit: a charred wick, and a smoke wisp curls up for 1.5 s after a timeline puts it out |
 | `key` | `color` (`#e8c040`), `hook` | `hook` hangs the key on a brass wall hook at the anchor, so `swing` pivots on the hook |
 | `broom` | `sweep` (event, `dur` 1.2), `color` (handle) | ±20°, one sweep every 6 frames, dust puffs |
 | `magnet` | `color` (`#c8202a`), `attract` (event, `target: [dx, dy]` px from the prop, default `[0, 1.4 × size]`) | Zigzag bolts redrawn on twos, expanding arcs, pole glow at 1 Hz |
@@ -195,7 +195,7 @@ Times inside a layer are layer-local (they count from the layer's `at`). A field
 
 ### Painted materials and props 2.0
 
-`props/props-paint.js`, `props-lab.js`, `props-goods.js`, `props-tools.js`, `props-machines.js`. All new kinds are
+`props/props-paint.js`, `props-lab.js`, `props-goods.js`, `props-tools.js`, `props-machines.js`, `props-everyday.js`, `props-house.js`. All new kinds are
 centred (`size` = height; long tools and guns: `size` = length) and drawn with shared materials, in both looks:
 
 | Material | API | Look |
@@ -210,10 +210,25 @@ centred (`size` = height; long tools and guns: `size` = length) and drawn with s
 | Lab glassware | `flask`, `round-flask`, `beaker`, `test-tube`, `tube-rack`, `retort`, `burner` | `liquid` (hex), `fill` (0..1 or `[{at, v}]` timeline), `bubbles` (true \| count), `boil` (bubbles + a tremble), `fumes` (true = steam, or a particles preset such as `gas`, `smoke`), `fumeColor`, `color` (glass tint); `round-flask`: `stand` (true, or the leg height as a fraction of `size`: an iron ring on a tripod, set it over a `burner`); `tube-rack`: `liquids` (list), `fumesAt` (tube index); `burner`: `flame` (0 = off) |
 | Stacks and money | `book-stack`, `paper-stack`, `coin-pile`, `banknotes`, `gold-bars` | `count`, `colors` (book spines), `color`, `text` (`$` on notes, `AU` on bars; `false` hides), `amount` (banknote corner value) |
 | Goods and food | `amphora`, `apple`, `cheese`, `fish` | `color`; `fish`: `flop` |
-| Furniture smalls and light | `chair`, `stool`, `oil-lamp`, `lantern`, `inkwell` | `color`; lamps: `flame: false` = unlit; `inkwell`: `ink` |
+| Furniture smalls and light | `chair`, `stool`, `oil-lamp`, `lantern`, `inkwell` | `color`; lamps: `flame: false` = unlit, or a `[{at, v}]` timeline (a smoke wisp for 1.5 s after it goes out); `inkwell`: `ink` |
+| Everyday props (`props-everyday.js`, `props-house.js`) | `scales`, `microscope`, `paintbrush`, `newspaper`, `spray-can`, `fridge`, `rope`, `pulley` | See the table below |
 | Tools | `hammer`, `wrench`, `saw`, `shovel`, `pickaxe`, `anvil`, `axe` | `color` (metal), `wood` |
 | Weapons | `bow`, `pistol`, `musket`, `cannon` | `bow`: `draw` (0..1 timeline), `arrow: false`; guns: `fire` (layer seconds, or a list): 3-frame muzzle star, a burst of gun smoke and recoil |
 | Machines | `gears`, `piston`, `gauge`, `valve`, `fuel-pump` | `gears`: `count` (1..5), `speed` (turns/s), meshing at the tooth ratio; `piston`: `speed`, `exhaust` (false = no puffs); `gauge`: `value` (0..1 timeline; the needle shivers while it moves and in the red zone), `danger` (0.8), `label`; `valve`: `open` (timeline, the wheel turns 1.5 turns per unit); `fuel-pump`: `brand` (globe), `price`, `running` (the counter rolls), `text` (fixed counter) |
+
+**Everyday props.** Original designs, centred (`size` = height; `paintbrush`: length). `paintbrush`, `newspaper`,
+`spray-can` and `rope` are handheld (bean `hold` with `holdProps` for their fields; `holdScale` 1.3 to 1.8 reads well).
+
+| Kind | Fields (defaults) | Look and motion |
+|---|---|---|
+| `scales` | `tilt` (0°, + = right pan down; number or `[{at, v}]`, clamped to ±30°), `left` / `right` (prop kinds in the pans), `color` (`#c99a3a` brass) | Balance on a stepped base: the beam and pointer pivot, the pans hang level on three cords each |
+| `microscope` | `color` (`#33434f` enamel), `light` (true; `false` = lamp off), `sample` (`#c84a7a` slide stain) | Curved arm, focus knobs, chrome tube with a tilted eyepiece, three objectives, a stage with a slide and clips, a glowing lamp |
+| `paintbrush` | `color` (`#b8322c` handle), `paint` (`#2f6fb0` tip; `false` = clean) | Lacquered handle, crimped ferrule, bristle tuft with a wet tip; bristles up |
+| `newspaper` | `title` (`THE DAILY NEWS`), `headline` (text, `\n` for lines; absent = grey headline bars), `date`, `photo` (true), `color` (`#efe9da`) | Folded broadsheet with a second sheet behind, masthead rules, a halftone photo and three columns |
+| `spray-can` | `color` (`#c8323a`), `label` (`SPRAY`), `labelColor` (`#f2e8d0`), `spray` (`true`, a start time (0 included), or `[[from, to], ...]` windows; every plume finishes its flight), `sprayColor` (= `color`), `dir` (−4°, 0 = right) | Aerosol with a label band, chrome dome and actuator; while spraying the actuator dips and a mist cone (closed-form particles) leaves the nozzle |
+| `fridge` | `open` (0..1 or timeline), `items` (`["bottle", "cheese", "apple", "fish"]`, a list of prop kinds on two shelves; ground props stand on the shelf), `light` (true), `color` (`#e9e3d3`) | Retro rounded cabinet with a freezer door, chrome handles and feet; the main door swings out on its right hinge (front face, then its liner with door bins) over a lit interior |
+| `rope` | `color` (`#c9a46a`) | A coil of twisted rope with a binding wrap and a loose end |
+| `pulley` | `lift` (0..1 or timeline: the load rises half of `size`), `load` (`crate`; any prop kind, `false` = empty hook), `loadSize` (0.24), `color` (rope), `wood` (`#8a5a32` beam) | Beam, hanging block and a wheel that turns as the rope runs; the load hangs on a hook and sling, the free end drops as it rises. Origin = the rig's centre; the beam is the top edge |
 
 **Painted versions of classic props.** Under `style.look: "painted"` these are redrawn with the materials (the classic
 functions stay in `T.PROPS_CLASSIC` and still draw the classic look): `bottle` (glass with liquid that stays level as

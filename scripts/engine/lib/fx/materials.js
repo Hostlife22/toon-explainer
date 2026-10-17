@@ -60,12 +60,15 @@
       k.globalAlpha = 1;
     },
     // Weathered statue: grayscale, warm stone multiply, seeded cracks, optional plinth under the feet.
-    stone(k, src, m, lt, d, seed, tag) {
+    stone(k, src, m, lt, d, seed, tag, at) {
       const box = alphaBox(src, tag);
       if (box && m.plinth) plinth(k, box, m, d);
       const [b, bk] = blank(src, 'afxstone' + tag);
-      filteredCopy(bk, src, 'grayscale(1) contrast(0.55) brightness(1.5)');
+      // painted look: keep more of the layer's own shading and add a carved grain (mottling, pits, chips)
+      filteredCopy(bk, src, T.PAINT ? 'grayscale(1) contrast(0.85) brightness(1.3)' : 'grayscale(1) contrast(0.55) brightness(1.5)');
       tint(bk, src, m.color ?? '#c9bea8');
+      const frame = box && T.PAINT && m.grain !== false && at ? layerFrame(at.L, at.lt, at.env) : null;
+      if (frame) stoneGrain(bk, box, frame, at.L.size ?? 200, seed, T.num(m.grain, lt, 1));
       if (box) cracks(bk, box, m.cracks ?? 3, seed, m.crack ?? '#8f846f', d);
       bk.globalCompositeOperation = 'destination-in'; bk.drawImage(src, 0, 0); bk.globalCompositeOperation = 'source-over';
       k.drawImage(b, 0, 0);
@@ -140,6 +143,57 @@
     }
     k.restore();
   }
+  // The layer's own frame in physical px (camera, anchor, rotation, scale), as core.js drawLayer sets it up: grain is
+  // seeded in layer units so it moves, turns and scales with the layer instead of with its 8 px alpha box.
+  function layerFrame(L, lt, env) {
+    const st = T.layerState(L, lt);
+    if (!st) return null;
+    const [, g] = T.scratch('afxstone-frame', 1, 1), dpr = env.dpr || 1;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (!(L.hud ?? T.HUD_DEFAULT[L.type] ?? false) && env.cam) T.applyCam(g, env.cam, T.layerZ(L));
+    g.translate(st.x, st.y); g.rotate(st.r); g.scale(st.s * st.flip * st.sx, st.s * st.sy);
+    const m = g.getTransform();
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    return m;
+  }
+  // Carved stone grain over the opaque pixels: soft light / dark mottling, pits with a lit lower lip and a few chipped
+  // facets. Cells of a fixed lattice in layer units are seeded by their index, so the grain never swims.
+  function stoneGrain(k, box, M, size, id, amt) {
+    const inv = M.inverse(), pts = [[box.x, box.y], [box.x + box.w, box.y], [box.x, box.y + box.h], [box.x + box.w, box.y + box.h]].map(([x, y]) => inv.transformPoint({ x, y }));
+    const lx0 = Math.min(...pts.map((p) => p.x)), lx1 = Math.max(...pts.map((p) => p.x)), ly0 = Math.min(...pts.map((p) => p.y)), ly1 = Math.max(...pts.map((p) => p.y));
+    const cells = (step, fn) => {
+      const gx0 = Math.floor(lx0 / step), gx1 = Math.ceil(lx1 / step), gy0 = Math.floor(ly0 / step), gy1 = Math.ceil(ly1 / step);
+      if ((gx1 - gx0) * (gy1 - gy0) > 6000) return; // degenerate frame (layer squashed to a line): skip the grain
+      for (let gx = gx0; gx < gx1; gx++) for (let gy = gy0; gy < gy1; gy++) fn(T.rng(T.hash(`${id}:stone:${step}:${gx}:${gy}`)), gx * step, gy * step);
+    };
+    k.save(); k.globalCompositeOperation = 'source-atop'; k.setTransform(M);
+    const big = size * 0.2, cell = size * 0.045, TAU = Math.PI * 2;
+    cells(big, (r, x0, y0) => { // mottling
+      const x = x0 + r() * big, y = y0 + r() * big, rad = big * (0.45 + r() * 0.5), dark = r() < 0.55, a = (dark ? 0.2 : 0.16) * amt * (0.5 + r() * 0.5);
+      const col = dark ? '46,36,26' : '255,248,232', g = k.createRadialGradient(x, y, 0, x, y, rad);
+      g.addColorStop(0, `rgba(${col},${a.toFixed(3)})`); g.addColorStop(1, `rgba(${col},0)`);
+      k.fillStyle = g; k.fillRect(x - rad, y - rad, rad * 2, rad * 2);
+    });
+    cells(cell, (r, x0, y0) => { // pits
+      const n = r() < 0.25 ? 2 : r() < 0.25 ? 0 : 1;
+      for (let i = 0; i < n; i++) {
+        const x = x0 + r() * cell, y = y0 + r() * cell, s = size * (0.003 + r() * 0.006), a = (0.24 + r() * 0.26) * amt;
+        k.fillStyle = `rgba(48,38,30,${a.toFixed(3)})`; k.beginPath(); k.arc(x, y, s, 0, TAU); k.fill();
+        k.fillStyle = `rgba(255,246,226,${(a * 0.6).toFixed(3)})`; k.beginPath(); k.arc(x + s * 0.35, y + s * 0.9, s * 0.55, 0, TAU); k.fill();
+      }
+    });
+    cells(big, (r, x0, y0) => { // chipped facets: a shaded dent with a lit lower rim
+      if (r() < 0.55) return;
+      const x = x0 + r() * big, y = y0 + r() * big, s = size * (0.02 + r() * 0.025), a0 = r() * TAU, q = [0, 1, 2, 3, 4].map(() => s * (0.6 + r() * 0.5));
+      const pt = (i) => { const a = a0 + i * TAU / 5; return [x + Math.cos(a) * q[i], y + Math.sin(a) * q[i] * 0.65]; };
+      k.beginPath(); for (let i = 0; i < 5; i++) k.lineTo(...pt(i)); k.closePath();
+      k.fillStyle = `rgba(46,36,26,${(0.16 * amt).toFixed(3)})`; k.fill();
+      const lo = [0, 1, 2, 3, 4].sort((i, j) => pt(j)[1] - pt(i)[1]).slice(0, 3).sort((i, j) => i - j);
+      k.strokeStyle = `rgba(255,248,232,${(0.3 * amt).toFixed(3)})`; k.lineWidth = size * 0.005; k.lineCap = 'round';
+      k.beginPath(); k.moveTo(...pt(lo[0])); k.lineTo(...pt(lo[1])); k.stroke();
+    });
+    k.restore();
+  }
   const MAT_KINDS = Object.keys(MAT);
   const matOf = (v) => {
     const m = optsOf(v);
@@ -164,7 +218,7 @@
       const m = matOf(L.material), p = m.at == null ? 1 : T.ease.inOut(T.prog(lt, m.at, m.dur ?? 0.5));
       if (p <= 0) return src;
       const [c, k] = blank(src, 'afxmat' + depth);
-      MAT[m.kind](k, src, m, lt - (L.at ?? 0), env.dpr || 1, layerId(L), String(depth));
+      MAT[m.kind](k, src, m, lt - (L.at ?? 0), env.dpr || 1, layerId(L), String(depth), { L, lt, env });
       return mixed(src, c, p, 'afxmatmix' + depth);
     },
   };
