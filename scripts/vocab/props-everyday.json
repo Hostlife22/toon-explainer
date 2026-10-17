@@ -1,0 +1,4 @@
+{
+  "_doc": "Everyday props: props/props-everyday.js (scales, microscope, paintbrush, newspaper, spray-can) and props/props-house.js (fridge, rope, pulley; unlit candle / oil-lamp / lantern). Fields in references/toolkits/03_props_creatures_vehicles.md.",
+  "props": ["scales", "microscope", "paintbrush", "newspaper", "spray-can", "fridge", "rope", "pulley"]
+}

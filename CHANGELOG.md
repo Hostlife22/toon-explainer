@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Engine backlog: places and props
+
+- Fix: the `courtroom` set preset's judge's desk now sits in front of the actors. Set parts take `front: true`: they are left out of the room and drawn by a front pass that goes into the layer order automatically (before the first fg layer, lettering, layer with `z` > 1 or layer standing lower than the part), so a judge stands behind the bench and a witness in front of it stays in front. An explicit `fg` `bg-front` (or the new `set-front`) layer places the pass by hand.
+- Fix: `contact: true` on an `obj` draws its shadow at the object's feet (it landed half a size below, detached), 1.3 times wider for the body.
+- Fix: the `stone` material shows a texture in the painted look: soft mottling, pits with a lit lip and chipped facets, seeded in the layer's own units so the grain moves and scales with it (`grain` 0..2, `false` = none); it also keeps more of the layer's shading. The classic look is unchanged.
+- `candle` takes `flame: false` (a charred wick); `candle`, `oil-lamp` and `lantern` also take a `[{at, v}]` flame timeline, and a lamp that goes out leaves a smoke wisp for 1.5 s.
+- `poof` defaults to 300 x 220 (was 420 x 300) so it no longer covers the subject; `word` takes any text, and `false` hides it like `null`. Explicit `w` / `h` work as before.
+- New props, original designs with painted shading: `scales` (tilting beam, pans holding props), `microscope`, `paintbrush`, `newspaper` (`title`, `headline`, `date`, `photo`), `spray-can` (`spray` windows with a particle mist), `fridge` (`open` door over lit shelves with `items`), `rope` (coil) and `pulley` (`lift` raises a `load`, the wheel turns). The paintbrush, newspaper, spray can and rope work as bean `hold` items with `holdProps`. Catalog shots in `examples/props_fx_v2` (`v13_everyday`, `v14_house`, `v15_unlit`) and `examples/painted_places` (`set_courtroom_front`).
+
 Painted engine, phase 8: directing rules.
 
 - `SKILL.md` makes the painted look the default for new films and routes to Places 2.0, real `geo` maps and globes, shot-size framing, acting, path motion and particles; production rules gain "one continuous motion per shot", shot-size quotas and a per-shot density checklist.
