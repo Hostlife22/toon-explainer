@@ -62,32 +62,42 @@
       if (!L0 || L0.type !== 'map') continue;
       let L = T.effLayer(L0, lt); // swaps first: a map may swap to (or away from) an ortho globe or its backdrop
       if (!orthoMap(L)) continue;
-      L = backdropBlur(L, lt, focus);
+      L = focusBlur(L, lt, focus);
       if (L.dist != null && T.distLayer) L = T.distLayer(L);
-      const llt = T.twosLt ? T.twosLt(L, lt, shot, env) : lt, st = T.layerState(L, llt);
+      const llt = T.twosLt ? T.twosLt(L, lt, shot, env) : lt;
+      if (Array.isArray(L.blur)) L = { ...L, blur: T.num(L.blur, llt) }; // keyed blur on the layer's own clock, as drawLayer
+      const st = T.layerState(L, llt);
       if (!st) continue;
+      // painted look opt-out exactly as drawLayer: painted: false (or an exempt type) draws the backdrop flat
+      const saved = T.PAINT, flat = saved && (L.painted === false || (L.painted !== true && T.PAINT_EXEMPT && T.PAINT_EXEMPT.has(L.type)));
+      if (flat) T.PAINT = null;
       ctx.save();
       try {
         ctx.globalAlpha *= st.a;
-        const paint = (c) => {
-          c.save();
-          const s = T.layerTransform(c, L, llt, cam);
-          if (s) space(c, L.geo, { env: { ...env, st: s } }, llt - (L.at ?? 0));
-          c.restore();
-        };
-        // a blurred backdrop fades out at the frame edges: lay it over a sharp copy, as drawShot does for backgrounds
-        if (T.num(L.blur, llt) >= 0.3) T.modLayer(ctx, { ...L, blur: 0 }, llt, env, paint);
-        T.modLayer(ctx, L, llt, env, paint);
-      } finally { ctx.restore(); }
+        backdrop(ctx, L, llt, env, cam);
+      } finally { ctx.restore(); T.PAINT = saved; }
     }
   });
-  // The blur the map layer itself gets in drawShot / drawLayer (rack focus, keyed blur), so its backdrop matches.
-  function backdropBlur(L, lt, focus) {
-    if (focus && L.id && !L.sharp) {
-      const fb = focus(L.id), own = T.num(L.blur, lt) || 0;
-      if (fb >= 0.3 || own) L = { ...L, blur: Math.max(fb, own) };
-    }
-    return Array.isArray(L.blur) ? { ...L, blur: T.num(L.blur, lt) } : L;
+  // The backdrop with the layer's modifiers. A blurred one fades out at the frame edges, so it is laid over a sharp copy
+  // (as drawShot does for backgrounds); both go to one scratch first, so the layer alpha applies once.
+  function backdrop(ctx, L, llt, env, cam) {
+    const paint = (c) => {
+      c.save();
+      const s = T.layerTransform(c, L, llt, cam);
+      if (s) space(c, L.geo, { env: { ...env, st: s } }, llt - (L.at ?? 0));
+      c.restore();
+    };
+    if (!(T.num(L.blur, llt) >= 0.3)) { T.modLayer(ctx, L, llt, env, paint); return; }
+    T.modLayer(ctx, { type: L.type }, llt, env, (o) => {
+      T.modLayer(o, { ...L, blur: 0 }, llt, env, paint);
+      T.modLayer(o, L, llt, env, paint);
+    }, true);
+  }
+  // Rack focus blur the map layer gets in drawShot (on the shot clock), so its backdrop matches.
+  function focusBlur(L, lt, focus) {
+    if (!focus || !L.id || L.sharp) return L;
+    const fb = focus(L.id), own = T.num(L.blur, lt) || 0;
+    return fb >= 0.3 || own ? { ...L, blur: Math.max(fb, own) } : L;
   }
   function graticule(ctx, G, Gm, step, col) {
     if (!(Number.isFinite(step) && step >= 1)) throw new Error(`map geo: graticule must be true or a step of at least 1 degree (got ${step})`);

@@ -119,3 +119,38 @@ def test_ortho_starfield_with_a_modifier_stays_behind_earlier_layers():
     box = [0.09, 0.12, 0.06, 0.08]  # the crate's face
     luma, _ = _page_run(with_card, lambda page: page.evaluate(LUMA, [1.0, box]))
     assert luma > 60, ("a layer listed before the globe stays in front of its blurred starfield", luma)
+
+
+# ---------- review follow-ups: alpha once, the twos clock, painted: false ----------
+def test_blurred_ortho_backdrop_takes_the_layer_alpha_once():
+    def spec_of(mods):
+        spec = _globe_spec(mods)
+        spec["shots"][0]["layers"][-1]["geo"]["backdrop"] = "#000000"
+        spec["shots"][0]["bg"] = {"kind": "flat", "color": "#ffffff"}
+        spec["style"] = {"look": "classic"}
+        assert validate(spec) == []
+        return spec
+    box = [0.05, 0.1, 0.1, 0.2]
+    sharp, _ = _page_run(spec_of({"alpha": 0.5}), lambda page: page.evaluate(LUMA, [1.0, box]))
+    blurred, _ = _page_run(spec_of({"alpha": 0.5, "blur": 8, "blurDim": 0}), lambda page: page.evaluate(LUMA, [1.0, box]))
+    assert sharp > 80 and abs(blurred - sharp) < 4, ("a blurred half-transparent backdrop covers as much as a sharp one", sharp, blurred)
+
+
+def test_keyed_backdrop_blur_follows_the_layers_twos_clock():
+    sharp = _globe_spec({"onTwos": True})
+    keyed = _globe_spec({"onTwos": True, "blur": [{"at": 0, "v": 0}, {"at": 0.08, "v": 8}]})
+    assert validate(keyed) == []
+    t = 2 / 30  # on twos (12 fps) the layer clock is still 0: no blur yet
+    n_sharp = _page_run(sharp, lambda page: page.evaluate(STARS, [t, CORNER]))
+    n_keyed = _page_run(keyed, lambda page: page.evaluate(STARS, [t, CORNER]))
+    assert n_sharp > 8 and n_keyed == n_sharp, ("the backdrop is as sharp as the globe", n_sharp, n_keyed)
+
+
+def test_backdrop_modifiers_honour_painted_false():
+    spec = _globe_spec({"painted": False, "material": "stone"})
+    assert validate(spec) == []
+    probe = """() => { const T = window.TOON, M = T.LAYER_MODS.material, orig = M.apply, seen = [];
+      M.apply = function (...a) { seen.push(!!T.PAINT); return orig.apply(this, a); };
+      window.renderFrame(1.0); M.apply = orig; return seen; }"""
+    seen = _page_run(spec, lambda page: page.evaluate(probe))
+    assert len(seen) >= 2 and not any(seen), ("globe and backdrop both drawn without the painted look", seen)
