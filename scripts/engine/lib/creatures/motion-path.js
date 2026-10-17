@@ -36,9 +36,27 @@
   };
 
   // ---------- sampling ----------
-  const cr = (p0, p1, p2, p3, t) => { // uniform Catmull-Rom
+  // Smooth curve: centripetal Catmull-Rom tangents (knot spacing sqrt(chord), so uneven point spacing makes no cusps or
+  // loops), limited per axis as in monotone cubic interpolation (Fritsch-Carlson): between two points the curve never
+  // runs back past either of them along x or y, so a path whose points advance one way never reverses.
+  function smoothTangents(P, loop) {
+    const n = P.length, at = (i) => (loop ? P[((i % n) + n) % n] : i < 0 ? ghost(0, 1) : i >= n ? ghost(n - 1, n - 2) : P[i]);
+    const ghost = (a, b) => [2 * P[a][0] - P[b][0], 2 * P[a][1] - P[b][1]]; // open ends: mirror the neighbour
+    const gap = (a, b) => Math.max(1e-3, Math.sqrt(Math.hypot(b[0] - a[0], b[1] - a[1])));
+    return P.map((p1, i) => {
+      const p0 = at(i - 1), p2 = at(i + 1), d0 = gap(p0, p1), d1 = gap(p1, p2), open = !loop && (i === 0 || i === n - 1);
+      const v = [0, 1].map((j) => {
+        const s0 = (p1[j] - p0[j]) / d0, s1 = (p2[j] - p1[j]) / d1; // secant slopes per knot unit
+        const c = s0 - (p2[j] - p0[j]) / (d0 + d1) + s1; // centripetal Catmull-Rom velocity
+        const lim = open ? (i === 0 ? s1 : s0) : s0 * s1 > 0 ? (Math.abs(s0) < Math.abs(s1) ? s0 : s1) : 0;
+        return c * lim <= 0 ? 0 : Math.sign(c) * Math.min(Math.abs(c), 3 * Math.abs(lim));
+      });
+      return { v, d1 };
+    });
+  }
+  const herm = (a, b, ma, mb, t) => { // cubic Hermite with end tangents per segment
     const t2 = t * t, t3 = t2 * t;
-    return 0.5 * (2 * p1 + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+    return (2 * t3 - 3 * t2 + 1) * a + (t3 - 2 * t2 + t) * ma + (-2 * t3 + 3 * t2) * b + (t3 - t2) * mb;
   };
   const bez = (a, b, c, d, t) => { const u = 1 - t; return u * u * u * a + 3 * u * u * t * b + 3 * u * t * t * c + t * t * t * d; };
   function samplePts(S) {
@@ -58,9 +76,11 @@
       out.push(Q[Q.length - 1]);
       return out;
     }
-    const at = (i) => (S.loop ? P[((i % n) + n) % n] : P[Math.max(0, Math.min(n - 1, i))]);
-    const segs = S.loop ? n : n - 1;
-    for (let i = 0; i < segs; i++) for (let k = 0; k < SEG; k++) { const t = k / SEG; out.push([0, 1].map((j) => cr(at(i - 1)[j], at(i)[j], at(i + 1)[j], at(i + 2)[j], t))); }
+    const tg = smoothTangents(P, S.loop), segs = S.loop ? n : n - 1;
+    for (let i = 0; i < segs; i++) {
+      const a = P[i], b = P[(i + 1) % n], len = tg[i].d1; // segment length in knot units scales the tangents
+      for (let k = 0; k < SEG; k++) { const t = k / SEG; out.push([0, 1].map((j) => herm(a[j], b[j], tg[i].v[j] * len, tg[(i + 1) % n].v[j] * len, t))); }
+    }
     out.push(S.loop ? P[0] : P[n - 1]);
     return out;
   }
@@ -158,9 +178,10 @@
     let x = (L.x ?? 0.5) * T.W, y = (L.y ?? 0.5) * T.H, d = 0;
     const face = (L.flip ? -1 : 1) * (L.dir === -1 ? -1 : 1);
     for (const m of L.move || []) {
-      if (!m.to) continue;
-      const tx = m.to[0] * T.W, ty = m.to[1] * T.H, len = Math.hypot(tx - x, ty - y);
-      const sg = Math.abs(tx - x) < 1e-6 ? 1 : Math.sign(tx - x) * face;
+      const seg = T.moveSeg(m, x, y);
+      if (!seg) continue;
+      const [x0, y0, tx, ty] = seg, len = Math.hypot(tx - x0, ty - y0);
+      const sg = Math.abs(tx - x0) < 1e-6 ? 1 : Math.sign(tx - x0) * face;
       d += sg * len * T.easeBy(m.ease || 'inOut')(T.prog(lt, m.at ?? 0, m.dur ?? 0.6));
       x = tx; y = ty;
     }
@@ -183,7 +204,7 @@
     const p = T.motionAt(L, lt);
     // the path owns the position: move keeps its scale / rot / alpha / flip but not `to`; an anonymous layer keeps the
     // noise seed of its authored anchor (bob, wobble, jitter) instead of one derived from the moving point
-    const move = L.move && L.move.some((m) => m && m.to) ? L.move.map(({ to, ...m }) => m) : L.move;
+    const move = L.move && L.move.some((m) => m && (m.to || m.by || m.from)) ? L.move.map(({ to, by, from, ...m }) => m) : L.move;
     const st = base({ ...L, x: p.x / T.W, y: p.y / T.H, move, __seed: L.id ? undefined : L.type + (L.x ?? 0) + (L.y ?? 0) }, lt);
     if (!st) return st;
     if (S.face) { st.flip = p.dir * (L.flip ? -1 : 1); st.sx *= p.turn; }

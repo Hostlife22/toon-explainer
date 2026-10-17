@@ -318,4 +318,55 @@
       ctx.restore();
     }
   };
+  // ---------- blackout: the lights go off ----------
+  // blackout: {level 0.94, color "#020203", fade 0.25 (in, from the layer at), dur (lights back on at layer time dur),
+  // fadeOut (= fade), lights: [id | {id, r, dx, dy} | {x, y, r}], r 240, glow "#ffcf70" (null = none)} — the whole frame
+  // darkens; `lights` keep soft holes around lit layers (a lamp, a candle, a phone screen) that follow them and the camera.
+  // Layers listed after the blackout stay fully lit (lettering, a glowing prop). Screen effect: ignores the layer position.
+  const lightPoint = (ctx, s, q, env) => {
+    const o = typeof q === 'string' ? { id: q } : q || {};
+    if (!(o.r == null || o.r > 0)) throw new Error(`blackout: light r must be > 0 (got ${o.r})`);
+    let x = (o.x ?? 0.5) * W, y = (o.y ?? 0.5) * H, z = 1, hud = !o.id;
+    if (o.id) {
+      const L0 = T.findShotLayer && T.findShotLayer(env.shot, o.id);
+      if (!L0) throw new Error(`blackout: light "${o.id}" is not a layer id in this shot`);
+      const L = T.effLayer(L0, env.lt), st = T.layerState(L, env.lt);
+      if (!st) return null; // the light is not on screen yet
+      x = st.x + (o.dx ?? 0); y = st.y + (o.dy ?? 0); z = T.layerZ(L); hud = !!(L.hud ?? (T.HUD_DEFAULT || {})[L.type]);
+    }
+    ctx.save(); ctx.setTransform(s, 0, 0, s, 0, 0);
+    if (env.cam && !hud) T.applyCam(ctx, env.cam, z);
+    const m = ctx.getTransform(); ctx.restore();
+    const p = m.transformPoint(new DOMPoint(x, y));
+    return { x: p.x, y: p.y, r: (o.r ?? 240) * Math.hypot(m.a, m.b) };
+  };
+  FX.blackout = (ctx, L, lt, env = {}) => {
+    const fade = Math.max(1e-3, L.fade ?? 0.25), out = L.dur == null ? 1 : 1 - T.ease.inOut(T.prog(lt, L.dur, L.fadeOut ?? fade));
+    const a = T.clamp(L.level ?? 0.94) * T.ease.inOut(T.prog(lt, 0, fade)) * out;
+    if (a <= 0) return;
+    const cw = ctx.canvas.width, ch = ctx.canvas.height, s = cw / W;
+    if (L.lights != null && !Array.isArray(L.lights)) throw new Error('blackout: lights must be a list of layer ids, {id, r, dx, dy} or {x, y, r}');
+    const holes = (L.lights || []).map((q) => lightPoint(ctx, s, q, env)).filter(Boolean);
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha *= a;
+    if (!holes.length) { ctx.fillStyle = L.color ?? '#020203'; ctx.fillRect(0, 0, cw, ch); ctx.restore(); return; }
+    const [c, k] = T.scratch('fxblackout', cw, ch);
+    k.clearRect(0, 0, cw, ch); // a translucent colour must not build up over earlier renders
+    k.fillStyle = L.color ?? '#020203'; k.fillRect(0, 0, cw, ch);
+    k.globalCompositeOperation = 'destination-out';
+    for (const h of holes) {
+      const g = k.createRadialGradient(h.x, h.y, 0, h.x, h.y, h.r);
+      g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(0.45, 'rgba(0,0,0,0.85)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      k.fillStyle = g; k.fillRect(h.x - h.r, h.y - h.r, h.r * 2, h.r * 2);
+    }
+    ctx.drawImage(c, 0, 0);
+    if (L.glow !== null) { // warm light spill inside the holes
+      ctx.globalCompositeOperation = 'soft-light';
+      for (const h of holes) {
+        const g = ctx.createRadialGradient(h.x, h.y, 0, h.x, h.y, h.r);
+        g.addColorStop(0, L.glow ?? '#ffcf70'); g.addColorStop(1, 'rgba(255,207,112,0)');
+        ctx.fillStyle = g; ctx.fillRect(h.x - h.r, h.y - h.r, h.r * 2, h.r * 2);
+      }
+    }
+    ctx.restore();
+  };
 })();

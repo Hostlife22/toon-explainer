@@ -1,7 +1,7 @@
 {
   "_module": "tone.js + tone-fx.js + grades (FX and tone)",
   "fx": ["glitch", "rgbsplit", "alarm", "cctv", "mist", "whirlpool", "redeyes", "eyes-white", "wallshadow", "darkness",
-         "eyelids", "inkburst", "paperstorm", "flameshape", "gas", "muzzle", "shellburst"],
+         "eyelids", "inkburst", "paperstorm", "flameshape", "gas", "muzzle", "shellburst", "blackout"],
   "enter": ["drop-squash", "pop-tilt", "slam"],
   "transitions": ["inkblot", "slash", "peephole", "sepia-to-color", "torn-split", "barwipe", "flash-cut"],
   "grades": ["sepia", "horror", "cold", "divine", "mono-red"]
