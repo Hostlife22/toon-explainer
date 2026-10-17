@@ -217,7 +217,14 @@
     ctx.restore();
   }
 
-  function arm(ctx, j, sleeve, skin, hold, lt = 0, w = ARM_W, hs = 1, holdSize = null, holdRot = 0, holdOpts = null) {
+  // part: 'all' (default), 'sleeve' (the arm only) or 'grip' (the held prop and the hand), so a caller can draw the grip
+  // later than the sleeve (bean.js draws a near hand's prop over the head).
+  function arm(ctx, j, sleeve, skin, hold, lt = 0, w = ARM_W, hs = 1, holdSize = null, holdRot = 0, holdOpts = null, part = 'all') {
+    if (part !== 'grip') sleeveOf(ctx, j, sleeve, w);
+    if (part === 'sleeve') return null;
+    return gripOf(ctx, j, skin, hold, lt, hs, holdSize, holdRot, holdOpts);
+  }
+  function sleeveOf(ctx, j, sleeve, w) {
     if (T.PAINT && T.paintLimb) T.paintLimb(ctx, [j.sx, j.sy], [j.ex, j.ey], [j.hx, j.hy], w, sleeve, { cuff: 0.84 }); // painted: shaded tube
     else {
       const path = () => { ctx.beginPath(); ctx.moveTo(j.sx, j.sy); ctx.quadraticCurveTo(j.ex, j.ey, (j.ex + j.hx) / 2, (j.ey + j.hy) / 2); ctx.lineTo(j.hx, j.hy); };
@@ -226,18 +233,30 @@
       ctx.strokeStyle = sleeve; ctx.lineWidth = w; path(); ctx.stroke();
       ctx.strokeStyle = T.shade(sleeve, -0.18); ctx.lineWidth = w * 0.35; ctx.beginPath(); ctx.moveTo(j.sx - 8, j.sy + 10); ctx.quadraticCurveTo(j.ex - 8, j.ey, j.ex - 6, j.ey + 6); ctx.stroke();
     }
+  }
+  // The held prop (its grip point in the palm, see grip.js) and the hand over it. Returns the grip point of the drawn
+  // prop and the palm centre in canvas pixels (probe), or null without a prop.
+  function gripOf(ctx, j, skin, hold, lt, hs, holdSize, holdRot, holdOpts) {
+    let out = null;
     if (hold && T.drawProp) {
-      ctx.save(); ctx.translate(j.hx, j.hy);
-      if (holdRot) ctx.rotate(holdRot * T.DEG * (j.sx < 0 ? -1 : 1)); // holdRot: tilt the prop in the grip (deg)
-      if (hold === 'sword') ctx.rotate(Math.PI - j.dir); // blade follows the forearm
-      else if (hold === 'spear' || hold === 'torch') { ctx.rotate(T.clamp(-Math.sin(j.dir) * 0.35, -0.35, 0.35)); ctx.translate(0, hold === 'spear' ? 160 : 40); } // shafts stay upright
-      else if (holdOpts) { // holdProps: the hand stays on the grip point (prop-size fractions), also while the prop tips itself
-        const sz = holdSize ?? 170, [gx, gy] = holdOpts.grip ?? [0, 0.32], tl = T.PROP_TILT?.[hold] ? T.PROP_TILT[hold](holdOpts, lt) : 0;
-        ctx.translate(-(gx * Math.cos(tl) - gy * Math.sin(tl)) * sz, -(gx * Math.sin(tl) + gy * Math.cos(tl)) * sz);
-      } else ctx.translate(0, hold === 'shield' ? 0 : -60 * (holdSize ? Math.min(1, holdSize / 170) : 1));
-      T.drawProp(ctx, hold, holdSize ?? (hold === 'shield' ? 260 : hold === 'spear' ? 420 : 170), lt, holdOpts || {}); ctx.restore();
+      const side = j.sx < 0 ? -1 : 1, size = T.heldSize(hold, holdSize);
+      const g = T.gripOf(hold, holdSize, side, j.dir, (j.gripTilt || 0) + holdRot * T.DEG * side, !!j.gripAlt); // holdRot: tilt in the grip
+      const [px, py] = g.entry ? T.palmOf(j, hs) : [j.hx, j.hy];
+      const pin = ctx.getTransform().transformPoint(new DOMPoint(px, py));
+      ctx.save(); ctx.translate(px, py); ctx.rotate(g.rot);
+      if (g.flip) ctx.scale(-1, 1);
+      // holdProps: grip [x, y] (size fractions) overrides the table; a prop that tips itself (a pouring bottle) turns
+      // around the grip point, so the hand stays on it
+      const at = holdOpts && holdOpts.grip ? [holdOpts.grip[0] * size, holdOpts.grip[1] * size] : holdOpts && !g.entry ? [0, 0.32 * size] : g.at;
+      const tl = holdOpts && T.PROP_TILT?.[hold] ? T.PROP_TILT[hold](holdOpts, lt) : 0;
+      const gx = at[0] * Math.cos(tl) - at[1] * Math.sin(tl), gy = at[0] * Math.sin(tl) + at[1] * Math.cos(tl);
+      ctx.translate(-gx, -gy);
+      const gp = ctx.getTransform().transformPoint(new DOMPoint(gx, gy));
+      T.drawProp(ctx, hold, size, lt, holdOpts || {}); ctx.restore();
+      out = { hold, grip: [gp.x, gp.y], palm: [pin.x, pin.y] };
     }
     hand(ctx, j.hx, j.hy, j.dir, j.hand, skin, hs);
+    return out;
   }
 
   // Shoe or sandal in the standing-foot frame: leg comes down the -y axis, sole at y 0, toes toward +x.
