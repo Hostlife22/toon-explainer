@@ -99,7 +99,9 @@
     const an = RG.anticState(Ly, lt, pt, blend);
     const ts = T.turnState(Ly, lt, bs.view ?? c.view ?? '3q');
     const ft = (act ? act.turn : T.travelPath(Ly)) ? T.flipTurn(Ly, env, ts.view) : null;
-    const view = ft ? ft.view : ts.view;
+    // 3q-back (back3q.js): body, outfit, hair and headwear draw as in the back view, the arms as in 3/4, the head turns
+    const shownView = ft ? ft.view : ts.view, qb = shownView === '3q-back';
+    const view = qb ? 'back' : shownView, armView = qb ? '3q' : view;
     const specs = moving && !Ly.keepArms ? (gait2 || gait).arms : null;
     const reachS = (g, m) => (m === 1 ? g : { ...g, l1: g.l1 * m, l2: g.l2 * m }); // armScale: stretchy reach
     const gPrev = reachS(G, prev.body.armScale), gCur = reachS(G, cur.body.armScale), gMix = reachS(G, bs.armScale);
@@ -201,18 +203,18 @@
       const drawArm = (i) => noArms ? null : RG.arm(ctx, arms[i], sleeve, c.skin, holdOf(i), lt, armW, B.hand, holdSz(i), holdRot, Ly.holdProps ?? c.holdProps ?? null);
       // acting: a near arm raised above the shoulders is drawn over the head, so arms-up / point-up stay visible
       // (front view: an arm whose hand ends over the head's width would cross the face, so it stays behind the head)
-      const overFace = (i) => view === 'front' && Math.abs(arms[i].hx) < 110 * B.head;
-      const raised = (i) => !!act && !front && view !== 'back' && arms[i].hy < B.neckY - 40 && !overFace(i);
+      const overFace = (i) => armView === 'front' && Math.abs(arms[i].hx) < 110 * B.head;
+      const raised = (i) => !!act && !front && armView !== 'back' && arms[i].hy < B.neckY - 40 && !overFace(i);
       const late = [];
       // back arm (character's left, screen-left in 3/4) goes behind the body unless the pose brings it to the face
-      if (view !== 'front' && !front) drawArm(0);
-      if (view === 'back') drawArm(1);
+      if (armView !== 'front' && !front) drawArm(0);
+      if (armView === 'back') drawArm(1);
       torso(() => { RG.body(ctx, c, view, sway ? sway.x * 0.6 : 0, seed); hooks(T.BEAN_EXTRAS); });
       if (geom && legMode !== 'gait' && over(legMode)) { ctx.save(); if (dyE) ctx.translate(0, -dyE); RG.drawLegMode(ctx, c, geom, B); ctx.restore(); }
       const drawFrontArms = () => {
         const one = (i) => (raised(i) ? late.push(i) : drawArm(i));
-        if (view === 'front' || front) one(0);
-        if (view !== 'back') one(1);
+        if (armView === 'front' || front) one(0);
+        if (armView !== 'back') one(1);
       };
       if (!front) drawFrontArms();
 
@@ -236,10 +238,11 @@
         gazeX: Ly.gaze ?? 0, smear,
         mouthKind, detail, mood: detail ? T.closeupMood(expr, T.EXPR[expr]) : null, sway,
       });
+      if (qb && T.headBack3q) T.headBack3q(ctx, c);
       ctx.restore();
       if (front) drawFrontArms();
       late.forEach(drawArm);
-      if (probe) record(probe, ctx, base, arms, { view, facing: ts.facing, inBetween: !!(ts.inBetween || ft), sx: sq.sx * tsx, sy: sq.sy * tsy * anticSy,
+      if (probe) record(probe, ctx, base, arms, { view: shownView, facing: ts.facing, inBetween: !!(ts.inBetween || ft), sx: sq.sx * tsx, sy: sq.sy * tsy * anticSy,
         antic, overshoot: act && pt.at > -1e8 && since < 0.6 ? pp - 1 : 0, gait: gait2 ? gait2.kind : gait ? (gait.run ? 'run' : 'walk') : null,
         feet: geom && legMode === 'gait' ? geom.map((L) => L.ft.map((v) => Math.round(v))) : gait ? gait.legs.map((l) => [Math.round(l.dx), Math.round(l.dy)]) : null,
         detail, mouth: mouthKind, sway, tilt: Ly.headTilt ?? 0, gaze: Ly.gaze ?? 0, blink: blinkNow });

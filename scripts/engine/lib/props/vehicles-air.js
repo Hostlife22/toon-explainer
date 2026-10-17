@@ -11,7 +11,7 @@
   const roll = (S) => T.clamp(S.bank / (60 * D), -1, 1); // -1..1
 
   function pilot(ctx, L, S, env, x, y, size) {
-    if (L.rider && T.layers.bean) { ctx.save(); ctx.translate(x, y); T.layers.bean(ctx, { type: 'bean', who: L.rider, size, legs: false, id: (L.id ?? 'air') + 'p', expr: L.riderExpr, head: 'pilot' }, S.lt, { ...env, st: null }); ctx.restore(); }
+    if (L.rider && T.layers.bean) { ctx.save(); ctx.translate(x, y); T.layers.bean(ctx, { type: 'bean', who: L.rider, size, legs: false, id: (L.id ?? 'air') + 'p', expr: L.riderExpr, head: 'pilot', look: L.riderLook }, S.lt, { ...env, st: null }); ctx.restore(); }
     else T.outlined(ctx, (c) => c.arc(x, y - size * 0.22, size * 0.12, Math.PI, 0), '#6a4a2a', { line: 5 });
   }
   // Wing seen edge-on to slightly from below / above as the plane rolls: thickness and offset follow the roll.
@@ -77,7 +77,7 @@
     T.outlined(ctx, env0, cols[0], { line: 8, shade: (c) => { c.fillStyle = cols[1]; for (let i = -2; i <= 2; i += 2) { c.beginPath(); c.moveTo(i * 26, -170); c.quadraticCurveTo(i * 80, -330, i * 28, -480); c.quadraticCurveTo(i * 80 + 30, -330, i * 26 + 24, -170); c.closePath(); c.fill(); } } });
     ctx.strokeStyle = P.ink; ctx.lineWidth = 4; for (const x of [-56, -20, 20, 56]) { ctx.beginPath(); ctx.moveTo(x, -172); ctx.lineTo(x * 0.6, -80); ctx.stroke(); }
     if (burn >= 0) { const f = Math.sin(burn * Math.PI), fl = Math.floor(S.lt * 15) % 2; T.outlined(ctx, (c) => { c.moveTo(-12, -110); c.quadraticCurveTo(-18 - fl * 4, -150, 0, -160 - f * 50); c.quadraticCurveTo(18, -150, 12, -110); c.closePath(); }, '#ffb030', { line: 4, paint: false }); }
-    if (L.rider) { ctx.save(); ctx.translate(0, -30); T.layers.bean(ctx, { type: 'bean', who: L.rider, size: 160, legs: false, id: (L.id ?? 'bal') + 'p', pose: L.riderPose ?? 'wave', expr: L.riderExpr }, S.lt, { ...env, st: null }); ctx.restore(); }
+    if (L.rider) { ctx.save(); ctx.translate(0, -30); T.layers.bean(ctx, { type: 'bean', who: L.rider, size: 160, legs: false, id: (L.id ?? 'bal') + 'p', pose: L.riderPose ?? 'wave', expr: L.riderExpr, look: L.riderLook }, S.lt, { ...env, st: null }); ctx.restore(); }
     T.outlined(ctx, (c) => T.rrect(c, -50, -86, 100, 86, 10), '#a8743a', { line: 7, shade: (c) => { if (T.fillTexture) T.fillTexture(c, null, 'fabric', { rect: [-50, -86, 100, 86], alpha: 0.5, scale: 0.7 }); } });
   }, 300);
 

@@ -42,7 +42,8 @@
   }
 
   // A seated rider's bean layer: `r` is a cast id or {who, expr, lookAt, pose, hold, holdL, talk, takes, gaze, look, view,
-  // facing, scale}; its own fields win over the vehicle-wide ones in `base`. A rider that acts (lookAt / takes) gets
+  // facing, scale}; its own fields win over the vehicle-wide ones in `base`; the vehicle's `riderLook` (look fields, as on
+  // creatures) sits under a rider's own `look`. A rider that acts (lookAt / takes) gets
   // __anchor = anchorOf(B): (shot time t) -> {x, y, flip} of its head in the world, a pure function of t, so the acting
   // director aims from the seat; __px (screen px per seat unit) scales its hops; `at` = the vehicle's (layer -> shot
   // time); its id carries the vehicle's identity so two vehicles never share a director plan.
@@ -53,13 +54,40 @@
       for (const [key, v] of Object.entries(r)) if (!RIDER_OWN.has(key)) B[key] = v;
       if (r.scale != null) B.size = base.size * r.scale;
     } else B.who = r;
+    if (L.riderLook) B.look = { ...L.riderLook, ...((r && typeof r === 'object' && r.look) || {}) }; // riderLook under the rider's own look
     if ((B.lookAt != null || B.takes) && anchorOf) {
       B.__anchor = anchorOf(B);
       B.__px = px || 1;
       if (L.at) B.at = L.at;
-      B.id = B.id + ':' + T.hash(JSON.stringify([L.kind, L.id, L.x, L.y, L.path, L.move, L.at, L.dir, L.flip, L.scale, L.size, L.facing, L.view, L.rot]));
+      B.id = B.id + ':' + T.hash(JSON.stringify(T.swapBase(L))); // the whole authored vehicle: its plan never mixes two vehicles
     }
     return B;
+  };
+
+  // Rider anchors by probing the drawing: T.RIDER_PROBE = {i, m, B} makes the vehicle's rider code record the transform
+  // rider i would be drawn with (and its bean fields) instead of drawing; the vehicle at shot time t is drawn on a
+  // scratch canvas from its world transform with its swaps resolved at t, so the anchor follows everything the drawing
+  // does (view and turn squash, suspension, path orient, bob). The head is the rider's own head height (build, age).
+  T.RIDER_PROBE = null;
+  let probeCtx = null;
+  T.riderProbe = (ctx, i, B) => {
+    const P = T.RIDER_PROBE;
+    if (P && P.i === i) { P.m = ctx.getTransform(); P.B = B; }
+  };
+  T.riderAnchor = (L, env, i) => {
+    const base = T.swapBase(L), cast = (env && env.cast) || {};
+    return (t) => {
+      const Lt = T.effLayer(base, t), st = T.layerState(Lt, t);
+      if (!st) return null;
+      if (!probeCtx) probeCtx = document.createElement('canvas').getContext('2d');
+      const c = probeCtx, prev = T.RIDER_PROBE, P = (T.RIDER_PROBE = { i, m: null, B: null });
+      c.setTransform(1, 0, 0, 1, 0, 0); c.translate(st.x, st.y); c.rotate(st.r); c.scale(st.s * st.flip * st.sx, st.s * st.sy);
+      try { T.layers.vehicle(c, Lt, t - (Lt.at ?? 0), { ...env, st, lt: t }); } finally { T.RIDER_PROBE = prev; }
+      if (!P.m) return null;
+      const own = { ...(cast[P.B.who] || {}), ...(P.B.look || {}) }, G = T.beanBuild({ ...((T.OUTFIT_DEFAULTS || {})[own.outfit] || {}), ...own });
+      const m = P.m, y = (G.neckY - 150 * G.head) * ((P.B.size ?? 420) / 600);
+      return { x: m.c * y + m.e, y: m.d * y + m.f, flip: m.a * m.d - m.b * m.c < 0 ? -1 : 1 };
+    };
   };
 
   const V = {
@@ -89,14 +117,13 @@
     car1910(ctx, L, s, env) {
       const k = s.size / 380, col = L.color ?? '#2f3e5a';
       ctx.scale(k, k);
-      const sg = L.dir === -1 ? -1 : 1, px = env && env.st ? Math.abs(env.st.s * env.st.sy) * k : k;
+      const px = env && env.st ? Math.abs(env.st.s * env.st.sy) * k : k;
       (L.riders || []).forEach((r, i) => {
         const base = { type: 'bean', size: 250, legs: false, id: 'car' + i, talk: L.talk, ...(L.riderExpr != null ? { expr: L.riderExpr } : {}) };
-        const anchorOf = (B) => (t) => { // the seat's head in the world at shot time t
-          const w = T.VK && T.VK.worldPt(L, t, (-70 + i * 110) * k * sg, (-40 - (450 * B.size) / 600) * k);
-          return w ? { x: w[0], y: w[1], flip: (w[2].flip || 1) * sg } : null;
-        };
-        ctx.save(); ctx.translate(-70 + i * 110, -40); T.layers.bean(ctx, T.vehicleRiderBean(L, r, base, anchorOf, px), s.lt, { ...env, st: null }); ctx.restore();
+        ctx.save(); ctx.translate(-70 + i * 110, -40);
+        if (T.RIDER_PROBE) T.riderProbe(ctx, i, T.vehicleRiderBean(L, r, base, null, px));
+        else T.layers.bean(ctx, T.vehicleRiderBean(L, r, base, () => T.riderAnchor(L, env, i), px), s.lt, { ...env, st: null });
+        ctx.restore();
       });
       T.outlined(ctx, (c) => { c.moveTo(-180, -60); c.lineTo(-150, -150); c.lineTo(40, -150); c.lineTo(70, -110); c.lineTo(175, -100); c.lineTo(190, -60); c.closePath(); }, col, {
         line: 8, shade: (c) => { c.fillStyle = T.shade(col, -0.25); c.fillRect(-200, -90, 420, 40); c.fillStyle = P.gold; c.fillRect(-180, -118, 360, 6); },
@@ -197,7 +224,7 @@
     rowboat(ctx, L, s, env) {
       const k = s.size / 300;
       ctx.scale(k, k);
-      (L.riders || []).forEach((who, i) => { ctx.save(); ctx.translate(-40 + i * 90, -40); T.layers.bean(ctx, { type: 'bean', who, size: 220, legs: false, id: 'row' + i, talk: L.talk }, s.lt, { ...env, st: null }); ctx.restore(); });
+      (L.riders || []).forEach((who, i) => { ctx.save(); ctx.translate(-40 + i * 90, -40); T.layers.bean(ctx, { type: 'bean', who, size: 220, legs: false, id: 'row' + i, talk: L.talk, look: L.riderLook }, s.lt, { ...env, st: null }); ctx.restore(); });
       const oar = Math.sin(s.dist * 5) * 0.5;
       ctx.strokeStyle = '#8a5a32'; ctx.lineWidth = 9;
       for (const d of [-1, 1]) { ctx.save(); ctx.translate(d * 30, -70); ctx.rotate(0.9 * d + oar * d); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 120); ctx.stroke(); ctx.restore(); }

@@ -49,7 +49,7 @@
     stick(ctx, 360, [[80, -138], [86, -164], [64, -170]], 7, '#3a3a3e');
     O(ctx, 360, (c) => ell(c, -44, -150, 26, 8), '#2a2a2e');
     if (L.rider) {
-      ctx.save(); ctx.translate(hip[0] + 4, hip[1] + 12); ctx.rotate(12 * D); bean(ctx, L.rider, 300 * (L.riderScale ?? 1), lt, env, { pose: L.riderPose ?? 'hold', expr: L.riderExpr, talk: L.talk, rock: 0.4, hold: L.riderHold }); ctx.restore();
+      ctx.save(); ctx.translate(hip[0] + 4, hip[1] + 12); ctx.rotate(12 * D); bean(ctx, L.rider, 300 * (L.riderScale ?? 1), lt, env, { pose: L.riderPose ?? 'hold', expr: L.riderExpr, talk: L.talk, rock: 0.4, hold: L.riderHold, look: L.riderLook }); ctx.restore();
       const knee = (p) => [(hip[0] + p[0]) / 2 + 22, (hip[1] + p[1]) / 2 - 18]; stick(ctx, 360, [hip, knee(ped[0]), ped[0]], 22, L.legColor ?? '#3a3a44');
     }
     for (const p of ped) O(ctx, 360, (c) => T.rrect(c, p[0] - 14, p[1] - 4, 28, 8, 3), '#3a3a3e');
@@ -57,14 +57,22 @@
   };
   // First layer time where a numeric timeline passes `v` (sampled per frame; used for the dump-truck slide).
   const crossing = (val, v, lt) => { for (let t = 0; t <= lt; t += 1 / 30) if (T.num(val, t) > v) return t; return null; };
+  // The bed riders' state at layer time lt: slide (s since the bed passed 25 degrees, null before) and who is off the back.
+  T.dumpTruckRiders = (L, lt) => {
+    const riders = L.riders || [], t25 = riders.length ? crossing(L.tilt, 25, lt) : null, slide = t25 == null ? null : lt - t25;
+    const d = slide == null ? 0 : 0.5 * 1400 * slide * slide;
+    return { slide, d, list: riders.map((who, i) => ({ who, i, bx: 120 + i * 110, off: 120 + i * 110 + 60 - d < 0 })) };
+  };
+  // s.noWheels / s.riderXf / s.riderView: the side drawing as the near side of the 3q views (vehicles-truck.js)
   V['dump-truck'] = (ctx, L, s, env) => {
     const k = s.size / 900, lt = s.lt, tilt = T.num(L.tilt, lt, 0) * D, col = L.color ?? '#f2d02f';
     ctx.scale(k, k);
     if (s.driving) ctx.translate(T.noise(lt * 20, 'dtx') * 1.5, T.noise(lt * 20, 'dty') * 1.5);
-    const riders = L.riders || [], t25 = riders.length ? crossing(L.tilt, 25, lt) : null, slide = t25 == null ? null : lt - t25;
+    const R = T.dumpTruckRiders(L, lt), slide = R.slide, look = L.riderLook ? { look: L.riderLook } : {}, view = s.riderView ? { view: s.riderView } : {};
+    const seat = (x, y, fn) => { ctx.save(); ctx.translate(x, y); if (s.riderXf) ctx.transform(s.riderXf[0], s.riderXf[1], s.riderXf[2], s.riderXf[3], 0, 0); fn(); ctx.restore(); };
     const off = [];
     ctx.save(); ctx.translate(-440, -100); ctx.rotate(-tilt);
-    riders.forEach((who, i) => { const bx = 120 + i * 110, d = slide == null ? 0 : 0.5 * 1400 * slide * slide; if (bx + 60 - d < 0) { off.push([who, i]); return; } ctx.save(); ctx.translate(bx + 60 - d, -90); bean(ctx, who, 260, lt, env, { pose: slide == null ? 'idle' : 'panic', expr: slide == null ? 'neutral' : 'scream', id: 'dt' + i }); ctx.restore(); });
+    R.list.forEach(({ who, i, bx, off: gone }) => { if (gone) { off.push([who, i]); return; } seat(bx + 60 - R.d, -90, () => bean(ctx, who, 260, lt, env, { pose: slide == null ? 'idle' : 'panic', expr: slide == null ? 'neutral' : 'scream', id: 'dt' + i, ...look, ...view })); });
     O(ctx, 600, (c) => { c.moveTo(0, 0); c.lineTo(560, 0); c.lineTo(580, -200); c.lineTo(-20, -200); c.closePath(); }, col, (c) => { c.fillStyle = sh(col, -0.2); c.fillRect(-40, -60, 640, 60); c.strokeStyle = sh(col, -0.3); c.lineWidth = 5; for (let i = 0; i < 5; i++) c.strokeRect(10 + i * 110, -180, 90, 150); });
     ctx.restore();
     const px = [-440 + Math.cos(-tilt) * 380, -100 + Math.sin(-tilt) * 380];
@@ -72,8 +80,8 @@
     O(ctx, 600, (c) => T.rrect(c, -440, -100, 880, 40, 8), '#3a2a20');
     O(ctx, 600, (c) => { c.moveTo(180, -60); c.lineTo(180, -320); c.lineTo(330, -320); c.lineTo(420, -200); c.lineTo(430, -60); c.closePath(); }, col, fillR(sh(col, -0.2), 180, -140, 260, 80));
     O(ctx, 600, (c) => { c.moveTo(250, -300); c.lineTo(320, -300); c.lineTo(390, -205); c.lineTo(250, -205); c.closePath(); }, '#bfe3f2');
-    for (const x of [-300, -170, 300]) wheel(ctx, x, -54, 54, s.dist * 6, 6, '#2a2a2e');
-    off.forEach(([who, i], j) => { ctx.save(); ctx.translate(-560 - j * 70, -10 - j * 30); ctx.rotate(-80 * D); bean(ctx, who, 240, lt, env, { pose: 'panic', expr: 'dead', id: 'dto' + i }); ctx.restore(); });
+    if (!s.noWheels) for (const x of [-300, -170, 300]) wheel(ctx, x, -54, 54, s.dist * 6, 6, '#2a2a2e');
+    off.forEach(([who, i], j) => { ctx.save(); ctx.translate(-560 - j * 70, -10 - j * 30); ctx.rotate(-80 * D); bean(ctx, who, 240, lt, env, { pose: 'panic', expr: 'dead', id: 'dto' + i, ...look }); ctx.restore(); });
   };
   V.helicopter = (ctx, L, s) => {
     const k = s.size / 700, lt = s.lt, col = L.color ?? '#5a7a4a';

@@ -29,9 +29,21 @@ k68 and k89 changed, all as intended; k48's panel was moved up behind the now-oc
   spray-can, rope, long tools, signs) without `holdScale`; ground fx (`dust` at the judge's feet, `T.FX_GROUND`) slot
   among front parts by `y` (`front: "over"` / `"depth"` override); every visible `set` contributes front parts (a
   parts-only set does not cover), and `frontY` opts `room` / `cell` / `antique` / `palace` / `studio` front planes in.
+- Vehicles and riders: `dump-truck` turns through `front` / `3q` / `3q-back` / `back`; the 3/4 car views are a real
+  projection (perspective faces, elliptical wheels on both sides, glass, lights, painted shading); beans take
+  `view: "3q-back"` (also riders in 3q-back); rider anchors come from the drawn head (suspension, turns, slopes, age);
+  vehicles take `riderLook`.
 
 ## Remaining gaps
 
-- `dump-truck` has no turn views; the 3/4 car views are a stylized extrusion, and the bean rig has no back three-quarter view
-  (riders in `3q-back` use the back view).
-- A rider's `lookAt` aims from its seat but ignores the suspension bounce; vehicle riders don't take `riderLook`.
+- Other road vehicles without turn views: `tank` (treads and sponsons would need their own front / back drawings), and the
+  animal-drawn or pushed `cart`, `chariot`, `wagon`, `bicycle` and `cannon` (they keep the squash on a reversal). There is
+  no bus, van or lorry kind besides `dump-truck`.
+- In the 3/4 car views the whole bumper draws on the front or rear face; a tall rider's head can rise above the roof; the
+  back-view truck riders' slide when the bed tips is approximate.
+- A rider with `lookAt` / `takes` finds its head by redrawing the vehicle without riders on a scratch canvas, once per
+  lookup.
+- An explicit `holdScale` still multiplies the classic 170, not the natural held size (kept so existing specs don't change).
+- `frontY` routes a background's whole front plane at one depth (columns and side curtains can't be split); a ground fx
+  with no `y`, `move`, `path` or `target` still draws over front parts; a front part is inserted before the first layer
+  that belongs in front of it, so list order still matters for fx that stay behind a desk while an actor walks in front.

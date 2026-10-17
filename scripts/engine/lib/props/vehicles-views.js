@@ -64,6 +64,7 @@
   VK.viewExplicit = (L) => VK.VIEW_KINDS.has(L.kind) && explicit(L);
   // Path reversals: the view from the arc distance to the nearest change of direction.
   const hasTurns = (L) => { const S = T.pathSpec(L); return !!S && S.face && T.pathTable(S).turns.length > 0; };
+  VK.hasTurns = hasTurns;
   // a reversing car turns through its views only when it can draw them (v2 rig, no authored view / facing)
   T.pathTurnViews = (L) => !!L && L.type === 'vehicle' && L.turn !== false && VK.VIEW_KINDS.has(L.kind) && !explicit(L) &&
     T.vehicleRig(L, false) === 'v2' && hasTurns(L);
@@ -209,26 +210,6 @@
     const v = S.view;
     if (v === 'front' || v === 'back') return drawFace(ctx, L, S, env, o, v === 'back');
     return VK.car3q(ctx, L, S, env, o, k);
-  };
-
-  // Seat of rider i in kind units for a view: [x, y, rider scale]. Side seats come from the kind's body drawing.
-  VK.seatAt = (o, view, i, seats, size) => {
-    const [x0, y0] = seats[Math.min(i, seats.length - 1)], x = x0 + (i >= seats.length ? (i - seats.length + 1) * 40 : 0);
-    const f = o && o.face;
-    if (!f || view === 'side') return [x, y0, 1];
-    if (view === 'front' || view === 'back') {
-      const sx = f.seat.x * (view === 'front' ? 1 : -1), xs = i === 0 ? sx : i === 1 ? -sx : -sx + (i - 1) * 40;
-      return [xs, f.seat.y, 1]; // the face seats use the side rider size
-    }
-    const g = VK.geo3q(o, view === '3q');
-    return [(x + g.offX) * g.cx - g.centre, y0 + g.offY, g.rk];
-  };
-  // Pure anchor for a rider's acting: its head in the world at shot time t, through the view and facing at t.
-  VK.seatAnchor = (L, o, k, i, size, seats) => (t) => {
-    const vs = VK.viewOf(L, t - (L.at ?? 0), t), view = vs ? vs.view : 'side';
-    const sg = (!L.path && L.dir === -1 ? -1 : 1) * (vs ? vs.facing : 1), [x, y, rk] = VK.seatAt(o, view, i, seats, size);
-    const w = VK.worldPt(L, t, x * k * sg, (y - ((450 * size) / 600) * rk) * k);
-    return w ? { x: w[0], y: w[1], flip: (w[2].flip || 1) * sg } : null;
   };
 
   // Turn smear: streaks trailing the body for the in-between frames (layer units, after the facing mirror).

@@ -157,8 +157,13 @@
   VK.SIZE = {};
   VK.LEGACY_V2 = new Set(['tank', 'train', 'biplane', 'submarine', 'car1910']);
   const NEW_FIELDS = ['path', 'terrain', 'lights', 'dust', 'exhaust', 'wake', 'contrail', 'spray', 'animal', 'team'];
+  // kinds whose v2 drawing only adds the turn views (dump-truck, vehicles-truck.js): v2 while a view / facing is authored
+  // or a path reverses, else the classic drawing in both looks
+  VK.VIEW_ONLY = new Set();
+  const viewsWanted = (L) => !!VK.viewExplicit && (VK.viewExplicit(L) || (L.turn !== false && VK.hasTurns(L)));
   T.vehicleRig = (L, painted) => {
     if (!VK.FN[L.kind]) return 'legacy';
+    if (VK.VIEW_ONLY.has(L.kind)) return L.rig !== 'classic' && (L.rig === 'v2' || viewsWanted(L)) ? 'v2' : 'legacy';
     if (!VK.LEGACY_V2.has(L.kind)) return 'v2';
     if (L.rig === 'classic') return 'legacy';
     if (L.rig === 'v2' || painted || NEW_FIELDS.some((f) => L[f] != null) || (VK.viewExplicit && VK.viewExplicit(L))) return 'v2';
@@ -188,7 +193,7 @@
     if (vs) S.view = vs.view;
     // an authored facing turn mirrors each puff by the facing at its own emission time, so smoke already out stays put
     const sgAt = vs && VK.viewExplicit && VK.viewExplicit(L) ? (te) => { const v = VK.viewOf(L, te - (L.at ?? 0), te); return v ? v.facing : 1; } : null;
-    const tr = VK.TRAILS[L.kind] && env && env.st ? VK.TRAILS[L.kind](L, S) : null;
+    const tr = VK.TRAILS[L.kind] && env && env.st && !T.RIDER_PROBE ? VK.TRAILS[L.kind](L, S) : null; // no trails in an anchor probe
     if (tr && tr.length) VK.inWorld(ctx, env, (c) => { // trails stay where they were emitted: drawn in the world, behind the body
       for (const [kind, lx, ly, o] of tr) {
         if (kind === 'contrail') VK.contrail(c, L, S.slt, lx * sg, ly, o);

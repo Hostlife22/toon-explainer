@@ -1,5 +1,5 @@
 {
- "_about": "Creatures and vehicles 2.0 catalog (painted look): one shot per feature. Gaits with planted feet (walk / trot / gallop, chosen by speed along a path), animal states (idle, eat, sleep, scared, sit), new animals, flocks and schools, cars of four eras with distance-driven wheels, exhaust, dust and headlights, a tank on rough ground, a chariot and a wagon pulled by a trotting team, a steam train with rods and smoke, ships rocking with wakes, a banking plane with a contrail, a zeppelin, a balloon and a rocket launch. Render with --sheet to browse.",
+ "_about": "Creatures and vehicles 2.0 catalog (painted look): one shot per feature. Gaits with planted feet (walk / trot / gallop, chosen by speed along a path), animal states (idle, eat, sleep, scared, sit), new animals, flocks and schools, cars of four eras with distance-driven wheels, exhaust, dust and headlights, a tank on rough ground, a chariot and a wagon pulled by a trotting team, a steam train with rods and smoke, ships rocking with wakes, a banking plane with a contrail, a zeppelin, a balloon and a rocket launch. Turn views of the dump-truck (tipping in 3/4), projected 3/4 cars with riders aiming from the bouncing seat, a riderLook swap and a bean in the rear 3/4 view. Render with --sheet to browse.",
  "seed": 61,
  "fps": 30,
  "style": {
@@ -1285,6 +1285,202 @@
        ]
       }
      ]
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c14_truck_turns",
+   "dur": 4,
+   "bg": {
+    "kind": "street1920"
+   },
+   "camera": {
+    "zoom": [
+     1,
+     1.03
+    ]
+   },
+   "layers": [
+    {
+     "type": "vehicle",
+     "kind": "dump-truck",
+     "x": 0.3,
+     "y": 0.86,
+     "size": 620,
+     "riders": [
+      "farmer",
+      "boss"
+     ],
+     "view": [
+      {
+       "at": 0,
+       "v": "3q"
+      },
+      {
+       "at": 1.4,
+       "v": "3q-back"
+      }
+     ],
+     "turn": {
+      "via": "back"
+     },
+     "tilt": [
+      {
+       "at": 0,
+       "v": 0
+      },
+      {
+       "at": 2,
+       "v": 0
+      },
+      {
+       "at": 3.2,
+       "v": 45
+      }
+     ],
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "dump-truck",
+     "x": 0.8,
+     "y": 0.77,
+     "size": 360,
+     "atmos": 0.2,
+     "view": [
+      {
+       "at": 0,
+       "v": "front"
+      },
+      {
+       "at": 2.2,
+       "v": "back"
+      }
+     ],
+     "riders": [
+      "rider"
+     ],
+     "enter": "none"
+    },
+    {
+     "type": "bean",
+     "who": "driver",
+     "x": 0.62,
+     "y": 0.95,
+     "size": 360,
+     "view": "3q-back",
+     "pose": "point",
+     "enter": "none"
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "z": 1.3
+    }
+   ]
+  },
+  {
+   "id": "c15_three_quarter_riders",
+   "dur": 4,
+   "bg": {
+    "kind": "street1920"
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "cop",
+     "who": "knight",
+     "x": 0.9,
+     "y": 0.9,
+     "size": 320,
+     "pose": "point",
+     "enter": "none"
+    },
+    {
+     "type": "vehicle",
+     "kind": "car1950",
+     "id": "convertible",
+     "size": 520,
+     "terrain": "cobble",
+     "view": "3q",
+     "path": {
+      "pts": [
+       [
+        0.05,
+        0.86
+       ],
+       [
+        0.45,
+        0.9
+       ]
+      ],
+      "dur": 4,
+      "ease": "out"
+     },
+     "enter": "none",
+     "riders": [
+      {
+       "who": "driver",
+       "lookAt": [
+        {
+         "at": 0,
+         "v": [
+          0.98,
+          0.5
+         ]
+        },
+        {
+         "at": 1.6,
+         "v": "cop"
+        }
+       ],
+       "expr": [
+        {
+         "at": 0,
+         "v": "happy"
+        },
+        {
+         "at": 1.6,
+         "v": "shock"
+        }
+       ]
+      },
+      "boss"
+     ],
+     "swap": [
+      {
+       "at": 2.6,
+       "riderLook": {
+        "age": "elder",
+        "hairColor": "#d8d8d8"
+       }
+      }
+     ]
+    },
+    {
+     "type": "vehicle",
+     "kind": "sedan1920",
+     "x": 0.68,
+     "y": 0.79,
+     "size": 380,
+     "view": "3q-back",
+     "atmos": 0.2,
+     "riders": [
+      "rider",
+      "farmer"
+     ],
+     "enter": "none"
     },
     {
      "type": "fg",

@@ -201,5 +201,5 @@ def test_rear_three_quarter_shows_one_tail_end_and_riders_from_behind():
       T.layers.bean = base; T.outlined = out; return {views, tails: tails[0]}; }"""
     spec = film([{"type": "vehicle", "kind": "car1950", "x": 0.5, "y": 0.9}])
     back, fwd = _page(spec, lambda p: [p.evaluate(js, "3q-back"), p.evaluate(js, "3q")])
-    assert set(back["views"]) == {"back"} and set(fwd["views"]) != {"back"}
+    assert set(back["views"]) == {"3q-back"} and set(fwd["views"]) != {"3q-back"}, "riders in 3q-back use the bean's rear three-quarter view"
     assert back["tails"] == 2, "the rear face's two tail lights, not the side drawing's as well"

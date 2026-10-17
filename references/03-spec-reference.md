@@ -162,6 +162,7 @@ Default entrance:
   - `3q` by default (≈60–70 % of reference frames): features shift toward the gaze side, the back of the head sits in a large cool shadow;
   - `front`, `side`;
   - `back`: back of the head, hair covers the head.
+  - `3q-back`: rear three-quarter: the back of the head and body, the near arm in front, the cheek and ear of the face side.
   - The character faces right; `flip: true` turns it left.
 - `expr`: the base set is `neutral happy content sleepy smug angry rage sad worried shock scream squint cry dead`; [01 Characters](toolkits/01_characters.md) lists all of them (`menace`, `evil`, `jaw-drop`, `side-eye`, …) with their eye, mouth and brow kinds.
   - The eyebrows carry the emotion.
