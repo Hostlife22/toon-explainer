@@ -1,4 +1,4 @@
-// helpers.js — helpers shared by the modules: animated numbers, outlined clouds, starbursts, thick arrows,
+// helpers.js — helpers shared by the modules: animated numbers, bottle pour progress, outlined clouds, starbursts, thick arrows,
 // cartoon gloves and sub-shot rendering (a shot drawn inside another: panels, TVs, bubbles, paintings).
 (function () {
   'use strict';
@@ -15,6 +15,39 @@
       if (lt < (b.at ?? 0)) return T.lerp(a.v, b.v, T.easeBy(b.ease || 'linear')(T.prog(lt, a.at ?? 0, (b.at ?? 0) - (a.at ?? 0))));
     }
     return v[v.length - 1].v;
+  };
+
+  const pourEvt = (v) => (v == null || v === false ? null : v === true ? {} : typeof v === 'number' ? { at: v } : v);
+  // Pour progress 0..1 (0 upright, 1 tipped 110 deg): an event {at, dur, back, backDur} tips over `dur` and, with `back`,
+  // returns upright from the tip it reached at `back` over `backDur` (default `dur`); a [{at, v, ease}] timeline gives
+  // the fraction directly.
+  const pourTip = (pr, t) => T.ease.inOut(T.prog(t, pr.at ?? 0, pr.dur ?? 0.5)); // forward tipping only
+  const pourBack = (pr) => (typeof pr.back === 'number' ? pr.back : Infinity);
+  T.pourAmount = (v, lt) => {
+    if (Array.isArray(v)) return T.clamp(T.num(v, lt, 0));
+    const pr = pourEvt(v);
+    if (!pr) return 0;
+    const b = pourBack(pr);
+    if (lt < b) return pourTip(pr, lt);
+    return pourTip(pr, b) * (1 - T.ease.inOut(T.prog(lt, b, pr.backDur ?? pr.dur ?? 0.5)));
+  };
+  // How far the pour has emptied the bottle (0..1): the deepest tip so far, so liquid stays poured once it tips back.
+  // Timelines: the running maximum of the tip curve on a fixed grid (POUR_GRID points per key segment, eased overshoot
+  // included), so it never falls between frames and does not depend on the frame times.
+  const POUR_GRID = 512; // lag behind a steep tip under 0.01
+  T.pourSpent = (v, lt) => {
+    if (!Array.isArray(v)) { const pr = pourEvt(v); return pr ? pourTip(pr, Math.min(lt, pourBack(pr))) : 0; }
+    if (!v.length) return 0;
+    let m = T.pourAmount(v, v[0].at ?? 0);
+    for (let i = 1; i < v.length; i++) {
+      const a = v[i - 1].at ?? 0, d = (v[i].at ?? 0) - a;
+      for (let j = 1; j <= POUR_GRID; j++) {
+        const t = a + (d * j) / POUR_GRID;
+        if (t > lt) return m;
+        m = Math.max(m, T.pourAmount(v, t));
+      }
+    }
+    return m;
   };
 
   // Seeded lobes of a cloud as [x, y, r]; `boil` (layer time) re-seeds the radii on twos.

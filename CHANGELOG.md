@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Engine backlog: characters
+
+- Fix: poses `flail` / `flail-b` stand upright (panicked arms thrown up at odd angles) instead of rendering the character upside down; the old head-over-heels flip is the new pose pair `upended` / `upended-b` (`story_banana_caper` uses it for its slips).
+- Fix: `glasses: true` draws plain spectacles (thin rounded frames over clear glass, the eyes show through) instead of sunglasses; `"clear"` / `"spectacles"` are the explicit names, `"sun"` (and other strings) still draw sunglasses.
+- Fix: `crowd` honours `look` (merged over every member's cast look, back rows still tinted), so a crowd `swap` with `look: {"age": "child"}` turns the whole crowd into children; bean `look.age` swaps are covered by a test.
+- Fix: a bean `reach` to a target above the shoulder and out of reach lengthens the arm toward it (up to 1.9 × straight up, like `hold-high`) without `stretch`; level and low targets keep the arm length and `stretch: false` turns it off. In the painted front view a raised arm whose hand ends over the head stays behind the head instead of crossing the face.
+- Fix: the `sick` expression reads as nausea, not bleeding: a pale green face tint, cold pale sweat beads and a new tight wavy `queasy` mouth replace the red drip.
+- Held and prop `bottle` `pour` can tip back: `{at, dur, back, backDur}` returns it upright, or a `[{at, v}]` timeline of tip fractions drives it; the painted liquid stays poured. The return starts from the tip reached at `back`, and the poured amount is the running maximum of the (eased) tip curve, so the liquid never rises again. `holdProps.pour` and a prop's `pour` are validated.
+- Crowd `look` (and `swap` looks) are validated like bean looks, and mounted crowds (`creature`) pass it to the riders through the new creature field `riderLook`.
+- `examples/characters_v2` gains `c11_panic_sick_reach` and `c12_crowd_age_pour`.
+
 Painted engine, phase 8: directing rules.
 
 - `SKILL.md` makes the painted look the default for new films and routes to Places 2.0, real `geo` maps and globes, shot-size framing, acting, path motion and particles; production rules gain "one continuous motion per shot", shot-size quotas and a per-shot density checklist.

@@ -32,7 +32,7 @@ Everything about a character's design lives in `cast` (or in a layer's `look`, w
 - **Construction (from the reference):** egg head (wide cheeks, narrow chin) about 45–50 % of the height, a tilted bell body with stubby legs, about 2.2 heads tall. Arms are bendable tapering tubes with white glove hands (`open`, `fist`, `point`, `thumb`). Eyes are dots or vertical ovals with no whites, thick brows carry the emotion, a "D" mouth has a pink tongue and a strip of upper teeth.
 - **Ink and shade:** every part is outlined in dark-brown ink (`#2a1c15`, width 9 rig units, about 6 px on a 400 px bean) with exactly one flat shadow tone per colour (about 22–24 % darker, derived from the fill). A custom `skin` derives its own head and leg shadow; set `skinShade` / `robeShade` only to override. Colours in the look must be hex (`#rgb` or `#rrggbb`); the validator rejects names.
 - **View:** `3q` in 60–70 % of shots (features slide to the face side, the back third of the head sits in a cool `#c4c1cd` shadow). `front` for confrontation and address, `side` for profiles and walking, `back` for leaving and over-the-shoulder. The rig faces right; `flip: true` faces left. Headwear and hair are view-aware (visors and fringes on the face side, masses toward the back).
-- **Sizes that read (1080p):** catalogue or crowd member 260–340; full figure in a wide shot 380–520 with feet at `y` 0.9–0.98; medium 560–700 (`y` 0.95–1.0); villain from below 750+ (`y` 1.02); close-up 900–1400 with `y` 1.2–1.5 (head fills the frame); baby next to adults about 250. `size` is always an adult's height: a child at the same `size` is drawn about 0.65 as tall.
+- **Sizes that read (1080p):** catalogue or crowd member 260–340; full figure in a wide shot 380–520 with feet at `y` 0.9–0.98; medium 560–700 (`y` 0.95–1.0); villain from below 750+ (`y` 1.02); close-up 900–1400 with `y` 1.2–1.5 (head fills the frame); baby next to adults about 250. `size` is always an adult's height: a child at the same `size` is drawn about 0.8 as tall (same head, shorter body and legs).
 - **Three planes:** put beans in the middle plane (`z` 1), a `fg` element in front (bushes, grass, an over-the-shoulder head) and the background behind. Labels go on the empty side (`x` 0.22–0.32 when the bean stands right).
 - **Safe frame:** keep faces and labels inside the 3.5 % margin; a catalogue shot holds at most 8 beans in two rows.
 - **Hold and snap:** a pose holds 0.4–4 s and changes in 1–2 frames with a small settle; expressions change in exactly one frame, on the stressed word, and two characters reacting together snap on the same frame. Smooth blends are rare (`poseBlend` 0.25 for one gentle gesture).
@@ -78,13 +78,13 @@ Modules: `turn.js`, `limbs.js`, `gait.js`, `motion.js`, `bean.js`, `closeup.js`,
 | `view` | `3q` | `front`, `3q`, `side` (alias `profile`), `back`, or a `[{at, v}]` timeline (layer time). A change turns through the views in between, one drawing each, squashed sideways (0.9 × 1.04) with an automatic hair smear; adjacent views get one squashed drawing of the new view. |
 | `facing` | `right` | `right` / `left` or a timeline: the rig mirrors itself (on top of `flip`). A facing change is part of the turn (3q right → 3q left passes through `front`; back → 3q left passes through the left profile). |
 | `turn` | on | `false` snaps turns; `{frames 1 (0..4 per in-between), smear: false, squash: false}`. A flip that comes from `move` / `path` gets a front-view in-between too (acting or path). |
-| `reach` | – | IK arm target: `{x, y}` normalised world point (`space: "local"` = rig units from the feet, x forward), or `{target: "<layer id>", dx, dy}` (the anchor of a layer in the same shot, followed while it moves). Options: `arm` `right` (default) / `left` / `both`, `hand` (shape while reaching; `grab` for a target), `dur` 0.35 (travel time), `arc` 0.25 (the hand rises on an arc, a fraction of the distance), `stretch: true` (rubber-hose arm when the target is out of reach). A `[{at, v}]` timeline moves the hand target to target on arcs; `v: null` returns to the pose. To pick something up: reach the prop's `target`, end the prop with `out`, and `swap` `hold` on at the same time. |
+| `reach` | – | IK arm target: `{x, y}` normalised world point (`space: "local"` = rig units from the feet, x forward), or `{target: "<layer id>", dx, dy}` (the anchor of a layer in the same shot, followed while it moves). Options: `arm` `right` (default) / `left` / `both`, `hand` (shape while reaching; `grab` for a target), `dur` 0.35 (travel time), `arc` 0.25 (the hand rises on an arc, a fraction of the distance), `stretch: true` (rubber-hose arm when the target is out of reach). Without `stretch`, a target above the shoulder that is out of reach lengthens the arm toward it, up to 1.9 × for a target straight up (the `hold-high` arm), so a raised hand clears the head; level and low targets keep the arm length, and `stretch: false` never lengthens it. A `[{at, v}]` timeline moves the hand target to target on arcs; `v: null` returns to the pose. To pick something up: reach the prop's `target`, end the prop with `out`, and `swap` `hold` on at the same time. |
 | `hand`, `handL` | pose hand | Right / left hand shape, constant or timeline: `open` `fist` `point` `thumb` `thumbs-up` `grab` `wave` `peace` and counting `one` `two` `three` `four` `five` (registry `T.HANDS`). |
 | `acting` | painted: on · classic: off | `true` / `false` or `{antic, overshoot, breathe, shift, squash, turn: false}` to drop one part. See [02 Acting](02_acting.md#body-acting-acting). |
 | `sneak`, `march` | – | Gait windows like `walk` / `run` (see the gait table in ④). |
 | `path` | – | The common travel field (one definition: [spec reference](../03-spec-reference.md#common-layer-fields)): a bean on an object `path` walks it with `path.gait` (`walk` default, `run`, `sneak`, `march`, `false` = glide), the stride matched to its speed and the leg phase integrated over speed changes, with a front-view in-between when it reverses. Use `"ease": "linear"` for a steady walk. |
 | `impact` | – | `[t, ...]` or `[{at, dir 1 \| -1, amount 1 (0..3)}]` (layer time): a squash and a recoil lean when hit. |
-| `holdProps` | – | Prop fields passed to the held prop, e.g. `{"pour": {"at": 0.3, "dur": 0.6}, "liquid": "#e8f0f2"}` for a bottle that tips and pours from the hand (it moves with the hand instead of hanging in the air). With `holdProps` the hand stays on a grip point, `grip` [x, y] in fractions of the prop size from its centre (default [0, 0.32], the lower body of a bottle), and follows it while the prop tips itself (`T.PROP_TILT`, e.g. a pouring bottle); also a look field. |
+| `holdProps` | – | Prop fields passed to the held prop, e.g. `{"pour": {"at": 0.3, "dur": 0.6}, "liquid": "#e8f0f2"}` for a bottle that tips and pours from the hand (it moves with the hand instead of hanging in the air). Add `back` (time) and `backDur` to tip it upright again (`{"at": 0.3, "dur": 0.6, "back": 2.2}`), or give `pour` a `[{at, v}]` timeline of tip fractions (0 upright, 1 fully tipped). With `holdProps` the hand stays on a grip point, `grip` [x, y] in fractions of the prop size from its centre (default [0, 0.32], the lower body of a bottle), and follows it while the prop tips itself (`T.PROP_TILT`, e.g. a pouring bottle); also a look field. |
 | `holdRot` | 0 | Tilt of the `hold` / `holdL` prop in the grip, degrees (number or `[{at, v}]` timeline; positive tips the top outward, mirrored for the left hand); also a look field. The prop stays attached to the hand, so a bottle raised to the nose with `pose: "drink"` can lean its neck toward the face without a separate prop that the fingers slide over. |
 | `holdScale` | 1 (acting: per prop) | Scale of the `hold` / `holdL` prop against the classic size (170 units; shield 260, spear 420); also a look field. With acting on, small props get their own size (coin 80, bulb 100, scroll / book 120, moneybag 140; table `T.HOLD_SIZE`); classic keeps 170. With acting, a near arm raised above the shoulders is drawn over the head, so `arms-up` / `point-up` hands stay visible. |
 | `secondary` | 1 | Strength 0..3 of the spring secondary motion (hair, cape, robe hem, crests and plumes, tie) while acting; 0 = rigid. |
@@ -108,7 +108,7 @@ Lip-sync workflow: `python3 scripts/lipsync.py film/vo.mp3 --out film/vo.lips.js
 | Force and power | `shove` (lean 15°) `t-pose` `spread` `flex` `flex-one` `hands-up` `hammer` `throw-windup` (lean −10°) `throw` (lean 12°) `hold-high` `carry` (squat) `grab` |
 | Pleading and offering | `beg` `rub-hands` (= `beg`) `offer` `kneel` `kneel-pray` `kneel-beg` `kneel-offer` `prostrate` |
 | Two characters | `hug` `arm-around` `handshake` (partner at +x, overlap about 40 %), `cradle` (pair with `hold: "swaddle"`), `lean-table` |
-| On the ground or in the air | `sit` (seat about 0.1 × `size` above `y`), `sit-floor` (hugging knees), `sit-slump`, `lie` (rot −88°), `crawl`, `fly` (rot 75°, centred), `flail` / `flail-b` (rot 160°, centred; alternate them), `hang` (dangling legs; hands at the bar) |
+| On the ground or in the air | `sit` (seat about 0.1 × `size` above `y`), `sit-floor` (hugging knees), `sit-slump`, `lie` (rot −88°), `crawl`, `fly` (rot 75°, centred), `flail` / `flail-b` (upright panic: arms thrown up at odd angles; alternate them), `upended` / `upended-b` (rot 160°, centred: flipped head over heels by a slip; alternate them), `hang` (dangling legs; hands at the bar) |
 
 Hands-in-front poses draw both arms over the body: `facepalm` `think` `cross` `hands-face` `clutch-head` and every pose with `body.front` (most of the hand poses and `pray`, `beg`, `cradle`, `sit-floor`, `kneel-beg`).
 
@@ -239,7 +239,7 @@ An outfit draws over the bell body and brings defaults (robe, trousers, shoes, `
 
 ### Expressions (`expr`)
 
-35 expressions in `T.EXPR`; each is eyes / brows / rest mouth / talk set, and all snap in one frame. `rage` adds an anger vein, `worried` a sweat drop, `cry` tear streams, `sick` a blood trickle.
+35 expressions in `T.EXPR`; each is eyes / brows / rest mouth / talk set, and all snap in one frame. `rage` adds an anger vein, `worried` a sweat drop, `cry` tear streams, `sick` a pale green face and cold sweat beads.
 
 | `expr` | Eyes / brows / mouth | Talk set | Use |
 |---|---|---|---|
@@ -255,7 +255,7 @@ An outfit draws over the bell body and brings defaults (robe, trousers, shoes, `
 | `dead` | `x` / – / `o` | o | death (with `rot: -88`, `rock: 0`, `blink: false`) |
 | `mad` | rotating `spiral` / – / `grin` | grin wide | madness |
 | `evil` | red glowing `slit` / angry / `smirk` | smirk wide | villain |
-| `sick` | dark-`ringed` / worried / `frown` + blood | frown mid | poison, plague |
+| `sick` | dark-`ringed` / worried / `queasy` (tight wavy mouth) + green tint and pale sweat beads | queasy mid | poison, plague, nausea |
 | `grimace` | `dash` + crease ticks / worried / `teeth-wide` | teeth-wide teeth-mid | cringe |
 | `star-eyes` | yellow `star` (rocks on twos) / high / `smileOpen` | smile wide | fame, dream |
 | `sparkle` | big glossy `sparkle` / sad / `wobble` | small mid | puppy plea (add `tears: "drop"`) |
@@ -293,7 +293,7 @@ An outfit draws over the bell body and brings defaults (robe, trousers, shoes, `
 | `mouthTape` | `true` | Two black strips in an X over the mouth. |
 | `bruise` | `left`, `right`, `both` | Purple swelling under the eye. |
 | `bandage` | `head`, `cross`, `eyes` | Head wrap with a knot, crossed plasters on the forehead, or a blindfold band. |
-| `glasses`, `glassesColor`, `opaque` | `sun` (any other value too), `shutter`, `round` | Sun lenses with a glint; shutter slats (`#2a6ad0`); round ink rims, or opaque white lenses with `opaque: true`. Side view: one lens and an arm to the ear. |
+| `glasses`, `glassesColor`, `opaque` | `true` / `clear` / `spectacles`, `sun` (any other string too), `shutter`, `round` | `true`: plain spectacles, thin rounded ink frames over clear glass with a glint (the eyes show through); `sun`: dark sunglasses with a glint; shutter slats (`#2a6ad0`); round ink rims, or opaque white lenses with `opaque: true`. Side view: one lens and an arm to the ear. |
 | `monocle` | `true` | Gold ring on the face-side eye with a chain. |
 | `label`, `labelColor` | text or `{text}`; `#c8323a` | White strip curved across the forehead, up to 8 letters. |
 | `devil`, `horns`, `tail`, `devilColor` | `devil: true`; `horns: "devil"`; `tail: "devil"`; `#d2232a` | `devil` adds red horns and an S-curve tail; `horns` / `tail` add one of them. |
@@ -350,6 +350,7 @@ Reading cues: a flat shadow offset down-right in screen space, two shoes peeking
 | `march`, `inStep` | false | Everyone walks; `inStep: true` keeps the phases equal. |
 | `armsUp` | false | Arms go up and down at 2 Hz per member (cheering). |
 | `pose`, `expr`, `view`, `rock`, `gaitRate`, `hold`, `holdL` | `idle`, `neutral`, `3q`, 1.6 | Passed to every member (constants only). |
+| `look` | – | Look fields merged over every member's cast look, e.g. `{"age": "child"}` or `{"robe": "#8a3a2a"}`; back rows still get the depth tint. A `swap` with `look` changes the whole crowd mid-shot (grown-ups become children). |
 | `flipAlt` | false | Every other member faces left. |
 | `silhouette` | false | Dark spectator figures (see ⑥ for `true` vs a hex). |
 | `mode` | – | `lineup`: a diagonal row of big overlapping faces, back first, each 5 % smaller, 0.3 × `size` apart (about 40 % overlap); `dir` ±1 sets the diagonal. |

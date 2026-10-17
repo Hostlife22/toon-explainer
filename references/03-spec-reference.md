@@ -177,7 +177,7 @@ Default entrance:
   - force and power: `shove t-pose spread flex flex-one hands-up hammer throw-windup throw hold-high carry grab`;
   - pleading and offering: `beg rub-hands offer kneel kneel-pray kneel-beg kneel-offer prostrate`;
   - two characters: `hug arm-around handshake` (partner at +x, overlap about 40 %), `cradle` (`hold: "swaddle"`), `lean-table`;
-  - body on the ground or in the air: `sit` (chair seat at about 0.1 × `size` above `y`), `sit-floor` (hugging knees), `sit-slump`, `lie` (pair with `expr: dead`), `crawl`, `fly`, `flail` / `flail-b` (alternate for a tumble), `hang` (from a bar).
+  - body on the ground or in the air: `sit` (chair seat at about 0.1 × `size` above `y`), `sit-floor` (hugging knees), `sit-slump`, `lie` (pair with `expr: dead`), `crawl`, `fly`, `flail` / `flail-b` (upright panic, arms thrown up; alternate them), `upended` / `upended-b` (flipped head over heels; alternate for a tumble or a slip), `hang` (from a bar).
   - A pose entry may carry a body: `{arms, body: {dy, rot, lean, legs, front, view, armScale, pivot}}`; legs are `stand kneel sit tuck splay kick squat dangle none`. Modules add poses with `T.POSES[name] = …`.
 - `antic: true` adds a 3-frame anticipation dip before every pose change and a 2-frame stretch after it; `snapTilt: 8` adds one tilted breakdown frame. Use them on big gestures (a slam on the table, a reveal), not on talking heads.
 - `look.build` (`adult brute fat thin muscle`) and `look.age` (`adult child toddler baby elder`) change proportions; `size` stays an adult's height, so a child at the same `size` is drawn about 0.65 as tall. `age` sets head/limb ratios, `build` sets widths. Overlays (belly, pecs, swaddle, wrinkles) are drawn by `characters/expressions.js` ([01 Characters](toolkits/01_characters.md)).
@@ -207,7 +207,7 @@ Default entrance:
 - `march`: everyone walks (`inStep: true` keeps them in step).
 - `armsUp`: arms go up and down alternately at 2 Hz (cheering).
 - `silhouette`: dark spectator silhouettes.
-- Other fields: `jitter` (x scatter, 30 px), `hold`, `holdL`, `gaitRate`, `rock`, `fog` (haze color for back rows).
+- Other fields: `jitter` (x scatter, 30 px), `hold`, `holdL`, `gaitRate`, `rock`, `fog` (haze color for back rows), `look` (merged over every member's cast look, e.g. `{"age": "child"}`; a `swap` with `look` changes the whole crowd).
 - Set `id` if a shot has two crowds with the same `who`, `x` and `count`; otherwise their phases match.
 
 ### `fg`: foreground, frame framing (the main source of depth in the reference)

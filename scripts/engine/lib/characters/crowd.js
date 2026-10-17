@@ -1,7 +1,8 @@
 // crowd.js — crowds and army rows the way the reference builds them: one design duplicated N times with phase offsets,
 // back rows smaller / desaturated, optional march cycle, raised arms, or black silhouettes for audiences.
 // Layer: { type:'crowd', who | who:[...], count, rows, spread, size, march, pose, expr, view, silhouette, flipAlt,
-//          mode:'lineup' (diagonal overlapping faces, 40% overlap, 5% scale step), creature:'horse' (animal members) }
+//          mode:'lineup' (diagonal overlapping faces, 40% overlap, 5% scale step), creature:'horse' (animal members),
+//          look (merged over every member's cast look, e.g. {age:'child'}; works with swap) }
 (function () {
   'use strict';
   const T = window.TOON;
@@ -12,10 +13,11 @@
     const r = T.rng(T.hash(L.id ?? 'crowd' + count + who.join(',') + (L.x ?? '') + (L.y ?? '')));
     // Depth tint is baked into the colours (ctx.filter per draw call is ~10x slower at 1080p).
     const COLOR_KEYS = ['skin', 'skinShade', 'robe', 'robeShade', 'sleeve', 'trim', 'sash', 'belt', 'cape', 'armor', 'hairColor', 'beardColor', 'mustacheColor', 'headColor', 'crest', 'sandal', 'legColor'];
+    const own = L.look && typeof L.look === 'object' ? L.look : null; // crowd-wide look (also from a swap)
     const tinted = (name, depth) => {
-      const base = { skin: T.PAL.skin, skinShade: '#c4c1cd', robe: T.PAL.red, hairColor: T.PAL.hair, ...(env.cast[name] || {}) };
-      if (!L.silhouette && depth <= 0) return null;
-      const fog = L.fog ?? '#8f9a9c', look = {};
+      if (!L.silhouette && depth <= 0) return own;
+      const base = { skin: T.PAL.skin, skinShade: '#c4c1cd', robe: T.PAL.red, hairColor: T.PAL.hair, ...(env.cast[name] || {}), ...(own || {}) };
+      const fog = L.fog ?? '#8f9a9c', look = { ...(own || {}) };
       for (const k of COLOR_KEYS) {
         const v = base[k];
         if (typeof v !== 'string' || v[0] !== '#') continue;
@@ -54,7 +56,7 @@
       };
       const tl = lt + (L.march ? (L.inStep ? 0 : m.off * 0.05) : m.off);
       if (T.PAINT && !L.silhouette && L.contact !== false && !L.creature) T.layerContact(ctx, { type: 'bean', size: bean.size, contact: L.contact }, null); // painted look (creature members draw their own)
-      if (L.creature) T.layers.creature(ctx, { type: 'creature', kind: L.creature, id: bean.id, size: size * m.s, walk: bean.walk, run: L.gallop ? [[0, 1e6]] : undefined, rider: m.who, riderHold: L.hold, color: L.color, contact: L.silhouette ? false : L.contact }, tl, { ...env, st: null });
+      if (L.creature) T.layers.creature(ctx, { type: 'creature', kind: L.creature, id: bean.id, size: size * m.s, walk: bean.walk, run: L.gallop ? [[0, 1e6]] : undefined, rider: m.who, riderHold: L.hold, riderLook: bean.look, color: L.color, contact: L.silhouette ? false : L.contact }, tl, { ...env, st: null });
       else T.layers.bean(ctx, bean, tl, { ...env, st: null });
       ctx.restore();
     }

@@ -57,6 +57,13 @@
    "hairColor": "#4a3022",
    "cape": "#7a1e24",
    "belt": "#5a3a22"
+  },
+  "scholar": {
+   "robe": "#4a5a7a",
+   "hair": "short",
+   "hairColor": "#3a2a20",
+   "glasses": true,
+   "belt": "#5a3a22"
   }
  },
  "shots": [
@@ -972,6 +979,312 @@
      "type": "fg",
      "kind": "lamp-post",
      "side": "left"
+    }
+   ]
+  },
+  {
+   "id": "c11_panic_sick_reach",
+   "dur": 3,
+   "bg": {
+    "kind": "street1920",
+    "obelisk": 0.5
+   },
+   "camera": {
+    "zoom": [
+     1.04,
+     1.08
+    ],
+    "focus": [
+     0.5,
+     0.62
+    ]
+   },
+   "layers": [
+    {
+     "type": "bean",
+     "id": "panic",
+     "who": "thief",
+     "x": 0.2,
+     "y": 0.94,
+     "size": 470,
+     "expr": "scream",
+     "pose": [
+      {
+       "at": 0.0,
+       "v": "flail"
+      },
+      {
+       "at": 0.1,
+       "v": "flail-b"
+      },
+      {
+       "at": 0.2,
+       "v": "flail"
+      },
+      {
+       "at": 0.3,
+       "v": "flail-b"
+      },
+      {
+       "at": 0.4,
+       "v": "flail"
+      },
+      {
+       "at": 0.5,
+       "v": "flail-b"
+      },
+      {
+       "at": 0.6,
+       "v": "flail"
+      },
+      {
+       "at": 0.7,
+       "v": "flail-b"
+      },
+      {
+       "at": 0.8,
+       "v": "flail"
+      },
+      {
+       "at": 0.9,
+       "v": "flail-b"
+      },
+      {
+       "at": 1.0,
+       "v": "flail"
+      },
+      {
+       "at": 1.1,
+       "v": "flail-b"
+      },
+      {
+       "at": 1.2,
+       "v": "flail"
+      },
+      {
+       "at": 1.3,
+       "v": "flail-b"
+      },
+      {
+       "at": 1.4,
+       "v": "flail"
+      },
+      {
+       "at": 1.5,
+       "v": "flail-b"
+      },
+      {
+       "at": 1.6,
+       "v": "flail"
+      },
+      {
+       "at": 1.7,
+       "v": "flail-b"
+      },
+      {
+       "at": 1.8,
+       "v": "flail"
+      },
+      {
+       "at": 1.9,
+       "v": "flail-b"
+      },
+      {
+       "at": 2.0,
+       "v": "flail"
+      },
+      {
+       "at": 2.1,
+       "v": "flail-b"
+      },
+      {
+       "at": 2.2,
+       "v": "flail"
+      },
+      {
+       "at": 2.3,
+       "v": "flail-b"
+      },
+      {
+       "at": 2.4,
+       "v": "flail"
+      },
+      {
+       "at": 2.5,
+       "v": "flail-b"
+      },
+      {
+       "at": 2.6,
+       "v": "flail"
+      },
+      {
+       "at": 2.7,
+       "v": "flail-b"
+      },
+      {
+       "at": 2.8,
+       "v": "flail"
+      },
+      {
+       "at": 2.9,
+       "v": "flail-b"
+      }
+     ]
+    },
+    {
+     "type": "bean",
+     "id": "queasy",
+     "who": "hero",
+     "x": 0.47,
+     "y": 0.94,
+     "size": 470,
+     "expr": "sick",
+     "view": "front",
+     "pose": "clutch-chest"
+    },
+    {
+     "type": "prop",
+     "id": "kite",
+     "kind": "coin",
+     "x": 0.8,
+     "y": 0.22,
+     "size": 70
+    },
+    {
+     "type": "bean",
+     "id": "reader",
+     "who": "scholar",
+     "x": 0.74,
+     "y": 0.94,
+     "size": 470,
+     "expr": "shock",
+     "reach": [
+      {
+       "at": 0,
+       "v": null
+      },
+      {
+       "at": 0.6,
+       "v": {
+        "target": "kite",
+        "hand": "grab"
+       }
+      }
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "side": "left"
+    }
+   ]
+  },
+  {
+   "id": "c12_crowd_age_pour",
+   "dur": 3.5,
+   "bg": {
+    "kind": "street1920",
+    "obelisk": 0.5
+   },
+   "camera": {
+    "zoom": [
+     1.1,
+     1.14
+    ],
+    "focus": [
+     0.5,
+     0.66
+    ]
+   },
+   "layers": [
+    {
+     "type": "crowd",
+     "id": "town",
+     "who": [
+      "scout",
+      "orator",
+      "hero"
+     ],
+     "x": 0.36,
+     "y": 0.92,
+     "count": 5,
+     "rows": 2,
+     "spread": 700,
+     "size": 300,
+     "swap": [
+      {
+       "at": 1.2,
+       "look": {
+        "age": "child"
+       }
+      }
+     ]
+    },
+    {
+     "type": "fx",
+     "kind": "poof",
+     "x": 0.36,
+     "y": 0.8,
+     "w": 300,
+     "h": 220,
+     "at": 1.1,
+     "word": null
+    },
+    {
+     "type": "bean",
+     "id": "pourer",
+     "who": "scout",
+     "x": 0.74,
+     "y": 0.94,
+     "size": 480,
+     "expr": [
+      {
+       "at": 0,
+       "v": "content"
+      },
+      {
+       "at": 2.4,
+       "v": "smug"
+      }
+     ],
+     "pose": "hold",
+     "hold": "bottle",
+     "holdScale": 1.1,
+     "holdProps": {
+      "pour": {
+       "at": 0.4,
+       "dur": 0.6,
+       "back": 2.0,
+       "backDur": 0.5
+      },
+      "liquid": "#e8f0f2"
+     }
+    },
+    {
+     "type": "prop",
+     "kind": "beaker",
+     "x": 0.82,
+     "y": 0.86,
+     "size": 90,
+     "fill": [
+      {
+       "at": 0,
+       "v": 0.05
+      },
+      {
+       "at": 0.9,
+       "v": 0.05
+      },
+      {
+       "at": 2.0,
+       "v": 0.6
+      }
+     ]
+    },
+    {
+     "type": "fg",
+     "kind": "lamp-post",
+     "side": "right"
     }
    ]
   }
